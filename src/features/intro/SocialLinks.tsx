@@ -11,7 +11,7 @@ export default function SocialLinks() {
         📘 블로그
       </a>
       <a
-        href="https://blog.naver.com/yeojoonsoo02"
+        href="https://www.instagram.com/yeojoonsoo02/"
         target="_blank"
         className="px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600"
       >
