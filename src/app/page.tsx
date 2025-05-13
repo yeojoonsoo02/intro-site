@@ -4,6 +4,7 @@ import { useState } from 'react';
 import CommentSection from '@/features/comments/CommentSection';
 import VisitorCount from '@/features/visitors/VisitorCount';
 import IntroCard from '@/features/intro/IntroCard';
+import SocialLinks from '@/features/intro/SocialLinks';
 
 export default function Home() {
   const [showComments, setShowComments] = useState(false);
@@ -11,6 +12,7 @@ export default function Home() {
   return (
     <main className="max-w-xl mx-auto p-6 text-center">
       <IntroCard />
+      <SocialLinks />
       <VisitorCount />
 
       <button
