@@ -64,7 +64,7 @@ export default function CommentSection() {
           <CommentItem
             key={c.id}
             text={c.text}
-            date={c.createdAt.toDate().toLocaleString()}
+            date={c.createdAt?.toDate ? c.createdAt.toDate().toLocaleString() : ''}
             onDelete={() => deleteComment(c.id)}
           />
         ))}
