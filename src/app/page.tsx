@@ -1,16 +1,43 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CommentSection from '@/features/comments/CommentSection';
 import VisitorCount from '@/features/visitors/VisitorCount';
 import IntroCard from '@/features/intro/IntroCard';
 import SocialLinks from '@/features/intro/SocialLinks';
+import { auth, provider, signInWithPopup, signOut, onAuthStateChanged } from '@/lib/firebase';
+import type { User } from 'firebase/auth';
+import AuthButton from '@/features/auth/AuthButton';
 
 export default function Home() {
   const [showComments, setShowComments] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogin = async () => {
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (e) {
+      alert('로그인 실패');
+    }
+  };
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (e) {
+      alert('로그아웃 실패');
+    }
+  };
 
   return (
     <main className="max-w-xl mx-auto p-6 text-center">
+      <AuthButton onUserChange={setUser} />
       <IntroCard />
       <SocialLinks />
       <VisitorCount />
@@ -25,7 +52,7 @@ export default function Home() {
       {showComments && (
         <div className="text-left">
           <h2 className="text-2xl font-bold mb-4">💬 여준수의 댓글 공간</h2>
-          <CommentSection />
+          <CommentSection user={user} />
         </div>
       )}
     </main>

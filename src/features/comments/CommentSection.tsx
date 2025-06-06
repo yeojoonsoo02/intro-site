@@ -15,10 +15,13 @@ import { db } from '@/lib/firebase';
 import CommentItem from './CommentItem';
 import { Comment } from './comment.model';
 import styles from './comment.module.css';
+import type { User } from 'firebase/auth';
 
-export default function CommentSection() {
+export default function CommentSection({ user }: { user: User | null }) {
   const [input, setInput] = useState('');
   const [comments, setComments] = useState<Comment[]>([]);
+
+  const isAdmin = user?.email === 'yeojoonsoo02@gmail.com';
 
   const loadComments = async () => {
     const q = query(collection(db, 'comments'), orderBy('createdAt', 'desc'));
@@ -66,6 +69,7 @@ export default function CommentSection() {
             text={c.text}
             date={c.createdAt?.toDate ? c.createdAt.toDate().toLocaleString() : ''}
             onDelete={() => deleteComment(c.id)}
+            isAdmin={isAdmin}
           />
         ))}
       </ul>
