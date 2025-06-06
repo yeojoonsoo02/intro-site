@@ -5,25 +5,25 @@ const SNS = [
 		href: 'https://blog.naver.com/yeojoonsoo02',
 		label: '여준수 블로그',
 		color: '#03c75a',
-		img: '/sns/naver.svg',
+		img: '/sns/blog.jpg',
 	},
 	{
 		href: 'https://www.instagram.com/yeojoonsoo02/',
 		label: '여준수 인스타그램',
 		color: '#e1306c',
-		img: '/sns/instagram.svg',
+		img: '/sns/instagram.png',
 	},
 	{
 		href: 'https://open.kakao.com/o/somekakaolink',
 		label: '여준수 카카오톡',
 		color: '#fee500',
-		img: '/sns/kakao.svg',
+		img: '/sns/kakao.png',
 	},
 	{
 		href: 'https://github.com/yeojoonsoo02/intro-site',
 		label: '프로젝트(GitHub)',
 		color: '#24292f',
-		img: '/sns/github.svg',
+		img: '/sns/github.png',
 	},
 ];
 
