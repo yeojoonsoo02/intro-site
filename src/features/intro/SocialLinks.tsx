@@ -4,6 +4,7 @@ const SNS = [
 	{
 		href: 'https://blog.naver.com/yeojoonsoo02',
 		label: '여준수 블로그',
+		color: '#03c75a',
 		icon: (
 			<svg
 				className="w-7 h-7"
@@ -29,6 +30,7 @@ const SNS = [
 	{
 		href: 'https://www.instagram.com/yeojoonsoo02/',
 		label: '여준수 인스타그램',
+		color: '#e1306c',
 		icon: (
 			<svg
 				className="w-7 h-7"
@@ -54,6 +56,7 @@ const SNS = [
 	{
 		href: 'https://open.kakao.com/o/somekakaolink',
 		label: '여준수 카카오톡',
+		color: '#fee500',
 		icon: (
 			<svg
 				className="w-7 h-7"
@@ -81,6 +84,7 @@ const SNS = [
 	{
 		href: 'https://github.com/yeojoonsoo02/intro-site',
 		label: '프로젝트(GitHub)',
+		color: '#24292f',
 		icon: (
 			<svg
 				className="w-7 h-7"
@@ -94,10 +98,10 @@ const SNS = [
 	},
 ];
 
-export default function SocialLinks() {
+export default function SocialLinks({ colored = false }: { colored?: boolean }) {
 	return (
 		<nav className="flex justify-center items-center gap-5 mt-4 flex-wrap w-full">
-			{SNS.map(({ href, label, icon }) => (
+			{SNS.map(({ href, label, icon, color }) => (
 				<a
 					key={href}
 					href={href}
@@ -105,6 +109,7 @@ export default function SocialLinks() {
 					rel="noopener noreferrer"
 					aria-label={label}
 					className="sns-icon transition-colors"
+					style={colored ? { color } : undefined}
 				>
 					<span className="sr-only">{label}</span>
 					{icon}

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import CommentSection from '@/features/comments/CommentSection';
 import VisitorCount from '@/features/visitors/VisitorCount';
-import ProfileCard from '@/features/intro/ProfileCard';
+import FlippableProfileCard from '@/features/intro/FlippableProfileCard';
 import AuthButton from '@/features/auth/AuthButton';
 
 export default function Home() {
@@ -11,9 +11,9 @@ export default function Home() {
   const [isAdmin, setIsAdmin] = useState(false);
 
   return (
-    <main className="max-w-xl mx-auto p-6 text-center">
+    <main className="max-w-xl mx-auto p-6 text-center pb-24">
       <AuthButton onAdminChange={setIsAdmin} />
-      <ProfileCard />
+      <FlippableProfileCard />
       <div className="my-8">
         <VisitorCount />
       </div>
