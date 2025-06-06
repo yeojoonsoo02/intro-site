@@ -17,14 +17,14 @@ export default function AuthButton({ onUserChange }: { onUserChange?: (user: Use
   const handleLogin = async () => {
     try {
       await signInWithPopup(auth, provider);
-    } catch (_) {
+    } catch {
       alert("로그인 실패");
     }
   };
   const handleLogout = async () => {
     try {
       await signOut(auth);
-    } catch (_) {
+    } catch {
       alert("로그아웃 실패");
     }
   };

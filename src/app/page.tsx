@@ -5,7 +5,7 @@ import CommentSection from '@/features/comments/CommentSection';
 import VisitorCount from '@/features/visitors/VisitorCount';
 import IntroCard from '@/features/intro/IntroCard';
 import SocialLinks from '@/features/intro/SocialLinks';
-import { auth, provider, signInWithPopup, signOut, onAuthStateChanged } from '@/lib/firebase';
+import { auth, onAuthStateChanged } from '@/lib/firebase';
 import type { User } from 'firebase/auth';
 import AuthButton from '@/features/auth/AuthButton';
 
