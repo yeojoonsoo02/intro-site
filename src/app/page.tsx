@@ -1,12 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import CommentSection from '@/features/comments/CommentSection';
 import VisitorCount from '@/features/visitors/VisitorCount';
 import IntroCard from '@/features/intro/IntroCard';
 import SocialLinks from '@/features/intro/SocialLinks';
-import { auth, onAuthStateChanged } from '@/lib/firebase';
-import type { User } from 'firebase/auth';
 import AuthButton from '@/features/auth/AuthButton';
 
 export default function Home() {
