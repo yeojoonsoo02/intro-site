@@ -21,7 +21,7 @@ const devProfile = {
   tagline: "풀스택 개발자 & AI 엔지니어",
   email: "hello@youremail.com",
   photo: "/profile.jpg",
-  skills: ["TypeScript", "React", "Next.js", "Firebase", "Python", "AI", "MLOps"],
+  interests: ["TypeScript", "React", "Next.js", "Firebase", "Python", "AI", "MLOps"],
   intro: [
     "웹 프론트엔드와 백엔드, AI 모델 개발까지 폭넓게 경험하며, 사용자 경험과 기술적 완성도를 동시에 추구합니다.",
     "실전 프로젝트와 오픈소스, 스타트업 경험을 바탕으로 빠르게 성장 중입니다.",
@@ -133,7 +133,7 @@ function ProfileCardContent({
           {isDev ? "주요 기술" : "관심사·취미"}
         </div>
         <div className="flex flex-wrap justify-center gap-x-1.5 gap-y-1">
-          {(isDev ? profile.skills : profile.interests).map((tag: string, idx: number, arr: string[]) => (
+          {(isDev ? profile.interests : profile.interests).map((tag: string, idx: number, arr: string[]) => (
             <span
               key={tag}
               className="bg-[#323236] text-[#D4D4D8] rounded-full px-3 py-1 text-[0.875rem] font-normal"
