@@ -7,6 +7,9 @@ export default function AuthButton({ onAdminChange }: { onAdminChange?: (isAdmin
   const [pw, setPw] = useState("");
   const [error, setError] = useState("");
 
+  // 환경변수에서 비밀번호를 읽음 (NEXT_PUBLIC_ADMIN_PASSWORD)
+  const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
+
   const handleLogin = () => setShowModal(true);
 
   const handleModalClose = () => {
@@ -17,7 +20,7 @@ export default function AuthButton({ onAdminChange }: { onAdminChange?: (isAdmin
 
   const handleModalSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (pw === "supersecret") {
+    if (pw === adminPassword) {
       setIsAdmin(true);
       if (onAdminChange) onAdminChange(true);
       handleModalClose();

@@ -3,14 +3,14 @@ import SocialLinks from './SocialLinks';
 const profile = {
   name: "여준수",
   tagline: "웹 개발자 & 사업가",
-  email: "hello@youremail.com",
+  email: "yeojoonsoo02@gmail.com",
   photo: "/profile.jpg", // public 폴더에 이미지 추가 필요
-  interests: ["여행", "운동", "독서", "테이블테니스"],
+  interests: ["블로그", "수영", "독서", "탁구"],
   intro: [
     "평소 카페 탐방을 즐기며, 친구들과 운동을 하러 다녀요. 새로운 사람을 만나는 걸 좋아하고, 독서를 통해 다양한 아이디어를 얻고 있습니다.",
     "최근에는 웹 개발과 AI에 관심을 갖고 다양한 프로젝트에 도전하고 있습니다.",
   ],
-  region: "서울시 강남구",
+  region: "경기도 김포시 운양동",
 };
 
 export default function ProfileCard() {
