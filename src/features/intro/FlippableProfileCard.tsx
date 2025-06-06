@@ -38,7 +38,8 @@ export default function FlippableProfileCard() {
       style={{ perspective: 1200, overflow: 'visible' }}
     >
       <button
-        className="absolute top-4 right-6 z-10 bg-[#232334] text-[#E4E4E7] px-4 py-1.5 rounded-full text-xs font-semibold shadow hover:bg-[color:var(--primary)] hover:text-white transition"
+        className="absolute top-3 right-3 z-10 bg-[#232334] text-[#E4E4E7] px-3 py-1 rounded-full text-xs sm:text-sm font-semibold shadow hover:bg-[color:var(--primary)] hover:text-white transition"
+        style={{ minWidth: 80, minHeight: 32 }}
         onClick={() => setFlipped(f => !f)}
         aria-label={flipped ? "일반인 프로필 보기" : "개발자 프로필 보기"}
         type="button"
@@ -125,7 +126,7 @@ function ProfileCardContent({
           </svg>
           <span>{profile.email}</span>
         </a>
-        <SocialLinks colored />
+        <SocialLinks colored useImg />
       </div>
       <div className="w-full h-px bg-[#393940] my-6" />
       <div className="w-full text-center mb-6">
