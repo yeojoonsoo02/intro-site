@@ -60,12 +60,12 @@ export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && addComment()}
           placeholder="댓글을 입력하세요"
-          className={styles.input + " flex-1"}
+          className={styles.input + " flex-1 bg-card text-[color:var(--foreground)] border border-[color:var(--input-border)]"}
           maxLength={100}
         />
         <button
           onClick={addComment}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-sm font-semibold min-w-[44px]"
+          className="bg-[color:var(--primary)] text-[color:var(--primary-contrast)] px-4 py-2 rounded-lg hover:bg-[color:var(--button-hover)] transition text-sm font-semibold min-w-[44px]"
           aria-label="댓글 등록"
         >
           등록
@@ -73,9 +73,9 @@ export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
       </div>
       <ul className="space-y-2">
         {loading ? (
-          <li className="text-center text-gray-400 py-4">댓글 불러오는 중...</li>
+          <li className="text-center text-muted py-4">댓글 불러오는 중...</li>
         ) : comments.length === 0 ? (
-          <li className="text-center text-gray-400 py-4">아직 댓글이 없습니다.</li>
+          <li className="text-center text-muted py-4">아직 댓글이 없습니다.</li>
         ) : (
           comments.map((c) => (
             <CommentItem
