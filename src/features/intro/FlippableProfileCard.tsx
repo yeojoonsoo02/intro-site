@@ -126,7 +126,7 @@ function ProfileCardContent({
           </svg>
           <span>{profile.email}</span>
         </a>
-        <SocialLinks colored useImg />
+        <SocialLinks colored/>
       </div>
       <div className="w-full h-px bg-[#393940] my-6" />
       <div className="w-full text-center mb-6">

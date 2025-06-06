@@ -101,7 +101,7 @@ export default function SocialLinks({
 	colored?: boolean;
 }) {
 	return (
-		<nav className="flex justify-center items-center gap-4 sm:gap-5 mt-4 flex-wrap w-full"></nav>
+		<nav className="flex justify-center items-center gap-4 sm:gap-5 mt-4 flex-wrap w-full">
 			{SNS.map(({ href, label, color, icon }) => (
 				<a
 					key={href}
