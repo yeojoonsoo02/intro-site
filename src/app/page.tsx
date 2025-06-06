@@ -12,22 +12,22 @@ export default function Home() {
   const [isAdmin, setIsAdmin] = useState(false);
 
   return (
-    <main className="max-w-xl mx-auto p-6 text-center">
+    <main className="max-w-md w-full mx-auto p-3 sm:p-6 text-center bg-white rounded-lg shadow-md min-h-screen flex flex-col items-center">
       <AuthButton onAdminChange={setIsAdmin} />
       <IntroCard />
       <SocialLinks />
       <VisitorCount />
 
       <button
-        className="mt-6 mb-4 px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700"
+        className="mt-6 mb-4 w-full max-w-xs px-4 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition text-base font-semibold"
         onClick={() => setShowComments(!showComments)}
       >
         {showComments ? '댓글 숨기기' : '💬 댓글 보기'}
       </button>
 
       {showComments && (
-        <div className="text-left">
-          <h2 className="text-2xl font-bold mb-4">💬 여준수의 댓글 공간</h2>
+        <div className="w-full text-left">
+          <h2 className="text-xl sm:text-2xl font-bold mb-4">💬 여준수의 댓글 공간</h2>
           <CommentSection isAdmin={isAdmin} />
         </div>
       )}

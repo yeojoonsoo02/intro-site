@@ -19,15 +19,25 @@ export default function AuthButton({ onAdminChange }: { onAdminChange?: (isAdmin
   };
 
   return (
-    <div style={{ position: "absolute", top: 10, right: 10, fontSize: "0.8rem" }}>
+    <div className="absolute top-3 right-3 z-10 text-xs sm:text-sm">
       {isAdmin ? (
         <>
-          <span style={{ marginRight: 8, color: '#008000' }}>관리자</span>
-          <button onClick={handleLogout} style={{ fontSize: "0.7rem", padding: "2px 6px", borderRadius: 4, border: "1px solid #ccc", background: "#fff", color: "#333" }}>로그아웃</button>
+          <span className="mr-2 text-green-700 font-semibold">관리자</span>
+          <button
+            onClick={handleLogout}
+            className="px-3 py-1 rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 transition"
+          >
+            로그아웃
+          </button>
         </>
       ) : (
-        <button onClick={handleLogin} style={{ fontSize: "0.7rem", padding: "2px 6px", borderRadius: 4, border: "1px solid #ccc", background: "#fff", color: "#333" }}>관리자 로그인</button>
+        <button
+          onClick={handleLogin}
+          className="px-3 py-1 rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 transition"
+        >
+          관리자 로그인
+        </button>
       )}
     </div>
   );
-} 
+}

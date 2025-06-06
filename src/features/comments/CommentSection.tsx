@@ -19,8 +19,10 @@ import styles from './comment.module.css';
 export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
   const [input, setInput] = useState('');
   const [comments, setComments] = useState<Comment[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const loadComments = async () => {
+    setLoading(true);
     const q = query(collection(db, 'comments'), orderBy('createdAt', 'desc'));
     const snapshot = await getDocs(q);
     const data = snapshot.docs.map((doc) => ({
@@ -28,6 +30,7 @@ export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
       ...doc.data(),
     })) as Comment[];
     setComments(data);
+    setLoading(false);
   };
 
   const addComment = async () => {
@@ -50,25 +53,40 @@ export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
   }, []);
 
   return (
-    <div>
-      <input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={(e) => e.key === 'Enter' && addComment()}
-        placeholder="댓글을 입력하세요"
-        className={styles.input}
-      />
-
-      <ul>
-        {comments.map((c) => (
-          <CommentItem
-            key={c.id}
-            text={c.text}
-            date={c.createdAt?.toDate ? c.createdAt.toDate().toLocaleString() : ''}
-            onDelete={() => deleteComment(c.id)}
-            isAdmin={isAdmin}
-          />
-        ))}
+    <div className="w-full">
+      <div className="flex gap-2 mb-2">
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && addComment()}
+          placeholder="댓글을 입력하세요"
+          className={styles.input + " flex-1"}
+          maxLength={100}
+        />
+        <button
+          onClick={addComment}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-sm font-semibold min-w-[44px]"
+          aria-label="댓글 등록"
+        >
+          등록
+        </button>
+      </div>
+      <ul className="space-y-2">
+        {loading ? (
+          <li className="text-center text-gray-400 py-4">댓글 불러오는 중...</li>
+        ) : comments.length === 0 ? (
+          <li className="text-center text-gray-400 py-4">아직 댓글이 없습니다.</li>
+        ) : (
+          comments.map((c) => (
+            <CommentItem
+              key={c.id}
+              text={c.text}
+              date={c.createdAt?.toDate ? c.createdAt.toDate().toLocaleString() : ''}
+              onDelete={() => deleteComment(c.id)}
+              isAdmin={isAdmin}
+            />
+          ))
+        )}
       </ul>
     </div>
   );
