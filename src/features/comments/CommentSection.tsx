@@ -15,13 +15,10 @@ import { db } from '@/lib/firebase';
 import CommentItem from './CommentItem';
 import { Comment } from './comment.model';
 import styles from './comment.module.css';
-import type { User } from 'firebase/auth';
 
-export default function CommentSection({ user }: { user: User | null }) {
+export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
   const [input, setInput] = useState('');
   const [comments, setComments] = useState<Comment[]>([]);
-
-  const isAdmin = user?.email === 'yeojoonsoo02@gmail.com';
 
   const loadComments = async () => {
     const q = query(collection(db, 'comments'), orderBy('createdAt', 'desc'));

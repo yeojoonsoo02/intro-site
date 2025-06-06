@@ -11,18 +11,11 @@ import AuthButton from '@/features/auth/AuthButton';
 
 export default function Home() {
   const [showComments, setShowComments] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-    });
-    return () => unsubscribe();
-  }, []);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   return (
     <main className="max-w-xl mx-auto p-6 text-center">
-      <AuthButton onUserChange={setUser} />
+      <AuthButton onAdminChange={setIsAdmin} />
       <IntroCard />
       <SocialLinks />
       <VisitorCount />
@@ -37,7 +30,7 @@ export default function Home() {
       {showComments && (
         <div className="text-left">
           <h2 className="text-2xl font-bold mb-4">💬 여준수의 댓글 공간</h2>
-          <CommentSection user={user} />
+          <CommentSection isAdmin={isAdmin} />
         </div>
       )}
     </main>
