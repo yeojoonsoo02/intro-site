@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import CommentSection from '@/features/comments/CommentSection';
 import VisitorCount from '@/features/visitors/VisitorCount';
-import IntroCard from '@/features/intro/IntroCard';
+import ProfileCard from '@/features/intro/ProfileCard';
 import SocialLinks from '@/features/intro/SocialLinks';
 import AuthButton from '@/features/auth/AuthButton';
 
@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <main className="max-w-md w-full mx-auto p-3 sm:p-6 text-center bg-white rounded-lg shadow-md min-h-screen flex flex-col items-center">
       <AuthButton onAdminChange={setIsAdmin} />
-      <IntroCard />
+      <ProfileCard />
       <SocialLinks />
       <VisitorCount />
 
@@ -27,7 +27,7 @@ export default function Home() {
 
       {showComments && (
         <div className="w-full text-left">
-          <h2 className="text-xl sm:text-2xl font-bold mb-4">💬 여준수의 댓글 공간</h2>
+          <h2 className="text-xl sm:text-2xl font-bold mb-4 text-[color:var(--foreground)]">💬 여준수의 댓글 공간</h2>
           <CommentSection isAdmin={isAdmin} />
         </div>
       )}

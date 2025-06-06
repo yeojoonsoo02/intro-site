@@ -60,7 +60,10 @@ export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && addComment()}
           placeholder="댓글을 입력하세요"
-          className={styles.input + " flex-1 bg-card text-[color:var(--foreground)] border border-[color:var(--input-border)]"}
+          className={
+            styles.input +
+            " flex-1 bg-card text-[color:var(--foreground)] border border-[color:var(--input-border)] placeholder:text-[color:var(--muted)]"
+          }
           maxLength={100}
         />
         <button

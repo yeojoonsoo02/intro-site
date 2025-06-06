@@ -153,7 +153,7 @@ const SNS = [
 export default function SocialLinks() {
 	return (
 		<nav className="flex justify-center items-center gap-5 mt-4 flex-wrap w-full">
-			{SNS.map(({ href, label, icon, color }) => (
+			{SNS.map(({ href, label, icon }) => (
 				<a
 					key={href}
 					href={href}
@@ -161,7 +161,6 @@ export default function SocialLinks() {
 					rel="noopener noreferrer"
 					aria-label={label}
 					className="sns-icon transition-colors"
-					style={{ color }}
 				>
 					<span className="sr-only">{label}</span>
 					{icon}
@@ -178,6 +177,7 @@ export default function SocialLinks() {
 					width: 2.7rem;
 					height: 2.7rem;
 					transition: color 0.18s, background 0.18s;
+					color: var(--muted);
 				}
 				.sns-icon:hover {
 					color: var(--primary);
