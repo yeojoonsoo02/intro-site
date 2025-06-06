@@ -3,9 +3,9 @@ import SocialLinks from './SocialLinks';
 const profile = {
   name: "여준수",
   tagline: "웹 개발자 & 사업가",
-  email: "yeojoonsoo02@gmail.com",
-  photo: "/profile.jpg", // public 폴더에 이미지 추가 필요
-  interests: ["블로그", "수영", "독서", "탁구"],
+  email: "hello@youremail.com",
+  photo: "/profile.jpg",
+  interests: ["여행", "운동", "독서", "테이블테니스"],
   intro: [
     "평소 카페 탐방을 즐기며, 친구들과 운동을 하러 다녀요. 새로운 사람을 만나는 걸 좋아하고, 독서를 통해 다양한 아이디어를 얻고 있습니다.",
     "최근에는 웹 개발과 AI에 관심을 갖고 다양한 프로젝트에 도전하고 있습니다.",
@@ -16,7 +16,13 @@ const profile = {
 export default function ProfileCard() {
   return (
     <section className="max-w-[600px] mx-auto mt-20 mb-8 px-2">
-      <div className="bg-card rounded-[20px] shadow-lg p-6 sm:p-8 flex flex-col items-center">
+      <div
+        className="w-full bg-[#27272A] dark:bg-[#27272A] rounded-[20px] shadow-lg p-6 sm:p-8 flex flex-col items-center"
+        style={{
+          background: "var(--card-bg, #27272A)",
+          boxShadow: "0 2px 16px rgba(0,0,0,0.18)",
+        }}
+      >
         {/* 프로필 사진 */}
         <div className="mb-4">
           <img
@@ -27,14 +33,14 @@ export default function ProfileCard() {
           />
         </div>
         {/* 이름 */}
-        <div className="text-[2rem] font-semibold text-[color:var(--foreground)] mb-2">{profile.name}</div>
+        <div className="text-[2rem] font-semibold text-[#E4E4E7] mb-2">{profile.name}</div>
         {/* 태그라인 */}
-        <div className="text-[1.25rem] text-[color:var(--muted)] mb-3">{profile.tagline}</div>
+        <div className="text-[1.25rem] text-[#A1A1AA] mb-3">{profile.tagline}</div>
         {/* 이메일 + SNS */}
         <div className="flex items-center justify-center gap-4 mb-6 flex-wrap">
           <a
             href={`mailto:${profile.email}`}
-            className="flex items-center gap-1.5 text-[color:var(--muted)] hover:text-[color:var(--primary)] transition-colors text-base"
+            className="flex items-center gap-1.5 text-[#A1A1AA] hover:text-[color:var(--primary)] transition-colors text-base"
           >
             <svg width="20" height="20" fill="currentColor" aria-hidden="true">
               <rect width="20" height="20" rx="4" fill="none" />
@@ -45,32 +51,39 @@ export default function ProfileCard() {
           <SocialLinks />
         </div>
         {/* 구분선 */}
-        <div className="w-full h-px bg-[color:var(--border)] my-6" />
+        <div className="w-full h-px bg-[#393940] my-6" />
         {/* 관심사·취미 */}
         <div className="w-full text-center mb-6">
-          <div className="text-base font-semibold text-[color:var(--foreground)] mb-2">관심사·취미</div>
-          <div className="flex flex-wrap justify-center gap-2">
-            {profile.interests.map((tag) => (
+          <div className="text-[1rem] font-semibold text-[#E4E4E7] mb-2">관심사·취미</div>
+          <div className="flex flex-wrap justify-center gap-x-1.5 gap-y-1">
+            {profile.interests.map((tag, idx) => (
               <span
                 key={tag}
-                className="bg-[color:var(--background)] text-[color:var(--foreground)] rounded-md px-3 py-1 text-sm font-medium border border-[color:var(--border)]"
+                className="bg-[#323236] text-[#D4D4D8] rounded-full px-3 py-1 text-[0.875rem] font-normal"
+                style={{
+                  marginRight: idx !== profile.interests.length - 1 ? '6px' : 0,
+                }}
               >
                 {tag}
+                {idx !== profile.interests.length - 1 && <span className="mx-1 text-[#393940]">·</span>}
               </span>
             ))}
           </div>
         </div>
         {/* 자기소개 */}
-        <div className="w-full text-center">
-          <div className="text-base font-semibold text-[color:var(--foreground)] mb-2">소개</div>
-          <div className="space-y-3 text-[color:var(--foreground)] text-[1rem] leading-relaxed">
+        <div className="w-full text-center mb-6">
+          <div className="text-[1rem] font-semibold text-[#E4E4E7] mb-2">소개</div>
+          <div className="space-y-3 text-[#C4C4C8] text-[1rem] leading-[1.5]">
             {profile.intro.map((p, i) => (
-              <p key={i}>{p}</p>
+              <p key={i} className={i !== 0 ? "mt-3" : ""}>{p}</p>
             ))}
           </div>
         </div>
-        {/* 지역 */}
-        <div className="mt-8 text-sm text-[color:var(--muted)]">{profile.region}</div>
+        {/* 위치 */}
+        <div className="mt-4 text-[0.875rem] flex items-center justify-center text-[#B0B0B8] font-medium">
+          <span className="mr-1" aria-hidden>📍</span>
+          {profile.region}
+        </div>
       </div>
     </section>
   );

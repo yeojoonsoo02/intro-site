@@ -11,7 +11,7 @@ export default function VisitorCount() {
   }, []);
 
   return (
-    <p className="text-xs sm:text-sm text-gray-500 mt-2 mb-1">
+    <p className="text-[0.875rem] text-[#A1A1AA]">
       👀 총 방문자 수:{' '}
       <span className="font-semibold">
         {count !== null ? count : '로딩 중...'}

@@ -14,19 +14,20 @@ export default function Home() {
     <main className="max-w-xl mx-auto p-6 text-center">
       <AuthButton onAdminChange={setIsAdmin} />
       <ProfileCard />
-      <div className="my-4">
+      <div className="my-8">
         <VisitorCount />
       </div>
       <button
-        className="mt-2 mb-4 w-full max-w-xs px-4 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition text-base font-semibold"
+        className="mb-8 w-full max-w-xs px-4 py-3 bg-[color:var(--primary)] text-white rounded-[8px] hover:bg-[color:var(--button-hover)] transition text-base font-semibold"
+        style={{ borderRadius: '8px' }}
         onClick={() => setShowComments(!showComments)}
       >
         {showComments ? '댓글 숨기기' : '💬 댓글 보기'}
       </button>
       {showComments && (
         <div className="w-full flex flex-col items-center">
-          <h2 className="text-xl sm:text-2xl font-bold mb-4 text-center text-[color:var(--foreground)]">
-            💬 <span className="font-extrabold">여준수의 댓글 공간</span>
+          <h2 className="text-xl sm:text-2xl font-extrabold mb-6 text-center text-[#E4E4E7]">
+            💬 여준수의 댓글 공간
           </h2>
           <CommentSection isAdmin={isAdmin} />
         </div>
