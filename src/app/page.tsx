@@ -20,21 +20,6 @@ export default function Home() {
     return () => unsubscribe();
   }, []);
 
-  const handleLogin = async () => {
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (e) {
-      alert('로그인 실패');
-    }
-  };
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-    } catch (e) {
-      alert('로그아웃 실패');
-    }
-  };
-
   return (
     <main className="max-w-xl mx-auto p-6 text-center">
       <AuthButton onUserChange={setUser} />
