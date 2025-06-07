@@ -61,6 +61,7 @@ export default function FlippableProfileCard() {
             height: "100%",
             transformStyle: "preserve-3d",
             transition: "transform 0.5s cubic-bezier(.4,0,.2,1)",
+            willChange: "transform",
             transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
           }}
         >

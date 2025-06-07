@@ -6,25 +6,22 @@ const SNS = [
 		label: '여준수 블로그',
 		color: '#03c75a',
 		icon: (
-			<svg
-				className="w-6 h-6"
-				viewBox="0 0 24 24"
-				fill="currentColor"
-				aria-hidden="true"
-			>
-				<rect width="24" height="24" rx="5" />
-				<text
-					x="50%"
-					y="60%"
-					textAnchor="middle"
-					fontSize="13"
-					fill="#fff"
-					fontWeight="bold"
-					dy=".3em"
+			<span className="relative flex items-center justify-center w-6 h-6">
+				<svg
+					className="w-6 h-6"
+					viewBox="0 0 24 24"
+					fill="currentColor"
+					aria-hidden="true"
+				>
+					<rect width="24" height="24" rx="5" fill="#03c75a" />
+				</svg>
+				<span
+					className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[45%] font-bold text-white text-[1.1rem] select-none"
+					style={{ fontFamily: 'sans-serif', letterSpacing: '-1px' }}
 				>
 					N
-				</text>
-			</svg>
+				</span>
+			</span>
 		),
 	},
 	{
@@ -38,7 +35,7 @@ const SNS = [
 				fill="none"
 				aria-hidden="true"
 			>
-				<rect width="24" height="24" rx="6" fill="currentColor" />
+				<rect width="24" height="24" rx="6" fill="#e1306c" />
 				<circle
 					cx="12"
 					cy="12"
@@ -56,21 +53,39 @@ const SNS = [
 		label: '여준수 카카오톡',
 		color: '#fee500',
 		icon: (
-			<svg
-				className="w-6 h-6"
-				viewBox="0 0 24 24"
-				fill="currentColor"
-				aria-hidden="true"
-			>
-				<ellipse
-					cx="12"
-					cy="12"
-					rx="10"
-					ry="9"
+			<span className="relative flex items-center justify-center w-6 h-6">
+				<svg
+					className="w-6 h-6"
+					viewBox="0 0 24 24"
 					fill="currentColor"
-				/>
-				<ellipse cx="12" cy="18" rx="3" ry="1.2" fill="#3d1e1e" />
-			</svg>
+					aria-hidden="true"
+				>
+					<ellipse
+						cx="12"
+						cy="12"
+						rx="10"
+						ry="9"
+						fill="#fee500"
+					/>
+					<ellipse cx="12" cy="18" rx="3" ry="1.2" fill="#3d1e1e" />
+				</svg>
+				<span className="kakao-tail" />
+				<style jsx>{`
+					.kakao-tail {
+						content: '';
+						position: absolute;
+						width: 0;
+						height: 0;
+						border-left: 6px solid transparent;
+						border-right: 0 solid transparent;
+						border-top: 8px solid #fee500;
+						right: 2px;
+						bottom: -2px;
+						z-index: 2;
+						display: block;
+					}
+				`}</style>
+			</span>
 		),
 	},
 	{
