@@ -93,9 +93,7 @@ export default function SocialLinks({ colored = false }: { colored?: boolean }) 
           rel="noopener noreferrer"
           aria-label={label}
           className="sns-icon transition-colors"
-          style={
-            colored ? { color, background: color + '22' } : undefined
-          }
+          style={colored ? { color, background: color + '22' } : undefined}
         >
           <span className="sr-only">{label}</span>
           <span className="flex items-center justify-center">{icon}</span>
@@ -116,19 +114,6 @@ export default function SocialLinks({ colored = false }: { colored?: boolean }) 
         .sns-icon:hover {
           color: var(--primary);
           background: rgba(37, 99, 235, 0.08);
-        }
-        /* 카카오톡 말풍선 꼬리 */
-        .kakao-tail {
-          content: '';
-          position: absolute;
-          width: 0;
-          height: 0;
-          border-left: 6px solid transparent;
-          border-right: 0 solid transparent;
-          border-top: 8px solid #fee500;
-          right: 4px;
-          bottom: -4px;
-          z-index: 2;
         }
         @media (max-width: 600px) {
           .sns-icon {

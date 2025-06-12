@@ -1,9 +1,7 @@
 'use client';
 
-import { useState, useEffect, ChangeEvent } from 'react';
-import SocialLinks from './SocialLinks';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { useState, useEffect } from 'react';
+import SocialLinks from '@/features/social/SocialLinks';
 
 type Profile = {
   name: string;
@@ -41,11 +39,13 @@ const devProfile: Profile = {
   region: "서울시 강남구",
 };
 
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+
 export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: boolean }) {
   const [flipped, setFlipped] = useState(false);
   const [profile, setProfile] = useState<Profile>(defaultProfile);
 
-  // Firestore에서 프로필 불러오기
   useEffect(() => {
     (async () => {
       try {
@@ -56,13 +56,11 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
     })();
   }, []);
 
-  // Firestore에 프로필 저장
   const saveProfile = async (nextProfile: Profile) => {
     setProfile(nextProfile);
     await setDoc(doc(db, 'profiles', 'main'), nextProfile, { merge: true });
   };
 
-  // 관리자 폼 핸들러
   const handleProfileChange = (field: keyof Profile, value: string) => {
     const nextProfile = {
       ...profile,
