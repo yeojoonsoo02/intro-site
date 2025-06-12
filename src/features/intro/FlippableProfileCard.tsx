@@ -154,6 +154,7 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
               onProfileChange={handleProfileChange}
               onProfileIntroChange={handleProfileIntroChange}
               onProfileRegionChange={handleProfileRegionChange}
+              allowComma
             />
           </div>
           {/* 뒷면 */}
@@ -165,6 +166,7 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
               onProfileChange={handleDevProfileChange}
               onProfileIntroChange={handleDevProfileIntroChange}
               onProfileRegionChange={handleDevProfileRegionChange}
+              allowComma
             />
           </div>
         </div>
@@ -213,6 +215,7 @@ function ProfileCardContent({
   onProfileChange,
   onProfileIntroChange,
   onProfileRegionChange,
+  allowComma,
 }: {
   profile: Profile;
   isDev: boolean;
@@ -220,6 +223,7 @@ function ProfileCardContent({
   onProfileChange?: (field: keyof Profile, value: string) => void;
   onProfileIntroChange?: (value: string) => void;
   onProfileRegionChange?: (value: string) => void;
+  allowComma?: boolean;
 }) {
   return (
     <div
@@ -266,19 +270,20 @@ function ProfileCardContent({
         <div className="text-[1rem] font-semibold text-[#18181b] dark:text-[#E4E4E7] mb-2">
           {isDev ? "주요 기술" : "관심사·취미"}
         </div>
-        {isAdmin && !isDev ? (
+        {isAdmin ? (
           <input
             type="text"
+            inputMode="text"
             className="w-full rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm mb-2 border border-gray-300 dark:border-gray-600"
             value={profile.interests.join(', ')}
             onChange={e => onProfileChange?.('interests', e.target.value)}
-            placeholder="관심사·취미 (쉼표로 구분)"
+            placeholder={isDev ? "주요 기술 (쉼표로 구분)" : "관심사·취미 (쉼표로 구분)"}
           />
         ) : null}
         <div className="flex flex-wrap justify-center gap-x-1.5 gap-y-1">
           {profile.interests.map((tag, idx, arr) => (
             <span
-              key={tag}
+              key={tag + idx}
               className="bg-[#ececec] dark:bg-[#323236] text-[#232334] dark:text-[#D4D4D8] rounded-full px-3 py-1 text-[0.875rem] font-normal"
               style={{
                 marginRight: idx !== arr.length - 1 ? '6px' : 0,
@@ -292,14 +297,14 @@ function ProfileCardContent({
       </div>
       {/* 자기소개 */}
       <div className="w-full text-center mb-6">
-        <div className="text-[1rem] font-semibold text-[#18181b] dark:text-[#E4E4E7] mb-2">소개</div>
-        {isAdmin && !isDev ? (
+        <div className="text-[1rem] font-semibold text-[#18181b] dark:text-[#E4E4E7] mb-2">{isDev ? "소개" : "소개"}</div>
+        {isAdmin ? (
           <textarea
             className="w-full rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm mb-2 border border-gray-300 dark:border-gray-600"
             rows={3}
             value={profile.intro.join('\n')}
             onChange={e => onProfileIntroChange?.(e.target.value)}
-            placeholder="소개 (여러 줄 입력 가능)"
+            placeholder={isDev ? "개발자 소개 (여러 줄 입력 가능)" : "소개 (여러 줄 입력 가능)"}
           />
         ) : null}
         <div className="space-y-3 text-[#232334] dark:text-[#C4C4C8] text-[1rem] leading-[1.5]">
