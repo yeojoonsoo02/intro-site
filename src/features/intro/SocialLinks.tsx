@@ -17,7 +17,7 @@ const SNS = [
         </svg>
         <span
           className="absolute inset-0 flex items-center justify-center font-bold text-white text-[0.75rem] select-none"
-          style={{ fontFamily: 'sans-serif', letterSpacing: '-1px', transform: 'translateX(-2px)' }}
+          style={{ fontFamily: 'sans-serif', letterSpacing: '-1px', transform: 'translateX(-1px)' }}
         >
          N
         </span>
