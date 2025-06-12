@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SocialLinks from './SocialLinks';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 const defaultProfile = {
   name: "여준수",
@@ -33,25 +35,53 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
   const [flipped, setFlipped] = useState(false);
   const [profile, setProfile] = useState({ ...defaultProfile });
   const [devProfile] = useState({ ...defaultDevProfile });
+  const [loading, setLoading] = useState(false);
+
+  // Firestore 연동: 불러오기
+  useEffect(() => {
+    async function fetchProfile() {
+      setLoading(true);
+      try {
+        const ref = doc(db, 'profiles', 'main');
+        const snap = await getDoc(ref);
+        if (snap.exists()) {
+          setProfile(snap.data() as typeof defaultProfile);
+        }
+      } catch (e) {
+        // ignore, fallback to default
+      }
+      setLoading(false);
+    }
+    fetchProfile();
+  }, []);
+
+  // Firestore 연동: 저장
+  const saveProfile = async (nextProfile: typeof defaultProfile) => {
+    setProfile(nextProfile);
+    await setDoc(doc(db, 'profiles', 'main'), nextProfile, { merge: true });
+  };
 
   // 관리자 폼 핸들러
   const handleProfileChange = (field: string, value: string) => {
-    setProfile((prev) => ({
-      ...prev,
+    const nextProfile = {
+      ...profile,
       [field]: field === "interests" ? value.split(',').map(v => v.trim()).filter(Boolean) : value,
-    }));
+    };
+    saveProfile(nextProfile);
   };
   const handleProfileIntroChange = (value: string) => {
-    setProfile((prev) => ({
-      ...prev,
+    const nextProfile = {
+      ...profile,
       intro: value.split('\n').filter(Boolean),
-    }));
+    };
+    saveProfile(nextProfile);
   };
   const handleProfileRegionChange = (value: string) => {
-    setProfile((prev) => ({
-      ...prev,
+    const nextProfile = {
+      ...profile,
       region: value,
-    }));
+    };
+    saveProfile(nextProfile);
   };
 
   return (
@@ -135,7 +165,6 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
               profile={devProfile}
               isDev
               isAdmin={false}
-              // 개발자 프로필은 수정 불가
             />
           </div>
         </div>
@@ -161,11 +190,18 @@ function ProfileCardContent({
 }) {
   return (
     <div
-      className="w-full bg-[#27272A] dark:bg-[#27272A] rounded-[20px] shadow-lg p-6 sm:p-8 flex flex-col items-center"
+      className="
+        w-full
+        bg-[#27272A] dark:bg-[#27272A]
+        rounded-[20px] shadow-lg p-6 sm:p-8 flex flex-col items-center
+        text-[#E4E4E7]
+        dark:text-[#E4E4E7]
+        "
       style={{
         background: "var(--card-bg, #27272A)",
         boxShadow: "0 2px 16px rgba(0,0,0,0.18)",
         minHeight: 480,
+        color: "var(--foreground, #18181b)",
       }}
     >
       <div className="mb-4">
@@ -176,12 +212,12 @@ function ProfileCardContent({
           style={{ background: "var(--background)" }}
         />
       </div>
-      <div className="text-[2rem] font-semibold text-[#E4E4E7] mb-2">{profile.name}</div>
-      <div className="text-[1.25rem] text-[#A1A1AA] mb-3">{profile.tagline}</div>
+      <div className="text-[2rem] font-semibold text-[#18181b] dark:text-[#E4E4E7] mb-2">{profile.name}</div>
+      <div className="text-[1.25rem] text-[#232334] dark:text-[#A1A1AA] mb-3">{profile.tagline}</div>
       <div className="flex items-center justify-center gap-4 mb-6 flex-wrap">
         <a
           href={`mailto:${profile.email}`}
-          className="flex items-center gap-1.5 text-[#A1A1AA] hover:text-[color:var(--primary)] transition-colors text-base"
+          className="flex items-center gap-1.5 text-[#232334] dark:text-[#A1A1AA] hover:text-[color:var(--primary)] transition-colors text-base"
         >
           <svg width="20" height="20" fill="currentColor" aria-hidden="true">
             <rect width="20" height="20" rx="4" fill="none" />
@@ -194,13 +230,13 @@ function ProfileCardContent({
       <div className="w-full h-px bg-[#393940] my-6" />
       {/* 관심사·취미 */}
       <div className="w-full text-center mb-6">
-        <div className="text-[1rem] font-semibold text-[#E4E4E7] mb-2">
+        <div className="text-[1rem] font-semibold text-[#18181b] dark:text-[#E4E4E7] mb-2">
           {isDev ? "주요 기술" : "관심사·취미"}
         </div>
         {isAdmin && !isDev ? (
           <input
             type="text"
-            className="w-full rounded bg-[#232334] text-white p-2 text-sm mb-2 border border-gray-600"
+            className="w-full rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm mb-2 border border-gray-300 dark:border-gray-600"
             value={profile.interests.join(', ')}
             onChange={e => onProfileChange?.('interests', e.target.value)}
             placeholder="관심사·취미 (쉼표로 구분)"
@@ -210,42 +246,42 @@ function ProfileCardContent({
           {(profile.interests).map((tag: string, idx: number, arr: string[]) => (
             <span
               key={tag}
-              className="bg-[#323236] text-[#D4D4D8] rounded-full px-3 py-1 text-[0.875rem] font-normal"
+              className="bg-[#ececec] dark:bg-[#323236] text-[#232334] dark:text-[#D4D4D8] rounded-full px-3 py-1 text-[0.875rem] font-normal"
               style={{
                 marginRight: idx !== arr.length - 1 ? '6px' : 0,
               }}
             >
               {tag}
-              {idx !== arr.length - 1 && <span className="mx-1 text-[#393940]">·</span>}
+              {idx !== arr.length - 1 && <span className="mx-1 text-[#bdbdbd] dark:text-[#393940]">·</span>}
             </span>
           ))}
         </div>
       </div>
       {/* 자기소개 */}
       <div className="w-full text-center mb-6">
-        <div className="text-[1rem] font-semibold text-[#E4E4E7] mb-2">소개</div>
+        <div className="text-[1rem] font-semibold text-[#18181b] dark:text-[#E4E4E7] mb-2">소개</div>
         {isAdmin && !isDev ? (
           <textarea
-            className="w-full rounded bg-[#232334] text-white p-2 text-sm mb-2 border border-gray-600"
+            className="w-full rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm mb-2 border border-gray-300 dark:border-gray-600"
             rows={3}
             value={profile.intro.join('\n')}
             onChange={e => onProfileIntroChange?.(e.target.value)}
             placeholder="소개 (여러 줄 입력 가능)"
           />
         ) : null}
-        <div className="space-y-3 text-[#C4C4C8] text-[1rem] leading-[1.5]">
+        <div className="space-y-3 text-[#232334] dark:text-[#C4C4C8] text-[1rem] leading-[1.5]">
           {profile.intro.map((p: string, i: number) => (
             <p key={i} className={i !== 0 ? "mt-3" : ""}>{p}</p>
           ))}
         </div>
       </div>
       {/* 위치 */}
-      <div className="mt-4 text-[0.875rem] flex items-center justify-center text-[#B0B0B8] font-medium">
+      <div className="mt-4 text-[0.875rem] flex items-center justify-center text-[#6b7280] dark:text-[#B0B0B8] font-medium">
         <span className="mr-1" aria-hidden>📍</span>
         {isAdmin && !isDev ? (
           <input
             type="text"
-            className="rounded bg-[#232334] text-white p-1 px-2 text-sm border border-gray-600"
+            className="rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-1 px-2 text-sm border border-gray-300 dark:border-gray-600"
             value={profile.region}
             onChange={e => onProfileRegionChange?.(e.target.value)}
             placeholder="거주 지역"
