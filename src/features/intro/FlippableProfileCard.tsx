@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import SocialLinks from '@/features/social/SocialLinks';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -41,6 +41,17 @@ const defaultDevProfile: Profile = {
   region: "서울시 강남구",
 };
 
+function useDebouncedSave(profile: Profile, saveFn: (p: Profile) => void, delay = 500) {
+  const timeout = useRef<NodeJS.Timeout | null>(null);
+  useEffect(() => {
+    if (timeout.current) clearTimeout(timeout.current);
+    timeout.current = setTimeout(() => saveFn(profile), delay);
+    return () => {
+      if (timeout.current) clearTimeout(timeout.current);
+    };
+  }, [profile, saveFn, delay]);
+}
+
 export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: boolean }) {
   const [flipped, setFlipped] = useState(false);
   const [profile, setProfile] = useState<Profile>(defaultProfile);
@@ -68,50 +79,54 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
     })();
   }, []);
 
-  // 일반인 프로필 저장
-  const saveProfile = async (nextProfile: Profile) => {
+  // 일반인 프로필 저장 (debounced)
+  useDebouncedSave(profile, async (nextProfile) => {
     await setDoc(doc(db, 'profiles', 'main'), nextProfile, { merge: true });
-    setProfile(nextProfile);
-  };
+  });
 
-  // 개발자 프로필 저장
-  const saveDevProfile = async (nextProfile: Profile) => {
+  // 개발자 프로필 저장 (debounced)
+  useDebouncedSave(devProfile, async (nextProfile) => {
     await setDoc(doc(db, 'profiles', 'dev'), nextProfile, { merge: true });
-    setDevProfile(nextProfile);
-  };
+  });
 
-  // 관리자 폼 핸들러
+  // 일반인 프로필 핸들러
   const handleProfileChange = (field: keyof Profile, value: string) => {
-    const nextProfile = {
-      ...profile,
+    setProfile((prev) => ({
+      ...prev,
       [field]: field === "interests" ? value.split(',').map(v => v.trim()).filter(Boolean) : value,
-    };
-    saveProfile(nextProfile);
+    }));
   };
   const handleProfileIntroChange = (value: string) => {
-    const nextProfile = { ...profile, intro: value.split('\n').filter(Boolean) };
-    saveProfile(nextProfile);
+    setProfile((prev) => ({
+      ...prev,
+      intro: value.split('\n').filter(Boolean),
+    }));
   };
   const handleProfileRegionChange = (value: string) => {
-    const nextProfile = { ...profile, region: value };
-    saveProfile(nextProfile);
+    setProfile((prev) => ({
+      ...prev,
+      region: value,
+    }));
   };
 
   // 개발자 프로필 핸들러
   const handleDevProfileChange = (field: keyof Profile, value: string) => {
-    const nextProfile = {
-      ...devProfile,
+    setDevProfile((prev) => ({
+      ...prev,
       [field]: field === "interests" ? value.split(',').map(v => v.trim()).filter(Boolean) : value,
-    };
-    saveDevProfile(nextProfile);
+    }));
   };
   const handleDevProfileIntroChange = (value: string) => {
-    const nextProfile = { ...devProfile, intro: value.split('\n').filter(Boolean) };
-    saveDevProfile(nextProfile);
+    setDevProfile((prev) => ({
+      ...prev,
+      intro: value.split('\n').filter(Boolean),
+    }));
   };
   const handleDevProfileRegionChange = (value: string) => {
-    const nextProfile = { ...devProfile, region: value };
-    saveDevProfile(nextProfile);
+    setDevProfile((prev) => ({
+      ...prev,
+      region: value,
+    }));
   };
 
   return (
