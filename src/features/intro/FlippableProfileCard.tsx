@@ -154,7 +154,6 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
               onProfileChange={handleProfileChange}
               onProfileIntroChange={handleProfileIntroChange}
               onProfileRegionChange={handleProfileRegionChange}
-              allowComma
             />
           </div>
           {/* 뒷면 */}
@@ -166,7 +165,6 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
               onProfileChange={handleDevProfileChange}
               onProfileIntroChange={handleDevProfileIntroChange}
               onProfileRegionChange={handleDevProfileRegionChange}
-              allowComma
             />
           </div>
         </div>
@@ -215,7 +213,6 @@ function ProfileCardContent({
   onProfileChange,
   onProfileIntroChange,
   onProfileRegionChange,
-  allowComma,
 }: {
   profile: Profile;
   isDev: boolean;
@@ -223,7 +220,6 @@ function ProfileCardContent({
   onProfileChange?: (field: keyof Profile, value: string) => void;
   onProfileIntroChange?: (value: string) => void;
   onProfileRegionChange?: (value: string) => void;
-  allowComma?: boolean;
 }) {
   return (
     <div
