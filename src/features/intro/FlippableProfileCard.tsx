@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import SocialLinks from './SocialLinks';
 
-const profile = {
+const defaultProfile = {
   name: "여준수",
   tagline: "웹 개발자 & 사업가",
   email: "hello@youremail.com",
@@ -16,7 +16,7 @@ const profile = {
   region: "경기도 김포시 운양동",
 };
 
-const devProfile = {
+const defaultDevProfile = {
   name: "여준수",
   tagline: "풀스택 개발자 & AI 엔지니어",
   email: "hello@youremail.com",
@@ -29,21 +29,63 @@ const devProfile = {
   region: "서울시 강남구",
 };
 
-export default function FlippableProfileCard() {
+export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: boolean }) {
   const [flipped, setFlipped] = useState(false);
+  const [profile, setProfile] = useState({ ...defaultProfile });
+  const [devProfile, setDevProfile] = useState({ ...defaultDevProfile });
+
+  // 관리자 폼 핸들러
+  const handleProfileChange = (field: string, value: string) => {
+    setProfile((prev) => ({
+      ...prev,
+      [field]: field === "interests" ? value.split(',').map(v => v.trim()).filter(Boolean) : value,
+    }));
+  };
+  const handleProfileIntroChange = (value: string) => {
+    setProfile((prev) => ({
+      ...prev,
+      intro: value.split('\n').filter(Boolean),
+    }));
+  };
+  const handleProfileRegionChange = (value: string) => {
+    setProfile((prev) => ({
+      ...prev,
+      region: value,
+    }));
+  };
 
   return (
     <section
       className="max-w-[600px] mx-auto mt-20 mb-8 px-2 relative"
       style={{ perspective: 1200, overflow: 'visible' }}
     >
+      {/* Flip 버튼 */}
       <button
-        className="absolute top-3 right-3 z-10 bg-[#232334] text-[#E4E4E7] px-3 py-1 rounded-full text-xs sm:text-sm font-semibold shadow hover:bg-[color:var(--primary)] hover:text-white transition"
-        style={{ minWidth: 80, minHeight: 32 }}
+        className="absolute top-3 right-3 z-10 bg-[#232334] text-[#E4E4E7] px-3 py-1 rounded-full text-xs sm:text-sm font-semibold shadow hover:bg-[color:var(--primary)] hover:text-white transition flex items-center gap-1"
+        style={{
+          minWidth: 80,
+          minHeight: 32,
+          willChange: 'transform',
+          transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+          transition: 'transform 0.5s cubic-bezier(.4,0,.2,1)',
+        }}
         onClick={() => setFlipped(f => !f)}
         aria-label={flipped ? "일반인 프로필 보기" : "개발자 프로필 보기"}
         type="button"
       >
+        <span className="inline-block transition-transform duration-500"
+          style={{
+            display: 'inline-block',
+            transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+          }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <g>
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M8 12a4 4 0 1 1 8 0" stroke="currentColor" strokeWidth="2"/>
+            </g>
+          </svg>
+        </span>
         {flipped ? "일반인 프로필" : "개발자 프로필"}
       </button>
       <div
@@ -61,6 +103,7 @@ export default function FlippableProfileCard() {
             height: "100%",
             transformStyle: "preserve-3d",
             transition: "transform 0.5s cubic-bezier(.4,0,.2,1)",
+            willChange: "transform",
             transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
           }}
         >
@@ -71,7 +114,14 @@ export default function FlippableProfileCard() {
               backfaceVisibility: "hidden",
             }}
           >
-            <ProfileCardContent profile={profile} isDev={false} />
+            <ProfileCardContent
+              profile={profile}
+              isDev={false}
+              isAdmin={isAdmin}
+              onProfileChange={handleProfileChange}
+              onProfileIntroChange={handleProfileIntroChange}
+              onProfileRegionChange={handleProfileRegionChange}
+            />
           </div>
           {/* 뒷면 */}
           <div
@@ -81,7 +131,12 @@ export default function FlippableProfileCard() {
               backfaceVisibility: "hidden",
             }}
           >
-            <ProfileCardContent profile={devProfile} isDev />
+            <ProfileCardContent
+              profile={devProfile}
+              isDev
+              isAdmin={false}
+              // 개발자 프로필은 수정 불가
+            />
           </div>
         </div>
       </div>
@@ -92,9 +147,17 @@ export default function FlippableProfileCard() {
 function ProfileCardContent({
   profile,
   isDev,
+  isAdmin,
+  onProfileChange,
+  onProfileIntroChange,
+  onProfileRegionChange,
 }: {
-  profile: typeof devProfile;
+  profile: typeof defaultProfile;
   isDev: boolean;
+  isAdmin?: boolean;
+  onProfileChange?: (field: string, value: string) => void;
+  onProfileIntroChange?: (value: string) => void;
+  onProfileRegionChange?: (value: string) => void;
 }) {
   return (
     <div
@@ -129,12 +192,22 @@ function ProfileCardContent({
         <SocialLinks colored/>
       </div>
       <div className="w-full h-px bg-[#393940] my-6" />
+      {/* 관심사·취미 */}
       <div className="w-full text-center mb-6">
         <div className="text-[1rem] font-semibold text-[#E4E4E7] mb-2">
           {isDev ? "주요 기술" : "관심사·취미"}
         </div>
+        {isAdmin && !isDev ? (
+          <input
+            type="text"
+            className="w-full rounded bg-[#232334] text-white p-2 text-sm mb-2 border border-gray-600"
+            value={profile.interests.join(', ')}
+            onChange={e => onProfileChange?.('interests', e.target.value)}
+            placeholder="관심사·취미 (쉼표로 구분)"
+          />
+        ) : null}
         <div className="flex flex-wrap justify-center gap-x-1.5 gap-y-1">
-          {(isDev ? profile.interests : profile.interests).map((tag: string, idx: number, arr: string[]) => (
+          {(profile.interests).map((tag: string, idx: number, arr: string[]) => (
             <span
               key={tag}
               className="bg-[#323236] text-[#D4D4D8] rounded-full px-3 py-1 text-[0.875rem] font-normal"
@@ -148,17 +221,39 @@ function ProfileCardContent({
           ))}
         </div>
       </div>
+      {/* 자기소개 */}
       <div className="w-full text-center mb-6">
         <div className="text-[1rem] font-semibold text-[#E4E4E7] mb-2">소개</div>
+        {isAdmin && !isDev ? (
+          <textarea
+            className="w-full rounded bg-[#232334] text-white p-2 text-sm mb-2 border border-gray-600"
+            rows={3}
+            value={profile.intro.join('\n')}
+            onChange={e => onProfileIntroChange?.(e.target.value)}
+            placeholder="소개 (여러 줄 입력 가능)"
+          />
+        ) : null}
         <div className="space-y-3 text-[#C4C4C8] text-[1rem] leading-[1.5]">
           {profile.intro.map((p: string, i: number) => (
             <p key={i} className={i !== 0 ? "mt-3" : ""}>{p}</p>
           ))}
         </div>
       </div>
+      {/* 위치 */}
       <div className="mt-4 text-[0.875rem] flex items-center justify-center text-[#B0B0B8] font-medium">
         <span className="mr-1" aria-hidden>📍</span>
-        {profile.region}
+        {isAdmin && !isDev ? (
+          <input
+            type="text"
+            className="rounded bg-[#232334] text-white p-1 px-2 text-sm border border-gray-600"
+            value={profile.region}
+            onChange={e => onProfileRegionChange?.(e.target.value)}
+            placeholder="거주 지역"
+            style={{ minWidth: 120 }}
+          />
+        ) : (
+          profile.region
+        )}
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <main className="max-w-xl mx-auto p-6 text-center pb-24">
       <AuthButton onAdminChange={setIsAdmin} />
-      <FlippableProfileCard />
+      <FlippableProfileCard isAdmin={isAdmin} />
       <div className="my-8">
         <VisitorCount />
       </div>
