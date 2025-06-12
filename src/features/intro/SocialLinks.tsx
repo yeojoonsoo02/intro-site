@@ -42,7 +42,7 @@ const SNS = [
     ),
   },
  {
-    href: 'https://open.kakao.com/o/somekakaolink',
+    href: 'http://qr.kakao.com/talk/pZzt.JQdkAaHRBmZaJYWdUHdl.M-',
     label: '여준수 카카오톡',
     color: '#fee500',
     icon: (
