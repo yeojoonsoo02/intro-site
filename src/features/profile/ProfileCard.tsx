@@ -22,7 +22,11 @@ export default function ProfileCard({ isAdmin = false }: { isAdmin?: boolean }) 
     <div>
       <ProfileCardContent profile={profile} isDev={false} />
       {isAdmin && (
-        <ProfileEditForm profile={profile} onChange={handleChange} />
+        <ProfileEditForm
+          label="프로필 편집"
+          profile={profile}
+          onChange={handleChange}
+        />
       )}
     </div>
   );

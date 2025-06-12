@@ -48,7 +48,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
         <div className="flex flex-wrap justify-center gap-x-1.5 gap-y-1">
           {profile.interests.map((tag, idx, arr) => (
             <span
-              key={tag}
+              key={tag + idx}
               className="bg-[#ececec] dark:bg-[#323236] text-[#232334] dark:text-[#D4D4D8] rounded-full px-3 py-1 text-[0.875rem] font-normal"
               style={{
                 marginRight: idx !== arr.length - 1 ? '6px' : 0,

@@ -3,16 +3,22 @@ import { Profile } from './profile.model';
 type Props = {
   profile: Profile;
   onChange: (profile: Profile) => void;
+  label: string;
 };
 
-export default function ProfileEditForm({ profile, onChange }: Props) {
+export default function ProfileEditForm({ profile, onChange, label }: Props) {
   return (
     <div className="w-full space-y-4 mt-4">
       <input
         className="w-full rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm border border-gray-300 dark:border-gray-600"
-        value={profile.interests.join(', ')}
-        onChange={e => onChange({ ...profile, interests: e.target.value.split(',').map(v => v.trim()).filter(Boolean) })}
-        placeholder="관심사·취미 (쉼표로 구분)"
+        value={profile.interests.join(' ')}
+        onChange={e =>
+          onChange({
+            ...profile,
+            interests: e.target.value.split(' ').map(v => v.trim()).filter(Boolean),
+          })
+        }
+        placeholder={`${label} (띄어쓰기로 구분)`}
       />
       <textarea
         className="w-full rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm border border-gray-300 dark:border-gray-600"

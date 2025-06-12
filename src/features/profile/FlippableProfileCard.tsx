@@ -1,33 +1,31 @@
 import { useState, useEffect } from 'react';
 import { Profile } from './profile.model';
-import { fetchProfile, saveProfile } from './profile.api';
+import {
+  fetchProfile,
+  saveProfile,
+  fetchDevProfile,
+  saveDevProfile,
+} from './profile.api';
 import ProfileCardContent from './ProfileCardContent';
 import ProfileEditForm from './ProfileEditForm';
-
-const defaultDevProfile: Profile = {
-  name: "여준수",
-  tagline: "풀스택 개발자 & AI 엔지니어",
-  email: "hello@youremail.com",
-  photo: "/profile.jpg",
-  interests: ["TypeScript", "React", "Next.js", "Firebase", "Python", "AI", "MLOps"],
-  intro: [
-    "웹 프론트엔드와 백엔드, AI 모델 개발까지 폭넓게 경험하며, 사용자 경험과 기술적 완성도를 동시에 추구합니다.",
-    "실전 프로젝트와 오픈소스, 스타트업 경험을 바탕으로 빠르게 성장 중입니다.",
-  ],
-  region: "서울시 강남구",
-};
 
 export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: boolean }) {
   const [flipped, setFlipped] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [devProfile, setDevProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
-    fetchProfile().then(p => setProfile(p));
+    fetchProfile().then(setProfile);
+    fetchDevProfile().then(setDevProfile);
   }, []);
 
-  const handleChange = async (next: Profile) => {
+  const handleProfileChange = async (next: Profile) => {
     setProfile(next);
     await saveProfile(next);
+  };
+  const handleDevProfileChange = async (next: Profile) => {
+    setDevProfile(next);
+    await saveDevProfile(next);
   };
 
   return (
@@ -78,13 +76,30 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
             {profile && (
               <>
                 <ProfileCardContent profile={profile} isDev={false} />
-                {isAdmin && <ProfileEditForm profile={profile} onChange={handleChange} />}
+                {isAdmin && (
+                  <ProfileEditForm
+                    profile={profile}
+                    onChange={handleProfileChange}
+                    label="관심사·취미"
+                  />
+                )}
               </>
             )}
           </div>
           {/* 뒷면 */}
           <div className={`w-full h-full left-0 top-0 ${flipped ? 'relative' : 'absolute'}`} style={{ transform: "rotateY(180deg)", backfaceVisibility: "hidden" }}>
-            <ProfileCardContent profile={defaultDevProfile} isDev />
+            {devProfile && (
+              <>
+                <ProfileCardContent profile={devProfile} isDev />
+                {isAdmin && (
+                  <ProfileEditForm
+                    profile={devProfile}
+                    onChange={handleDevProfileChange}
+                    label="주요 기술"
+                  />
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>
