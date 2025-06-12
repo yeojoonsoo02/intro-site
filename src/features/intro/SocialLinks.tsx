@@ -53,9 +53,22 @@ const SNS = [
           fill="none"
           aria-hidden="true"
         >
-          <ellipse cx="12" cy="12" rx="10" ry="9" fill="#fee500" />
+          <path
+            d="M4 2h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4l-4 4-4-4H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"
+            fill="#fee500"
+          />
+          <text
+            x="12"
+            y="14"
+            textAnchor="middle"
+            fill="#3d1e1e"
+            fontSize="6"
+            fontWeight="bold"
+            fontFamily="sans-serif"
+          >
+            TALK
+          </text>
         </svg>
-        <span className="kakao-tail" />
       </span>
     ),
   },
