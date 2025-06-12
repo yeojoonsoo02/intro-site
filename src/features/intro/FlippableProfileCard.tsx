@@ -35,12 +35,10 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
   const [flipped, setFlipped] = useState(false);
   const [profile, setProfile] = useState({ ...defaultProfile });
   const [devProfile] = useState({ ...defaultDevProfile });
-  const [_loading, setLoading] = useState(false);
 
   // Firestore 연동: 불러오기
   useEffect(() => {
     async function fetchProfile() {
-      setLoading(true);
       try {
         const ref = doc(db, 'profiles', 'main');
         const snap = await getDoc(ref);
@@ -50,7 +48,6 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
       } catch {
         // ignore, fallback to default
       }
-      setLoading(false);
     }
     fetchProfile();
   }, []);
