@@ -27,7 +27,6 @@ export default function Home() {
       {showComments && (
         <div className="w-full flex flex-col items-center">
           <h2 className="text-xl sm:text-2xl font-extrabold mb-6 text-center text-[#E4E4E7]">
-            💬 여준수의 댓글 공간
           </h2>
           <CommentSection isAdmin={isAdmin} />
         </div>
