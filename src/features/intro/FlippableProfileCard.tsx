@@ -35,7 +35,7 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
   const [flipped, setFlipped] = useState(false);
   const [profile, setProfile] = useState({ ...defaultProfile });
   const [devProfile] = useState({ ...defaultDevProfile });
-  const [loading, setLoading] = useState(false);
+  const [_loading, setLoading] = useState(false);
 
   // Firestore 연동: 불러오기
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
         if (snap.exists()) {
           setProfile(snap.data() as typeof defaultProfile);
         }
-      } catch (e) {
+      } catch {
         // ignore, fallback to default
       }
       setLoading(false);
