@@ -1,11 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import SocialLinks from './SocialLinks';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
-const defaultProfile = {
+type Profile = {
+  name: string;
+  tagline: string;
+  email: string;
+  photo: string;
+  interests: string[];
+  intro: string[];
+  region: string;
+};
+
+const defaultProfile: Profile = {
   name: "여준수",
   tagline: "웹 개발자 & 사업가",
   email: "hello@youremail.com",
@@ -18,7 +28,7 @@ const defaultProfile = {
   region: "경기도 김포시 운양동",
 };
 
-const defaultDevProfile = {
+const devProfile: Profile = {
   name: "여준수",
   tagline: "풀스택 개발자 & AI 엔지니어",
   email: "hello@youremail.com",
@@ -33,33 +43,27 @@ const defaultDevProfile = {
 
 export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: boolean }) {
   const [flipped, setFlipped] = useState(false);
-  const [profile, setProfile] = useState({ ...defaultProfile });
-  const [devProfile] = useState({ ...defaultDevProfile });
+  const [profile, setProfile] = useState<Profile>(defaultProfile);
 
-  // Firestore 연동: 불러오기
+  // Firestore에서 프로필 불러오기
   useEffect(() => {
-    async function fetchProfile() {
+    (async () => {
       try {
         const ref = doc(db, 'profiles', 'main');
         const snap = await getDoc(ref);
-        if (snap.exists()) {
-          setProfile(snap.data() as typeof defaultProfile);
-        }
-      } catch {
-        // ignore, fallback to default
-      }
-    }
-    fetchProfile();
+        if (snap.exists()) setProfile(snap.data() as Profile);
+      } catch {}
+    })();
   }, []);
 
-  // Firestore 연동: 저장
-  const saveProfile = async (nextProfile: typeof defaultProfile) => {
+  // Firestore에 프로필 저장
+  const saveProfile = async (nextProfile: Profile) => {
     setProfile(nextProfile);
     await setDoc(doc(db, 'profiles', 'main'), nextProfile, { merge: true });
   };
 
   // 관리자 폼 핸들러
-  const handleProfileChange = (field: string, value: string) => {
+  const handleProfileChange = (field: keyof Profile, value: string) => {
     const nextProfile = {
       ...profile,
       [field]: field === "interests" ? value.split(',').map(v => v.trim()).filter(Boolean) : value,
@@ -67,61 +71,18 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
     saveProfile(nextProfile);
   };
   const handleProfileIntroChange = (value: string) => {
-    const nextProfile = {
-      ...profile,
-      intro: value.split('\n').filter(Boolean),
-    };
+    const nextProfile = { ...profile, intro: value.split('\n').filter(Boolean) };
     saveProfile(nextProfile);
   };
   const handleProfileRegionChange = (value: string) => {
-    const nextProfile = {
-      ...profile,
-      region: value,
-    };
+    const nextProfile = { ...profile, region: value };
     saveProfile(nextProfile);
   };
 
   return (
-    <section
-      className="max-w-[600px] mx-auto mt-20 mb-8 px-2 relative"
-      style={{ perspective: 1200, overflow: 'visible' }}
-    >
-      {/* Flip 버튼 */}
-      <button
-        className="absolute top-3 right-3 z-10 bg-[#232334] text-[#E4E4E7] px-3 py-1 rounded-full text-xs sm:text-sm font-semibold shadow hover:bg-[color:var(--primary)] hover:text-white transition flex items-center gap-1"
-        style={{
-          minWidth: 80,
-          minHeight: 32,
-          willChange: 'transform',
-          transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-          transition: 'transform 0.5s cubic-bezier(.4,0,.2,1)',
-        }}
-        onClick={() => setFlipped(f => !f)}
-        aria-label={flipped ? "일반인 프로필 보기" : "개발자 프로필 보기"}
-        type="button"
-      >
-        <span className="inline-block transition-transform duration-500"
-          style={{
-            display: 'inline-block',
-            transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-          }}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <g>
-              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M8 12a4 4 0 1 1 8 0" stroke="currentColor" strokeWidth="2"/>
-            </g>
-          </svg>
-        </span>
-        {flipped ? "일반인 프로필" : "개발자 프로필"}
-      </button>
-      <div
-        className="relative w-full min-h-[480px]"
-        style={{
-          perspective: 1200,
-          overflow: 'visible',
-        }}
-      >
+    <section className="max-w-[600px] mx-auto mt-20 mb-8 px-2 relative" style={{ perspective: 1200, overflow: 'visible' }}>
+      <FlipButton flipped={flipped} setFlipped={setFlipped} />
+      <div className="relative w-full min-h-[480px]" style={{ perspective: 1200, overflow: 'visible' }}>
         <div
           className="w-full h-full"
           style={{
@@ -135,12 +96,7 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
           }}
         >
           {/* 앞면 */}
-          <div
-            className={`w-full h-full left-0 top-0 ${flipped ? 'absolute' : 'relative'}`}
-            style={{
-              backfaceVisibility: "hidden",
-            }}
-          >
+          <div className={`w-full h-full left-0 top-0 ${flipped ? 'absolute' : 'relative'}`} style={{ backfaceVisibility: "hidden" }}>
             <ProfileCardContent
               profile={profile}
               isDev={false}
@@ -151,13 +107,7 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
             />
           </div>
           {/* 뒷면 */}
-          <div
-            className={`w-full h-full left-0 top-0 ${flipped ? 'relative' : 'absolute'}`}
-            style={{
-              transform: "rotateY(180deg)",
-              backfaceVisibility: "hidden",
-            }}
-          >
+          <div className={`w-full h-full left-0 top-0 ${flipped ? 'relative' : 'absolute'}`} style={{ transform: "rotateY(180deg)", backfaceVisibility: "hidden" }}>
             <ProfileCardContent
               profile={devProfile}
               isDev
@@ -170,6 +120,39 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
   );
 }
 
+function FlipButton({ flipped, setFlipped }: { flipped: boolean; setFlipped: (f: boolean) => void }) {
+  return (
+    <button
+      className="absolute top-3 right-3 z-10 bg-[#232334] text-[#E4E4E7] px-3 py-1 rounded-full text-xs sm:text-sm font-semibold shadow hover:bg-[color:var(--primary)] hover:text-white transition flex items-center gap-1"
+      style={{
+        minWidth: 80,
+        minHeight: 32,
+        willChange: 'transform',
+        transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+        transition: 'transform 0.5s cubic-bezier(.4,0,.2,1)',
+      }}
+      onClick={() => setFlipped(!flipped)}
+      aria-label={flipped ? "일반인 프로필 보기" : "개발자 프로필 보기"}
+      type="button"
+    >
+      <span className="inline-block transition-transform duration-500"
+        style={{
+          display: 'inline-block',
+          transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+        }}
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <g>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            <path d="M8 12a4 4 0 1 1 8 0" stroke="currentColor" strokeWidth="2"/>
+          </g>
+        </svg>
+      </span>
+      {flipped ? "일반인 프로필" : "개발자 프로필"}
+    </button>
+  );
+}
+
 function ProfileCardContent({
   profile,
   isDev,
@@ -178,10 +161,10 @@ function ProfileCardContent({
   onProfileIntroChange,
   onProfileRegionChange,
 }: {
-  profile: typeof defaultProfile;
+  profile: Profile;
   isDev: boolean;
   isAdmin?: boolean;
-  onProfileChange?: (field: string, value: string) => void;
+  onProfileChange?: (field: keyof Profile, value: string) => void;
   onProfileIntroChange?: (value: string) => void;
   onProfileRegionChange?: (value: string) => void;
 }) {
@@ -240,7 +223,7 @@ function ProfileCardContent({
           />
         ) : null}
         <div className="flex flex-wrap justify-center gap-x-1.5 gap-y-1">
-          {(profile.interests).map((tag: string, idx: number, arr: string[]) => (
+          {profile.interests.map((tag, idx, arr) => (
             <span
               key={tag}
               className="bg-[#ececec] dark:bg-[#323236] text-[#232334] dark:text-[#D4D4D8] rounded-full px-3 py-1 text-[0.875rem] font-normal"
@@ -267,7 +250,7 @@ function ProfileCardContent({
           />
         ) : null}
         <div className="space-y-3 text-[#232334] dark:text-[#C4C4C8] text-[1rem] leading-[1.5]">
-          {profile.intro.map((p: string, i: number) => (
+          {profile.intro.map((p, i) => (
             <p key={i} className={i !== 0 ? "mt-3" : ""}>{p}</p>
           ))}
         </div>
