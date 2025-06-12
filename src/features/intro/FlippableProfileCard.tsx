@@ -286,7 +286,6 @@ function ProfileCardContent({
               }}
             >
               {tag}
-              {idx !== arr.length - 1 && <span className="mx-1 text-[#bdbdbd] dark:text-[#393940]">·</span>}
             </span>
           ))}
         </div>
