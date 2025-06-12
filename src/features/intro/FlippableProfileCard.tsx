@@ -32,7 +32,7 @@ const defaultDevProfile = {
 export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: boolean }) {
   const [flipped, setFlipped] = useState(false);
   const [profile, setProfile] = useState({ ...defaultProfile });
-  const [devProfile, setDevProfile] = useState({ ...defaultDevProfile });
+  const [devProfile] = useState({ ...defaultDevProfile });
 
   // 관리자 폼 핸들러
   const handleProfileChange = (field: string, value: string) => {
