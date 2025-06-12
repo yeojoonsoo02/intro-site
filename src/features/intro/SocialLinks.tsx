@@ -55,7 +55,7 @@ const SNS = [
         >
           {/* 노란색 말풍선 형태: 타원 + 좌측 아래 꼬리 */}
           <ellipse cx="12" cy="10" rx="10" ry="8" fill="#fee500" />
-          <path d="M8 18 L1 22 L15 18 Z" fill="#fee500" transform="rotate(-10 8 20)" />
+          <path d="M8 18 L3 22 L15 18 Z" fill="#fee500" transform="rotate(-10 8 20)" />
         </svg>
       </span>
     ),
