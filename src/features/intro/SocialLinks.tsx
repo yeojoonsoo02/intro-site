@@ -41,7 +41,7 @@ const SNS = [
       </svg>
     ),
   },
-  {
+ {
     href: 'https://open.kakao.com/o/somekakaolink',
     label: '여준수 카카오톡',
     color: '#fee500',
@@ -50,22 +50,12 @@ const SNS = [
         <svg
           className="w-6 h-6"
           viewBox="0 0 24 24"
+          fill="none"
           aria-hidden="true"
         >
-          {/* 말풍선: 둥근 타원 + 좌측 아래 꼬리 */}
-          <ellipse cx="12" cy="9" rx="8" ry="7" fill="#3d1e1e" />
-          <path d="M7 16 L3 22 L9 18 Z" fill="#3d1e1e" />
-          <text
-            x="12"
-            y="11"
-            textAnchor="middle"
-            fill="#fee500"
-            fontSize="5"
-            fontWeight="bold"
-            fontFamily="sans-serif"
-          >
-            TALK
-          </text>
+          {/* 노란색 말풍선 형태: 타원 + 좌측 아래 꼬리 */}
+          <ellipse cx="12" cy="10" rx="10" ry="8" fill="#fee500" />
+          <path d="M8 18 L4 22 L10 18 Z" fill="#fee500" transform="rotate(-10 7 20)" />
         </svg>
       </span>
     ),
