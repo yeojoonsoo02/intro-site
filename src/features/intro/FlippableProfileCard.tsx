@@ -28,7 +28,7 @@ const defaultProfile: Profile = {
   region: "경기도 김포시 운양동",
 };
 
-const devProfile: Profile = {
+const defaultDevProfile: Profile = {
   name: "여준수",
   tagline: "풀스택 개발자 & AI 엔지니어",
   email: "hello@youremail.com",
@@ -44,8 +44,9 @@ const devProfile: Profile = {
 export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: boolean }) {
   const [flipped, setFlipped] = useState(false);
   const [profile, setProfile] = useState<Profile>(defaultProfile);
+  const [devProfile, setDevProfile] = useState<Profile>(defaultDevProfile);
 
-  // DB에서 프로필 불러오기
+  // 일반인 프로필 불러오기
   useEffect(() => {
     (async () => {
       try {
@@ -56,10 +57,27 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
     })();
   }, []);
 
-  // DB에 프로필 저장
+  // 개발자 프로필 불러오기
+  useEffect(() => {
+    (async () => {
+      try {
+        const ref = doc(db, 'profiles', 'dev');
+        const snap = await getDoc(ref);
+        if (snap.exists()) setDevProfile(snap.data() as Profile);
+      } catch {}
+    })();
+  }, []);
+
+  // 일반인 프로필 저장
   const saveProfile = async (nextProfile: Profile) => {
     await setDoc(doc(db, 'profiles', 'main'), nextProfile, { merge: true });
     setProfile(nextProfile);
+  };
+
+  // 개발자 프로필 저장
+  const saveDevProfile = async (nextProfile: Profile) => {
+    await setDoc(doc(db, 'profiles', 'dev'), nextProfile, { merge: true });
+    setDevProfile(nextProfile);
   };
 
   // 관리자 폼 핸들러
@@ -77,6 +95,23 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
   const handleProfileRegionChange = (value: string) => {
     const nextProfile = { ...profile, region: value };
     saveProfile(nextProfile);
+  };
+
+  // 개발자 프로필 핸들러
+  const handleDevProfileChange = (field: keyof Profile, value: string) => {
+    const nextProfile = {
+      ...devProfile,
+      [field]: field === "interests" ? value.split(',').map(v => v.trim()).filter(Boolean) : value,
+    };
+    saveDevProfile(nextProfile);
+  };
+  const handleDevProfileIntroChange = (value: string) => {
+    const nextProfile = { ...devProfile, intro: value.split('\n').filter(Boolean) };
+    saveDevProfile(nextProfile);
+  };
+  const handleDevProfileRegionChange = (value: string) => {
+    const nextProfile = { ...devProfile, region: value };
+    saveDevProfile(nextProfile);
   };
 
   return (
@@ -111,7 +146,10 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
             <ProfileCardContent
               profile={devProfile}
               isDev
-              isAdmin={false}
+              isAdmin={isAdmin}
+              onProfileChange={handleDevProfileChange}
+              onProfileIntroChange={handleDevProfileIntroChange}
+              onProfileRegionChange={handleDevProfileRegionChange}
             />
           </div>
         </div>
