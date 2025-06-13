@@ -95,7 +95,7 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
       onPointerUp={handlePointerEnd}
       onPointerCancel={handlePointerEnd}
     >
-      <div className="absolute left-1/2 -translate-x-1/2 top-2 z-10 text-xs sm:text-sm font-semibold bg-[#232334] text-[#E4E4E7] px-4 py-1.5 rounded-full shadow pointer-events-none select-none">
+      <div className="absolute top-2 right-2 z-10 text-xs sm:text-sm font-semibold bg-[#232334] text-[#E4E4E7] px-3 py-1 rounded-full shadow pointer-events-none select-none">
         {flipped ? '개발자 프로필' : '일반인 프로필'}
       </div>
 
