@@ -53,7 +53,7 @@ export default function useCardFlip({ flipped, setFlipped, innerRef }: UseCardFl
   };
 
   const handlePointerEnd = (e: React.PointerEvent) => {
-    if (!innerRef.current || startX.current === null) {
+    if (!innerRef.current || startX.current === null || startY.current === null) {
       dragging.current = false;
       startX.current = null;
       startY.current = null;
@@ -61,15 +61,25 @@ export default function useCardFlip({ flipped, setFlipped, innerRef }: UseCardFl
     }
 
     const dx = e.clientX - startX.current;
-    const dy = e.clientY - (startY.current ?? 0);
+    const dy = e.clientY - startY.current;
 
-    const shouldFlip = Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > SWIPE_THRESHOLD;
-    const nextFlipped = shouldFlip ? !flipped : flipped;
-    setFlipped(nextFlipped);
+    const isHorizontalSwipe = Math.abs(dx) > Math.abs(dy);
+    const isRightSwipe = dx > SWIPE_THRESHOLD;
+    const isLeftSwipe = dx < -SWIPE_THRESHOLD;
+
+    if (isHorizontalSwipe) {
+      if (isRightSwipe) {
+        setFlipped(true); // 오른쪽으로 넘기면 뒷면
+        innerRef.current.style.transform = 'rotateY(180deg)';
+      } else if (isLeftSwipe) {
+        setFlipped(false); // 왼쪽으로 넘기면 앞면
+        innerRef.current.style.transform = 'rotateY(0deg)';
+      } else {
+        innerRef.current.style.transform = flipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
+      }
+    }
 
     innerRef.current.style.transition = 'transform 0.3s ease';
-    innerRef.current.style.transform = nextFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
-
     dragging.current = false;
     startX.current = null;
     startY.current = null;
