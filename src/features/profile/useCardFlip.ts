@@ -45,11 +45,8 @@ export default function useCardFlip({ flipped, setFlipped, innerRef }: UseCardFl
     const ratio = Math.min(1, Math.abs(dx) / SWIPE_THRESHOLD);
     const delta = ratio * MAX_ANGLE;
 
-    const angle = flipped
-      ? 180 + (dx > 0 ? -delta : delta)
-      : dx > 0 ? delta : -delta;
-
-    innerRef.current.style.transform = `rotateY(${angle}deg)`;
+    const angle = dx > 0 ? delta : -delta;
+    innerRef.current.style.transform = `rotateY(${flipped ? 180 + angle : angle}deg)`;
   };
 
   const handlePointerEnd = (e: React.PointerEvent) => {
@@ -69,10 +66,10 @@ export default function useCardFlip({ flipped, setFlipped, innerRef }: UseCardFl
 
     if (isHorizontalSwipe) {
       if (isRightSwipe) {
-        setFlipped(true); // 오른쪽으로 넘기면 뒷면
+        setFlipped(true);
         innerRef.current.style.transform = 'rotateY(180deg)';
       } else if (isLeftSwipe) {
-        setFlipped(false); // 왼쪽으로 넘기면 앞면
+        setFlipped(false);
         innerRef.current.style.transform = 'rotateY(0deg)';
       } else {
         innerRef.current.style.transform = flipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
