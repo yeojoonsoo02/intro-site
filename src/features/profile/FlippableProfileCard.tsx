@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect, useRef } from 'react';
 import { Profile } from './profile.model';
 import {
@@ -9,22 +11,24 @@ import {
 import ProfileCardContent from './ProfileCardContent';
 import ProfileEditForm from './ProfileEditForm';
 
+// 스와이프 역치 설정
+const SWIPE_THRESHOLD = 60;
+
 export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: boolean }) {
   const [flipped, setFlipped] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [devProfile, setDevProfile] = useState<Profile | null>(null);
 
-  // Swipe and edge-click detection
+  // 상태 및 ref
   const startX = useRef<number | null>(null);
   const dragging = useRef(false);
   const innerRef = useRef<HTMLDivElement>(null);
 
-  // 초기 데이터 로드 및 힌트 애니메이션
+  // 데이터 로드 및 힌트 애니메이션
   useEffect(() => {
     fetchProfile().then(setProfile);
     fetchDevProfile().then(setDevProfile);
 
-    // 진입 시 뒤집기 힌트 애니메이션
     if (innerRef.current) {
       innerRef.current.animate(
         [
@@ -39,38 +43,42 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
 
   // Pointer 이벤트 핸들러
   const handlePointerDown = (e: React.PointerEvent) => {
-    // 부모 컨테이너의 너비 가져오기
-    const container = innerRef.current?.parentElement;
-    if (container) {
-      const { left, width } = container.getBoundingClientRect();
-      const x = e.clientX;
-      const edge = width * 0.2;
-      if (x < left + edge) {
-        setFlipped(false);
-        return;
-      }
-      if (x > left + width - edge) {
-        setFlipped(true);
-        return;
-      }
-    }
-    // 스와이프 시작
     startX.current = e.clientX;
     dragging.current = true;
+    // 즉시 스타일 변경 준비
+    if (innerRef.current) {
+      innerRef.current.style.transition = 'none';
+    }
     (e.target as Element).setPointerCapture(e.pointerId);
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!dragging.current || startX.current === null) return;
     const dx = e.clientX - startX.current;
-    if (Math.abs(dx) > 60) {
-      setFlipped(dx < 0);
-      dragging.current = false;
-      startX.current = null;
+    // dx 비율로 회전 각도 결정
+    const ratio = Math.max(-1, Math.min(1, dx / SWIPE_THRESHOLD));
+    const angle = ratio * 180;
+    if (innerRef.current) {
+      innerRef.current.style.transform = `rotateY(${angle}deg)`;
     }
   };
 
   const handlePointerEnd = (e: React.PointerEvent) => {
+    if (!innerRef.current || startX.current === null) {
+      dragging.current = false;
+      startX.current = null;
+      return;
+    }
+    const dx = e.clientX - startX.current;
+    const nextFlipped = dx > SWIPE_THRESHOLD;
+    setFlipped(nextFlipped);
+
+    // 스냅 애니메이션
+    innerRef.current.style.transition = 'transform 0.3s ease';
+    innerRef.current.style.transform = nextFlipped
+      ? 'rotateY(180deg)'
+      : 'rotateY(0deg)';
+
     dragging.current = false;
     startX.current = null;
     (e.target as Element).releasePointerCapture(e.pointerId);
@@ -95,6 +103,7 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
       onPointerUp={handlePointerEnd}
       onPointerCancel={handlePointerEnd}
     >
+      {/* 라벨: 오른쪽 위 */}
       <div className="absolute top-2 right-2 z-10 text-xs sm:text-sm font-semibold bg-[#232334] text-[#E4E4E7] px-3 py-1 rounded-full shadow pointer-events-none select-none">
         {flipped ? '개발자 프로필' : '일반인 프로필'}
       </div>
@@ -111,9 +120,9 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
             width: '100%',
             height: '100%',
             transformStyle: 'preserve-3d',
-            transition: 'transform 0.5s cubic-bezier(.4,0,.2,1)',
             willChange: 'transform',
             transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+            transition: 'transform 0.5s cubic-bezier(.4,0,.2,1)',
           }}
         >
           {/* 앞면 */}
