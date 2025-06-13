@@ -17,10 +17,10 @@ type Profile = {
 
 const defaultProfile: Profile = {
   name: "여준수",
-  tagline: "웹 개발자 & 사업가",
-  email: "hello@youremail.com",
+  tagline: "대학생 & 취미 개발자",
+  email: "yeojoonsoo02@gmail.com",
   photo: "/profile.jpg",
-  interests: ["여행", "운동", "독서", "테이블테니스"],
+  interests: ["맨몸운동", "독서",],
   intro: [
     "평소 카페 탐방을 즐기며, 친구들과 운동을 하러 다녀요. 새로운 사람을 만나는 걸 좋아하고, 독서를 통해 다양한 아이디어를 얻고 있습니다.",
     "최근에는 웹 개발과 AI에 관심을 갖고 다양한 프로젝트에 도전하고 있습니다.",
@@ -29,16 +29,16 @@ const defaultProfile: Profile = {
 };
 
 const defaultDevProfile: Profile = {
-  name: "여준수",
-  tagline: "풀스택 개발자 & AI 엔지니어",
-  email: "hello@youremail.com",
+  name: "챗코가",
+  tagline: "AI 전문가 & 사업가",
+  email: "chatgptkrguide@gmail.com",
   photo: "/profile.jpg",
   interests: ["TypeScript", "React", "Next.js", "Firebase", "Python", "AI", "MLOps"],
   intro: [
     "웹 프론트엔드와 백엔드, AI 모델 개발까지 폭넓게 경험하며, 사용자 경험과 기술적 완성도를 동시에 추구합니다.",
     "실전 프로젝트와 오픈소스, 스타트업 경험을 바탕으로 빠르게 성장 중입니다.",
   ],
-  region: "서울시 강남구",
+  region:"경기도 김포시 운양동",
 };
 
 function useDebouncedSave(profile: Profile, saveFn: (p: Profile) => void, delay = 500) {
