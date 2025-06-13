@@ -14,40 +14,53 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
   const [profile, setProfile] = useState<Profile | null>(null);
   const [devProfile, setDevProfile] = useState<Profile | null>(null);
 
-  // 스와이프 상태
+  // Swipe and edge-click detection
   const startX = useRef<number | null>(null);
   const dragging = useRef(false);
+  const innerRef = useRef<HTMLDivElement>(null);
 
+  // 초기 데이터 로드 및 힌트 애니메이션
   useEffect(() => {
     fetchProfile().then(setProfile);
     fetchDevProfile().then(setDevProfile);
+
+    // 진입 시 뒤집기 힌트 애니메이션
+    if (innerRef.current) {
+      innerRef.current.animate(
+        [
+          { transform: 'rotateY(0deg)' },
+          { transform: 'rotateY(15deg)' },
+          { transform: 'rotateY(0deg)' },
+        ],
+        { duration: 800, easing: 'ease-in-out', delay: 500 }
+      );
+    }
   }, []);
 
-  // 스와이프 핸들러
-  const handleTouchStart = (e: React.TouchEvent) => {
-    startX.current = e.touches[0].clientX;
-    dragging.current = true;
-  };
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!dragging.current || startX.current === null) return;
-    const dx = e.touches[0].clientX - startX.current;
-    if (Math.abs(dx) > 60) {
-      setFlipped(dx < 0);
-      dragging.current = false;
-      startX.current = null;
+  // Pointer 이벤트 핸들러
+  const handlePointerDown = (e: React.PointerEvent) => {
+    // 부모 컨테이너의 너비 가져오기
+    const container = innerRef.current?.parentElement;
+    if (container) {
+      const { left, width } = container.getBoundingClientRect();
+      const x = e.clientX;
+      const edge = width * 0.2;
+      if (x < left + edge) {
+        setFlipped(false);
+        return;
+      }
+      if (x > left + width - edge) {
+        setFlipped(true);
+        return;
+      }
     }
-  };
-  const handleTouchEnd = () => {
-    dragging.current = false;
-    startX.current = null;
-  };
-
-  // 마우스 드래그(데스크탑)
-  const handleMouseDown = (e: React.MouseEvent) => {
+    // 스와이프 시작
     startX.current = e.clientX;
     dragging.current = true;
+    (e.target as Element).setPointerCapture(e.pointerId);
   };
-  const handleMouseMove = (e: React.MouseEvent) => {
+
+  const handlePointerMove = (e: React.PointerEvent) => {
     if (!dragging.current || startX.current === null) return;
     const dx = e.clientX - startX.current;
     if (Math.abs(dx) > 60) {
@@ -56,12 +69,14 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
       startX.current = null;
     }
   };
-  const handleMouseUp = () => {
+
+  const handlePointerEnd = (e: React.PointerEvent) => {
     dragging.current = false;
     startX.current = null;
+    (e.target as Element).releasePointerCapture(e.pointerId);
   };
 
-  // 프로필 수정 핸들러
+  // 프로필 저장 핸들러
   const handleProfileChange = async (next: Profile) => {
     setProfile(next);
     await saveProfile(next);
@@ -74,33 +89,38 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
   return (
     <section
       className="max-w-[600px] mx-auto mt-20 mb-8 px-2 relative select-none"
-      style={{ perspective: 1200, overflow: 'visible' }}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
+      style={{ perspective: 1200, overflow: 'visible', touchAction: 'pan-y' }}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerEnd}
+      onPointerCancel={handlePointerEnd}
     >
       <div className="absolute left-1/2 -translate-x-1/2 top-2 z-10 text-xs sm:text-sm font-semibold bg-[#232334] text-[#E4E4E7] px-4 py-1.5 rounded-full shadow pointer-events-none select-none">
-        {flipped ? "개발자 프로필" : "일반인 프로필"}
+        {flipped ? '개발자 프로필' : '일반인 프로필'}
       </div>
-      <div className="relative w-full min-h-[480px]" style={{ perspective: 1200, overflow: 'visible' }}>
+
+      <div
+        className="relative w-full min-h-[480px]"
+        style={{ perspective: 1200, overflow: 'visible' }}
+      >
         <div
+          ref={innerRef}
           className="w-full h-full"
           style={{
-            position: "relative",
-            width: "100%",
-            height: "100%",
-            transformStyle: "preserve-3d",
-            transition: "transform 0.5s cubic-bezier(.4,0,.2,1)",
-            willChange: "transform",
-            transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+            position: 'relative',
+            width: '100%',
+            height: '100%',
+            transformStyle: 'preserve-3d',
+            transition: 'transform 0.5s cubic-bezier(.4,0,.2,1)',
+            willChange: 'transform',
+            transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
           }}
         >
           {/* 앞면 */}
-          <div className={`w-full h-full left-0 top-0 ${flipped ? 'absolute' : 'relative'}`} style={{ backfaceVisibility: "hidden" }}>
+          <div
+            className={`w-full h-full left-0 top-0 ${flipped ? 'absolute' : 'relative'}`}
+            style={{ backfaceVisibility: 'hidden' }}
+          >
             {profile && (
               <>
                 <ProfileCardContent profile={profile} isDev={false} />
@@ -114,8 +134,12 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
               </>
             )}
           </div>
+
           {/* 뒷면 */}
-          <div className={`w-full h-full left-0 top-0 ${flipped ? 'relative' : 'absolute'}`} style={{ transform: "rotateY(180deg)", backfaceVisibility: "hidden" }}>
+          <div
+            className={`w-full h-full left-0 top-0 ${flipped ? 'relative' : 'absolute'}`}
+            style={{ transform: 'rotateY(180deg)', backfaceVisibility: 'hidden' }}
+          >
             {devProfile && (
               <>
                 <ProfileCardContent profile={devProfile} isDev />
