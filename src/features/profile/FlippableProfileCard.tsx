@@ -74,7 +74,7 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
     const ratio = Math.min(1, Math.abs(dx) / SWIPE_THRESHOLD);
     const delta = ratio * MAX_ANGLE;
 
-    let angle = flipped
+    const angle = flipped
       ? 180 + (dx > 0 ? -delta : delta)
       : dx > 0 ? delta : -delta;
 
