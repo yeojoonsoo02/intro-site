@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Profile } from './profile.model';
 import {
   fetchProfile,
@@ -14,11 +14,54 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
   const [profile, setProfile] = useState<Profile | null>(null);
   const [devProfile, setDevProfile] = useState<Profile | null>(null);
 
+  // 스와이프 상태
+  const startX = useRef<number | null>(null);
+  const dragging = useRef(false);
+
   useEffect(() => {
     fetchProfile().then(setProfile);
     fetchDevProfile().then(setDevProfile);
   }, []);
 
+  // 스와이프 핸들러
+  const handleTouchStart = (e: React.TouchEvent) => {
+    startX.current = e.touches[0].clientX;
+    dragging.current = true;
+  };
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!dragging.current || startX.current === null) return;
+    const dx = e.touches[0].clientX - startX.current;
+    if (Math.abs(dx) > 60) {
+      setFlipped(dx < 0);
+      dragging.current = false;
+      startX.current = null;
+    }
+  };
+  const handleTouchEnd = () => {
+    dragging.current = false;
+    startX.current = null;
+  };
+
+  // 마우스 드래그(데스크탑)
+  const handleMouseDown = (e: React.MouseEvent) => {
+    startX.current = e.clientX;
+    dragging.current = true;
+  };
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!dragging.current || startX.current === null) return;
+    const dx = e.clientX - startX.current;
+    if (Math.abs(dx) > 60) {
+      setFlipped(dx < 0);
+      dragging.current = false;
+      startX.current = null;
+    }
+  };
+  const handleMouseUp = () => {
+    dragging.current = false;
+    startX.current = null;
+  };
+
+  // 프로필 수정 핸들러
   const handleProfileChange = async (next: Profile) => {
     setProfile(next);
     await saveProfile(next);
@@ -29,35 +72,20 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
   };
 
   return (
-    <section className="max-w-[600px] mx-auto mt-20 mb-8 px-2 relative" style={{ perspective: 1200, overflow: 'visible' }}>
-      <button
-        className="absolute top-3 right-3 z-10 bg-[#232334] text-[#E4E4E7] px-3 py-1 rounded-full text-xs sm:text-sm font-semibold shadow hover:bg-[color:var(--primary)] hover:text-white transition flex items-center gap-1"
-        style={{
-          minWidth: 80,
-          minHeight: 32,
-          willChange: 'transform',
-          transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-          transition: 'transform 0.5s cubic-bezier(.4,0,.2,1)',
-        }}
-        onClick={() => setFlipped(f => !f)}
-        aria-label={flipped ? "일반인 프로필 보기" : "개발자 프로필 보기"}
-        type="button"
-      >
-        <span className="inline-block transition-transform duration-500"
-          style={{
-            display: 'inline-block',
-            transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-          }}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <g>
-              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M8 12a4 4 0 1 1 8 0" stroke="currentColor" strokeWidth="2"/>
-            </g>
-          </svg>
-        </span>
-        {flipped ? "일반인 프로필" : "개발자 프로필"}
-      </button>
+    <section
+      className="max-w-[600px] mx-auto mt-20 mb-8 px-2 relative select-none"
+      style={{ perspective: 1200, overflow: 'visible' }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+    >
+      <div className="absolute left-1/2 -translate-x-1/2 top-2 z-10 text-xs sm:text-sm font-semibold bg-[#232334] text-[#E4E4E7] px-4 py-1.5 rounded-full shadow pointer-events-none select-none">
+        {flipped ? "개발자 프로필" : "일반인 프로필"}
+      </div>
       <div className="relative w-full min-h-[480px]" style={{ perspective: 1200, overflow: 'visible' }}>
         <div
           className="w-full h-full"
