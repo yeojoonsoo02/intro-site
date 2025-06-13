@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import CommentSection from '@/features/comments/CommentSection';
 import VisitorCount from '@/features/visitors/VisitorCount';
-import FlippableProfileCard from '@/features/intro/FlippableProfileCard';
+import FlippableProfileCard from '@/features/profile/FlippableProfileCard';
 import AuthButton from '@/features/auth/AuthButton';
 
 export default function Home() {
