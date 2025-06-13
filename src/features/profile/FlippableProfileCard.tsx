@@ -21,6 +21,7 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
   const [devProfile, setDevProfile] = useState<Profile | null>(null);
 
   const startX = useRef<number | null>(null);
+  const startY = useRef<number | null>(null); // 추가됨
   const dragging = useRef(false);
   const innerRef = useRef<HTMLDivElement>(null);
 
@@ -47,28 +48,36 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
     const { left, width } = container.getBoundingClientRect();
     const x = e.clientX - left;
     const edgeW = width * 0.2;
-    if (x > edgeW && x < width - edgeW) {
-      // 중앙 영역은 무시
-      return;
-    }
+    if (x > edgeW && x < width - edgeW) return;
 
     startX.current = e.clientX;
+    startY.current = e.clientY;
     dragging.current = true;
     if (innerRef.current) innerRef.current.style.transition = 'none';
     (e.target as Element).setPointerCapture(e.pointerId);
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!dragging.current || startX.current === null || !innerRef.current) return;
+    if (
+      !dragging.current ||
+      startX.current === null ||
+      startY.current === null ||
+      !innerRef.current
+    ) return;
+
     const dx = e.clientX - startX.current;
+    const dy = e.clientY - startY.current;
+
+    // 좌우 스와이프가 아닐 경우 무시
+    if (Math.abs(dx) <= Math.abs(dy)) return;
+
     const ratio = Math.min(1, Math.abs(dx) / SWIPE_THRESHOLD);
     const delta = ratio * MAX_ANGLE;
-    let angle: number;
-    if (!flipped) {
-      angle = dx > 0 ? delta : -delta;
-    } else {
-      angle = 180 + (dx > 0 ? -delta : delta);
-    }
+
+    let angle = flipped
+      ? 180 + (dx > 0 ? -delta : delta)
+      : dx > 0 ? delta : -delta;
+
     innerRef.current.style.transform = `rotateY(${angle}deg)`;
   };
 
@@ -76,10 +85,14 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
     if (!innerRef.current || startX.current === null) {
       dragging.current = false;
       startX.current = null;
+      startY.current = null;
       return;
     }
+
     const dx = e.clientX - startX.current;
-    const shouldFlip = Math.abs(dx) > SWIPE_THRESHOLD;
+    const dy = e.clientY - (startY.current ?? 0);
+
+    const shouldFlip = Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > SWIPE_THRESHOLD;
     const nextFlipped = shouldFlip ? !flipped : flipped;
     setFlipped(nextFlipped);
 
@@ -89,6 +102,7 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
 
     dragging.current = false;
     startX.current = null;
+    startY.current = null;
     (e.target as Element).releasePointerCapture(e.pointerId);
   };
 
@@ -96,6 +110,7 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
     setProfile(next);
     await saveProfile(next);
   };
+
   const handleDevProfileChange = async (next: Profile) => {
     setDevProfile(next);
     await saveDevProfile(next);
