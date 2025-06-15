@@ -11,11 +11,11 @@ export default function ProfileEditForm({ profile, onChange, label }: Props) {
     <div className="w-full space-y-4 mt-4">
       <input
         className="w-full rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm border border-gray-300 dark:border-gray-600"
-        value={profile.interests.join('')}
+        value={profile.interests.join(' ')}
         onChange={e =>
           onChange({
             ...profile,
-            interests: e.target.value.split(',').map(v => v.trim()).filter(Boolean),
+            interests: e.target.value.split(' ').map(v => v.trim()).filter(Boolean),
           })
         }
         placeholder={`${label} (콤마로 구분)`}
