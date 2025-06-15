@@ -8,7 +8,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
         w-full
         bg-[#27272A] dark:bg-[#27272A]
         rounded-[28px]
-        border-[3px] border-[#3f3f46] dark:border-[#3f3f46]
+        border-[3px] border-[#5a5a5a]
         shadow-[0_8px_36px_0_rgba(0,0,0,0.3),0_2px_10px_0_rgba(0,0,0,0.15)]
         p-8 sm:p-10 flex flex-col items-center
         transition-transform duration-300
@@ -19,7 +19,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       style={{
         background: "var(--card-bg, #27272A)",
         minHeight: 480,
-        color: "var(--foreground, #18181b)",
+        color: "var(--foreground, #1e1e1e)", // 진한 텍스트 색 (라이트 모드용)
       }}
     >
       <div className="mb-4">
@@ -36,18 +36,18 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
         />
       </div>
 
-      <div className="text-[2.1rem] font-extrabold tracking-tight text-[#E4E4E7] mb-2">
+      <div className="text-[2.1rem] font-extrabold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">
         {profile.name}
       </div>
 
-      <div className="text-[1.25rem] text-[#A1A1AA] font-semibold tracking-tight mb-3">
+      <div className="text-[1.25rem] text-[#2c2c2c] dark:text-[#A1A1AA] font-semibold tracking-tight mb-3">
         {profile.tagline}
       </div>
 
       <div className="flex items-center justify-center gap-4 mb-6 flex-wrap">
         <a
           href={`mailto:${profile.email}`}
-          className="flex items-center gap-1.5 text-[#A1A1AA] hover:text-[color:var(--primary)] transition-colors text-base font-medium"
+          className="flex items-center gap-1.5 text-[#2c2c2c] dark:text-[#A1A1AA] hover:text-[color:var(--primary)] transition-colors text-base font-medium"
         >
           <svg width="20" height="20" fill="currentColor" aria-hidden="true">
             <rect width="20" height="20" rx="4" fill="none" />
@@ -62,7 +62,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
 
       {/* 관심사 또는 기술 */}
       <div className="w-full text-center mb-6">
-        <div className="text-[1rem] font-bold tracking-tight text-[#E4E4E7] mb-2">
+        <div className="text-[1rem] font-bold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">
           {isDev ? "주요 기술" : "관심사·취미"}
         </div>
         <div className="flex flex-wrap justify-center gap-x-2 gap-y-2">
@@ -70,11 +70,11 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
             <span
               key={tag + idx}
               className={`
-                bg-[#323236] dark:bg-[#323236]
-                text-[#E4E4E7]
+                bg-[#e6e6e6] dark:bg-[#323236]
+                text-[#1e1e1e] dark:text-[#E4E4E7]
                 rounded-full px-4 py-1.5
                 text-[0.95rem] font-semibold tracking-tight
-                shadow-sm border border-[#393940]
+                shadow-sm border border-[#5a5a5a]
                 flex items-center
               `}
               style={{
@@ -82,7 +82,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
               }}
             >
               {tag}
-              {idx !== arr.length - 1 && <span className="mx-1 text-[#393940] font-bold">·</span>}
+              {idx !== arr.length - 1 && <span className="mx-1 text-[#888888] font-bold">·</span>}
             </span>
           ))}
         </div>
@@ -90,8 +90,8 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
 
       {/* 소개 */}
       <div className="w-full text-center mb-6">
-        <div className="text-[1rem] font-bold tracking-tight text-[#E4E4E7] mb-2">소개</div>
-        <div className="space-y-3 text-[#C4C4C8] text-[1.05rem] leading-[1.6] font-medium">
+        <div className="text-[1rem] font-bold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">소개</div>
+        <div className="space-y-3 text-[#2c2c2c] dark:text-[#C4C4C8] text-[1.05rem] leading-[1.6] font-medium">
           {profile.intro.map((p, i) => (
             <p key={i} className={i !== 0 ? "mt-3" : ""}>{p}</p>
           ))}
@@ -99,7 +99,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       </div>
 
       {/* 지역 */}
-      <div className="mt-4 text-[0.95rem] flex items-center justify-center text-[#B0B0B8] font-semibold tracking-tight">
+      <div className="mt-4 text-[0.95rem] flex items-center justify-center text-[#4b4b4b] dark:text-[#B0B0B8] font-semibold tracking-tight">
         <span className="mr-1" aria-hidden>📍</span>
         {profile.region}
       </div>
