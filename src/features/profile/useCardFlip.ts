@@ -8,7 +8,7 @@ const MAX_ANGLE = 45;
 type UseCardFlipProps = {
   flipped: boolean;
   setFlipped: (f: boolean) => void;
-  innerRef: React.RefObject<HTMLDivElement>;
+  innerRef: React.RefObject<HTMLDivElement| null>;
 };
 
 export default function useCardFlip({ flipped, setFlipped, innerRef }: UseCardFlipProps) {
