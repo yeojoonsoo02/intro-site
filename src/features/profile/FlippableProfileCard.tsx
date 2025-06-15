@@ -52,11 +52,16 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
 
   return (
     <section
-      className="max-w-[600px] mx-auto mt-20 mb-8 px-2 relative select-none z-10"
-      style={{ perspective: 1200, overflow: 'visible', touchAction: 'pan-y' }}
+      className="max-w-[600px] mx-auto mt-20 mb-8 px-2 relative select-none"
+      style={{
+        perspective: 1200,
+        overflow: 'visible',
+        touchAction: 'pan-y',
+        minHeight: '500px', // ✅ 고정 높이 확보
+      }}
       {...pointerHandlers}
     >
-      <div className="relative w-full min-h-[480px]" style={{ perspective: 1200, overflow: 'visible' }}>
+      <div className="relative w-full h-full" style={{ perspective: 1200, overflow: 'visible' }}>
         <div
           ref={innerRef}
           className="w-full h-full"
@@ -68,8 +73,9 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
             willChange: 'transform',
           }}
         >
+          {/* 앞면 */}
           <div
-            className="w-full h-full absolute top-0 left-0"
+            className="w-full h-full absolute top-0 left-0 z-10"
             style={{
               backfaceVisibility: 'hidden',
               transform: 'rotateY(0deg)',
@@ -89,8 +95,9 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
             )}
           </div>
 
+          {/* 뒷면 */}
           <div
-            className="w-full h-full absolute top-0 left-0"
+            className="w-full h-full absolute top-0 left-0 z-0"
             style={{
               backfaceVisibility: 'hidden',
               transform: 'rotateY(180deg)',
