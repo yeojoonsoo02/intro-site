@@ -18,8 +18,8 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
   const [devProfile, setDevProfile] = useState<Profile | null>(null);
   const innerRef = useRef<HTMLDivElement>(null);
 
-  // 스와이프/포인터 이벤트 핸들러 분리
-  const pointerHandlers = useCardFlip({ flipped, setFlipped, innerRef });
+  // 스와이프/포인터 이벤트 핸들러 분리 (flipped 제거)
+  const pointerHandlers = useCardFlip({ innerRef });
 
   useEffect(() => {
     fetchProfile().then(setProfile);
@@ -55,7 +55,7 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
       {...pointerHandlers}
     >
       <div className="absolute top-2 right-2 z-10 text-xs sm:text-sm font-semibold bg-[#232334] text-[#E4E4E7] px-3 py-1 rounded-full shadow pointer-events-none select-none">
-        {flipped ? '개발자 프로필' : '일반인 프로필'}
+        {/* 안내 텍스트는 제거 또는 필요 시 상태 계산으로 대체 */}
       </div>
       <div className="relative w-full min-h-[480px]" style={{ perspective: 1200, overflow: 'visible' }}>
         <div
@@ -67,13 +67,11 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
             height: '100%',
             transformStyle: 'preserve-3d',
             willChange: 'transform',
-            transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-            transition: 'transform 0.5s cubic-bezier(.4,0,.2,1)',
           }}
         >
           {/* 앞면 */}
           <div
-            className={`w-full h-full left-0 top-0 ${flipped ? 'absolute' : 'relative'}`}
+            className={`w-full h-full left-0 top-0 absolute`}
             style={{ backfaceVisibility: 'hidden' }}
           >
             {profile && (
@@ -91,7 +89,7 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
           </div>
           {/* 뒷면 */}
           <div
-            className={`w-full h-full left-0 top-0 ${flipped ? 'relative' : 'absolute'}`}
+            className={`w-full h-full left-0 top-0 absolute`}
             style={{ transform: 'rotateY(180deg)', backfaceVisibility: 'hidden' }}
           >
             {devProfile && (
