@@ -68,7 +68,8 @@ export default function useCardFlip({ flipped, setFlipped, innerRef }: UseCardFl
     setFlipped(nextFlipped);
 
     innerRef.current.style.transition = 'transform 0.3s ease';
-    innerRef.current.style.transform = `rotateY(${nextFlipped ? 180 : 0}deg)`;
+    const rotateDirection = dx > 0 ? 180 : -180;
+    innerRef.current.style.transform = `rotateY(${rotateDirection}deg)`;
 
     dragging.current = false;
     startX.current = null;
