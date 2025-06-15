@@ -6,16 +6,17 @@ const SWIPE_THRESHOLD = 60;
 const MAX_SWIPE_ANGLE = 45;
 const FLIP_TRIGGER_ANGLE = 30;
 
-type UseCardFlipProps = {
+export type UseCardFlipProps = {
   innerRef: React.RefObject<HTMLDivElement | null>;
+  onAngleChange?: (angle: number) => void;
 };
 
-export default function useCardFlip({ innerRef }: UseCardFlipProps) {
+export default function useCardFlip({ innerRef, onAngleChange }: UseCardFlipProps) {
   const startX = useRef<number | null>(null);
   const startY = useRef<number | null>(null);
   const dragging = useRef(false);
   const currentAngle = useRef(0);
-  const previewAngle = useRef(0); // 임시 회전 각도 저장
+  const previewAngle = useRef(0);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     const container = innerRef.current?.parentElement;
@@ -42,11 +43,12 @@ export default function useCardFlip({ innerRef }: UseCardFlipProps) {
     const dy = e.clientY - (startY.current ?? 0);
     if (Math.abs(dx) <= Math.abs(dy)) return;
 
-    // 스와이프 각도 제한
     const rawAngle = (dx / SWIPE_THRESHOLD) * MAX_SWIPE_ANGLE;
     previewAngle.current = Math.max(-MAX_SWIPE_ANGLE, Math.min(MAX_SWIPE_ANGLE, rawAngle));
 
-    innerRef.current.style.transform = `rotateY(${currentAngle.current + previewAngle.current}deg)`;
+    const totalAngle = currentAngle.current + previewAngle.current;
+    innerRef.current.style.transform = `rotateY(${totalAngle}deg)`;
+    onAngleChange?.(totalAngle);
   };
 
   const handlePointerEnd = (e: React.PointerEvent) => {
@@ -56,16 +58,14 @@ export default function useCardFlip({ innerRef }: UseCardFlipProps) {
     const shouldFlip = absPreview >= FLIP_TRIGGER_ANGLE;
 
     if (shouldFlip) {
-      // 스와이프 방향에 따라 +180 또는 -180 추가
       const direction = previewAngle.current > 0 ? 1 : -1;
       currentAngle.current += 180 * direction;
     }
 
-    // 최종 각도 적용
     innerRef.current.style.transition = 'transform 0.4s ease';
     innerRef.current.style.transform = `rotateY(${currentAngle.current}deg)`;
+    onAngleChange?.(currentAngle.current);
 
-    // 초기화
     dragging.current = false;
     startX.current = null;
     startY.current = null;

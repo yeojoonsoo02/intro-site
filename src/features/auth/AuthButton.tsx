@@ -1,13 +1,12 @@
 "use client";
 import { useState } from "react";
 
-export default function AuthButton({ onAdminChange }: { onAdminChange?: (isAdmin: boolean) => void }) {
+export default function AuthButton({ onAdminChange, visible }: { onAdminChange?: (isAdmin: boolean) => void; visible?: boolean }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [pw, setPw] = useState("");
   const [error, setError] = useState("");
 
-  // 환경변수에서 비밀번호를 읽음 (NEXT_PUBLIC_ADMIN_PASSWORD)
   const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
 
   const handleLogin = () => setShowModal(true);
@@ -34,9 +33,10 @@ export default function AuthButton({ onAdminChange }: { onAdminChange?: (isAdmin
     if (onAdminChange) onAdminChange(false);
   };
 
+  if (!visible) return null;
+
   return (
     <>
-      {/* 하단 중앙에 자연스럽게 배치 */}
       <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-30">
         {isAdmin ? (
           <button
@@ -56,7 +56,6 @@ export default function AuthButton({ onAdminChange }: { onAdminChange?: (isAdmin
           </button>
         )}
       </div>
-      {/* 모달 */}
       {showModal && (
         <div className="admin-modal-backdrop" onClick={handleModalClose}>
           <form
@@ -78,19 +77,8 @@ export default function AuthButton({ onAdminChange }: { onAdminChange?: (isAdmin
             />
             {error && <div className="text-red-500 text-xs mt-1">{error}</div>}
             <div className="modal-actions mt-2">
-              <button
-                type="button"
-                className="modal-btn cancel"
-                onClick={handleModalClose}
-              >
-                취소
-              </button>
-              <button
-                type="submit"
-                className="modal-btn"
-              >
-                확인
-              </button>
+              <button type="button" className="modal-btn cancel" onClick={handleModalClose}>취소</button>
+              <button type="submit" className="modal-btn">확인</button>
             </div>
           </form>
         </div>

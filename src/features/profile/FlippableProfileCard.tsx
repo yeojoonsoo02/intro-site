@@ -11,20 +11,23 @@ import {
 import ProfileCardContent from './ProfileCardContent';
 import ProfileEditForm from './ProfileEditForm';
 import useCardFlip from './useCardFlip';
+import AuthButton from '../auth/AuthButton'; // ✅ 설정 버튼 import
 
 export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: boolean }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [devProfile, setDevProfile] = useState<Profile | null>(null);
+  const [angle, setAngle] = useState(0); // ✅ 현재 회전 각도 저장
   const innerRef = useRef<HTMLDivElement>(null);
 
-  // 스와이프/포인터 이벤트 핸들러 분리 (flipped 제거)
-  const pointerHandlers = useCardFlip({ innerRef });
+  const pointerHandlers = useCardFlip({
+    innerRef,
+    onAngleChange: setAngle, // ✅ 각도 업데이트 콜백 전달
+  });
 
   useEffect(() => {
     fetchProfile().then(setProfile);
     fetchDevProfile().then(setDevProfile);
 
-    // 진입 힌트 애니메이션
     if (innerRef.current) {
       innerRef.current.animate(
         [
@@ -53,9 +56,11 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
       style={{ perspective: 1200, overflow: 'visible', touchAction: 'pan-y' }}
       {...pointerHandlers}
     >
-      <div className="absolute top-2 right-2 z-10 text-xs sm:text-sm font-semibold bg-[#232334] text-[#E4E4E7] px-3 py-1 rounded-full shadow pointer-events-none select-none">
-        {/* 안내 텍스트는 제거 또는 필요 시 상태 계산으로 대체 */}
-      </div>
+      {/* ✅ 1000도 이상일 때만 설정 버튼 표시 */}
+      {angle >= 1000 && (
+        <AuthButton />
+      )}
+
       <div className="relative w-full min-h-[480px]" style={{ perspective: 1200, overflow: 'visible' }}>
         <div
           ref={innerRef}
@@ -68,7 +73,6 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
             willChange: 'transform',
           }}
         >
-          {/* 앞면 */}
           <div
             className={`w-full h-full left-0 top-0 absolute`}
             style={{ backfaceVisibility: 'hidden' }}
@@ -86,7 +90,7 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
               </>
             )}
           </div>
-          {/* 뒷면 */}
+
           <div
             className={`w-full h-full left-0 top-0 absolute`}
             style={{ transform: 'rotateY(180deg)', backfaceVisibility: 'hidden' }}
