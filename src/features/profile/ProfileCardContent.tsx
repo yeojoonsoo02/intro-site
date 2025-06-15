@@ -7,13 +7,14 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       className={`
         w-full
         bg-[#27272A] dark:bg-[#27272A]
-        rounded-[24px]
-        shadow-[0_6px_32px_0_rgba(0,0,0,0.22),0_1.5px_6px_0_rgba(0,0,0,0.10)]
-        p-6 sm:p-8 flex flex-col items-center
-        transition-transform transition-shadow duration-200
+        rounded-[28px]
+        border-[3px] border-[#3f3f46] dark:border-[#3f3f46]
+        shadow-[0_8px_36px_0_rgba(0,0,0,0.3),0_2px_10px_0_rgba(0,0,0,0.15)]
+        p-8 sm:p-10 flex flex-col items-center
+        transition-transform duration-300
         group
+        hover:scale-[1.02]
         will-change-transform
-        hover:scale-[1.025] hover:shadow-[0_12px_48px_0_rgba(0,0,0,0.32),0_2px_8px_0_rgba(0,0,0,0.16)]
       `}
       style={{
         background: "var(--card-bg, #27272A)",
@@ -70,10 +71,10 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
               key={tag + idx}
               className={`
                 bg-[#323236] dark:bg-[#323236]
-                text-[#E4E4E7] dark:text-[#E4E4E7]
+                text-[#E4E4E7]
                 rounded-full px-4 py-1.5
-                text-[0.98rem] font-semibold tracking-tight
-                shadow-sm border border-[#393940] dark:border-[#393940]
+                text-[0.95rem] font-semibold tracking-tight
+                shadow-sm border border-[#393940]
                 flex items-center
               `}
               style={{
