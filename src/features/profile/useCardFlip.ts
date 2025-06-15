@@ -59,11 +59,14 @@ export default function useCardFlip({ flipped, setFlipped, innerRef }: UseCardFl
   const handlePointerEnd = (e: React.PointerEvent) => {
     if (!innerRef.current) return;
 
-    const finalAngle = currentAngle.current % 360;
-    const targetAngle = Math.abs(finalAngle - 180) < Math.abs(finalAngle - 0) ? 180 : 0;
-    const nextFlipped = targetAngle === 180;
+    const rawAngle = currentAngle.current;
+    const finalAngle = ((rawAngle % 360) + 360) % 360; // 0 ~ 359
 
-    setFlipped(nextFlipped);
+    const distTo0 = Math.abs(finalAngle > 180 ? finalAngle - 360 : finalAngle);
+    const distTo180 = Math.abs(finalAngle - 180);
+    const targetAngle = distTo0 < distTo180 ? 0 : 180;
+
+    setFlipped(targetAngle === 180);
     innerRef.current.style.transition = 'transform 0.4s ease';
     innerRef.current.style.transform = `rotateY(${targetAngle}deg)`;
 
