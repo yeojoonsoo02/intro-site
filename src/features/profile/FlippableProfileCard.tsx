@@ -11,17 +11,21 @@ import {
 import ProfileCardContent from './ProfileCardContent';
 import ProfileEditForm from './ProfileEditForm';
 import useCardFlip from './useCardFlip';
-import AuthButton from '../auth/AuthButton'; // ✅ 설정 버튼 import
 
-export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: boolean }) {
+type Props = {
+  isAdmin?: boolean;
+  onAngleChange?: (angle: number) => void;
+};
+
+export default function FlippableProfileCard({ isAdmin = false, onAngleChange }: Props) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [devProfile, setDevProfile] = useState<Profile | null>(null);
-  const [angle, setAngle] = useState(0); // ✅ 현재 회전 각도 저장
   const innerRef = useRef<HTMLDivElement>(null);
 
+  // useCardFlip에 onAngleChange 전달
   const pointerHandlers = useCardFlip({
     innerRef,
-    onAngleChange: setAngle, // ✅ 각도 업데이트 콜백 전달
+    onAngleChange,
   });
 
   useEffect(() => {
@@ -56,11 +60,6 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
       style={{ perspective: 1200, overflow: 'visible', touchAction: 'pan-y' }}
       {...pointerHandlers}
     >
-      {/* ✅ 1000도 이상일 때만 설정 버튼 표시 */}
-      {angle >= 1000 && (
-        <AuthButton />
-      )}
-
       <div className="relative w-full min-h-[480px]" style={{ perspective: 1200, overflow: 'visible' }}>
         <div
           ref={innerRef}
@@ -73,9 +72,16 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
             willChange: 'transform',
           }}
         >
+          {/* 앞면 */}
           <div
-            className={`w-full h-full left-0 top-0 absolute`}
-            style={{ backfaceVisibility: 'hidden' }}
+            className="w-full"
+            style={{
+              backfaceVisibility: 'hidden',
+              position: 'relative',
+              zIndex: 2,
+              transform: 'rotateY(0deg)',
+              marginBottom: '2.5rem',
+            }}
           >
             {profile && (
               <>
@@ -90,10 +96,15 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
               </>
             )}
           </div>
-
+          {/* 뒷면 */}
           <div
-            className={`w-full h-full left-0 top-0 absolute`}
-            style={{ transform: 'rotateY(180deg)', backfaceVisibility: 'hidden' }}
+            className="w-full"
+            style={{
+              backfaceVisibility: 'hidden',
+              position: 'relative',
+              zIndex: 1,
+              transform: 'rotateY(180deg)',
+            }}
           >
             {devProfile && (
               <>
