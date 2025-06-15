@@ -15,10 +15,10 @@ export default function ProfileEditForm({ profile, onChange, label }: Props) {
         onChange={e =>
           onChange({
             ...profile,
-            interests: e.target.value.split(' ').map(v => v.trim()).filter(Boolean),
+            interests: e.target.value.split(',').map(v => v.trim()).filter(Boolean),
           })
         }
-        placeholder={`${label} (띄어쓰기로 구분)`}
+        placeholder={`${label} (콤마로 구분)`}
       />
       <textarea
         className="w-full rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm border border-gray-300 dark:border-gray-600"
