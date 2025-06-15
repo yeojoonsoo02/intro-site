@@ -1,3 +1,5 @@
+'use client';
+
 import { useRef } from 'react';
 
 const SWIPE_THRESHOLD = 60;
@@ -13,6 +15,7 @@ export default function useCardFlip({ flipped, setFlipped, innerRef }: UseCardFl
   const startX = useRef<number | null>(null);
   const startY = useRef<number | null>(null);
   const dragging = useRef(false);
+  const direction = useRef<'left' | 'right' | null>(null);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     const container = innerRef.current?.parentElement;
@@ -24,24 +27,32 @@ export default function useCardFlip({ flipped, setFlipped, innerRef }: UseCardFl
 
     startX.current = e.clientX;
     startY.current = e.clientY;
+    direction.current = x < edgeW ? 'left' : 'right';
     dragging.current = true;
     if (innerRef.current) innerRef.current.style.transition = 'none';
     (e.target as Element).setPointerCapture(e.pointerId);
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!dragging.current || startX.current === null || startY.current === null || !innerRef.current) return;
+    if (
+      !dragging.current ||
+      startX.current === null ||
+      startY.current === null ||
+      !innerRef.current
+    ) return;
 
     const dx = e.clientX - startX.current;
     const dy = e.clientY - startY.current;
+
     if (Math.abs(dx) <= Math.abs(dy)) return;
 
     const ratio = Math.min(1, Math.abs(dx) / SWIPE_THRESHOLD);
     const delta = ratio * MAX_ANGLE;
-    const angle = dx > 0 ? delta : -delta;
 
-    const baseAngle = flipped ? 180 : 0;
-    innerRef.current.style.transform = `rotateY(${baseAngle + angle}deg)`;
+    let angle = flipped ? 180 : 0;
+    angle += dx > 0 ? delta : -delta;
+
+    innerRef.current.style.transform = `rotateY(${angle}deg)`;
   };
 
   const handlePointerEnd = (e: React.PointerEvent) => {
@@ -49,6 +60,7 @@ export default function useCardFlip({ flipped, setFlipped, innerRef }: UseCardFl
       dragging.current = false;
       startX.current = null;
       startY.current = null;
+      direction.current = null;
       return;
     }
 
@@ -57,14 +69,15 @@ export default function useCardFlip({ flipped, setFlipped, innerRef }: UseCardFl
 
     const shouldFlip = Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > SWIPE_THRESHOLD;
     const nextFlipped = shouldFlip ? !flipped : flipped;
-    setFlipped(nextFlipped);
 
+    setFlipped(nextFlipped);
     innerRef.current.style.transition = 'transform 0.3s ease';
     innerRef.current.style.transform = nextFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
 
     dragging.current = false;
     startX.current = null;
     startY.current = null;
+    direction.current = null;
     (e.target as Element).releasePointerCapture(e.pointerId);
   };
 
