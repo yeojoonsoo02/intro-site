@@ -22,10 +22,7 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
   const [devProfile, setDevProfile] = useState<Profile | null>(null);
   const innerRef = useRef<HTMLDivElement>(null);
 
-  const pointerHandlers = useCardFlip({
-    innerRef,
-    onAngleChange,
-  });
+  const pointerHandlers = useCardFlip({ innerRef, onAngleChange });
 
   useEffect(() => {
     fetchProfile().then(setProfile);
@@ -55,7 +52,7 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
 
   return (
     <section
-      className="max-w-[600px] mx-auto mt-20 mb-8 px-2 relative select-none"
+      className="max-w-[600px] mx-auto mt-20 mb-8 px-2 relative select-none z-10"
       style={{ perspective: 1200, overflow: 'visible', touchAction: 'pan-y' }}
       {...pointerHandlers}
     >
@@ -71,13 +68,9 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
             willChange: 'transform',
           }}
         >
-          {/* 앞면 */}
           <div
-            className="w-full h-full"
+            className="w-full h-full absolute top-0 left-0"
             style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
               backfaceVisibility: 'hidden',
               transform: 'rotateY(0deg)',
             }}
@@ -96,13 +89,9 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
             )}
           </div>
 
-          {/* 뒷면 */}
           <div
-            className="w-full h-full"
+            className="w-full h-full absolute top-0 left-0"
             style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
               backfaceVisibility: 'hidden',
               transform: 'rotateY(180deg)',
             }}
