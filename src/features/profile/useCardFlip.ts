@@ -3,7 +3,6 @@
 import { useRef } from 'react';
 
 const SWIPE_THRESHOLD = 60;
-const MAX_ANGLE = 45;
 
 type UseCardFlipProps = {
   flipped: boolean;
