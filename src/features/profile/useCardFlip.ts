@@ -15,7 +15,6 @@ export default function useCardFlip({ flipped, setFlipped, innerRef }: UseCardFl
   const startX = useRef<number | null>(null);
   const startY = useRef<number | null>(null);
   const dragging = useRef(false);
-  const direction = useRef<'left' | 'right' | null>(null);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     const container = innerRef.current?.parentElement;
@@ -27,7 +26,6 @@ export default function useCardFlip({ flipped, setFlipped, innerRef }: UseCardFl
 
     startX.current = e.clientX;
     startY.current = e.clientY;
-    direction.current = x < edgeW ? 'left' : 'right';
     dragging.current = true;
     if (innerRef.current) innerRef.current.style.transition = 'none';
     (e.target as Element).setPointerCapture(e.pointerId);
@@ -49,8 +47,8 @@ export default function useCardFlip({ flipped, setFlipped, innerRef }: UseCardFl
     const ratio = Math.min(1, Math.abs(dx) / SWIPE_THRESHOLD);
     const delta = ratio * MAX_ANGLE;
 
-    let angle = flipped ? 180 : 0;
-    angle += dx > 0 ? delta : -delta;
+    const baseAngle = flipped ? 180 : 0;
+    const angle = baseAngle + (dx > 0 ? delta : -delta);
 
     innerRef.current.style.transform = `rotateY(${angle}deg)`;
   };
@@ -60,7 +58,6 @@ export default function useCardFlip({ flipped, setFlipped, innerRef }: UseCardFl
       dragging.current = false;
       startX.current = null;
       startY.current = null;
-      direction.current = null;
       return;
     }
 
@@ -77,7 +74,6 @@ export default function useCardFlip({ flipped, setFlipped, innerRef }: UseCardFl
     dragging.current = false;
     startX.current = null;
     startY.current = null;
-    direction.current = null;
     (e.target as Element).releasePointerCapture(e.pointerId);
   };
 
