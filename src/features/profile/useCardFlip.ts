@@ -3,7 +3,7 @@
 import { useRef } from 'react';
 
 const SWIPE_THRESHOLD = 60;
-const MAX_SWIPE_ANGLE = 90; // 최대 회전 각도 제한
+const MAX_SWIPE_ANGLE = 45; // ✅ 최대 회전 각도를 45도로 설정
 
 type UseCardFlipProps = {
   flipped: boolean;
@@ -15,7 +15,6 @@ export default function useCardFlip({ flipped, setFlipped, innerRef }: UseCardFl
   const startX = useRef<number | null>(null);
   const startY = useRef<number | null>(null);
   const dragging = useRef(false);
-  const swipeDirection = useRef<'left' | 'right' | null>(null);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     const container = innerRef.current?.parentElement;
@@ -28,23 +27,27 @@ export default function useCardFlip({ flipped, setFlipped, innerRef }: UseCardFl
     startX.current = e.clientX;
     startY.current = e.clientY;
     dragging.current = true;
-    swipeDirection.current = null;
     if (innerRef.current) innerRef.current.style.transition = 'none';
     (e.target as Element).setPointerCapture(e.pointerId);
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!dragging.current || startX.current === null || startY.current === null || !innerRef.current) return;
+    if (
+      !dragging.current ||
+      startX.current === null ||
+      startY.current === null ||
+      !innerRef.current
+    ) return;
 
     const dx = e.clientX - startX.current;
     const dy = e.clientY - startY.current;
     if (Math.abs(dx) <= Math.abs(dy)) return;
 
-    swipeDirection.current = dx > 0 ? 'right' : 'left';
-
-    const angle = dx / SWIPE_THRESHOLD * MAX_SWIPE_ANGLE;
+    const ratio = Math.min(1, Math.abs(dx) / SWIPE_THRESHOLD);
+    const delta = ratio * MAX_SWIPE_ANGLE * (dx > 0 ? 1 : -1);
     const base = flipped ? 180 : 0;
-    innerRef.current.style.transform = `rotateY(${base + angle}deg)`;
+
+    innerRef.current.style.transform = `rotateY(${base + delta}deg)`;
   };
 
   const handlePointerEnd = (e: React.PointerEvent) => {
@@ -52,29 +55,22 @@ export default function useCardFlip({ flipped, setFlipped, innerRef }: UseCardFl
       dragging.current = false;
       startX.current = null;
       startY.current = null;
-      swipeDirection.current = null;
       return;
     }
 
     const dx = e.clientX - startX.current;
     const dy = e.clientY - startY.current;
-
     const shouldFlip = Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > SWIPE_THRESHOLD;
-    let nextFlipped = flipped;
-    if (shouldFlip) {
-      nextFlipped = !flipped;
-    }
+    const nextFlipped = shouldFlip ? !flipped : flipped;
 
     setFlipped(nextFlipped);
 
     innerRef.current.style.transition = 'transform 0.3s ease';
-    const rotateDirection = dx > 0 ? 180 : -180;
-    innerRef.current.style.transform = `rotateY(${rotateDirection}deg)`;
+    innerRef.current.style.transform = nextFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
 
     dragging.current = false;
     startX.current = null;
     startY.current = null;
-    swipeDirection.current = null;
     (e.target as Element).releasePointerCapture(e.pointerId);
   };
 
