@@ -13,7 +13,6 @@ import ProfileEditForm from './ProfileEditForm';
 import useCardFlip from './useCardFlip';
 
 export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: boolean }) {
-  const [flipped, setFlipped] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [devProfile, setDevProfile] = useState<Profile | null>(null);
   const innerRef = useRef<HTMLDivElement>(null);
