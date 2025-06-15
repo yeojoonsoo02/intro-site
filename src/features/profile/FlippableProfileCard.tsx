@@ -22,7 +22,6 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
   const [devProfile, setDevProfile] = useState<Profile | null>(null);
   const innerRef = useRef<HTMLDivElement>(null);
 
-  // useCardFlip에 onAngleChange 전달
   const pointerHandlers = useCardFlip({
     innerRef,
     onAngleChange,
@@ -74,13 +73,13 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
         >
           {/* 앞면 */}
           <div
-            className="w-full"
+            className="w-full h-full"
             style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
               backfaceVisibility: 'hidden',
-              position: 'relative',
-              zIndex: 2,
               transform: 'rotateY(0deg)',
-              marginBottom: '2.5rem',
             }}
           >
             {profile && (
@@ -96,13 +95,15 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
               </>
             )}
           </div>
+
           {/* 뒷면 */}
           <div
-            className="w-full"
+            className="w-full h-full"
             style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
               backfaceVisibility: 'hidden',
-              position: 'relative',
-              zIndex: 1,
               transform: 'rotateY(180deg)',
             }}
           >
