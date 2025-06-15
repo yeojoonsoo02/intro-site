@@ -53,13 +53,10 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
       style={{ perspective: 1200, overflow: 'visible', touchAction: 'pan-y' }}
       {...pointerHandlers}
     >
-      <div className="absolute top-2 right-2 z-10 text-xs sm:text-sm font-semibold bg-[#232334] text-[#E4E4E7] px-3 py-1 rounded-full shadow pointer-events-none select-none">
-        {/* 안내 텍스트는 제거 또는 필요 시 상태 계산으로 대체 */}
-      </div>
       <div className="relative w-full min-h-[480px]" style={{ perspective: 1200, overflow: 'visible' }}>
         <div
           ref={innerRef}
-          className="w-full h-full"
+          className="w-full h-full flex flex-col"
           style={{
             position: 'relative',
             width: '100%',
@@ -70,8 +67,13 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
         >
           {/* 앞면 */}
           <div
-            className={`w-full h-full left-0 top-0 absolute`}
-            style={{ backfaceVisibility: 'hidden' }}
+            className="w-full h-full"
+            style={{
+              backfaceVisibility: 'hidden',
+              position: 'relative',
+              zIndex: 2,
+              transform: 'rotateY(0deg)',
+            }}
           >
             {profile && (
               <>
@@ -88,8 +90,14 @@ export default function FlippableProfileCard({ isAdmin = false }: { isAdmin?: bo
           </div>
           {/* 뒷면 */}
           <div
-            className={`w-full h-full left-0 top-0 absolute`}
-            style={{ transform: 'rotateY(180deg)', backfaceVisibility: 'hidden' }}
+            className="w-full h-full"
+            style={{
+              backfaceVisibility: 'hidden',
+              position: 'relative',
+              zIndex: 1,
+              transform: 'rotateY(180deg)',
+              marginTop: '2.5rem',
+            }}
           >
             {devProfile && (
               <>
