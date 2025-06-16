@@ -53,7 +53,6 @@ const SNS = [
           fill="none"
           aria-hidden="true"
         >
-          {/* 노란색 말풍선 형태: 타원 + 좌측 아래 꼬리 */}
           <ellipse cx="12" cy="10" rx="10" ry="8" fill="#fee500" />
           <path d="M7 17 L5 22 L13 18 Z" fill="#fee500" transform="rotate(-10 8 20)" />
         </svg>
@@ -65,7 +64,7 @@ const SNS = [
     label: '프로젝트(GitHub)',
     icon: (
       <svg
-        className="w-6 h-6 text-[#18181b] dark:text-white"
+        className="w-6 h-6 rounded ring-2 ring-white dark:ring-[#1a1a1a] text-[#18181b] dark:text-white"
         viewBox="0 0 24 24"
         fill="currentColor"
         aria-hidden="true"
