@@ -19,7 +19,7 @@ const SNS = [
           className="absolute inset-0 flex items-center justify-center font-bold text-white text-[0.75rem] select-none"
           style={{ fontFamily: 'sans-serif', letterSpacing: '-1px', transform: 'translateX(-1px)' }}
         >
-         N
+          N
         </span>
       </span>
     ),
@@ -41,7 +41,7 @@ const SNS = [
       </svg>
     ),
   },
- {
+  {
     href: 'https://open.kakao.com/o/somekakaolink',
     label: '여준수 카카오톡',
     color: '#fee500',
@@ -63,10 +63,9 @@ const SNS = [
   {
     href: 'https://github.com/yeojoonsoo02/intro-site',
     label: '프로젝트(GitHub)',
-    color: '#24292f',
     icon: (
       <svg
-        className="w-6 h-6"
+        className="w-6 h-6 text-[#18181b] dark:text-white"
         viewBox="0 0 24 24"
         fill="currentColor"
         aria-hidden="true"
@@ -75,11 +74,10 @@ const SNS = [
           fillRule="evenodd"
           clipRule="evenodd"
           d="M12 2C6.48 2 2 6.58 2 12.26c0 4.48 2.87 8.28 6.84 9.63.5.09.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.78.62-4.02-1.36-4.02-1.36-.45-1.18-1.1-1.5-1.1-1.5-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05A9.38 9.38 0 0 1 12 6.84c.85.004 1.7.12 2.5.35 1.9-1.33 2.74-1.05 2.74-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.8 0 .27.18.58.69.48C19.13 20.54 22 16.74 22 12.26 22 6.58 17.52 2 12 2z"
-          fill="#fff"
         />
       </svg>
     ),
-  },
+  }
 ];
 
 export default function SocialLinks({ colored = false }: { colored?: boolean }) {
