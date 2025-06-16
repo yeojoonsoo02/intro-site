@@ -62,16 +62,21 @@ const SNS = [
 {
   href: 'https://github.com/yeojoonsoo02/intro-site',
   label: '프로젝트(GitHub)',
-  color: '#18181b',
   icon: (
     <span className="relative flex items-center justify-center w-6 h-6">
       <svg
         className="w-6 h-6"
         viewBox="0 0 24 24"
-        fill="currentColor"
+        fill="none"
         aria-hidden="true"
       >
-        <circle cx="12" cy="12" r="12" fill="#18181b" className="dark:fill-white" />
+        <circle
+          cx="12"
+          cy="12"
+          r="12"
+          fill="#18181b"
+          className="dark:fill-[#e4e4e7]"
+        />
         <path
           fillRule="evenodd"
           clipRule="evenodd"
