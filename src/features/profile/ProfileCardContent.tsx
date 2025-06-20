@@ -82,7 +82,6 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
               }}
             >
               {tag}
-              {idx !== arr.length - 1 && <span className="mx-1 text-[#888888] font-bold">·</span>}
             </span>
           ))}
         </div>
