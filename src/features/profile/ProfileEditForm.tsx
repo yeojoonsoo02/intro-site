@@ -16,7 +16,7 @@ export default function ProfileEditForm({ profile, onChange, label }: Props) {
           onChange({
             ...profile,
             interests: e.target.value
-              .split(/[ ,·]+/)
+              .split(/[ , ]+/)
               .map(v => v.trim())
               .filter(Boolean),
           })
