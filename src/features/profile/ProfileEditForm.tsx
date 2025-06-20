@@ -15,7 +15,10 @@ export default function ProfileEditForm({ profile, onChange, label }: Props) {
         onChange={e =>
           onChange({
             ...profile,
-            interests: e.target.value.split(' ').map(v => v.trim()).filter(Boolean),
+            interests: e.target.value
+              .split(/[ ,·]+/)
+              .map(v => v.trim())
+              .filter(Boolean),
           })
         }
         placeholder={`${label} (콤마로 구분)`}
