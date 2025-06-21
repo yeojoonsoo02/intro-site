@@ -12,6 +12,7 @@ import {
 import ProfileCardContent from './ProfileCardContent';
 import ProfileEditForm from './ProfileEditForm';
 import useCardFlip from './useCardFlip';
+import SocialLinks from '@/features/social/SocialLinks';
 
 type Props = {
   isAdmin?: boolean;
@@ -21,14 +22,18 @@ type Props = {
 export default function FlippableProfileCard({ isAdmin = false, onAngleChange }: Props) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [devProfile, setDevProfile] = useState<Profile | null>(null);
+  const [angle, setAngle] = useState(0);
   const innerRef = useRef<HTMLDivElement>(null);
 
-  const pointerHandlers = useCardFlip({ innerRef, onAngleChange });
+  // useCardFlip에 angle 업데이트 함수 전달
+  const pointerHandlers = useCardFlip({ innerRef, onAngleChange: (a) => {
+    setAngle(a);
+    if (onAngleChange) onAngleChange(a);
+  }});
 
   useEffect(() => {
     fetchProfile().then(setProfile);
     fetchDevProfile().then(setDevProfile);
-
     if (innerRef.current) {
       innerRef.current.animate(
         [
@@ -53,45 +58,71 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
 
   return (
     <section
-      className="max-w-[600px] mx-auto mt-20 mb-8 px-2 relative select-none z-10"
+      className="max-w-[600px] mx-auto mt-20 mb-8 px-2 relative select-none"
       style={{ perspective: 1200, overflow: 'visible', touchAction: 'pan-y' }}
       {...pointerHandlers}
     >
-      <div className="relative w-full" style={{ transformStyle: 'preserve-3d', willChange: 'transform' }} ref={innerRef}>
+      <div className="relative w-full min-h-[480px]" style={{ perspective: 1200, overflow: 'visible' }}>
         <div
-          className="w-full"
-          style={{ backfaceVisibility: 'hidden', transform: 'rotateY(0deg)' }}
+          ref={innerRef}
+          className="w-full h-full"
+          style={{
+            position: 'relative',
+            width: '100%',
+            height: '100%',
+            transformStyle: 'preserve-3d',
+            willChange: 'transform',
+          }}
         >
-          {profile && (
-            <>
-              <ProfileCardContent profile={profile} isDev={false} />
-              {isAdmin && (
-                <ProfileEditForm
-                  profile={profile}
-                  onChange={handleProfileChange}
-                  label="관심사·취미"
-                />
-              )}
-            </>
-          )}
-        </div>
-
-        <div
-          className="w-full absolute top-0 left-0"
-          style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
-        >
-          {devProfile && (
-            <>
-              <ProfileCardContent profile={devProfile} isDev />
-              {isAdmin && (
-                <ProfileEditForm
-                  profile={devProfile}
-                  onChange={handleDevProfileChange}
-                  label="주요 기술"
-                />
-              )}
-            </>
-          )}
+          {/* 앞면 */}
+          <div
+            className="w-full"
+            style={{
+              backfaceVisibility: 'hidden',
+              position: 'relative',
+              zIndex: 2,
+              transform: 'rotateY(0deg)',
+              marginBottom: '2.5rem',
+            }}
+          >
+            {profile && (
+              <>
+                <ProfileCardContent profile={profile} isDev={false} />
+                <SocialLinks angle={angle} />
+                {isAdmin && (
+                  <ProfileEditForm
+                    profile={profile}
+                    onChange={handleProfileChange}
+                    label="관심사·취미"
+                  />
+                )}
+              </>
+            )}
+          </div>
+          {/* 뒷면 */}
+          <div
+            className="w-full"
+            style={{
+              backfaceVisibility: 'hidden',
+              position: 'relative',
+              zIndex: 1,
+              transform: 'rotateY(180deg)',
+            }}
+          >
+            {devProfile && (
+              <>
+                <ProfileCardContent profile={devProfile} isDev />
+                <SocialLinks angle={angle} />
+                {isAdmin && (
+                  <ProfileEditForm
+                    profile={devProfile}
+                    onChange={handleDevProfileChange}
+                    label="주요 기술"
+                  />
+                )}
+              </>
+            )}
+          </div>
         </div>
       </div>
     </section>
