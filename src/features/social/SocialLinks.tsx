@@ -15,7 +15,6 @@ export default function SocialLinks({ colored = false, angle = 0 }: { colored?: 
 
   const githubColor = isDarkMode ? '#e4e4e7' : '#3f3f46';
 
-  // angle이 360의 배수면 일반인, 아니면 개발자
   const isNormal = angle % 360 === 0;
 
   const SNS = isNormal
@@ -26,7 +25,7 @@ export default function SocialLinks({ colored = false, angle = 0 }: { colored?: 
           color: '#03c75a',
           icon: (
             <span className="relative flex items-center justify-center w-6 h-6">
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                 <rect width="24" height="24" rx="5" fill="#03c75a" />
               </svg>
               <span className="absolute inset-0 flex items-center justify-center font-bold text-white text-[0.75rem] select-none" style={{ fontFamily: 'sans-serif', letterSpacing: '-1px', transform: 'translateX(-1px)' }}>N</span>
@@ -38,7 +37,7 @@ export default function SocialLinks({ colored = false, angle = 0 }: { colored?: 
           label: '여준수 인스타그램',
           color: '#e1306c',
           icon: (
-            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
               <rect width="24" height="24" rx="6" fill="#e1306c" />
               <circle cx="12" cy="12" r="5" stroke="#fff" strokeWidth="2" fill="none" />
               <circle cx="18" cy="6" r="1.2" fill="#fff" />
@@ -51,7 +50,7 @@ export default function SocialLinks({ colored = false, angle = 0 }: { colored?: 
           color: '#fee500',
           icon: (
             <span className="relative flex items-center justify-center w-6 h-6">
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
                 <ellipse cx="12" cy="10" rx="10" ry="8" fill="#fee500" />
                 <path d="M7 17 L5 22 L13 18 Z" fill="#fee500" transform="rotate(-10 8 20)" />
               </svg>
@@ -64,7 +63,7 @@ export default function SocialLinks({ colored = false, angle = 0 }: { colored?: 
           color: githubColor,
           icon: (
             <span className="relative flex items-center justify-center w-6 h-6" style={{ backgroundColor: githubColor + '22', borderRadius: '50%' }}>
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
                 <path
                   fillRule="evenodd"
                   clipRule="evenodd"
