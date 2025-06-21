@@ -48,7 +48,7 @@ export default function useCardFlip({ innerRef, onAngleChange }: UseCardFlipProp
 
     const totalAngle = currentAngle.current + previewAngle.current;
     innerRef.current.style.transform = `rotateY(${totalAngle}deg)`;
-    if (onAngleChange) onAngleChange(totalAngle);
+    onAngleChange?.(totalAngle);
   };
 
   const handlePointerEnd = (e: React.PointerEvent) => {
@@ -64,7 +64,7 @@ export default function useCardFlip({ innerRef, onAngleChange }: UseCardFlipProp
 
     innerRef.current.style.transition = 'transform 0.4s ease';
     innerRef.current.style.transform = `rotateY(${currentAngle.current}deg)`;
-    if (onAngleChange) onAngleChange(currentAngle.current);
+    onAngleChange?.(currentAngle.current);
 
     dragging.current = false;
     startX.current = null;
