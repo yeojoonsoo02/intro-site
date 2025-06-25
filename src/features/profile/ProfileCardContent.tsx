@@ -55,7 +55,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
           </svg>
           <span>{profile.email}</span>
         </a>
-        <SocialLinks colored />
+        <SocialLinks colored isDev={isDev} />
       </div>
 
       <div className="w-full h-px bg-[#393940] my-6" />
