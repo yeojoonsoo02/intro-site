@@ -67,30 +67,59 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
         </div>
         <div className="flex flex-wrap justify-center gap-x-2 gap-y-2">
           {profile.interests
-            .filter(item =>
-              typeof item === 'string' ? item.trim() : item.label.trim(),
-            )
-            .map((item, idx, arr) => (
-            <a
-              key={item.label + idx}
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`
-                bg-[#e6e6e6] dark:bg-[#323236]
-                text-[#1e1e1e] dark:text-[#E4E4E7]
-                rounded-full px-4 py-1.5
-                text-[0.95rem] font-semibold tracking-tight
-                shadow-sm border border-[#5a5a5a]
-                flex items-center
-              `}
-              style={{
-                marginRight: idx !== arr.length - 1 ? '6px' : 0,
-              }}
-            >
-              {item.label}
-            </a>
-          ))}
+            .filter(item => {
+              if (typeof item === 'string') {
+                return item.trim() !== '';
+              } else if (
+                typeof item === 'object' &&
+                'label' in item &&
+                typeof item.label === 'string'
+              ) {
+                return item.label.trim() !== '';
+              }
+              return false;
+            })
+            .map((item, idx, arr) => {
+              if (typeof item === 'string') {
+                const label = item.trim();
+                return (
+                  <span
+                    key={label + idx}
+                    className={`
+                      bg-[#e6e6e6] dark:bg-[#323236]
+                      text-[#1e1e1e] dark:text-[#E4E4E7]
+                      rounded-full px-4 py-1.5
+                      text-[0.95rem] font-semibold tracking-tight
+                      shadow-sm border border-[#5a5a5a]
+                      flex items-center
+                    `}
+                    style={{ marginRight: idx !== arr.length - 1 ? '6px' : 0 }}
+                  >
+                    {label}
+                  </span>
+                );
+              }
+              const label = item.label.trim();
+              return (
+                <a
+                  key={label + idx}
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`
+                    bg-[#e6e6e6] dark:bg-[#323236]
+                    text-[#1e1e1e] dark:text-[#E4E4E7]
+                    rounded-full px-4 py-1.5
+                    text-[0.95rem] font-semibold tracking-tight
+                    shadow-sm border border-[#5a5a5a]
+                    flex items-center
+                  `}
+                  style={{ marginRight: idx !== arr.length - 1 ? '6px' : 0 }}
+                >
+                  {label}
+                </a>
+              );
+            })}
         </div>
       </div>
 
