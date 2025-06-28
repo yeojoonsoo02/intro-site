@@ -22,6 +22,9 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
   const [profile, setProfile] = useState<Profile | null>(null);
   const [devProfile, setDevProfile] = useState<Profile | null>(null);
   const innerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
+  const frontRef = useRef<HTMLDivElement>(null);
+  const backRef = useRef<HTMLDivElement>(null);
 
   const pointerHandlers = useCardFlip({ innerRef, onAngleChange });
 
@@ -41,6 +44,27 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
     }
   }, []);
 
+  // Adjust container height based on content of both faces
+  useEffect(() => {
+    const container = containerRef.current;
+    const front = frontRef.current;
+    const back = backRef.current;
+    if (!container || !front || !back) return;
+
+    const updateHeight = () => {
+      const h = Math.max(front.offsetHeight, back.offsetHeight);
+      container.style.height = `${h}px`;
+    };
+
+    updateHeight();
+    const ro = new ResizeObserver(updateHeight);
+    ro.observe(front);
+    ro.observe(back);
+    return () => {
+      ro.disconnect();
+    };
+  }, [profile, devProfile]);
+
   const handleProfileChange = async (next: Profile) => {
     setProfile(next);
     await saveProfile(next);
@@ -56,11 +80,17 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
       className="max-w-[600px] mx-auto mt-20 mb-8 px-2 relative select-none z-10"
       style={{ perspective: 1200, overflow: 'visible', touchAction: 'pan-y' }}
       {...pointerHandlers}
+      ref={containerRef}
     >
-      <div className="relative w-full" style={{ transformStyle: 'preserve-3d', willChange: 'transform' }} ref={innerRef}>
+      <div
+        className="relative w-full"
+        style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}
+        ref={innerRef}
+      >
         <div
           className="w-full"
           style={{ backfaceVisibility: 'hidden', transform: 'rotateY(0deg)' }}
+          ref={frontRef}
         >
           {profile && (
             <>
@@ -79,6 +109,7 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
         <div
           className="w-full absolute top-0 left-0"
           style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+          ref={backRef}
         >
           {devProfile && (
             <>
