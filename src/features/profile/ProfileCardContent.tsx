@@ -67,24 +67,31 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
         </div>
         <div className="flex flex-wrap justify-center gap-x-2 gap-y-2">
           {profile.interests
-            .filter(item => {
+            .map(item => {
               if (typeof item === 'string') {
-                return item.trim() !== '';
-              } else if (
+                return { label: item.trim() };
+              }
+              if (
                 typeof item === 'object' &&
                 'label' in item &&
                 typeof item.label === 'string'
               ) {
-                return item.label.trim() !== '';
+                return {
+                  label: item.label.trim(),
+                  url:
+                    'url' in item && typeof item.url === 'string'
+                      ? item.url
+                      : undefined,
+                };
               }
-              return false;
+              return { label: '' };
             })
+            .filter(item => item.label !== '')
             .map((item, idx, arr) => {
-              if (typeof item === 'string') {
-                const label = item.trim();
+              if (!item.url) {
                 return (
                   <span
-                    key={label + idx}
+                    key={item.label + idx}
                     className={`
                       bg-[#e6e6e6] dark:bg-[#323236]
                       text-[#1e1e1e] dark:text-[#E4E4E7]
@@ -95,14 +102,13 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
                     `}
                     style={{ marginRight: idx !== arr.length - 1 ? '6px' : 0 }}
                   >
-                    {label}
+                    {item.label}
                   </span>
                 );
               }
-              const label = item.label.trim();
               return (
                 <a
-                  key={label + idx}
+                  key={item.label + idx}
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -116,7 +122,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
                   `}
                   style={{ marginRight: idx !== arr.length - 1 ? '6px' : 0 }}
                 >
-                  {label}
+                  {item.label}
                 </a>
               );
             })}
