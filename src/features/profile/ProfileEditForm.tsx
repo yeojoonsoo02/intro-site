@@ -8,6 +8,9 @@ type Props = {
 
 export default function ProfileEditForm({ profile, onChange, label }: Props) {
   const handleAdd = () => {
+    if (profile.interests.some(item => !item.label.trim() && !item.url.trim())) {
+      return;
+    }
     onChange({
       ...profile,
       interests: [...profile.interests, { label: '', url: '' }],
@@ -30,6 +33,15 @@ export default function ProfileEditForm({ profile, onChange, label }: Props) {
     onChange({ ...profile, interests: next });
   };
 
+  const handleBlur = (idx: number) => {
+    const next = profile.interests.filter(
+      (item, i) => !(i === idx && !item.label.trim() && !item.url.trim()),
+    );
+    if (next.length !== profile.interests.length) {
+      onChange({ ...profile, interests: next });
+    }
+  };
+
   return (
     <div className="w-full space-y-4 mt-4">
       {profile.interests.map((item, idx) => (
@@ -39,12 +51,14 @@ export default function ProfileEditForm({ profile, onChange, label }: Props) {
             value={item.label}
             onChange={e => handleItemChange(idx, 'label', e.target.value)}
             placeholder={label}
+            onBlur={() => handleBlur(idx)}
           />
           <input
             className="flex-1 rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm border border-gray-300 dark:border-gray-600"
             value={item.url}
             onChange={e => handleItemChange(idx, 'url', e.target.value)}
             placeholder="링크(URL)"
+            onBlur={() => handleBlur(idx)}
           />
           <button
             type="button"

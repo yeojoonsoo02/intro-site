@@ -66,7 +66,9 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
           {isDev ? "주요 기술" : "관심사·취미"}
         </div>
         <div className="flex flex-wrap justify-center gap-x-2 gap-y-2">
-          {profile.interests.map((item, idx, arr) => (
+          {profile.interests
+            .filter(item => item.label.trim())
+            .map((item, idx, arr) => (
             <a
               key={item.label + idx}
               href={item.url}
