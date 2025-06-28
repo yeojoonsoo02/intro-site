@@ -7,18 +7,22 @@ type Props = {
 };
 
 export default function ProfileEditForm({ profile, onChange, label }: Props) {
+  const interests = profile.interests.map(item =>
+    typeof item === 'string' ? { label: item, url: '' } : item,
+  );
+
   const handleAdd = () => {
-    if (profile.interests.some(item => !item.label.trim() && !item.url.trim())) {
+    if (interests.some(item => !item.label.trim() && !item.url.trim())) {
       return;
     }
     onChange({
       ...profile,
-      interests: [...profile.interests, { label: '', url: '' }],
+      interests: [...interests, { label: '', url: '' }],
     });
   };
 
   const handleRemove = (idx: number) => {
-    const next = profile.interests.filter((_, i) => i !== idx);
+    const next = interests.filter((_, i) => i !== idx);
     onChange({ ...profile, interests: next });
   };
 
@@ -27,24 +31,24 @@ export default function ProfileEditForm({ profile, onChange, label }: Props) {
     key: 'label' | 'url',
     value: string,
   ) => {
-    const next = profile.interests.map((item, i) =>
+    const next = interests.map((item, i) =>
       i === idx ? { ...item, [key]: value } : item,
     );
     onChange({ ...profile, interests: next });
   };
 
   const handleBlur = (idx: number) => {
-    const next = profile.interests.filter(
+    const next = interests.filter(
       (item, i) => !(i === idx && !item.label.trim() && !item.url.trim()),
     );
-    if (next.length !== profile.interests.length) {
+    if (next.length !== interests.length) {
       onChange({ ...profile, interests: next });
     }
   };
 
   return (
     <div className="w-full space-y-4 mt-4">
-      {profile.interests.map((item, idx) => (
+      {interests.map((item, idx) => (
         <div key={idx} className="flex gap-2 items-center">
           <input
             className="flex-1 rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm border border-gray-300 dark:border-gray-600"
