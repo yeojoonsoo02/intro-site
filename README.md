@@ -37,4 +37,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Authentication Setup
 
-The project uses **NextAuth.js** with Google and Kakao providers. Create a `.env.local` file based on `.env.example` and provide the credentials from your Firebase project (for Firestore storage) and OAuth apps. After configuring the environment variables you can start the development server and test login via `/login`.
+Google sign-in is implemented with **Firebase Authentication**. Create a `.env.local` file based on `.env.example` and fill in your Firebase project configuration. Once the environment variables are set you can run the development server and test login via `/login`.

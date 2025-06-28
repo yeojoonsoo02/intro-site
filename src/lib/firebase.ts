@@ -6,20 +6,28 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChang
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyD0SEgiLTh9jpUg5Ca-yLnBQ6aK85b4oDw",
-  authDomain: "intro-site-e88aa.firebaseapp.com",
-  projectId: "intro-site-e88aa",
-  storageBucket: "intro-site-e88aa.firebasestorage.app",
-  messagingSenderId: "899682203152",
-  appId: "1:899682203152:web:958e9a308ccb1f3655bc95",
-  measurementId: "G-HNBGJ6GG9E"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
-export const auth = getAuth(app);
+let app: ReturnType<typeof initializeApp> | undefined;
+let authInstance: ReturnType<typeof getAuth> | undefined;
+
+if (typeof window !== 'undefined' && firebaseConfig.apiKey) {
+  app = initializeApp(firebaseConfig);
+  authInstance = getAuth(app);
+}
+
+export const db: ReturnType<typeof getFirestore> = app
+  ? getFirestore(app)
+  : (undefined as unknown as ReturnType<typeof getFirestore>);
+export const auth: ReturnType<typeof getAuth> = authInstance
+  ? authInstance
+  : (undefined as unknown as ReturnType<typeof getAuth>);
 export const provider = new GoogleAuthProvider();
 export { signInWithPopup, signOut, onAuthStateChanged };
