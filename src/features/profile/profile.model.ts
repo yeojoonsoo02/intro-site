@@ -3,7 +3,10 @@ export type Profile = {
   tagline: string;
   email: string;
   photo: string;
-  interests: string[];
+  interests: {
+    label: string;
+    url: string;
+  }[];
   intro: string[];
   region: string;
 };

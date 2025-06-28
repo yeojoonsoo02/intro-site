@@ -7,22 +7,62 @@ type Props = {
 };
 
 export default function ProfileEditForm({ profile, onChange, label }: Props) {
+  const handleAdd = () => {
+    onChange({
+      ...profile,
+      interests: [...profile.interests, { label: '', url: '' }],
+    });
+  };
+
+  const handleRemove = (idx: number) => {
+    const next = profile.interests.filter((_, i) => i !== idx);
+    onChange({ ...profile, interests: next });
+  };
+
+  const handleItemChange = (
+    idx: number,
+    key: 'label' | 'url',
+    value: string,
+  ) => {
+    const next = profile.interests.map((item, i) =>
+      i === idx ? { ...item, [key]: value } : item,
+    );
+    onChange({ ...profile, interests: next });
+  };
+
   return (
     <div className="w-full space-y-4 mt-4">
-      <input
-        className="w-full rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm border border-gray-300 dark:border-gray-600"
-        value={profile.interests.join(' ')}
-        onChange={e =>
-          onChange({
-            ...profile,
-            interests: e.target.value
-              .split(/[ , ]+/)
-              .map(v => v.trim())
-              .filter(Boolean),
-          })
-        }
-        placeholder={`${label} (콤마로 구분)`}
-      />
+      {profile.interests.map((item, idx) => (
+        <div key={idx} className="flex gap-2 items-center">
+          <input
+            className="flex-1 rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm border border-gray-300 dark:border-gray-600"
+            value={item.label}
+            onChange={e => handleItemChange(idx, 'label', e.target.value)}
+            placeholder={label}
+          />
+          <input
+            className="flex-1 rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm border border-gray-300 dark:border-gray-600"
+            value={item.url}
+            onChange={e => handleItemChange(idx, 'url', e.target.value)}
+            placeholder="링크(URL)"
+          />
+          <button
+            type="button"
+            onClick={() => handleRemove(idx)}
+            className="text-red-500 ml-1 text-xs px-2 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900"
+            aria-label="항목 삭제"
+          >
+            ❌
+          </button>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={handleAdd}
+        className="text-sm px-3 py-1 rounded bg-[#e6e6e6] dark:bg-[#323236] text-[#1e1e1e] dark:text-[#E4E4E7]"
+      >
+        + 항목 추가
+      </button>
       <textarea
         className="w-full rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm border border-gray-300 dark:border-gray-600"
         rows={3}

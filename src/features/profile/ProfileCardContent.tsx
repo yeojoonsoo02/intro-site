@@ -66,9 +66,12 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
           {isDev ? "주요 기술" : "관심사·취미"}
         </div>
         <div className="flex flex-wrap justify-center gap-x-2 gap-y-2">
-          {profile.interests.map((tag, idx, arr) => (
-            <span
-              key={tag + idx}
+          {profile.interests.map((item, idx, arr) => (
+            <a
+              key={item.label + idx}
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
               className={`
                 bg-[#e6e6e6] dark:bg-[#323236]
                 text-[#1e1e1e] dark:text-[#E4E4E7]
@@ -81,8 +84,8 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
                 marginRight: idx !== arr.length - 1 ? '6px' : 0,
               }}
             >
-              {tag}
-            </span>
+              {item.label}
+            </a>
           ))}
         </div>
       </div>
