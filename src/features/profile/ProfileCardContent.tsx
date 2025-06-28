@@ -67,7 +67,9 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
         </div>
         <div className="flex flex-wrap justify-center gap-x-2 gap-y-2">
           {profile.interests
-            .filter(item => item.label.trim())
+            .filter(item =>
+              typeof item === 'string' ? item.trim() : item.label.trim(),
+            )
             .map((item, idx, arr) => (
             <a
               key={item.label + idx}
