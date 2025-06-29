@@ -6,6 +6,8 @@ import VisitorCount from '@/features/visitors/VisitorCount';
 import FlippableProfileCard from '@/features/profile/FlippableProfileCard';
 import AuthButton from '@/features/auth/AuthButton';
 
+export const dynamic = "force-dynamic";
+
 export default function Home() {
   const [showComments, setShowComments] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -13,6 +15,9 @@ export default function Home() {
 
   return (
     <main className="max-w-xl mx-auto p-6 text-center pb-24">
+      <div className="mb-4 text-right">
+        <a href="/login" className="text-blue-500 underline">Login</a>
+      </div>
       {/* 설정 버튼은 각도 1000도 이상일 때만 표시 */}
       {angle >= 1000 && <AuthButton onAdminChange={setIsAdmin} visible />}
 
