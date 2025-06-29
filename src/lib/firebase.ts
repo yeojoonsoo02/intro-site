@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp, getApps } from 'firebase/app';
+import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 // TODO: Add SDKs for Firebase products that you want to use
@@ -15,15 +15,17 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-let app = getApps()[0];
-if (!app && firebaseConfig.apiKey) {
+let app;
+if (getApps().length) {
+  app = getApp();
+} else if (firebaseConfig.apiKey) {
   app = initializeApp(firebaseConfig);
 }
 
-export const db: ReturnType<typeof getFirestore> = app
+export const db = app
   ? getFirestore(app)
   : (undefined as unknown as ReturnType<typeof getFirestore>);
-export const auth: ReturnType<typeof getAuth> = app
+export const auth = app
   ? getAuth(app)
   : (undefined as unknown as ReturnType<typeof getAuth>);
 export const provider = new GoogleAuthProvider();
