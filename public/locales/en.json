@@ -27,5 +27,7 @@
   "language": "Language",
   "wrongPassword": "Incorrect password.",
   "profilePhoto": "profile photo"
+  ,"feedbackMessage": "Thank you for visiting! Please leave a quick opinion and feedback in the comments."
+  ,"goToComments": "Go to Comments"
   ,"viewProfile": "View Profile"
 }

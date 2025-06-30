@@ -6,6 +6,7 @@ import CommentSection from '@/features/comments/CommentSection';
 import VisitorCount from '@/features/visitors/VisitorCount';
 import FlippableProfileCard from '@/features/profile/FlippableProfileCard';
 import AuthButton from '@/features/auth/AuthButton';
+import FeedbackBanner from '@/features/feedback/FeedbackBanner';
 
 export const dynamic = "force-dynamic";
 
@@ -44,11 +45,12 @@ export default function Home() {
 
       {/* 댓글 영역 */}
       {showComments && (
-        <div className="w-full flex flex-col items-center">
+        <div id="comments" className="w-full flex flex-col items-center">
           <CommentSection isAdmin={isAdmin} />
         </div>
       )}
     </main>
+    <FeedbackBanner onShowComments={() => setShowComments(true)} />
     </>
   );
 }
