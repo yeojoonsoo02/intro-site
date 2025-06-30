@@ -77,7 +77,7 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
 
   return (
     <section
-      className="max-w-[600px] mx-auto mt-20 mb-8 px-2 relative select-none z-10"
+      className="max-w-[600px] mx-auto mt-10 mb-8 px-2 relative select-none z-10"
       style={{ perspective: 1200, overflow: 'visible', touchAction: 'pan-y' }}
       {...pointerHandlers}
       ref={containerRef}
