@@ -13,7 +13,12 @@ const resources = {
 };
 
 const { i18n } = createClient({
-  ...createConfig({ ...nextI18NextConfig, lng: nextI18NextConfig.i18n.defaultLocale }),
+  ...createConfig({
+    ...nextI18NextConfig,
+    lng: nextI18NextConfig.i18n.defaultLocale,
+    ns: ['translation'],
+    defaultNS: 'translation',
+  }),
   resources,
 }).i18n;
 
