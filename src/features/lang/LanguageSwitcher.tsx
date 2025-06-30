@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { i18n } from 'next-i18next';
+import i18n from '@/lib/i18n';
 import { useTranslation } from 'next-i18next';
 
 const LANGS = [
