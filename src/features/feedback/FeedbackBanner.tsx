@@ -32,14 +32,6 @@ export default function FeedbackBanner({ onShowComments }: { onShowComments: () 
       }}
       className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-1rem)] max-w-md bg-white/80 dark:bg-gray-800/80 backdrop-blur border border-gray-300 dark:border-gray-700 rounded-lg p-4 shadow z-50"
     >
-      <button
-        type="button"
-        aria-label="close"
-        onClick={hide}
-        className="absolute top-1 right-2 text-lg font-bold"
-      >
-        ×
-      </button>
       <p className="mb-2 text-sm">{t('feedbackMessage')}</p>
       <div className="text-right">
         <button
