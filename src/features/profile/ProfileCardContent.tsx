@@ -1,6 +1,7 @@
 import { Profile } from './profile.model';
 import SocialLinks from '@/features/social/SocialLinks';
 import { useTranslation } from 'next-i18next';
+import Image from 'next/image';
 
 export default function ProfileCardContent({ profile, isDev }: { profile: Profile; isDev: boolean }) {
   const { t } = useTranslation();
@@ -25,11 +26,13 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       }}
     >
       <div className="mb-4">
-        <img
+        <Image
           src={profile.photo}
           alt={t('profilePhoto', { defaultValue: 'profile photo' })}
+          width={144}
+          height={144}
           className={`
-            w-36 h-36 rounded-full border-[6px] border-[color:var(--primary)]
+            rounded-full border-[6px] border-[color:var(--primary)]
             object-cover shadow-lg
             transition-transform duration-300
             group-hover:scale-105
