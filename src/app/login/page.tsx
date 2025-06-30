@@ -2,12 +2,14 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthProvider";
+import { useTranslation } from "next-i18next";
 
 export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
   const { login, user } = useAuth();
   const router = useRouter();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (user) router.replace("/dashboard");
@@ -22,7 +24,7 @@ export default function LoginPage() {
           router.push("/dashboard");
         }}
       >
-        Login with Google
+        {t('loginWithGoogle')}
       </button>
     </main>
   );

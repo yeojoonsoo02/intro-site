@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from 'next-i18next';
 import CommentSection from '@/features/comments/CommentSection';
 import VisitorCount from '@/features/visitors/VisitorCount';
 import FlippableProfileCard from '@/features/profile/FlippableProfileCard';
@@ -15,6 +16,7 @@ export default function Home() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [angle, setAngle] = useState(0);
   const [showPrompt, setShowPrompt] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <>
@@ -26,7 +28,7 @@ export default function Home() {
             onClick={() => setShowPrompt(!showPrompt)}
             className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium border border-blue-300 rounded-full bg-white text-blue-700 hover:bg-blue-100 transition"
           >
-            <span>💬</span> <span>Prompt</span>
+            <span>💬</span> <span>{t('prompt')}</span>
           </button>
         </div>
       {/* 설정 버튼은 각도 1000도 이상일 때만 표시 */}
@@ -48,7 +50,7 @@ export default function Home() {
           className="w-full max-w-xs px-4 py-3 bg-[color:var(--primary)] text-white rounded-[8px] hover:bg-[color:var(--button-hover)] transition text-base font-semibold"
           onClick={() => setShowComments(!showComments)}
         >
-          {showComments ? '댓글 숨기기' : '💬 댓글 보기'}
+          {showComments ? t('hideComments') : t('showComments')}
         </button>
       </div>
 
