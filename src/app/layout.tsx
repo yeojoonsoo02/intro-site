@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import AuthProvider from "@/lib/AuthProvider";
 import I18nProvider from "@/lib/I18nProvider";
-import LanguageSwitcher from "@/features/lang/LanguageSwitcher";
+import TopBar from "@/features/nav/TopBar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,9 +19,7 @@ export default function RootLayout({
       <body className="antialiased relative">
         <AuthProvider>
           <I18nProvider>
-            <div className="fixed top-2 right-4 z-50">
-              <LanguageSwitcher />
-            </div>
+            <TopBar />
             {children}
           </I18nProvider>
         </AuthProvider>
