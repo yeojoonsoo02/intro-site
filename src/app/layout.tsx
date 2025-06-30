@@ -3,7 +3,6 @@ import "./globals.css";
 import AuthProvider from "@/lib/AuthProvider";
 import I18nProvider from "@/lib/I18nProvider";
 import LanguageSwitcher from "@/features/lang/LanguageSwitcher";
-import '@/lib/i18n';
 
 export const metadata: Metadata = {
   title: "Create Next App",
