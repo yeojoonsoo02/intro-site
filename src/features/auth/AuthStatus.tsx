@@ -1,8 +1,10 @@
 "use client";
 import Image from "next/image";
 import { useAuth } from "@/lib/AuthProvider";
+import { useTranslation } from "next-i18next";
 
 export default function AuthStatus() {
+  const { t } = useTranslation();
   const { user, login, logout } = useAuth();
 
   if (!user) {
@@ -12,7 +14,7 @@ export default function AuthStatus() {
         onClick={login}
         className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium border border-blue-300 rounded-full bg-white text-blue-700 hover:bg-blue-100 transition"
       >
-        <span>🔑</span> <span>Sign In</span>
+        <span>🔑</span> <span>{t('signIn')}</span>
       </button>
     );
   }
@@ -35,7 +37,7 @@ export default function AuthStatus() {
         onClick={logout}
         className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium border border-blue-300 rounded-full bg-white text-blue-700 hover:bg-blue-100 transition"
       >
-        Logout
+        {t('logout')}
       </button>
     </div>
   );

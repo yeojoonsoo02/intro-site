@@ -1,7 +1,10 @@
 import { Profile } from './profile.model';
 import SocialLinks from '@/features/social/SocialLinks';
+import { useTranslation } from 'next-i18next';
+import Image from 'next/image';
 
 export default function ProfileCardContent({ profile, isDev }: { profile: Profile; isDev: boolean }) {
+  const { t } = useTranslation();
   return (
     <div
       className={`
@@ -23,11 +26,13 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       }}
     >
       <div className="mb-4">
-        <img
+        <Image
           src={profile.photo}
-          alt="프로필 사진"
+          alt={t('profilePhoto', { defaultValue: 'profile photo' })}
+          width={144}
+          height={144}
           className={`
-            w-36 h-36 rounded-full border-[6px] border-[color:var(--primary)]
+            rounded-full border-[6px] border-[color:var(--primary)]
             object-cover shadow-lg
             transition-transform duration-300
             group-hover:scale-105
@@ -63,7 +68,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       {/* 관심사 또는 기술 */}
       <div className="w-full text-center mb-6">
         <div className="text-[1rem] font-bold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">
-          {isDev ? "주요 기술" : "관심사·취미"}
+          {isDev ? t('mainSkills') : t('hobbies')}
         </div>
         <div className="flex flex-wrap justify-center gap-x-2 gap-y-2">
           {profile.interests
@@ -131,7 +136,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
 
       {/* 소개 */}
       <div className="w-full text-center mb-6">
-        <div className="text-[1rem] font-bold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">소개</div>
+        <div className="text-[1rem] font-bold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">{t('introduction')}</div>
         <div className="space-y-3 text-[#2c2c2c] dark:text-[#C4C4C8] text-[1.05rem] leading-[1.6] font-medium">
           {profile.intro.map((p, i) => (
             <p key={i} className={i !== 0 ? "mt-3" : ""}>{p}</p>
@@ -142,7 +147,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       {/* 지역 */}
       <div className="mt-4 text-[0.95rem] flex items-center justify-center text-[#4b4b4b] dark:text-[#B0B0B8] font-semibold tracking-tight">
         <span className="mr-1" aria-hidden>📍</span>
-        {profile.region}
+        {t('region')}: {profile.region}
       </div>
     </div>
   );

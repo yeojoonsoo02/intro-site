@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { incrementVisitCount } from './counter';
+import { useTranslation } from 'next-i18next';
 
 export default function VisitorCount() {
   const [count, setCount] = useState<number | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     incrementVisitCount((c) => setCount(c));
@@ -12,9 +14,9 @@ export default function VisitorCount() {
 
   return (
     <p className="text-[0.875rem] text-[#A1A1AA]">
-      👀 총 방문자 수:{' '}
+      {t('visitorCount')}{' '}
       <span className="font-semibold">
-        {count !== null ? count : '로딩 중...'}
+        {count !== null ? count : t('loading')}
       </span>
     </p>
   );

@@ -15,11 +15,13 @@ import { db } from '@/lib/firebase';
 import CommentItem from './CommentItem';
 import { Comment } from './comment.model';
 import styles from './comment.module.css';
+import { useTranslation } from 'next-i18next';
 
 export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
   const [input, setInput] = useState('');
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   const loadComments = async () => {
     setLoading(true);
@@ -59,7 +61,7 @@ export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && addComment()}
-          placeholder="댓글을 입력하세요"
+          placeholder={t('commentPlaceholder')}
           className={
             styles.input +
             " flex-1 bg-card text-[color:var(--foreground)] border border-[color:var(--input-border)] placeholder:text-[color:var(--muted)]"
@@ -69,16 +71,16 @@ export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
         <button
           onClick={addComment}
           className="bg-[color:var(--primary)] text-[color:var(--primary-contrast)] px-4 py-2 rounded-lg hover:bg-[color:var(--button-hover)] transition text-sm font-semibold min-w-[44px]"
-          aria-label="댓글 등록"
+          aria-label={t('submit')}
         >
-          등록
+          {t('submit')}
         </button>
       </div>
       <ul className="space-y-2">
         {loading ? (
-          <li className="text-center text-muted py-4">댓글 불러오는 중...</li>
+          <li className="text-center text-muted py-4">{t('loadingComments')}</li>
         ) : comments.length === 0 ? (
-          <li className="text-center text-muted py-4">아직 댓글이 없습니다.</li>
+          <li className="text-center text-muted py-4">{t('noComments')}</li>
         ) : (
           comments.map((c) => (
             <CommentItem
