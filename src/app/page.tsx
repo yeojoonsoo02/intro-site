@@ -6,8 +6,6 @@ import CommentSection from '@/features/comments/CommentSection';
 import VisitorCount from '@/features/visitors/VisitorCount';
 import FlippableProfileCard from '@/features/profile/FlippableProfileCard';
 import AuthButton from '@/features/auth/AuthButton';
-import PromptBox from '@/features/prompt/PromptBox';
-import AuthStatus from '@/features/auth/AuthStatus';
 
 export const dynamic = "force-dynamic";
 
@@ -15,22 +13,12 @@ export default function Home() {
   const [showComments, setShowComments] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [angle, setAngle] = useState(0);
-  const [showPrompt, setShowPrompt] = useState(false);
   const { t } = useTranslation();
 
   return (
     <>
       <main className="max-w-xl mx-auto p-6 text-center pb-32">
-        <div className="mb-4 flex justify-end items-center gap-2 bg-blue-50 dark:bg-gray-800/40 p-2 rounded-md">
-          <AuthStatus />
-          <button
-            type="button"
-            onClick={() => setShowPrompt(!showPrompt)}
-            className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium border border-blue-300 rounded-full bg-white text-blue-700 hover:bg-blue-100 transition"
-          >
-            <span>💬</span> <span>{t('prompt')}</span>
-          </button>
-        </div>
+        {/* Top actions removed in favor of global menu */}
       {/* 설정 버튼은 각도 1000도 이상일 때만 표시 */}
       {angle >= 1000 && <AuthButton onAdminChange={setIsAdmin} visible />}
 
@@ -61,7 +49,6 @@ export default function Home() {
         </div>
       )}
     </main>
-    <PromptBox open={showPrompt} />
     </>
   );
 }
