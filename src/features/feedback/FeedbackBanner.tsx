@@ -30,7 +30,7 @@ export default function FeedbackBanner({ onShowComments }: { onShowComments: () 
       onTouchMove={(e) => {
         if (startY !== null && e.touches[0].clientY - startY > 50) hide()
       }}
-      className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-1rem)] max-w-md bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-lg p-3 shadow-sm z-50"
+      className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-1rem)] max-w-md bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border border-gray-200 dark:border-gray-600 rounded-lg p-3 shadow z-50"
     >
       <p className="mb-2 text-sm leading-relaxed">{t('feedbackMessage')}</p>
       <div className="text-right">
@@ -40,7 +40,7 @@ export default function FeedbackBanner({ onShowComments }: { onShowComments: () 
             onShowComments()
             hide()
           }}
-          className="px-3 py-1 text-sm rounded-md bg-blue-500/90 text-white hover:bg-blue-600"
+          className="px-3 py-1 text-sm rounded-md bg-blue-500/80 text-white hover:bg-blue-600"
         >
           {t('goToComments')}
         </button>
