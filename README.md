@@ -41,10 +41,10 @@ Google sign-in is implemented with **Firebase Authentication**. Create a `.env.l
 
 ## Gemini Chat
 
-To enable chatting with Google's Gemini model via the prompt box or `/chat` page, provide your Gemini API key in `.env.local`:
+The chat prompt sends your text to an external server running the Gemini API.
+By default it uses the Cloud Run deployment at
+`https://gemini-api-565729687872.asia-northeast3.run.app/chat`.
+You can point to a different endpoint by setting
+`NEXT_PUBLIC_GEMINI_API_URL` in your `.env.local` file.
 
-```
-GEMINI_API_KEY=your-key-here
-```
-
-With the key configured, start the dev server and you can send prompts from the UI.
+No API key is needed in the frontend when using this hosted service.

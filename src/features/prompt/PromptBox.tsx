@@ -13,14 +13,16 @@ export default function PromptBox({ open }: { open: boolean }) {
     setMessages((m) => [...m, { role: "user", text: prompt }]);
     setText("");
     try {
-      const res = await fetch("/api/gemini", {
+      const url = process.env.NEXT_PUBLIC_GEMINI_API_URL ??
+        "https://gemini-api-565729687872.asia-northeast3.run.app/chat";
+      const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
+        body: JSON.stringify({ message: prompt }),
       });
       const data = await res.json();
-      if (data.text) {
-        setMessages((m) => [...m, { role: "assistant", text: data.text }]);
+      if (data.reply) {
+        setMessages((m) => [...m, { role: "assistant", text: data.reply }]);
       }
     } catch (err) {
       console.error(err);
@@ -32,9 +34,18 @@ export default function PromptBox({ open }: { open: boolean }) {
       className={`fixed bottom-0 left-0 w-full bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border-t border-gray-200 dark:border-gray-600 p-3 transition-transform duration-300 z-40 ${open ? "translate-y-0" : "translate-y-full pointer-events-none"}`}
     >
       <div className="max-w-xl mx-auto flex flex-col gap-2">
-        <div className="max-h-60 overflow-y-auto space-y-2">
+        <div className="max-h-80 overflow-y-auto space-y-2">
           {messages.map((m, i) => (
-            <div key={i} className={`text-sm ${m.role === "user" ? "text-right" : ""}`}>{m.text}</div>
+            <div
+              key={i}
+              className={`text-sm max-w-xs px-3 py-2 rounded-md ${
+                m.role === "user"
+                  ? "ml-auto bg-blue-500 text-white"
+                  : "mr-auto bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              }`}
+            >
+              {m.text}
+            </div>
           ))}
         </div>
         <div className="flex items-center gap-2">
