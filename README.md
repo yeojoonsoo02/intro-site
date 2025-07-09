@@ -38,3 +38,13 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ## Authentication Setup
 
 Google sign-in is implemented with **Firebase Authentication**. Create a `.env.local` file based on `.env.example` and fill in your Firebase project configuration. Once the environment variables are set you can run the development server and test login via `/login`.
+
+## Gemini Chat
+
+To enable chatting with Google's Gemini model via the prompt box or `/chat` page, provide your Gemini API key in `.env.local`:
+
+```
+GEMINI_API_KEY=your-key-here
+```
+
+With the key configured, start the dev server and you can send prompts from the UI.
