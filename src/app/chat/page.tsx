@@ -1,11 +1,6 @@
-'use client'
-import PromptBox from '@/features/prompt/PromptBox'
+"use client";
+import ChatWindow from "@/features/chat/ChatWindow";
 
 export default function ChatPage() {
-  return (
-    <div className="min-h-screen flex flex-col">
-      <PromptBox open={true} />
-    </div>
-  )
+  return <ChatWindow />;
 }
-
