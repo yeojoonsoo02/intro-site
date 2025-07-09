@@ -1,0 +1,33 @@
+{
+  "prompt": "프롬프트",
+  "signIn": "로그인",
+  "logout": "로그아웃",
+  "commentPlaceholder": "댓글을 입력하세요",
+  "submit": "등록",
+  "loadingComments": "댓글 불러오는 중...",
+  "noComments": "아직 댓글이 없습니다.",
+  "showComments": "💬 댓글 보기",
+  "hideComments": "댓글 숨기기",
+  "visitorCount": "👀 총 방문자 수:",
+  "loading": "로딩 중...",
+  "adminLogout": "관리자 모드 해제",
+  "adminLogin": "🌐 설정",
+  "adminAuthTitle": "관리자 인증",
+  "adminAuthDesc": "관리자 비밀번호를 입력하세요.",
+  "passwordPlaceholder": "비밀번호",
+  "cancel": "취소",
+  "confirm": "확인",
+  "loginWithGoogle": "Google로 로그인",
+  "typeYourPrompt": "프롬프트를 입력하세요",
+  "send": "전송",
+  "mainSkills": "주요 기술",
+  "hobbies": "관심사·취미",
+  "introduction": "소개",
+  "region": "지역",
+  "language": "언어",
+  "wrongPassword": "비밀번호가 올바르지 않습니다.",
+  "profilePhoto": "프로필 사진"
+  ,"feedbackMessage": "방문해 주셔서 감사합니다! 댓글로 간단한 의견과 피드백을 남겨 주세요."
+  ,"goToComments": "댓글 남기기"
+  ,"viewProfile": "프로필 보기"
+}

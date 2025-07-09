@@ -1,7 +1,10 @@
 import { Profile } from './profile.model';
 import SocialLinks from '@/features/social/SocialLinks';
+import { useTranslation } from 'next-i18next';
+import Image from 'next/image';
 
 export default function ProfileCardContent({ profile, isDev }: { profile: Profile; isDev: boolean }) {
+  const { t } = useTranslation();
   return (
     <div
       className={`
@@ -23,11 +26,13 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       }}
     >
       <div className="mb-4">
-        <img
+        <Image
           src={profile.photo}
-          alt="프로필 사진"
+          alt={t('profilePhoto', { defaultValue: 'profile photo' })}
+          width={144}
+          height={144}
           className={`
-            w-36 h-36 rounded-full border-[6px] border-[color:var(--primary)]
+            rounded-full border-[6px] border-[color:var(--primary)]
             object-cover shadow-lg
             transition-transform duration-300
             group-hover:scale-105
@@ -55,7 +60,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
           </svg>
           <span>{profile.email}</span>
         </a>
-        <SocialLinks colored />
+        <SocialLinks colored isDev={isDev} />
       </div>
 
       <div className="w-full h-px bg-[#393940] my-6" />
@@ -63,33 +68,75 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       {/* 관심사 또는 기술 */}
       <div className="w-full text-center mb-6">
         <div className="text-[1rem] font-bold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">
-          {isDev ? "주요 기술" : "관심사·취미"}
+          {isDev ? t('mainSkills') : t('hobbies')}
         </div>
         <div className="flex flex-wrap justify-center gap-x-2 gap-y-2">
-          {profile.interests.map((tag, idx, arr) => (
-            <span
-              key={tag + idx}
-              className={`
-                bg-[#e6e6e6] dark:bg-[#323236]
-                text-[#1e1e1e] dark:text-[#E4E4E7]
-                rounded-full px-4 py-1.5
-                text-[0.95rem] font-semibold tracking-tight
-                shadow-sm border border-[#5a5a5a]
-                flex items-center
-              `}
-              style={{
-                marginRight: idx !== arr.length - 1 ? '6px' : 0,
-              }}
-            >
-              {tag}
-            </span>
-          ))}
+          {profile.interests
+            .map(item => {
+              if (typeof item === 'string') {
+                return { label: item.trim() };
+              }
+              if (
+                typeof item === 'object' &&
+                'label' in item &&
+                typeof item.label === 'string'
+              ) {
+                return {
+                  label: item.label.trim(),
+                  url:
+                    'url' in item && typeof item.url === 'string'
+                      ? item.url
+                      : undefined,
+                };
+              }
+              return { label: '' };
+            })
+            .filter(item => item.label !== '')
+            .map((item, idx, arr) => {
+              if (!item.url) {
+                return (
+                  <span
+                    key={item.label + idx}
+                    className={`
+                      bg-[#e6e6e6] dark:bg-[#323236]
+                      text-[#1e1e1e] dark:text-[#E4E4E7]
+                      rounded-full px-4 py-1.5
+                      text-[0.95rem] font-semibold tracking-tight
+                      shadow-sm border border-[#5a5a5a]
+                      flex items-center
+                    `}
+                    style={{ marginRight: idx !== arr.length - 1 ? '6px' : 0 }}
+                  >
+                    {item.label}
+                  </span>
+                );
+              }
+              return (
+                <a
+                  key={item.label + idx}
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`
+                    bg-[#e6e6e6] dark:bg-[#323236]
+                    text-[#1e1e1e] dark:text-[#E4E4E7]
+                    rounded-full px-4 py-1.5
+                    text-[0.95rem] font-semibold tracking-tight
+                    shadow-sm border border-[#5a5a5a]
+                    flex items-center
+                  `}
+                  style={{ marginRight: idx !== arr.length - 1 ? '6px' : 0 }}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
         </div>
       </div>
 
       {/* 소개 */}
       <div className="w-full text-center mb-6">
-        <div className="text-[1rem] font-bold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">소개</div>
+        <div className="text-[1rem] font-bold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">{t('introduction')}</div>
         <div className="space-y-3 text-[#2c2c2c] dark:text-[#C4C4C8] text-[1.05rem] leading-[1.6] font-medium">
           {profile.intro.map((p, i) => (
             <p key={i} className={i !== 0 ? "mt-3" : ""}>{p}</p>
@@ -100,7 +147,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       {/* 지역 */}
       <div className="mt-4 text-[0.95rem] flex items-center justify-center text-[#4b4b4b] dark:text-[#B0B0B8] font-semibold tracking-tight">
         <span className="mr-1" aria-hidden>📍</span>
-        {profile.region}
+        {t('region')}: {profile.region}
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-export default function SocialLinks({ colored = false, angle = 0 }: { colored?: boolean; angle?: number }) {
+export default function SocialLinks({ colored = false, isDev = false }: { colored?: boolean; isDev?: boolean }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
@@ -13,8 +13,8 @@ export default function SocialLinks({ colored = false, angle = 0 }: { colored?: 
     return () => match.removeEventListener('change', handler);
   }, []);
 
-  const githubColor = isDarkMode ? '#e4e4e7' : '#3f3f46';  // angle이 360의 배수면 일반인, 아니면 개발자
-  const isNormal = angle % 360 === 0;
+  const githubColor = isDarkMode ? '#e4e4e7' : '#3f3f46';
+  const isNormal = !isDev;
 
   const SNS = [
     {
