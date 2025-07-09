@@ -26,7 +26,10 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
   const frontRef = useRef<HTMLDivElement>(null);
   const backRef = useRef<HTMLDivElement>(null);
 
-  const pointerHandlers = useCardFlip({ innerRef, onAngleChange });
+  const { isFlipped, ...pointerHandlers } = useCardFlip({
+    innerRef,
+    onAngleChange,
+  });
 
   useEffect(() => {
     fetchProfile().then(setProfile);

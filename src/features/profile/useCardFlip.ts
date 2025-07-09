@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 const SWIPE_THRESHOLD = 60;
 const MAX_SWIPE_ANGLE = 45;
@@ -12,6 +12,7 @@ export type UseCardFlipProps = {
 };
 
 export default function useCardFlip({ innerRef, onAngleChange }: UseCardFlipProps) {
+  const [isFlipped, setIsFlipped] = useState(false);
   const startX = useRef<number | null>(null);
   const startY = useRef<number | null>(null);
   const dragging = useRef(false);
@@ -60,6 +61,7 @@ export default function useCardFlip({ innerRef, onAngleChange }: UseCardFlipProp
     if (shouldFlip) {
       const direction = previewAngle.current > 0 ? 1 : -1;
       currentAngle.current += 180 * direction;
+      setIsFlipped(currentAngle.current % 360 !== 0);
     }
 
     innerRef.current.style.transition = 'transform 0.4s ease';
@@ -78,5 +80,6 @@ export default function useCardFlip({ innerRef, onAngleChange }: UseCardFlipProp
     onPointerMove: handlePointerMove,
     onPointerUp: handlePointerEnd,
     onPointerCancel: handlePointerEnd,
+    isFlipped,
   };
 }
