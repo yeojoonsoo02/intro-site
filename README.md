@@ -41,10 +41,9 @@ Google sign-in is implemented with **Firebase Authentication**. Create a `.env.l
 
 ## Gemini Chat
 
-The chat prompt sends your text to an external server running the Gemini API.
-By default it uses the Cloud Run deployment at
-`https://gemini-api-565729687872.asia-northeast3.run.app/chat`.
-You can point to a different endpoint by setting
-`NEXT_PUBLIC_GEMINI_API_URL` in your `.env.local` file.
-
-No API key is needed in the frontend when using this hosted service.
+The chat interface posts your prompt to the API route `/api/gemini`.
+If `GEMINI_API_KEY` is defined the request is handled locally using the
+`@google/generative-ai` SDK. Without a key the route forwards the message to the
+external service at
+`https://gemini-api-565729687872.asia-northeast3.run.app/chat` (or the URL in
+`NEXT_PUBLIC_GEMINI_API_URL`).

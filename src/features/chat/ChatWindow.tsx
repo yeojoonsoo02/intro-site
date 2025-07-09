@@ -15,17 +15,15 @@ export default function ChatWindow() {
     setMessages((m) => [...m, { role: "user", text: prompt }]);
     setText("");
     try {
-      const url =
-        process.env.NEXT_PUBLIC_GEMINI_API_URL ??
-        "https://gemini-api-565729687872.asia-northeast3.run.app/chat";
-      const res = await fetch(url, {
+      const res = await fetch("/api/gemini", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: prompt }),
       });
       const data = await res.json();
-      if (data.reply) {
-        setMessages((m) => [...m, { role: "assistant", text: data.reply }]);
+      const reply = data.reply || data.text;
+      if (reply) {
+        setMessages((m) => [...m, { role: "assistant", text: reply }]);
       }
     } catch (err) {
       console.error(err);
