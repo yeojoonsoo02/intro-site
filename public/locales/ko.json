@@ -30,5 +30,9 @@
   ,"feedbackMessage": "방문해 주셔서 감사합니다! 댓글로 간단한 의견과 피드백을 남겨 주세요."
   ,"goToComments": "댓글 남기기"
   ,"viewProfile": "프로필 보기",
-  "chat": "대화하기"
+  "chat": "대화하기",
+  "chatInvite": "AI 여준수와 대화해보세요",
+  "hideConversation": "대화 숨기기",
+  "showConversation": "대화 보기",
+  "close": "닫기"
 }

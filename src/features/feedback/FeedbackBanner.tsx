@@ -3,17 +3,24 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'next-i18next'
 
-export default function FeedbackBanner({ onShowComments }: { onShowComments: () => void }) {
+export default function FeedbackBanner({
+  onShowComments,
+  trigger,
+}: {
+  onShowComments: () => void
+  trigger: number
+}) {
   const { t } = useTranslation()
   const [visible, setVisible] = useState(false)
   const [startY, setStartY] = useState<number | null>(null)
 
   useEffect(() => {
+    if (trigger === 0) return
     if (typeof window === 'undefined') return
     if (sessionStorage.getItem('hideFeedbackBanner') === '1') return
     const timer = setTimeout(() => setVisible(true), 10000)
     return () => clearTimeout(timer)
-  }, [])
+  }, [trigger])
 
   const hide = () => {
     setVisible(false)
