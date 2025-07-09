@@ -30,6 +30,7 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
     innerRef,
     onAngleChange,
   });
+  void isFlipped;
 
   useEffect(() => {
     fetchProfile().then(setProfile);
