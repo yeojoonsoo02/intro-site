@@ -12,6 +12,8 @@ export default function PromptBox({
   const [text, setText] = useState("");
   const [messages, setMessages] = useState<{ role: "user" | "assistant"; text: string }[]>([]);
   const [collapsed, setCollapsed] = useState(false);
+  const [showLimit, setShowLimit] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { t } = useTranslation();
 
@@ -45,6 +47,12 @@ export default function PromptBox({
       el.scrollTop = el.scrollHeight;
     }
   }, [messages, collapsed, open]);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   return (
     <div
@@ -92,19 +100,31 @@ export default function PromptBox({
           <input
             type="text"
             value={text}
-            onChange={(e) => setText(e.target.value)}
+            onChange={(e) => {
+              let val = e.target.value
+              if (val.length > 30) {
+                val = val.slice(0, 30)
+                setShowLimit(true)
+                if (timerRef.current) clearTimeout(timerRef.current)
+                timerRef.current = setTimeout(() => setShowLimit(false), 2000)
+              }
+              setText(val)
+            }}
             onKeyDown={(e) => e.key === "Enter" && sendPrompt()}
             placeholder={t('typeYourPrompt')}
             className="flex-1 border border-gray-300 dark:border-gray-500 rounded-md px-3 py-2 bg-white/50 dark:bg-gray-700/40 text-gray-700 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-500"
           />
-          <button
-            type="button"
+        <button
+          type="button"
           onClick={sendPrompt}
           className="bg-blue-500/80 hover:bg-blue-600 text-white text-sm px-3 py-2 rounded-md"
         >
           {t('send')}
         </button>
         </div>
+        {showLimit && (
+          <p className="text-xs text-red-600">{t('max30Chars')}</p>
+        )}
       </div>
     </div>
   );

@@ -34,5 +34,6 @@
   "chatInvite": "AI 여준수와 대화해보세요",
   "hideConversation": "대화 숨기기",
   "showConversation": "대화 보기",
-  "close": "닫기"
+  "close": "닫기",
+  "max30Chars": "최대 30자까지만 입력 가능합니다"
 }

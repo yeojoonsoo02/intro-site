@@ -34,5 +34,6 @@
   "chatInvite": "Chat with AI Yeojunsoo",
   "hideConversation": "Hide conversation",
   "showConversation": "Show conversation",
-  "close": "Close"
+  "close": "Close",
+  "max30Chars": "Maximum 30 characters allowed"
 }
