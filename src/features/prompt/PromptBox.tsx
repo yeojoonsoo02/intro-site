@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "next-i18next";
 
 export default function PromptBox({
@@ -12,6 +12,7 @@ export default function PromptBox({
   const [text, setText] = useState("");
   const [messages, setMessages] = useState<{ role: "user" | "assistant"; text: string }[]>([]);
   const [collapsed, setCollapsed] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const { t } = useTranslation();
 
   const sendPrompt = async () => {
@@ -38,6 +39,13 @@ export default function PromptBox({
     }
   };
 
+  useEffect(() => {
+    if (!collapsed && containerRef.current) {
+      const el = containerRef.current;
+      el.scrollTop = el.scrollHeight;
+    }
+  }, [messages, collapsed, open]);
+
   return (
     <div
       className={`fixed bottom-0 left-0 w-full bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border-t border-gray-200 dark:border-gray-600 p-3 transition-transform duration-300 z-40 ${open ? "translate-y-0" : "translate-y-full pointer-events-none"}`}
@@ -61,7 +69,7 @@ export default function PromptBox({
           </button>
         </div>
         {!collapsed && (
-          <div className="max-h-80 overflow-y-auto space-y-2">
+          <div ref={containerRef} className="max-h-80 overflow-y-auto space-y-2">
             {messages.map((m, i) => (
               <div
                 key={i}
