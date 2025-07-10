@@ -113,7 +113,7 @@ export default function TopBar() {
             setPromptOpen(true)
             setInviteVisible(false)
           }}
-          className="fixed bottom-20 right-4 z-40 px-4 py-2 rounded-md bg-blue-500/80 text-white shadow"
+          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 px-4 py-2 rounded-md bg-blue-500/80 text-white shadow"
         >
           {t('chatInvite')}
         </button>

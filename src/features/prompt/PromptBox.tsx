@@ -47,7 +47,7 @@ export default function PromptBox({
           <button
             type="button"
             onClick={() => setCollapsed((v) => !v)}
-            className="text-xs underline"
+            className="text-xs px-2 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white/40 dark:bg-gray-700/40 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             {collapsed ? t('showConversation') : t('hideConversation')}
           </button>
@@ -55,9 +55,9 @@ export default function PromptBox({
             type="button"
             onClick={onClose}
             aria-label={t('close')}
-            className="text-xl"
+            className="w-6 h-6 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
-            ×
+            <span className="text-lg leading-none">×</span>
           </button>
         </div>
         {!collapsed && (
