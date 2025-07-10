@@ -54,8 +54,9 @@ export default function PromptBox({
         <div className="flex justify-between items-center">
           <button
             type="button"
+            aria-label={collapsed ? t('showConversation') : t('hideConversation')}
             onClick={() => setCollapsed((v) => !v)}
-            className="text-xs px-2 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white/40 dark:bg-gray-700/40 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="text-sm px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white/40 dark:bg-gray-700/40 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             {collapsed ? t('showConversation') : t('hideConversation')}
           </button>
@@ -63,20 +64,23 @@ export default function PromptBox({
             type="button"
             onClick={onClose}
             aria-label={t('close')}
-            className="w-6 h-6 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
-            <span className="text-lg leading-none">×</span>
+            <span className="text-xl leading-none">×</span>
           </button>
         </div>
         {!collapsed && (
-          <div ref={containerRef} className="max-h-80 overflow-y-auto space-y-2">
+          <div
+            ref={containerRef}
+            className="max-h-80 overflow-y-auto space-y-2"
+          >
             {messages.map((m, i) => (
               <div
                 key={i}
-                className={`text-sm max-w-xs px-3 py-2 rounded-md ${
-                  m.role === "user"
-                    ? "ml-auto bg-blue-500 text-white"
-                    : "mr-auto bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                className={`text-sm leading-relaxed break-words whitespace-pre-wrap max-w-[75%] px-3 py-2 rounded-md ${
+                  m.role === 'user'
+                    ? 'ml-auto bg-blue-500 text-white'
+                    : 'mr-auto bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
                 }`}
               >
                 {m.text}
