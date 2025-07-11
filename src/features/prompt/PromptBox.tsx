@@ -10,7 +10,7 @@ export default function PromptBox({
   onClose: () => void;
 }) {
   const [text, setText] = useState("");
-  const [messages, setMessages] = useState<{ role: "user" | "assistant"; text: string; similar?: string[] }[]>([]);
+  const [messages, setMessages] = useState<{ role: "user" | "assistant"; text: string }[]>([]);
   const [remaining, setRemaining] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
@@ -33,9 +33,8 @@ export default function PromptBox({
       });
       const data = await res.json();
       const reply = data.reply || data.text;
-      const similar: string[] | undefined = data.similar;
       if (reply) {
-        setMessages((m) => [...m, { role: "assistant", text: reply, similar }]);
+        setMessages((m) => [...m, { role: "assistant", text: reply }]);
       }
       if (typeof data.remaining === "number") {
         setRemaining(data.remaining);
@@ -102,13 +101,6 @@ export default function PromptBox({
                 >
                   {m.text}
                 </div>
-                {m.similar && m.similar.length > 0 && (
-                  <ul className="text-[11px] text-gray-600 dark:text-gray-400 max-w-[75%] mr-auto list-disc list-inside">
-                    {m.similar.map((s, si) => (
-                      <li key={si}>{s}</li>
-                    ))}
-                  </ul>
-                )}
               </div>
             ))}
             {loading && (

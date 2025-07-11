@@ -41,7 +41,7 @@ Google sign-in is implemented with **Firebase Authentication**. Create a `.env.l
 
 ## Gemini Chat
 
-Open the prompt box from the menu (or visit `/chat`) and type your question.
+Open the prompt box from the menu and type your question.
 Requests are posted to `/api/gemini`. If
 `GEMINI_API_KEY` is set the server handles the request locally using the
 `@google/generative-ai` SDK. Without a key the message is forwarded to the

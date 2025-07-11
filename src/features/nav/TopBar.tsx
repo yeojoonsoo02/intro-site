@@ -56,13 +56,6 @@ export default function TopBar() {
               >
                 {t('prompt')}
               </button>
-              <Link
-                href="/chat"
-                onClick={() => setMenuOpen(false)}
-                className="block px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                {t('chat')}
-              </Link>
               {!user && (
                 <button
                   onClick={() => {

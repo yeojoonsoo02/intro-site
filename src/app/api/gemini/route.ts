@@ -26,8 +26,7 @@ export async function POST(req: NextRequest) {
       const limit = data.limit
       const used = data.used
       const reset = data.reset
-      const similar = data.similarSentences
-      return NextResponse.json({ reply, remaining, limit, used, reset, similar })
+      return NextResponse.json({ reply, remaining, limit, used, reset })
     } catch (err) {
       console.error('Proxy error', err)
       return NextResponse.json({ error: 'Failed to fetch response' }, { status: 500 })
