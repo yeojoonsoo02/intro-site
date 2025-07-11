@@ -35,5 +35,7 @@
   "hideConversation": "대화 숨기기",
   "showConversation": "대화 보기",
   "close": "닫기",
-  "max30Chars": "최대 30자까지만 입력 가능합니다"
+  "max30Chars": "최대 30자까지만 입력 가능합니다",
+  "remaining": "남은 질문 횟수: {{count}}",
+  "typing": "작성 중..."
 }

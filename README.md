@@ -48,3 +48,5 @@ seconds) and type your question. Requests are posted to `/api/gemini`. If
 external service at
 `https://gemini-api-565729687872.asia-northeast3.run.app/chat` (or the URL in
 `NEXT_PUBLIC_GEMINI_API_URL`).
+
+Responses may include a `remaining` count showing how many questions you have left. When provided, it is displayed next to the prompt box.

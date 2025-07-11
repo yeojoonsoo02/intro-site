@@ -11,6 +11,8 @@ export default function PromptBox({
 }) {
   const [text, setText] = useState("");
   const [messages, setMessages] = useState<{ role: "user" | "assistant"; text: string }[]>([]);
+  const [remaining, setRemaining] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [showLimit, setShowLimit] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -22,6 +24,7 @@ export default function PromptBox({
     if (!prompt) return;
     setMessages((m) => [...m, { role: "user", text: prompt }]);
     setText("");
+    setLoading(true);
     try {
       const res = await fetch("/api/gemini", {
         method: "POST",
@@ -33,11 +36,16 @@ export default function PromptBox({
       if (reply) {
         setMessages((m) => [...m, { role: "assistant", text: reply }]);
       }
+      if (typeof data.remaining === "number") {
+        setRemaining(data.remaining);
+      }
       if (typeof window !== "undefined") {
         window.dispatchEvent(new Event("ai-chat"));
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -94,6 +102,11 @@ export default function PromptBox({
                 {m.text}
               </div>
             ))}
+            {loading && (
+              <div className="text-sm leading-relaxed break-words whitespace-pre-wrap max-w-[75%] mr-auto bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-3 py-2 rounded-md">
+                {t('typing')}
+              </div>
+            )}
           </div>
         )}
         <div className="flex items-center gap-2">
@@ -122,6 +135,9 @@ export default function PromptBox({
           {t('send')}
         </button>
         </div>
+        {remaining !== null && (
+          <p className="text-right text-xs text-gray-600 dark:text-gray-400">{t('remaining', { count: remaining })}</p>
+        )}
         {showLimit && (
           <p className="text-xs text-red-600">{t('max30Chars')}</p>
         )}

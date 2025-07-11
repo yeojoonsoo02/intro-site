@@ -21,7 +21,9 @@ export async function POST(req: NextRequest) {
         body: JSON.stringify({ message }),
       })
       const data = await res.json()
-      return NextResponse.json(data)
+      const reply = data.reply ?? data.text
+      const remaining = data.remaining ?? data.count
+      return NextResponse.json({ reply, remaining })
     } catch (err) {
       console.error('Proxy error', err)
       return NextResponse.json({ error: 'Failed to fetch response' }, { status: 500 })
@@ -33,7 +35,7 @@ export async function POST(req: NextRequest) {
     const model = genAI.getGenerativeModel({ model: 'gemini-pro' })
     const result = await model.generateContent(message)
     const reply = result.response.text()
-    return NextResponse.json({ reply })
+    return NextResponse.json({ reply, remaining: null })
   } catch (err) {
     console.error('Gemini API error', err)
     return NextResponse.json({ error: 'Failed to fetch response' }, { status: 500 })
