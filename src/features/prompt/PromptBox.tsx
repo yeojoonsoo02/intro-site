@@ -10,7 +10,7 @@ export default function PromptBox({
   onClose: () => void;
 }) {
   const [text, setText] = useState("");
-  const [messages, setMessages] = useState<{ role: "user" | "assistant"; text: string }[]>([]);
+  const [messages, setMessages] = useState<{ role: "user" | "assistant"; text: string; similar?: string[] }[]>([]);
   const [remaining, setRemaining] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
@@ -33,8 +33,9 @@ export default function PromptBox({
       });
       const data = await res.json();
       const reply = data.reply || data.text;
+      const similar: string[] | undefined = data.similar;
       if (reply) {
-        setMessages((m) => [...m, { role: "assistant", text: reply }]);
+        setMessages((m) => [...m, { role: "assistant", text: reply, similar }]);
       }
       if (typeof data.remaining === "number") {
         setRemaining(data.remaining);
@@ -91,15 +92,23 @@ export default function PromptBox({
             className="max-h-80 overflow-y-auto space-y-2"
           >
             {messages.map((m, i) => (
-              <div
-                key={i}
-                className={`text-sm leading-relaxed break-words whitespace-pre-wrap max-w-[75%] px-3 py-2 rounded-md ${
-                  m.role === 'user'
-                    ? 'ml-auto bg-blue-500 text-white'
-                    : 'mr-auto bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
-                }`}
-              >
-                {m.text}
+              <div key={i} className="space-y-1">
+                <div
+                  className={`text-sm leading-relaxed break-words whitespace-pre-wrap max-w-[75%] px-3 py-2 rounded-md ${
+                    m.role === 'user'
+                      ? 'ml-auto bg-blue-500 text-white'
+                      : 'mr-auto bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                  }`}
+                >
+                  {m.text}
+                </div>
+                {m.similar && m.similar.length > 0 && (
+                  <ul className="text-[11px] text-gray-600 dark:text-gray-400 max-w-[75%] mr-auto list-disc list-inside">
+                    {m.similar.map((s, si) => (
+                      <li key={si}>{s}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
             ))}
             {loading && (
