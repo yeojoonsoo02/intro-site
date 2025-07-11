@@ -4,8 +4,10 @@ import i18n from '@/lib/i18n';
 import { useTranslation } from 'next-i18next';
 
 const LANGS = [
-  { code: 'ko', label: '🇰🇷 Korean' },
-  { code: 'en', label: '🇺🇸 English' },
+  { code: 'ko', label: '한국어' },
+  { code: 'en', label: 'English' },
+  { code: 'zh', label: '中文' },
+  { code: 'ja', label: '日本語' },
 ];
 
 export default function LanguageSwitcher() {
@@ -32,7 +34,7 @@ export default function LanguageSwitcher() {
       <select
         value={lang}
         onChange={(e) => changeLang(e.target.value)}
-        className="border rounded px-2 py-1 text-sm bg-white dark:bg-gray-800"
+        className="border rounded px-2 py-1 text-sm font-medium bg-white dark:bg-gray-800"
       >
         {LANGS.map((l) => (
           <option key={l.code} value={l.code}>

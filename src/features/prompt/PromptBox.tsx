@@ -13,6 +13,7 @@ export default function PromptBox({
   const [messages, setMessages] = useState<{ role: "user" | "assistant"; text: string }[]>([]);
   const [remaining, setRemaining] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+  const [dots, setDots] = useState(1);
   const [collapsed, setCollapsed] = useState(false);
   const [showLimit, setShowLimit] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -38,6 +39,7 @@ export default function PromptBox({
       }
       if (typeof data.remaining === "number") {
         setRemaining(data.remaining);
+        if (data.remaining === 0) alert(t('noQuestionsLeft'));
       }
       if (typeof window !== "undefined") {
         window.dispatchEvent(new Event("ai-chat"));
@@ -61,6 +63,16 @@ export default function PromptBox({
       if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (loading) {
+      const id = setInterval(() => {
+        setDots((d) => (d % 3) + 1);
+      }, 500);
+      return () => clearInterval(id);
+    }
+    setDots(1);
+  }, [loading]);
 
   return (
     <div
@@ -106,6 +118,7 @@ export default function PromptBox({
             {loading && (
               <div className="text-sm leading-relaxed break-words whitespace-pre-wrap max-w-[75%] mr-auto bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-3 py-2 rounded-md">
                 {t('typing')}
+                {'.'.repeat(dots)}
               </div>
             )}
           </div>

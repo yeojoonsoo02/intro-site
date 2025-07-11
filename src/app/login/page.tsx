@@ -12,7 +12,7 @@ export default function LoginPage() {
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (user) router.replace("/dashboard");
+    if (user) router.replace("/");
   }, [user, router]);
 
   return (
@@ -21,7 +21,7 @@ export default function LoginPage() {
         className="bg-blue-500 text-white px-4 py-2 rounded"
         onClick={async () => {
           await login();
-          router.push("/dashboard");
+          router.push("/");
         }}
       >
         {t('loginWithGoogle')}
