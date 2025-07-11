@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 import { useTranslation } from 'next-i18next'
 import { useAuth } from '@/lib/AuthProvider'
 import i18n from '@/lib/i18n'
@@ -10,6 +9,8 @@ import PromptBox from '@/features/prompt/PromptBox'
 const LANGS = [
   { code: 'ko', label: '🇰🇷' },
   { code: 'en', label: '🇺🇸' },
+  { code: 'zh', label: '🇨🇳' },
+  { code: 'ja', label: '🇯🇵' },
 ]
 
 export default function TopBar() {
@@ -69,13 +70,6 @@ export default function TopBar() {
               )}
               {user && (
                 <>
-                  <Link
-                    href="/dashboard"
-                    onClick={() => setMenuOpen(false)}
-                    className="block px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    {t('viewProfile')}
-                  </Link>
                   <button
                     onClick={() => {
                       logout()

@@ -36,5 +36,6 @@
   "close": "Close",
   "max30Chars": "Maximum 30 characters allowed",
   "remaining": "Questions left: {{count}}",
-  "typing": "typing..."
+  "typing": "typing",
+  "noQuestionsLeft": "No questions left. Please try again tomorrow."
 }

@@ -6,6 +6,8 @@ import { useTranslation } from 'next-i18next';
 const LANGS = [
   { code: 'ko', label: '🇰🇷 Korean' },
   { code: 'en', label: '🇺🇸 English' },
+  { code: 'zh', label: '🇨🇳 中文' },
+  { code: 'ja', label: '🇯🇵 日本語' },
 ];
 
 export default function LanguageSwitcher() {
