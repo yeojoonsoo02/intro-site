@@ -19,6 +19,7 @@ export default function TopBar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [promptOpen, setPromptOpen] = useState(false)
   const [inviteVisible, setInviteVisible] = useState(false)
+  const [langOpen, setLangOpen] = useState(false)
 
   useEffect(() => {
     const timer = setTimeout(() => setInviteVisible(true), 10000)
@@ -81,20 +82,31 @@ export default function TopBar() {
                   </button>
                 </>
               )}
-              <div className="border-t border-gray-200 dark:border-gray-700 px-3 py-2 flex items-center gap-2">
-                <span className="mr-auto">{t('language')}</span>
-                {LANGS.map((l) => (
-                  <button
-                    key={l.code}
-                    onClick={() => {
-                      changeLanguage(l.code)
-                      setMenuOpen(false)
-                    }}
-                    className="px-1 hover:underline"
-                  >
-                    {l.label}
-                  </button>
-                ))}
+              <div className="border-t border-gray-200 dark:border-gray-700">
+                <button
+                  onClick={() => setLangOpen((o) => !o)}
+                  className="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  <span>{t('language')}</span>
+                  <span>{langOpen ? '▲' : '▼'}</span>
+                </button>
+                {langOpen && (
+                  <div className="px-3 pb-2 space-y-1">
+                    {LANGS.map((l) => (
+                      <button
+                        key={l.code}
+                        onClick={() => {
+                          changeLanguage(l.code)
+                          setMenuOpen(false)
+                          setLangOpen(false)
+                        }}
+                        className="block w-full text-left px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        {l.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}
