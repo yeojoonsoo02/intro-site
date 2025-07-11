@@ -29,5 +29,12 @@
   "profilePhoto": "프로필 사진"
   ,"feedbackMessage": "방문해 주셔서 감사합니다! 댓글로 간단한 의견과 피드백을 남겨 주세요."
   ,"goToComments": "댓글 남기기"
-  ,"viewProfile": "프로필 보기"
+  ,"viewProfile": "프로필 보기",
+  "chatInvite": "AI 여준수와 대화해보세요",
+  "hideConversation": "대화 숨기기",
+  "showConversation": "대화 보기",
+  "close": "닫기",
+  "max30Chars": "최대 30자까지만 입력 가능합니다",
+  "remaining": "남은 질문 횟수: {{count}}",
+  "typing": "작성 중..."
 }

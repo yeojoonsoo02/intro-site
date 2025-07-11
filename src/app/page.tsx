@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
 import CommentSection from '@/features/comments/CommentSection';
 import VisitorCount from '@/features/visitors/VisitorCount';
@@ -14,7 +14,14 @@ export default function Home() {
   const [showComments, setShowComments] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [angle, setAngle] = useState(0);
+  const [chatTrigger, setChatTrigger] = useState(0);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const handler = () => setChatTrigger((n) => n + 1);
+    window.addEventListener('ai-chat', handler);
+    return () => window.removeEventListener('ai-chat', handler);
+  }, []);
 
   return (
     <>
@@ -50,7 +57,9 @@ export default function Home() {
         </div>
       )}
     </main>
-    <FeedbackBanner onShowComments={() => setShowComments(true)} />
+    <FeedbackBanner
+      onShowComments={() => setShowComments(true)}
+      trigger={chatTrigger}
+    />
     </>
-  );
-}
+  );}

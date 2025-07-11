@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useTranslation } from 'next-i18next'
 import { useAuth } from '@/lib/AuthProvider'
@@ -17,6 +17,12 @@ export default function TopBar() {
   const { t } = useTranslation()
   const [menuOpen, setMenuOpen] = useState(false)
   const [promptOpen, setPromptOpen] = useState(false)
+  const [inviteVisible, setInviteVisible] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setInviteVisible(true), 10000)
+    return () => clearTimeout(timer)
+  }, [])
 
   const changeLanguage = (l: string) => {
     if (!i18n) return
@@ -100,7 +106,19 @@ export default function TopBar() {
           )}
         </div>
       </div>
-      <PromptBox open={promptOpen} />
+      {inviteVisible && !promptOpen && (
+        <button
+          type="button"
+          onClick={() => {
+            setPromptOpen(true)
+            setInviteVisible(false)
+          }}
+          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 px-4 py-2 rounded-md bg-blue-500/80 text-white shadow"
+        >
+          {t('chatInvite')}
+        </button>
+      )}
+      <PromptBox open={promptOpen} onClose={() => setPromptOpen(false)} />
     </>
   )
 }
