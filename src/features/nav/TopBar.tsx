@@ -7,10 +7,10 @@ import i18n from '@/lib/i18n'
 import PromptBox from '@/features/prompt/PromptBox'
 
 const LANGS = [
-  { code: 'ko', label: '🇰🇷' },
-  { code: 'en', label: '🇺🇸' },
-  { code: 'zh', label: '🇨🇳' },
-  { code: 'ja', label: '🇯🇵' },
+  { code: 'ko', label: '한국어' },
+  { code: 'en', label: 'English' },
+  { code: 'zh', label: '中文' },
+  { code: 'ja', label: '日本語' },
 ]
 
 export default function TopBar() {
@@ -85,7 +85,7 @@ export default function TopBar() {
               <div className="border-t border-gray-200 dark:border-gray-700">
                 <button
                   onClick={() => setLangOpen((o) => !o)}
-                  className="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  className="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 font-semibold"
                 >
                   <span>{t('language')}</span>
                   <span>{langOpen ? '▲' : '▼'}</span>
@@ -100,7 +100,7 @@ export default function TopBar() {
                           setMenuOpen(false)
                           setLangOpen(false)
                         }}
-                        className="block w-full text-left px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                        className="block w-full text-left px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-base font-medium"
                       >
                         {l.label}
                       </button>
