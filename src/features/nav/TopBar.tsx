@@ -46,15 +46,25 @@ export default function TopBar() {
             type="button"
             aria-label="menu"
             onClick={() => setMenuOpen(!menuOpen)}
-            className="w-10 h-10 flex items-center justify-center rounded-full backdrop-blur bg-white/60 dark:bg-gray-800/60 shadow border border-gray-300 dark:border-gray-700 hover:bg-gray-200/70 dark:hover:bg-gray-700/60"
+            className="w-10 h-10 flex items-center justify-center rounded-full backdrop-blur bg-white/70 dark:bg-gray-800/70 shadow border border-gray-300 dark:border-gray-700 hover:bg-gray-100/70 dark:hover:bg-gray-700/60"
           >
-            <span className="text-xl">···</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-5 h-5"
+              aria-hidden="true"
+            >
+              <circle cx="5" cy="12" r="1.5" />
+              <circle cx="12" cy="12" r="1.5" />
+              <circle cx="19" cy="12" r="1.5" />
+            </svg>
           </button>
           {menuOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white/80 dark:bg-gray-800/80 backdrop-blur border border-gray-300 dark:border-gray-700 rounded-lg shadow text-sm">
+            <div className="absolute right-0 mt-2 w-48 rounded-xl overflow-hidden bg-[#2563eb] text-white shadow-lg backdrop-blur flex flex-col text-sm divide-y divide-white/30 py-2">
               <button
                 onClick={togglePrompt}
-                className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="block w-full text-left px-4 py-3 hover:bg-blue-600"
               >
                 {t('prompt')}
               </button>
@@ -64,7 +74,7 @@ export default function TopBar() {
                     login()
                     setMenuOpen(false)
                   }}
-                  className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  className="block w-full text-left px-4 py-3 hover:bg-blue-600"
                 >
                   {t('signIn')}
                 </button>
@@ -73,25 +83,32 @@ export default function TopBar() {
                 <>
                   <button
                     onClick={() => {
-                      logout()
-                      setMenuOpen(false)
-                    }}
-                    className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    logout()
+                    setMenuOpen(false)
+                  }}
+                    className="block w-full text-left px-4 py-3 hover:bg-blue-600"
                   >
                     {t('logout')}
                   </button>
                 </>
               )}
-              <div className="border-t border-gray-200 dark:border-gray-700">
+              <div className="pt-2 mt-2 border-t border-white/30">
                 <button
                   onClick={() => setLangOpen((o) => !o)}
-                  className="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 font-semibold"
+                  className="w-full flex items-center justify-between px-4 py-3 hover:bg-blue-600 font-semibold"
                 >
                   <span>{t('language')}</span>
-                  <span>{langOpen ? '▲' : '▼'}</span>
+                  <svg
+                    className={`w-4 h-4 ml-1 transition-transform ${langOpen ? 'rotate-180' : ''}`}
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path fillRule="evenodd" d="M5 7l5 5 5-5H5z" clipRule="evenodd" />
+                  </svg>
                 </button>
                 {langOpen && (
-                  <div className="px-3 pb-2 space-y-1">
+                  <div className="px-5 pb-2 space-y-1">
                     {LANGS.map((l) => (
                       <button
                         key={l.code}
@@ -100,7 +117,7 @@ export default function TopBar() {
                           setMenuOpen(false)
                           setLangOpen(false)
                         }}
-                        className="block w-full text-left px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-base font-medium"
+                        className="block w-full text-left px-2 py-1 rounded hover:bg-white/10 text-base font-medium"
                       >
                         {l.label}
                       </button>
@@ -119,8 +136,9 @@ export default function TopBar() {
             setPromptOpen(true)
             setInviteVisible(false)
           }}
-          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 px-4 py-2 rounded-md bg-blue-500/80 text-white shadow"
+          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 px-6 py-2 rounded-[24px] bg-[#357AE8] text-white text-sm leading-[1.4] shadow transition-transform hover:shadow-lg hover:scale-105 flex items-center"
         >
+          <span className="mr-1.5" aria-hidden>🚀</span>
           {t('chatInvite')}
         </button>
       )}

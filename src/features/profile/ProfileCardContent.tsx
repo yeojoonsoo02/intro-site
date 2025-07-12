@@ -70,7 +70,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
         <div className="text-[1rem] font-bold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">
           {isDev ? t('mainSkills') : t('hobbies')}
         </div>
-        <div className="flex flex-wrap justify-center gap-x-2 gap-y-2">
+        <div className="flex flex-wrap justify-center gap-2">
           {profile.interests
             .map(item => {
               if (typeof item === 'string') {
@@ -92,20 +92,19 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
               return { label: '' };
             })
             .filter(item => item.label !== '')
-            .map((item, idx, arr) => {
+            .map((item, idx) => {
               if (!item.url) {
                 return (
                   <span
                     key={item.label + idx}
                     className={`
                       bg-[#e6e6e6] dark:bg-[#323236]
-                      text-[#1e1e1e] dark:text-[#E4E4E7]
+                      text-[#1e1e1e]/70 dark:text-[#E4E4E7]/70
                       rounded-full px-4 py-1.5
                       text-[0.95rem] font-semibold tracking-tight
                       shadow-sm border border-[#5a5a5a]
-                      flex items-center
+                      flex items-center cursor-default opacity-60
                     `}
-                    style={{ marginRight: idx !== arr.length - 1 ? '6px' : 0 }}
                   >
                     {item.label}
                   </span>
@@ -123,9 +122,8 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
                     rounded-full px-4 py-1.5
                     text-[0.95rem] font-semibold tracking-tight
                     shadow-sm border border-[#5a5a5a]
-                    flex items-center
+                    flex items-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors
                   `}
-                  style={{ marginRight: idx !== arr.length - 1 ? '6px' : 0 }}
                 >
                   {item.label}
                 </a>
@@ -137,9 +135,9 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       {/* 소개 */}
       <div className="w-full text-center mb-6">
         <div className="text-[1rem] font-bold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">{t('introduction')}</div>
-        <div className="space-y-3 text-[#2c2c2c] dark:text-[#C4C4C8] text-[1.05rem] leading-[1.6] font-medium">
+        <div className="space-y-4 text-[#2c2c2c] dark:text-[#C4C4C8] text-[1.05rem] leading-7 font-medium">
           {profile.intro.map((p, i) => (
-            <p key={i} className={i !== 0 ? "mt-3" : ""}>{p}</p>
+            <p key={i}>{p}</p>
           ))}
         </div>
       </div>
