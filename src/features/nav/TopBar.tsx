@@ -61,10 +61,10 @@ export default function TopBar() {
             </svg>
           </button>
           {menuOpen && (
-            <div className="absolute right-0 mt-2 w-48 rounded-2xl bg-[#3b82f6] text-white shadow-lg backdrop-blur flex flex-col text-sm py-2 divide-y divide-white/20">
+            <div className="absolute right-0 mt-2 w-48 rounded-xl overflow-hidden bg-[#2563eb] text-white shadow-lg backdrop-blur flex flex-col text-sm divide-y divide-white/30 py-2">
               <button
                 onClick={togglePrompt}
-                className="block w-full text-left px-5 py-3 hover:bg-white/10"
+                className="block w-full text-left px-4 py-3 hover:bg-blue-600"
               >
                 {t('prompt')}
               </button>
@@ -74,7 +74,7 @@ export default function TopBar() {
                     login()
                     setMenuOpen(false)
                   }}
-                  className="block w-full text-left px-5 py-3 hover:bg-white/10"
+                  className="block w-full text-left px-4 py-3 hover:bg-blue-600"
                 >
                   {t('signIn')}
                 </button>
@@ -83,19 +83,19 @@ export default function TopBar() {
                 <>
                   <button
                     onClick={() => {
-                      logout()
-                      setMenuOpen(false)
-                    }}
-                    className="block w-full text-left px-5 py-3 hover:bg-white/10"
+                    logout()
+                    setMenuOpen(false)
+                  }}
+                    className="block w-full text-left px-4 py-3 hover:bg-blue-600"
                   >
                     {t('logout')}
                   </button>
                 </>
               )}
-              <div className="border-t border-white/30">
+              <div className="pt-2 mt-2 border-t border-white/30">
                 <button
                   onClick={() => setLangOpen((o) => !o)}
-                  className="w-full flex items-center justify-between px-5 py-3 hover:bg-white/10 font-semibold"
+                  className="w-full flex items-center justify-between px-4 py-3 hover:bg-blue-600 font-semibold"
                 >
                   <span>{t('language')}</span>
                   <svg
