@@ -61,10 +61,10 @@ export default function TopBar() {
             </svg>
           </button>
           {menuOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white/80 dark:bg-gray-800/80 backdrop-blur border border-gray-300 dark:border-gray-700 rounded-lg shadow text-sm">
+            <div className="absolute right-0 mt-2 w-48 rounded-xl bg-[#357AE8] text-white shadow-lg backdrop-blur py-1 text-sm">
               <button
                 onClick={togglePrompt}
-                className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="block w-full text-left px-4 py-2 hover:bg-white/20"
               >
                 {t('prompt')}
               </button>
@@ -74,7 +74,7 @@ export default function TopBar() {
                     login()
                     setMenuOpen(false)
                   }}
-                  className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  className="block w-full text-left px-4 py-2 hover:bg-white/20"
                 >
                   {t('signIn')}
                 </button>
@@ -86,22 +86,29 @@ export default function TopBar() {
                       logout()
                       setMenuOpen(false)
                     }}
-                    className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="block w-full text-left px-4 py-2 hover:bg-white/20"
                   >
                     {t('logout')}
                   </button>
                 </>
               )}
-              <div className="border-t border-gray-200 dark:border-gray-700">
+              <div className="border-t border-white/30">
                 <button
                   onClick={() => setLangOpen((o) => !o)}
-                  className="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 font-semibold"
+                  className="w-full flex items-center justify-between px-4 py-2 hover:bg-white/20 font-semibold"
                 >
                   <span>{t('language')}</span>
-                  <span>{langOpen ? '▲' : '▼'}</span>
+                  <svg
+                    className={`w-3 h-3 ml-1 transition-transform ${langOpen ? 'rotate-180' : ''}`}
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path fillRule="evenodd" d="M5 7l5 5 5-5H5z" clipRule="evenodd" />
+                  </svg>
                 </button>
                 {langOpen && (
-                  <div className="px-3 pb-2 space-y-1">
+                  <div className="px-4 pb-2 space-y-1">
                     {LANGS.map((l) => (
                       <button
                         key={l.code}
@@ -110,7 +117,7 @@ export default function TopBar() {
                           setMenuOpen(false)
                           setLangOpen(false)
                         }}
-                        className="block w-full text-left px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-base font-medium"
+                        className="block w-full text-left px-2 py-1 rounded hover:bg-white/20 text-base font-medium"
                       >
                         {l.label}
                       </button>
@@ -129,7 +136,7 @@ export default function TopBar() {
             setPromptOpen(true)
             setInviteVisible(false)
           }}
-          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 px-4 py-2 rounded-md bg-blue-500/80 text-white shadow"
+          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 px-5 py-2 rounded-full bg-[#357AE8] text-white shadow transition-transform hover:shadow-lg hover:scale-105"
         >
           {t('chatInvite')}
         </button>
