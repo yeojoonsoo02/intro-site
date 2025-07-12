@@ -9,6 +9,9 @@
   color: #18181b; /* 라이트모드: 진한 검정 */
   transition: border 0.2s;
   box-sizing: border-box;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  resize: none;
 }
 
 .input:focus {
