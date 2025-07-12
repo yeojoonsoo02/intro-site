@@ -155,8 +155,8 @@ export default function PromptBox({
         {showLimit && (
           <p className="text-xs text-red-600">{t('max30Chars')}</p>
         )}
-        <p className="text-xs text-gray-400 text-center">AI may occasionally provide inaccurate or misleading information.</p>
+          <p className="text-xs text-gray-400 text-center">{t('aiDisclaimer')}</p>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }

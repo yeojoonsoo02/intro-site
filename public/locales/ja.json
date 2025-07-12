@@ -38,4 +38,5 @@
   "remaining": "残りの質問数: {{count}}",
   "typing": "入力中",
   "noQuestionsLeft": "残りの質問回数がありません。明日またお試しください。"
+  ,"aiDisclaimer": "AI が不正確または誤解を招く情報を提供する場合があります。"
 }

@@ -137,7 +137,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
         <div className="text-[1rem] font-bold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">{t('introduction')}</div>
         <div className="space-y-4 text-[#2c2c2c] dark:text-[#C4C4C8] text-[1.05rem] leading-7 font-medium">
           {profile.intro.map((p, i) => (
-            <p key={i}>{p}</p>
+            <p key={i} className="break-normal whitespace-pre-wrap">{p}</p>
           ))}
         </div>
       </div>
