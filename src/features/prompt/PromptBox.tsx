@@ -83,20 +83,10 @@ export default function PromptBox({
           type="button"
           onClick={onClose}
           aria-label={t('close')}
-          className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700"
+          className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-md bg-gray-700 hover:bg-gray-600 text-sm text-gray-400"
         >
-          <span className="text-xl leading-none">×</span>
+          ×
         </button>
-        <div className="flex justify-between items-center">
-          <button
-            type="button"
-            aria-label={collapsed ? t('showConversation') : t('hideConversation')}
-            onClick={() => setCollapsed((v) => !v)}
-            className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700"
-          >
-            <span className="text-lg leading-none">{collapsed ? '⌃' : '⌄'}</span>
-          </button>
-        </div>
         {!collapsed && (
           <div
             ref={containerRef}
@@ -124,6 +114,15 @@ export default function PromptBox({
           </div>
         )}
         <div className="flex items-center gap-2 bg-[#1f2937] rounded-lg px-2 py-1 text-white">
+          <button
+            type="button"
+            title={t('hideConversation')}
+            aria-label={collapsed ? t('showConversation') : t('hideConversation')}
+            onClick={() => setCollapsed((v) => !v)}
+            className="p-1 text-sm text-gray-400 hover:text-gray-200"
+          >
+            {collapsed ? '⌃' : '⌄'}
+          </button>
           <input
             type="text"
             value={text}
@@ -141,14 +140,14 @@ export default function PromptBox({
             placeholder={t('typeYourPrompt')}
             className="flex-1 bg-transparent focus:outline-none px-3 py-2 placeholder-gray-400"
           />
-        <button
-          type="button"
-          onClick={sendPrompt}
-          className="p-2 rounded-md hover:bg-[#374151]"
-          aria-label={t('send')}
-        >
-          <span role="img" aria-hidden className="text-lg">📤</span>
-        </button>
+          <button
+            type="button"
+            onClick={sendPrompt}
+            className="p-2 rounded-md hover:bg-[#374151] text-sm text-gray-400"
+            aria-label={t('send')}
+          >
+            <span role="img" aria-hidden className="text-lg">📤</span>
+          </button>
         </div>
         {remaining !== null && (
           <p className="text-right text-xs text-gray-600 dark:text-gray-400">{t('remaining', { count: remaining })}</p>
