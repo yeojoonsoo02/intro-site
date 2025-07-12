@@ -46,9 +46,19 @@ export default function TopBar() {
             type="button"
             aria-label="menu"
             onClick={() => setMenuOpen(!menuOpen)}
-            className="w-10 h-10 flex items-center justify-center rounded-full backdrop-blur bg-white/60 dark:bg-gray-800/60 shadow border border-gray-300 dark:border-gray-700 hover:bg-gray-200/70 dark:hover:bg-gray-700/60"
+            className="w-10 h-10 flex items-center justify-center rounded-full backdrop-blur bg-white/70 dark:bg-gray-800/70 shadow border border-gray-300 dark:border-gray-700 hover:bg-gray-100/70 dark:hover:bg-gray-700/60"
           >
-            <span className="text-xl">···</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-5 h-5"
+              aria-hidden="true"
+            >
+              <circle cx="5" cy="12" r="1.5" />
+              <circle cx="12" cy="12" r="1.5" />
+              <circle cx="19" cy="12" r="1.5" />
+            </svg>
           </button>
           {menuOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white/80 dark:bg-gray-800/80 backdrop-blur border border-gray-300 dark:border-gray-700 rounded-lg shadow text-sm">
