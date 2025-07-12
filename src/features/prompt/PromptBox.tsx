@@ -76,25 +76,25 @@ export default function PromptBox({
 
   return (
     <div
-      className={`fixed bottom-0 left-0 w-full bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border-t border-gray-200 dark:border-gray-600 p-3 transition-transform duration-300 z-40 ${open ? "translate-y-0" : "translate-y-full pointer-events-none"}`}
+      className={`fixed bottom-0 left-0 w-full bg-[#1f2937] text-white border-t border-gray-600 p-3 transition-transform duration-300 z-40 ${open ? "translate-y-0" : "translate-y-full pointer-events-none"}`}
     >
-      <div className="max-w-xl mx-auto flex flex-col gap-2">
+      <div className="max-w-2xl mx-auto flex flex-col gap-2 relative">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label={t('close')}
+          className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700"
+        >
+          <span className="text-xl leading-none">×</span>
+        </button>
         <div className="flex justify-between items-center">
           <button
             type="button"
             aria-label={collapsed ? t('showConversation') : t('hideConversation')}
             onClick={() => setCollapsed((v) => !v)}
-            className="text-sm px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white/40 dark:bg-gray-700/40 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
-            {collapsed ? t('showConversation') : t('hideConversation')}
-          </button>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label={t('close')}
-            className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
-          >
-            <span className="text-xl leading-none">×</span>
+            <span className="text-lg leading-none">{collapsed ? '⌃' : '⌄'}</span>
           </button>
         </div>
         {!collapsed && (
@@ -123,7 +123,7 @@ export default function PromptBox({
             )}
           </div>
         )}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 bg-[#1f2937] rounded-lg px-2 py-1 text-white">
           <input
             type="text"
             value={text}
@@ -139,14 +139,15 @@ export default function PromptBox({
             }}
             onKeyDown={(e) => e.key === "Enter" && sendPrompt()}
             placeholder={t('typeYourPrompt')}
-            className="flex-1 border border-gray-300 dark:border-gray-500 rounded-md px-3 py-2 bg-white/50 dark:bg-gray-700/40 text-gray-700 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-500"
+            className="flex-1 bg-transparent focus:outline-none px-3 py-2 placeholder-gray-400"
           />
         <button
           type="button"
           onClick={sendPrompt}
-          className="bg-blue-500/80 hover:bg-blue-600 text-white text-sm px-3 py-2 rounded-md"
+          className="p-2 rounded-md hover:bg-[#374151]"
+          aria-label={t('send')}
         >
-          {t('send')}
+          <span role="img" aria-hidden className="text-lg">📤</span>
         </button>
         </div>
         {remaining !== null && (
