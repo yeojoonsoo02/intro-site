@@ -38,4 +38,5 @@
   "remaining": "剩余问题数: {{count}}",
   "typing": "输入中",
   "noQuestionsLeft": "已无剩余提问次数，请明天再试。"
+  ,"aiDisclaimer": "AI 可能偶尔会提供不准确或具有误导性的信息。"
 }
