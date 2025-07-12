@@ -57,16 +57,22 @@ export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
   return (
     <div className="w-full">
       <div className="flex gap-2 mb-2">
-        <input
+        <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && addComment()}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              addComment();
+            }
+          }}
           placeholder={t('commentPlaceholder')}
           className={
             styles.input +
-            " flex-1 bg-card text-[color:var(--foreground)] border border-[color:var(--input-border)] placeholder:text-[color:var(--muted)]"
+            ' flex-1 bg-card text-[color:var(--foreground)] border border-[color:var(--input-border)] placeholder:text-[color:var(--muted)] resize-none'
           }
           maxLength={100}
+          rows={2}
         />
         <button
           onClick={addComment}
