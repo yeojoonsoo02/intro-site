@@ -25,8 +25,6 @@ export default function PromptBox({
     const prompt = text.trim();
     if (!prompt) return;
     setMessages((m) => [...m, { role: "user", text: prompt }]);
-    // Save prompt text to Firestore
-    void savePrompt(prompt);
     setText("");
     setLoading(true);
     try {
@@ -39,6 +37,7 @@ export default function PromptBox({
       const reply = data.reply || data.text;
       if (reply) {
         setMessages((m) => [...m, { role: "assistant", text: reply }]);
+        void savePrompt(prompt, reply);
       }
       if (typeof data.remaining === "number") {
         setRemaining(data.remaining);

@@ -1,10 +1,11 @@
 import { collection, addDoc, Timestamp } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 
-export async function savePrompt(text: string) {
+export async function savePrompt(prompt: string, reply: string) {
   try {
     await addDoc(collection(db, 'prompts'), {
-      text,
+      prompt,
+      reply,
       createdAt: Timestamp.now(),
     })
   } catch (err) {
