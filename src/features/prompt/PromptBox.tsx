@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "next-i18next";
+import { savePrompt } from "./prompt.api";
 
 export default function PromptBox({
   open,
@@ -24,6 +25,8 @@ export default function PromptBox({
     const prompt = text.trim();
     if (!prompt) return;
     setMessages((m) => [...m, { role: "user", text: prompt }]);
+    // Save prompt text to Firestore
+    void savePrompt(prompt);
     setText("");
     setLoading(true);
     try {
