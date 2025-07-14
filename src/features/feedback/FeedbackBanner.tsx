@@ -39,7 +39,7 @@ export default function FeedbackBanner({
       }}
       className="fixed top-4 right-4 w-80 max-w-[calc(100%-2rem)] bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border border-gray-200 dark:border-gray-600 rounded-xl p-3 shadow z-50"
     >
-      <p className="mb-2 text-sm leading-relaxed">{t('feedbackMessage')}</p>
+      <p className="mb-2 text-sm leading-relaxed break-keep whitespace-pre-wrap">{t('feedbackMessage')}</p>
       <div className="text-right">
         <button
           type="button"
