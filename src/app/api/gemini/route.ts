@@ -26,17 +26,17 @@ export async function POST(req: NextRequest) {
       const limit = data.limit
       const used = data.used
       const reset = data.reset
-      try {
-        await fetch(
-          'http://localhost:5678/webhook-test/website-chat-webhook',
-          {
+      const webhook = process.env.WEBSITE_CHAT_WEBHOOK_URL
+      if (webhook) {
+        try {
+          await fetch(webhook, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ question: message, answer: reply }),
-          }
-        )
-      } catch (err) {
-        console.error('Failed to send webhook:', err)
+          })
+        } catch (err) {
+          console.error('Failed to send webhook:', err)
+        }
       }
       return NextResponse.json({ reply, remaining, limit, used, reset })
     } catch (err) {
@@ -50,17 +50,17 @@ export async function POST(req: NextRequest) {
     const model = genAI.getGenerativeModel({ model: 'gemini-pro' })
     const result = await model.generateContent(message)
     const reply = result.response.text()
-    try {
-      await fetch(
-        'http://localhost:5678/webhook-test/website-chat-webhook',
-        {
+    const webhook = process.env.WEBSITE_CHAT_WEBHOOK_URL
+    if (webhook) {
+      try {
+        await fetch(webhook, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ question: message, answer: reply }),
-        }
-      )
-    } catch (err) {
-      console.error('Failed to send webhook:', err)
+        })
+      } catch (err) {
+        console.error('Failed to send webhook:', err)
+      }
     }
     return NextResponse.json({ reply, remaining: null })
   } catch (err) {
