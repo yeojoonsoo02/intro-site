@@ -35,7 +35,7 @@ export async function sendKakaoMemo(template: KakaoTemplate) {
 export function buildKakaoTemplate(question: string, answer: string): KakaoTemplate {
   return {
     object_type: 'text',
-    text: `Q: ${question}\nA: ${answer}`,
+    text: `Q: ${question} A: ${answer}`,
     link: {
       web_url: 'https://example.com',
       mobile_web_url: 'https://m.example.com',
