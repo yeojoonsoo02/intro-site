@@ -14,6 +14,10 @@ export async function sendQuestionAnswer(
         answer,
         userInfo,
         timestamp: new Date().toISOString(),
+        template_object: JSON.stringify({
+          object_type: 'text',
+          text: `Q: ${question}\nA: ${answer}`,
+        }),
       }),
     })
   } catch (err) {
