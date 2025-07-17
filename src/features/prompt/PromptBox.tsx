@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "next-i18next";
 import { savePrompt } from "./prompt.api";
+import { useAuth } from "@/lib/AuthProvider";
 
 export default function PromptBox({
   open,
@@ -20,6 +21,7 @@ export default function PromptBox({
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { t } = useTranslation();
+  const { user } = useAuth();
 
   const sendPrompt = async () => {
     const prompt = text.trim();
@@ -31,7 +33,10 @@ export default function PromptBox({
       const res = await fetch("/api/gemini", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: prompt }),
+        body: JSON.stringify({
+          message: prompt,
+          userInfo: user?.email ?? null,
+        }),
       });
       const data = await res.json();
       const reply = data.reply || data.text;
