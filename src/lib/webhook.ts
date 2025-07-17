@@ -6,7 +6,8 @@ export async function sendQuestionAnswer(
   userInfo?: string,
 ) {
   const webhook = process.env.WEBSITE_CHAT_WEBHOOK_URL
-  const template = buildKakaoTemplate(question, answer)
+  const cleanAnswer = answer.replace(/\n+/g, ' ').trim()
+  const template = buildKakaoTemplate(question, cleanAnswer)
   if (webhook) {
     try {
       await fetch(webhook, {
@@ -14,7 +15,7 @@ export async function sendQuestionAnswer(
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           question,
-          answer,
+          answer: cleanAnswer,
           userInfo,
           timestamp: new Date().toISOString(),
           template_object: JSON.stringify(template),
