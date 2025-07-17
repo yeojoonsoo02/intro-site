@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
+import { sendQuestionAnswer } from '@/lib/webhook'
 
 const DEFAULT_URL =
   'https://gemini-api-565729687872.asia-northeast3.run.app/chat'
@@ -26,18 +27,7 @@ export async function POST(req: NextRequest) {
       const limit = data.limit
       const used = data.used
       const reset = data.reset
-      const webhook = process.env.WEBSITE_CHAT_WEBHOOK_URL
-      if (webhook) {
-        try {
-          await fetch(webhook, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ question: message, answer: reply }),
-          })
-        } catch (err) {
-          console.error('Failed to send webhook:', err)
-        }
-      }
+      await sendQuestionAnswer(message, reply)
       return NextResponse.json({ reply, remaining, limit, used, reset })
     } catch (err) {
       console.error('Proxy error', err)
@@ -50,18 +40,7 @@ export async function POST(req: NextRequest) {
     const model = genAI.getGenerativeModel({ model: 'gemini-pro' })
     const result = await model.generateContent(message)
     const reply = result.response.text()
-    const webhook = process.env.WEBSITE_CHAT_WEBHOOK_URL
-    if (webhook) {
-      try {
-        await fetch(webhook, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ question: message, answer: reply }),
-        })
-      } catch (err) {
-        console.error('Failed to send webhook:', err)
-      }
-    }
+    await sendQuestionAnswer(message, reply)
     return NextResponse.json({ reply, remaining: null })
   } catch (err) {
     console.error('Gemini API error', err)
