@@ -1,21 +1,20 @@
 import axios from 'axios'
 
-export async function sendKakaoMemo(question: string, answer: string) {
+export interface KakaoTemplate {
+  object_type: 'text'
+  text: string
+  link: {
+    web_url: string
+    mobile_web_url: string
+  }
+}
+
+export async function sendKakaoMemo(template: KakaoTemplate) {
   const accessToken = process.env.KAKAO_ACCESS_TOKEN
   if (!accessToken) return
 
   const payload = new URLSearchParams()
-  payload.append(
-    'template_object',
-    JSON.stringify({
-      object_type: 'text',
-      text: `Q: ${question}\nA: ${answer}`,
-      link: {
-        web_url: 'https://example.com',
-        mobile_web_url: 'https://m.example.com',
-      },
-    })
-  )
+  payload.append('template_object', JSON.stringify(template))
 
   try {
     await axios.post(
@@ -30,5 +29,16 @@ export async function sendKakaoMemo(question: string, answer: string) {
     )
   } catch (err) {
     console.error('Failed to send Kakao memo:', err)
+  }
+}
+
+export function buildKakaoTemplate(question: string, answer: string): KakaoTemplate {
+  return {
+    object_type: 'text',
+    text: `Q: ${question}\nA: ${answer}`,
+    link: {
+      web_url: 'https://example.com',
+      mobile_web_url: 'https://m.example.com',
+    },
   }
 }
