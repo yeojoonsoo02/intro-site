@@ -50,3 +50,5 @@ external service at
 `NEXT_PUBLIC_GEMINI_API_URL`).
 
 Responses may include a `remaining` count showing how many questions you have left. When provided, it is displayed next to the prompt box.
+
+Set `WEBSITE_CHAT_WEBHOOK_URL` in your `.env.local` to forward each question and answer to an external service.
