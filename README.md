@@ -51,4 +51,4 @@ external service at
 
 Responses may include a `remaining` count showing how many questions you have left. When provided, it is displayed next to the prompt box.
 
-Set `WEBSITE_CHAT_WEBHOOK_URL` in your `.env.local` to forward each question and answer to an external service. The API route uses `sendQuestionAnswer` from `src/lib/webhook.ts` to post `{ question, answer }` to this URL.
+Set `WEBSITE_CHAT_WEBHOOK_URL` in your `.env.local` to forward each question and answer to an external service. The API route uses `sendQuestionAnswer` from `src/lib/webhook.ts` to post `{ question, answer, userInfo, timestamp }` to this URL.
