@@ -1,20 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f9fafb;
-  --foreground: #171717;
-  --primary: #2563eb;
-  --primary-contrast: #fff;
-  --card-bg: #fff;
-  --border: #e5e7eb;
-  --input-bg: #fff;
-  --input-border: #cbd5e1;
+  --background: linear-gradient(135deg, #0f172a, #1e3a8a);
+  --foreground: #f1f5f9;
+  --primary: #60a5fa;
+  --primary-contrast: #0f172a;
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --border: rgba(255, 255, 255, 0.2);
+  --input-bg: rgba(255, 255, 255, 0.08);
+  --input-border: rgba(255, 255, 255, 0.2);
   --button-bg: #2563eb;
   --button-hover: #1d4ed8;
   --button-text: #fff;
-  --muted: #64748b;
+  --muted: #94a3b8;
   --font-geist-sans: system-ui, sans-serif;
   --font-geist-mono: ui-monospace, monospace;
+  --font-sans: 'Inter', 'Pretendard', var(--font-geist-sans);
 }
 
 /* @theme inline {
@@ -24,22 +25,6 @@
   --font-mono: var(--font-geist-mono);
 } */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #18181b;
-    --foreground: #ededed;
-    --primary: #60a5fa;
-    --primary-contrast: #18181b;
-    --card-bg: #232329;
-    --border: #2d2d35;
-    --input-bg: #232329;
-    --input-border: #374151;
-    --button-bg: #2563eb;
-    --button-hover: #1e40af;
-    --button-text: #fff;
-    --muted: #a1a1aa;
-  }
-}
 
 body {
   background: var(--background);
@@ -59,7 +44,7 @@ button, input, textarea {
 }
 
 button {
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
   cursor: pointer;
   min-height: 44px;
   min-width: 44px;
@@ -70,6 +55,7 @@ button {
 
 button:hover, button:focus {
   background: var(--button-hover);
+  box-shadow: 0 0 8px var(--primary);
 }
 
 input, textarea {
@@ -80,18 +66,25 @@ input, textarea {
   font-size: 1rem;
   background: var(--input-bg);
   color: var(--foreground);
-  transition: border 0.2s, background 0.2s;
+  transition: border 0.2s, background 0.2s, box-shadow 0.2s;
 }
 
 input:focus, textarea:focus {
   border-color: var(--primary);
+  box-shadow: 0 0 6px var(--primary);
 }
 
 .card, .bg-card {
   background: var(--card-bg);
   color: var(--foreground);
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+.glass-card {
+  @apply card p-6;
 }
 
 .text-muted {
