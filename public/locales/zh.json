@@ -19,6 +19,7 @@
   "confirm": "确认",
   "loginWithGoogle": "使用 Google 登录",
   "typeYourPrompt": "输入您的提示",
+  "promptHint": "可以自然地向 AI 提问，例如：'总结我的待办事项'、'给我博客创意'",
   "send": "发送",
   "mainSkills": "主要技能",
   "hobbies": "兴趣与爱好",

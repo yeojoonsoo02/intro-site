@@ -19,6 +19,7 @@
   "confirm": "確認",
   "loginWithGoogle": "Googleでログイン",
   "typeYourPrompt": "プロンプトを入力してください",
+  "promptHint": "AI に自然な言葉で何でも質問できます。例: 'やることリストを要約して', 'ブログのアイデアを教えて'",
   "send": "送信",
   "mainSkills": "主要スキル",
   "hobbies": "興味・趣味",

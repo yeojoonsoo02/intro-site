@@ -19,6 +19,7 @@
   "confirm": "확인",
   "loginWithGoogle": "Google로 로그인",
   "typeYourPrompt": "프롬프트를 입력하세요",
+  "promptHint": "AI에게 자연스럽게 무엇이든 물어보세요. 예: '할 일 목록 요약해줘', '블로그 아이디어 알려줘'",
   "send": "전송",
   "mainSkills": "주요 기술",
   "hobbies": "관심사·취미",

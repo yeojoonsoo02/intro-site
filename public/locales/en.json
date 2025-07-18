@@ -19,6 +19,7 @@
   "confirm": "Confirm",
   "loginWithGoogle": "Login with Google",
   "typeYourPrompt": "Type your prompt",
+  "promptHint": "Ask the AI anything naturally. E.g., 'Summarize my to-do list', 'Give me blog ideas'",
   "send": "Send",
   "mainSkills": "Main Skills",
   "hobbies": "Interests & Hobbies",
