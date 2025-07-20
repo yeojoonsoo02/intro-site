@@ -7,6 +7,9 @@ import TopBar from "@/features/nav/TopBar";
 export const metadata: Metadata = {
   title: "yeojoonsoo02",
   description: "yeojoonsoo02",
+  icons: {
+    icon: "/favicon.ico?v=1",
+  },
 };
 
 export default function RootLayout({
