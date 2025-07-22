@@ -1,25 +1,25 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import CommentSection from '@/features/comments/CommentSection';
 import VisitorCount from '@/features/visitors/VisitorCount';
 import FlippableProfileCard from '@/features/profile/FlippableProfileCard';
 import AuthButton from '@/features/auth/AuthButton';
-import FeedbackBanner from '@/features/feedback/FeedbackBanner';
+// import FeedbackBanner from '@/features/feedback/FeedbackBanner';
 
 export const dynamic = "force-dynamic";
 
 export default function Home() {
-  const [showComments, setShowComments] = useState(false);
+  const [showComments /* , setShowComments */] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [angle, setAngle] = useState(0);
-  const [chatTrigger, setChatTrigger] = useState(0);
+  // const [chatTrigger, setChatTrigger] = useState(0);
 
-  useEffect(() => {
-    const handler = () => setChatTrigger((n) => n + 1);
-    window.addEventListener('ai-chat', handler);
-    return () => window.removeEventListener('ai-chat', handler);
-  }, []);
+  // useEffect(() => {
+  //   const handler = () => setChatTrigger((n) => n + 1);
+  //   window.addEventListener('ai-chat', handler);
+  //   return () => window.removeEventListener('ai-chat', handler);
+  // }, []);
 
   return (
     <>
@@ -57,9 +57,11 @@ export default function Home() {
         </div>
       )}
     </main>
+    {/*
     <FeedbackBanner
       onShowComments={() => setShowComments(true)}
       trigger={chatTrigger}
     />
+    */}
     </>
   );}
