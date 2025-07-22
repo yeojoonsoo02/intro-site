@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslation } from 'next-i18next';
 import CommentSection from '@/features/comments/CommentSection';
 import VisitorCount from '@/features/visitors/VisitorCount';
 import FlippableProfileCard from '@/features/profile/FlippableProfileCard';
@@ -15,7 +14,6 @@ export default function Home() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [angle, setAngle] = useState(0);
   const [chatTrigger, setChatTrigger] = useState(0);
-  const { t } = useTranslation();
 
   useEffect(() => {
     const handler = () => setChatTrigger((n) => n + 1);
@@ -40,7 +38,8 @@ export default function Home() {
         <VisitorCount />
       </div>
 
-      {/* 댓글 토글 버튼 */}
+      {/* 댓글 토글 버튼 (임시 비활성화) */}
+      {/*
       <div className="mb-6">
         <button
           className="w-full max-w-xs px-4 py-3 bg-[color:var(--primary)] text-white rounded-[8px] hover:bg-[color:var(--button-hover)] transition text-base font-semibold"
@@ -49,6 +48,7 @@ export default function Home() {
           {showComments ? t('hideComments') : t('showComments')}
         </button>
       </div>
+      */}
 
       {/* 댓글 영역 */}
       {showComments && (
