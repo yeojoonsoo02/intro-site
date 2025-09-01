@@ -36,9 +36,9 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
   void isFlipped;
 
   useEffect(() => {
-    const currentLang = i18n.language || 'en';
-    fetchProfile(currentLang).then(p => setProfile(p ?? DEFAULT_PROFILES[currentLang] ?? DEFAULT_PROFILES['en']));
-    fetchDevProfile(currentLang).then(p => setDevProfile(p ?? DEFAULT_PROFILES[currentLang] ?? DEFAULT_PROFILES['en']));
+    // Always fetch the same profile data regardless of language
+    fetchProfile().then(p => setProfile(p ?? DEFAULT_PROFILES['en']));
+    fetchDevProfile().then(p => setDevProfile(p ?? DEFAULT_PROFILES['en']));
 
     if (innerRef.current) {
       innerRef.current.animate(
@@ -50,7 +50,7 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
         { duration: 800, easing: 'ease-in-out', delay: 500 }
       );
     }
-  }, [i18n.language]);
+  }, []);
 
   // Adjust container height based on content of both faces
   useEffect(() => {
@@ -75,14 +75,12 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
 
   const handleProfileChange = async (next: Profile) => {
     setProfile(next);
-    const currentLang = i18n.language || 'en';
-    await saveProfile(next, currentLang);
+    await saveProfile(next);
   };
 
   const handleDevProfileChange = async (next: Profile) => {
     setDevProfile(next);
-    const currentLang = i18n.language || 'en';
-    await saveDevProfile(next, currentLang);
+    await saveDevProfile(next);
   };
 
   return (
