@@ -10,6 +10,7 @@ import {
   saveDevProfile,
 } from './profile.api';
 import { DEFAULT_PROFILES } from './defaultProfiles';
+import { useTranslation } from 'react-i18next';
 import ProfileCardContent from './ProfileCardContent';
 import ProfileEditForm from './ProfileEditForm';
 import useCardFlip from './useCardFlip';
@@ -22,6 +23,7 @@ type Props = {
 export default function FlippableProfileCard({ isAdmin = false, onAngleChange }: Props) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [devProfile, setDevProfile] = useState<Profile | null>(null);
+  const { i18n } = useTranslation();
   const innerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLElement>(null);
   const frontRef = useRef<HTMLDivElement>(null);
@@ -34,9 +36,10 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
   void isFlipped;
 
   useEffect(() => {
-    // Always fetch the same profile data regardless of language
-    fetchProfile().then(p => setProfile(p ?? DEFAULT_PROFILES['en']));
-    fetchDevProfile().then(p => setDevProfile(p ?? DEFAULT_PROFILES['en']));
+    // Fetch language-specific profiles
+    const currentLang = i18n.language || 'en';
+    fetchProfile(currentLang).then(p => setProfile(p ?? DEFAULT_PROFILES[currentLang] ?? DEFAULT_PROFILES['en']));
+    fetchDevProfile(currentLang).then(p => setDevProfile(p ?? DEFAULT_PROFILES[currentLang] ?? DEFAULT_PROFILES['en']));
 
     if (innerRef.current) {
       innerRef.current.animate(
@@ -48,7 +51,7 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
         { duration: 800, easing: 'ease-in-out', delay: 500 }
       );
     }
-  }, []);
+  }, [i18n.language]);
 
   // Adjust container height based on content of both faces
   useEffect(() => {
@@ -73,12 +76,14 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
 
   const handleProfileChange = async (next: Profile) => {
     setProfile(next);
-    await saveProfile(next);
+    const currentLang = i18n.language || 'en';
+    await saveProfile(next, currentLang);
   };
 
   const handleDevProfileChange = async (next: Profile) => {
     setDevProfile(next);
-    await saveDevProfile(next);
+    const currentLang = i18n.language || 'en';
+    await saveDevProfile(next, currentLang);
   };
 
   return (
