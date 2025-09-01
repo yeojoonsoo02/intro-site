@@ -10,7 +10,6 @@ import {
   saveDevProfile,
 } from './profile.api';
 import { DEFAULT_PROFILES } from './defaultProfiles';
-import { useTranslation } from 'next-i18next';
 import ProfileCardContent from './ProfileCardContent';
 import ProfileEditForm from './ProfileEditForm';
 import useCardFlip from './useCardFlip';
@@ -23,7 +22,6 @@ type Props = {
 export default function FlippableProfileCard({ isAdmin = false, onAngleChange }: Props) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [devProfile, setDevProfile] = useState<Profile | null>(null);
-  const { i18n } = useTranslation();
   const innerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLElement>(null);
   const frontRef = useRef<HTMLDivElement>(null);
