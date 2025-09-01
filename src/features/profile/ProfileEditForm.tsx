@@ -1,4 +1,5 @@
 import { Profile } from './profile.model';
+import { useTranslation } from 'next-i18next';
 
 type Props = {
   profile: Profile;
@@ -7,6 +8,7 @@ type Props = {
 };
 
 export default function ProfileEditForm({ profile, onChange, label }: Props) {
+  const { t } = useTranslation();
   const interests = profile.interests.map(item =>
     typeof item === 'string' ? { label: item, url: '' } : item,
   );
@@ -54,21 +56,21 @@ export default function ProfileEditForm({ profile, onChange, label }: Props) {
             className="flex-1 rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm border border-gray-300 dark:border-gray-600"
             value={item.label}
             onChange={e => handleItemChange(idx, 'label', e.target.value)}
-            placeholder={label}
+            placeholder={t(label)}
             onBlur={() => handleBlur(idx)}
           />
           <input
             className="flex-1 rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm border border-gray-300 dark:border-gray-600"
             value={item.url}
             onChange={e => handleItemChange(idx, 'url', e.target.value)}
-            placeholder="링크(URL)"
+            placeholder={t('linkUrl', 'Link (URL)')}
             onBlur={() => handleBlur(idx)}
           />
           <button
             type="button"
             onClick={() => handleRemove(idx)}
             className="text-red-500 ml-1 text-xs px-2 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900"
-            aria-label="항목 삭제"
+            aria-label={t('deleteItem', 'Delete item')}
           >
             ❌
           </button>
@@ -79,20 +81,20 @@ export default function ProfileEditForm({ profile, onChange, label }: Props) {
         onClick={handleAdd}
         className="text-sm px-3 py-1 rounded bg-[#e6e6e6] dark:bg-[#323236] text-[#1e1e1e] dark:text-[#E4E4E7]"
       >
-        + 항목 추가
+        + {t('addItem', 'Add item')}
       </button>
       <textarea
         className="w-full rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm border border-gray-300 dark:border-gray-600"
         rows={3}
         value={profile.intro.join('\n')}
         onChange={e => onChange({ ...profile, intro: e.target.value.split('\n').filter(Boolean) })}
-        placeholder="소개 (여러 줄 입력 가능)"
+        placeholder={t('introPlaceholder', 'Introduction (multiple lines allowed)')}
       />
       <input
         className="w-full rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm border border-gray-300 dark:border-gray-600"
         value={profile.region}
         onChange={e => onChange({ ...profile, region: e.target.value })}
-        placeholder="거주 지역"
+        placeholder={t('regionPlaceholder', 'Region')}
       />
     </div>
   );

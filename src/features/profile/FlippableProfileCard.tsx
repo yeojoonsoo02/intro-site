@@ -36,8 +36,9 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
   void isFlipped;
 
   useEffect(() => {
-    fetchProfile().then(p => setProfile(p ?? DEFAULT_PROFILES[i18n.language]));
-    fetchDevProfile().then(p => setDevProfile(p ?? DEFAULT_PROFILES[i18n.language]));
+    const currentLang = i18n.language || 'en';
+    fetchProfile(currentLang).then(p => setProfile(p ?? DEFAULT_PROFILES[currentLang] ?? DEFAULT_PROFILES['en']));
+    fetchDevProfile(currentLang).then(p => setDevProfile(p ?? DEFAULT_PROFILES[currentLang] ?? DEFAULT_PROFILES['en']));
 
     if (innerRef.current) {
       innerRef.current.animate(
@@ -74,12 +75,14 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
 
   const handleProfileChange = async (next: Profile) => {
     setProfile(next);
-    await saveProfile(next);
+    const currentLang = i18n.language || 'en';
+    await saveProfile(next, currentLang);
   };
 
   const handleDevProfileChange = async (next: Profile) => {
     setDevProfile(next);
-    await saveDevProfile(next);
+    const currentLang = i18n.language || 'en';
+    await saveDevProfile(next, currentLang);
   };
 
   return (
@@ -106,7 +109,7 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
                 <ProfileEditForm
                   profile={profile}
                   onChange={handleProfileChange}
-                  label="관심사·취미"
+                  label="hobbies"
                 />
               )}
             </>
@@ -125,7 +128,7 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
                 <ProfileEditForm
                   profile={devProfile}
                   onChange={handleDevProfileChange}
-                  label="주요 기술"
+                  label="mainSkills"
                 />
               )}
             </>

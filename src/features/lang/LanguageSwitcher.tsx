@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import i18n from '@/lib/i18n';
 import { useTranslation } from 'next-i18next';
+import { useRouter, usePathname } from 'next/navigation';
 
 const LANGS = [
   { code: 'ko', label: '한국어' },
@@ -13,12 +14,21 @@ const LANGS = [
 export default function LanguageSwitcher() {
   const [lang, setLang] = useState('en');
   const { t } = useTranslation();
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    if (i18n && i18n.language) {
+    // Get language from URL or i18n
+    const currentLang = pathname.split('/')[1];
+    if (LANGS.some(l => l.code === currentLang)) {
+      setLang(currentLang);
+      if (i18n && i18n.language !== currentLang) {
+        i18n.changeLanguage(currentLang);
+      }
+    } else if (i18n && i18n.language) {
       setLang(i18n.language);
     }
-  }, []);
+  }, [pathname]);
 
   const changeLang = (l: string) => {
     if (!i18n) return;
@@ -26,6 +36,13 @@ export default function LanguageSwitcher() {
     document.documentElement.lang = l;
     localStorage.setItem('lang', l);
     setLang(l);
+    
+    // Navigate to the new language route
+    if (l === 'en') {
+      router.push('/');
+    } else {
+      router.push(`/${l}`);
+    }
   };
 
   return (

@@ -26,7 +26,12 @@
   "region": "Region",
   "language": "Language",
   "wrongPassword": "Incorrect password.",
-  "profilePhoto": "profile photo"
+  "profilePhoto": "profile photo",
+  "linkUrl": "Link (URL)",
+  "deleteItem": "Delete item",
+  "addItem": "Add item",
+  "introPlaceholder": "Introduction (multiple lines allowed)",
+  "regionPlaceholder": "Region"
   ,"feedbackMessage": "Thank you for visiting! Please leave a quick opinion and feedback in the comments."
   ,"goToComments": "Go to Comments"
   ,"viewProfile": "View Profile",
