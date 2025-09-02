@@ -136,7 +136,7 @@ export default function TopBar() {
             setPromptOpen(true)
             setInviteVisible(false)
           }}
-          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 px-6 py-2 rounded-[24px] bg-[#357AE8] text-white text-sm leading-[1.4] shadow transition-transform hover:shadow-lg hover:scale-105 flex items-center break-keep whitespace-pre-wrap"
+          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 px-6 py-2 rounded-[24px] bg-[#357AE8] text-white text-sm leading-[1.4] shadow transition-transform hover:shadow-lg hover:scale-105 flex items-center break-words whitespace-pre-wrap overflow-wrap-anywhere"
         >
           <span className="mr-1.5" aria-hidden>🚀</span>
           {t('chatInvite')}

@@ -41,11 +41,11 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
         />
       </div>
 
-      <div className="text-[2.1rem] font-extrabold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">
+      <div className="text-[2.1rem] font-extrabold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2 text-center break-words max-w-full px-2">
         {profile.name}
       </div>
 
-      <div className="text-[1.25rem] text-[#2c2c2c] dark:text-[#A1A1AA] font-semibold tracking-tight mb-3">
+      <div className="text-[1.25rem] text-[#2c2c2c] dark:text-[#A1A1AA] font-semibold tracking-tight mb-3 text-center break-words max-w-full px-2">
         {profile.tagline}
       </div>
 
@@ -104,6 +104,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
                       text-[0.95rem] font-semibold tracking-tight
                       shadow-sm border border-[#5a5a5a]
                       flex items-center cursor-default opacity-60
+                      break-all max-w-full
                     `}
                   >
                     {item.label}
@@ -123,6 +124,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
                     text-[0.95rem] font-semibold tracking-tight
                     shadow-sm border border-[#5a5a5a]
                     flex items-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors
+                    break-all max-w-full
                   `}
                 >
                   {item.label}
@@ -137,7 +139,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
         <div className="text-[1rem] font-bold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">{t('introduction')}</div>
         <div className="space-y-4 text-[#2c2c2c] dark:text-[#C4C4C8] text-[1.05rem] leading-7 font-medium">
           {profile.intro.map((p, i) => (
-            <p key={i} className="break-keep whitespace-pre-wrap">{p}</p>
+            <p key={i} className="break-words whitespace-pre-wrap overflow-wrap-anywhere">{p}</p>
           ))}
         </div>
       </div>

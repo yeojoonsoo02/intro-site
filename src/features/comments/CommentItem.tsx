@@ -9,7 +9,7 @@ export default function CommentItem({ text, date, onDelete, isAdmin }: Props) {
   return (
     <li className="border border-[color:var(--border)] bg-card p-3 rounded-lg flex justify-between items-start shadow-sm">
       <div className="flex-1 min-w-0">
-        <div className="break-keep whitespace-pre-wrap text-base text-[color:var(--foreground)]">{text}</div>
+        <div className="break-words whitespace-pre-wrap text-base text-[color:var(--foreground)] overflow-wrap-anywhere">{text}</div>
         <div className="text-xs text-muted mt-1">{date}</div>
       </div>
       {isAdmin && (

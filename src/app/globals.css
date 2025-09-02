@@ -50,6 +50,26 @@ body {
   font-size: 16px;
   min-height: 100vh;
   -webkit-tap-highlight-color: transparent;
+  /* Prevent horizontal scroll from text overflow */
+  overflow-x: hidden;
+}
+
+/* Global text wrapping for CJK and long text */
+* {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word; /* For CJK text */
+}
+
+/* Specific handling for paragraphs and text containers */
+p, div, span, li, td, th {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
 }
 
 button, input, textarea {
