@@ -39,11 +39,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
       setResolvedTheme(isDark ? 'dark' : 'light')
 
+      // Remove all theme classes first
+      root.classList.remove('dark', 'light')
+
       if (isDark) {
         root.classList.add('dark')
         root.style.colorScheme = 'dark'
       } else {
-        root.classList.remove('dark')
+        root.classList.add('light')
         root.style.colorScheme = 'light'
       }
     }

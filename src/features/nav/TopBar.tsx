@@ -70,28 +70,38 @@ export default function TopBar() {
               >
                 {t('prompt')}
               </button>
-              <button
-                onClick={() => {
-                  const nextTheme = theme === 'dark' ? 'light' : theme === 'light' ? 'system' : 'dark'
-                  setTheme(nextTheme)
-                }}
-                className="block w-full text-left px-4 py-3 hover:bg-blue-600 flex items-center justify-between"
-              >
-                <span>
-                  {theme === 'system'
-                    ? t('themeSystem', { defaultValue: 'System Theme' })
-                    : theme === 'dark'
-                    ? t('themeDark', { defaultValue: 'Dark Mode' })
-                    : t('themeLight', { defaultValue: 'Light Mode' })}
-                </span>
-                <span className="text-lg ml-2">
-                  {theme === 'system'
-                    ? '💻'
-                    : theme === 'dark'
-                    ? '🌙'
-                    : '☀️'}
-                </span>
-              </button>
+              <div className="pt-2 mt-2 border-t border-white/30">
+                <div className="px-4 pb-2 text-xs font-semibold opacity-80">
+                  {t('theme', { defaultValue: 'Theme' })}
+                </div>
+                <button
+                  onClick={() => setTheme('light')}
+                  className={`block w-full text-left px-4 py-2 hover:bg-blue-600 flex items-center justify-between ${
+                    theme === 'light' ? 'bg-blue-700' : ''
+                  }`}
+                >
+                  <span>{t('themeLight', { defaultValue: 'Light Mode' })}</span>
+                  <span className="text-lg ml-2">☀️</span>
+                </button>
+                <button
+                  onClick={() => setTheme('dark')}
+                  className={`block w-full text-left px-4 py-2 hover:bg-blue-600 flex items-center justify-between ${
+                    theme === 'dark' ? 'bg-blue-700' : ''
+                  }`}
+                >
+                  <span>{t('themeDark', { defaultValue: 'Dark Mode' })}</span>
+                  <span className="text-lg ml-2">🌙</span>
+                </button>
+                <button
+                  onClick={() => setTheme('system')}
+                  className={`block w-full text-left px-4 py-2 hover:bg-blue-600 flex items-center justify-between ${
+                    theme === 'system' ? 'bg-blue-700' : ''
+                  }`}
+                >
+                  <span>{t('themeSystem', { defaultValue: 'System Theme' })}</span>
+                  <span className="text-lg ml-2">💻</span>
+                </button>
+              </div>
               {!user && (
                 <button
                   onClick={() => {
