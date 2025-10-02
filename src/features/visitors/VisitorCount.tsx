@@ -13,7 +13,7 @@ export default function VisitorCount() {
   }, []);
 
   return (
-    <p className="text-[0.875rem] text-[#A1A1AA]">
+    <p className="text-[0.8rem] sm:text-[0.875rem] text-[#A1A1AA]">
       {t('visitorCount')}{' '}
       <span className="font-semibold">
         {count !== null ? count : t('loading')}

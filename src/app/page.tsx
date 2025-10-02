@@ -23,7 +23,7 @@ export default function Home() {
 
   return (
     <>
-      <main className="max-w-xl mx-auto p-6 text-center pb-32">
+      <main className="max-w-xl mx-auto p-4 sm:p-6 text-center pb-32">
         {/* Top actions removed in favor of global menu */}
       {/* 설정 버튼은 각도 1000도 이상일 때만 표시 */}
       {angle >= 1000 && <AuthButton onAdminChange={setIsAdmin} visible />}

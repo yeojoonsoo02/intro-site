@@ -10,10 +10,10 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       className={`
         w-full
         bg-[#27272A] dark:bg-[#27272A]
-        rounded-[28px]
-        border-[3px] border-[#5a5a5a]
+        rounded-[20px] sm:rounded-[28px]
+        border-[2px] sm:border-[3px] border-[#5a5a5a]
         shadow-[0_8px_36px_0_rgba(0,0,0,0.3),0_2px_10px_0_rgba(0,0,0,0.15)]
-        p-8 sm:p-10 flex flex-col items-center
+        p-6 sm:p-8 md:p-10 flex flex-col items-center
         transition-transform duration-300
         group
         hover:scale-[1.02]
@@ -21,18 +21,19 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       `}
       style={{
         background: "var(--card-bg, #27272A)",
-        minHeight: 480,
+        minHeight: 420,
         color: "var(--foreground, #1e1e1e)", // 진한 텍스트 색 (라이트 모드용)
       }}
     >
-      <div className="mb-4">
+      <div className="mb-3 sm:mb-4">
         <Image
           src={profile.photo}
           alt={t('profilePhoto', { defaultValue: 'profile photo' })}
           width={144}
           height={144}
           className={`
-            rounded-full border-[6px] border-[color:var(--primary)]
+            w-[120px] h-[120px] sm:w-[144px] sm:h-[144px]
+            rounded-full border-[4px] sm:border-[6px] border-[color:var(--primary)]
             object-cover shadow-lg
             transition-transform duration-300
             group-hover:scale-105
@@ -41,18 +42,18 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
         />
       </div>
 
-      <div className="text-[2.1rem] font-extrabold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2 text-center break-words max-w-full px-2">
+      <div className="text-[1.75rem] sm:text-[2rem] md:text-[2.1rem] font-extrabold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2 text-center break-words max-w-full px-2">
         {profile.name}
       </div>
 
-      <div className="text-[1.25rem] text-[#2c2c2c] dark:text-[#A1A1AA] font-semibold tracking-tight mb-3 text-center break-words max-w-full px-2">
+      <div className="text-[1.1rem] sm:text-[1.2rem] md:text-[1.25rem] text-[#2c2c2c] dark:text-[#A1A1AA] font-semibold tracking-tight mb-3 text-center break-words max-w-full px-2">
         {profile.tagline}
       </div>
 
-      <div className="flex items-center justify-center gap-4 mb-6 flex-wrap">
+      <div className="flex items-center justify-center gap-3 sm:gap-4 mb-4 sm:mb-6 flex-wrap">
         <a
           href={`mailto:${profile.email}`}
-          className="flex items-center gap-1.5 text-[#2c2c2c] dark:text-[#A1A1AA] hover:text-[color:var(--primary)] transition-colors text-base font-medium"
+          className="flex items-center gap-1.5 text-[#2c2c2c] dark:text-[#A1A1AA] hover:text-[color:var(--primary)] transition-colors text-sm sm:text-base font-medium"
         >
           <svg width="20" height="20" fill="currentColor" aria-hidden="true">
             <rect width="20" height="20" rx="4" fill="none" />
@@ -63,11 +64,11 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
         <SocialLinks colored isDev={isDev} />
       </div>
 
-      <div className="w-full h-px bg-[#393940] my-6" />
+      <div className="w-full h-px bg-[#393940] my-4 sm:my-6" />
 
       {/* 관심사 또는 기술 */}
-      <div className="w-full text-center mb-6">
-        <div className="text-[1rem] font-bold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">
+      <div className="w-full text-center mb-4 sm:mb-6">
+        <div className="text-[0.9rem] sm:text-[1rem] font-bold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">
           {isDev ? t('mainSkills') : t('hobbies')}
         </div>
         <div className="flex flex-wrap justify-center gap-2">
@@ -100,8 +101,8 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
                     className={`
                       bg-[#e6e6e6] dark:bg-[#323236]
                       text-[#1e1e1e]/70 dark:text-[#E4E4E7]/70
-                      rounded-full px-4 py-1.5
-                      text-[0.95rem] font-semibold tracking-tight
+                      rounded-full px-3 sm:px-4 py-1 sm:py-1.5
+                      text-[0.85rem] sm:text-[0.95rem] font-semibold tracking-tight
                       shadow-sm border border-[#5a5a5a]
                       flex items-center cursor-default opacity-60
                       break-all max-w-full
@@ -120,8 +121,8 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
                   className={`
                     bg-[#e6e6e6] dark:bg-[#323236]
                     text-[#1e1e1e] dark:text-[#E4E4E7]
-                    rounded-full px-4 py-1.5
-                    text-[0.95rem] font-semibold tracking-tight
+                    rounded-full px-3 sm:px-4 py-1 sm:py-1.5
+                    text-[0.85rem] sm:text-[0.95rem] font-semibold tracking-tight
                     shadow-sm border border-[#5a5a5a]
                     flex items-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors
                     break-all max-w-full
@@ -135,9 +136,9 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       </div>
 
       {/* 소개 */}
-      <div className="w-full text-center mb-6">
-        <div className="text-[1rem] font-bold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">{t('introduction')}</div>
-        <div className="space-y-4 text-[#2c2c2c] dark:text-[#C4C4C8] text-[1.05rem] leading-7 font-medium">
+      <div className="w-full text-center mb-4 sm:mb-6">
+        <div className="text-[0.9rem] sm:text-[1rem] font-bold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">{t('introduction')}</div>
+        <div className="space-y-3 sm:space-y-4 text-[#2c2c2c] dark:text-[#C4C4C8] text-[0.95rem] sm:text-[1.05rem] leading-6 sm:leading-7 font-medium">
           {profile.intro.map((p, i) => (
             <p key={i} className="break-words whitespace-pre-wrap overflow-wrap-anywhere">{p}</p>
           ))}
@@ -145,7 +146,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       </div>
 
       {/* 지역 */}
-      <div className="mt-4 text-[0.95rem] flex items-center justify-center text-[#4b4b4b] dark:text-[#B0B0B8] font-semibold tracking-tight">
+      <div className="mt-3 sm:mt-4 text-[0.85rem] sm:text-[0.95rem] flex items-center justify-center text-[#4b4b4b] dark:text-[#B0B0B8] font-semibold tracking-tight">
         <span className="mr-1" aria-hidden>📍</span>
         {t('region')}: {profile.region}
       </div>

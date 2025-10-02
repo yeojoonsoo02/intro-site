@@ -40,13 +40,13 @@ export default function TopBar() {
 
   return (
     <>
-      <div className="fixed top-2 right-4 z-50">
+      <div className="fixed top-2 right-2 sm:right-4 z-50">
         <div className="relative">
           <button
             type="button"
             aria-label="menu"
             onClick={() => setMenuOpen(!menuOpen)}
-            className="w-10 h-10 flex items-center justify-center rounded-full backdrop-blur bg-white/70 dark:bg-gray-800/70 shadow border border-gray-300 dark:border-gray-700 hover:bg-gray-100/70 dark:hover:bg-gray-700/60"
+            className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full backdrop-blur bg-white/70 dark:bg-gray-800/70 shadow border border-gray-300 dark:border-gray-700 hover:bg-gray-100/70 dark:hover:bg-gray-700/60"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
