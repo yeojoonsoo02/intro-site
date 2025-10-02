@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'next-i18next'
 import { useAuth } from '@/lib/AuthProvider'
+import { useTheme } from '@/lib/ThemeProvider'
 import i18n from '@/lib/i18n'
 import PromptBox from '@/features/prompt/PromptBox'
 
@@ -16,6 +17,7 @@ const LANGS = [
 export default function TopBar() {
   const { user, login, logout } = useAuth()
   const { t } = useTranslation()
+  const { theme, setTheme, resolvedTheme } = useTheme()
   const [menuOpen, setMenuOpen] = useState(false)
   const [promptOpen, setPromptOpen] = useState(false)
   const [inviteVisible, setInviteVisible] = useState(false)
@@ -67,6 +69,28 @@ export default function TopBar() {
                 className="block w-full text-left px-4 py-3 hover:bg-blue-600"
               >
                 {t('prompt')}
+              </button>
+              <button
+                onClick={() => {
+                  const nextTheme = theme === 'dark' ? 'light' : theme === 'light' ? 'system' : 'dark'
+                  setTheme(nextTheme)
+                }}
+                className="block w-full text-left px-4 py-3 hover:bg-blue-600 flex items-center justify-between"
+              >
+                <span>
+                  {theme === 'system'
+                    ? t('themeSystem', { defaultValue: 'System Theme' })
+                    : theme === 'dark'
+                    ? t('themeDark', { defaultValue: 'Dark Mode' })
+                    : t('themeLight', { defaultValue: 'Light Mode' })}
+                </span>
+                <span className="text-lg ml-2">
+                  {theme === 'system'
+                    ? '💻'
+                    : theme === 'dark'
+                    ? '🌙'
+                    : '☀️'}
+                </span>
               </button>
               {!user && (
                 <button

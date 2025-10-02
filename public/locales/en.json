@@ -44,4 +44,7 @@
   "typing": "typing",
   "noQuestionsLeft": "No questions left. Please try again tomorrow."
   ,"aiDisclaimer": "AI may occasionally provide inaccurate or misleading information."
+  ,"themeSystem": "System Theme"
+  ,"themeDark": "Dark Mode"
+  ,"themeLight": "Light Mode"
 }

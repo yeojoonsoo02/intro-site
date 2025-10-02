@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import AuthProvider from "@/lib/AuthProvider";
 import I18nProvider from "@/lib/I18nProvider";
+import { ThemeProvider } from "@/lib/ThemeProvider";
 import TopBar from "@/features/nav/TopBar";
 
 export const metadata: Metadata = {
@@ -20,12 +21,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased relative">
-        <AuthProvider>
-          <I18nProvider>
-            <TopBar />
-            {children}
-          </I18nProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <I18nProvider>
+              <TopBar />
+              {children}
+            </I18nProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

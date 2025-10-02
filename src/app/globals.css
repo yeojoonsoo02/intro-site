@@ -24,8 +24,25 @@
   --font-mono: var(--font-geist-mono);
 } */
 
+/* Dark mode styles when class is applied */
+html.dark {
+  --background: #18181b;
+  --foreground: #ededed;
+  --primary: #60a5fa;
+  --primary-contrast: #18181b;
+  --card-bg: #232329;
+  --border: #2d2d35;
+  --input-bg: #232329;
+  --input-border: #374151;
+  --button-bg: #2563eb;
+  --button-hover: #1e40af;
+  --button-text: #fff;
+  --muted: #a1a1aa;
+}
+
+/* System preference fallback */
 @media (prefers-color-scheme: dark) {
-  :root {
+  html:not(.dark):not(.light) {
     --background: #18181b;
     --foreground: #ededed;
     --primary: #60a5fa;
@@ -52,6 +69,8 @@ body {
   -webkit-tap-highlight-color: transparent;
   /* Prevent horizontal scroll from text overflow */
   overflow-x: hidden;
+  /* Smooth transition for dark mode */
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Global text wrapping for CJK and long text */
@@ -112,6 +131,7 @@ input:focus, textarea:focus {
   color: var(--foreground);
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .text-muted {
