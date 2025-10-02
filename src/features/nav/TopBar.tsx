@@ -17,7 +17,7 @@ const LANGS = [
 export default function TopBar() {
   const { user, login, logout } = useAuth()
   const { t } = useTranslation()
-  const { theme, setTheme, resolvedTheme } = useTheme()
+  const { theme, setTheme } = useTheme()
   const [menuOpen, setMenuOpen] = useState(false)
   const [promptOpen, setPromptOpen] = useState(false)
   const [inviteVisible, setInviteVisible] = useState(false)
