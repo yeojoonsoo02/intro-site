@@ -53,13 +53,13 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       <div className="flex items-center justify-center gap-3 sm:gap-4 mb-4 sm:mb-6 flex-wrap">
         <a
           href={`mailto:${profile.email}`}
-          className="flex items-center gap-1.5 text-[#2c2c2c] dark:text-[#A1A1AA] hover:text-[color:var(--primary)] transition-colors text-sm sm:text-base font-medium"
+          className="flex items-center gap-1.5 text-[#2c2c2c] dark:text-[#A1A1AA] hover:text-[color:var(--primary)] transition-colors text-sm sm:text-base font-medium min-w-0"
         >
-          <svg width="20" height="20" fill="currentColor" aria-hidden="true">
+          <svg width="20" height="20" fill="currentColor" aria-hidden="true" className="shrink-0">
             <rect width="20" height="20" rx="4" fill="none" />
             <path d="M3 5.5A2.5 2.5 0 0 1 5.5 3h9A2.5 2.5 0 0 1 17 5.5v9A2.5 2.5 0 0 1 14.5 17h-9A2.5 2.5 0 0 1 3 14.5v-9Zm2.2.5 4.3 3.7a1 1 0 0 0 1.3 0l4.3-3.7" stroke="currentColor" strokeWidth="1.2" fill="none"/>
           </svg>
-          <span>{profile.email}</span>
+          <span className="break-all">{profile.email}</span>
         </a>
         <SocialLinks colored isDev={isDev} />
       </div>
@@ -125,7 +125,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
                     text-[0.85rem] sm:text-[0.95rem] font-semibold tracking-tight
                     shadow-sm border border-[#5a5a5a]
                     flex items-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors
-                    break-all max-w-full
+                    break-keep overflow-wrap-anywhere max-w-full
                   `}
                 >
                   {item.label}
@@ -138,7 +138,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       {/* 소개 */}
       <div className="w-full text-center mb-4 sm:mb-6">
         <div className="text-[0.9rem] sm:text-[1rem] font-bold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">{t('introduction')}</div>
-        <div className="space-y-3 sm:space-y-4 text-[#2c2c2c] dark:text-[#C4C4C8] text-[0.95rem] sm:text-[1.05rem] leading-6 sm:leading-7 font-medium">
+        <div className="space-y-3 sm:space-y-4 text-[#2c2c2c] dark:text-[#C4C4C8] text-[0.95rem] sm:text-[1.05rem] leading-[1.8] sm:leading-7 font-medium">
           {profile.intro.map((p, i) => (
             <p key={i} className="break-keep whitespace-pre-wrap overflow-wrap-anywhere">{p}</p>
           ))}

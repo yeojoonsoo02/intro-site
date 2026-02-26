@@ -118,6 +118,11 @@ p, div, span, li, td, th {
   word-break: keep-all;
 }
 
+/* Tailwind v4 에 없는 overflow-wrap: anywhere 유틸리티 */
+.overflow-wrap-anywhere {
+  overflow-wrap: anywhere;
+}
+
 button, input, textarea {
   font-family: inherit;
   font-size: 1rem;
