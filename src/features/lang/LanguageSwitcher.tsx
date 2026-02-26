@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import i18n from '@/lib/i18n';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 import { useRouter, usePathname } from 'next/navigation';
 
 const LANGS = [

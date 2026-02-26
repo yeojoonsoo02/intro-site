@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useTranslation } from 'next-i18next'
+import Image from 'next/image'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/lib/AuthProvider'
 import { useTheme } from '@/lib/ThemeProvider'
 import i18n from '@/lib/i18n'
@@ -114,17 +115,32 @@ export default function TopBar() {
                 </button>
               )}
               {user && (
-                <>
+                <div className="px-4 py-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    {user.photoURL && (
+                      <Image
+                        src={user.photoURL}
+                        alt={user.displayName || 'profile'}
+                        width={28}
+                        height={28}
+                        className="rounded-full border border-white/40"
+                        referrerPolicy="no-referrer"
+                      />
+                    )}
+                    <span className="text-sm font-medium truncate">
+                      {user.displayName || user.email}
+                    </span>
+                  </div>
                   <button
                     onClick={() => {
-                    logout()
-                    setMenuOpen(false)
-                  }}
-                    className="block w-full text-left px-4 py-3 hover:bg-blue-600"
+                      logout()
+                      setMenuOpen(false)
+                    }}
+                    className="block w-full text-left text-white/70 hover:text-white text-xs"
                   >
                     {t('logout')}
                   </button>
-                </>
+                </div>
               )}
               <div className="pt-2 mt-2 border-t border-white/30">
                 <button
@@ -170,7 +186,7 @@ export default function TopBar() {
             setPromptOpen(true)
             setInviteVisible(false)
           }}
-          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 px-6 py-2 rounded-[24px] bg-[#357AE8] text-white text-sm leading-[1.4] shadow transition-transform hover:shadow-lg hover:scale-105 flex items-center break-words whitespace-pre-wrap overflow-wrap-anywhere"
+          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 px-6 py-2 rounded-[24px] bg-[#357AE8] text-white text-sm leading-[1.4] shadow transition-transform hover:shadow-lg hover:scale-105 flex items-center break-keep whitespace-pre-wrap overflow-wrap-anywhere"
         >
           <span className="mr-1.5" aria-hidden>🚀</span>
           {t('chatInvite')}

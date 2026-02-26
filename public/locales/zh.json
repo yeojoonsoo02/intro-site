@@ -44,4 +44,9 @@
   "typing": "输入中",
   "noQuestionsLeft": "已无剩余提问次数，请明天再试。"
   ,"aiDisclaimer": "AI 可能偶尔会提供不准确或具有误导性的信息。"
+  ,"theme": "主题"
+  ,"themeLight": "浅色模式"
+  ,"themeDark": "深色模式"
+  ,"themeSystem": "系统主题"
+  ,"deleteComment": "删除评论"
 }

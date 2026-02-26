@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { incrementVisitCount } from './counter';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 
 export default function VisitorCount() {
   const [count, setCount] = useState<number | null>(null);

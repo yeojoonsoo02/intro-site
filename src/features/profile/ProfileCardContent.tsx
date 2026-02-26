@@ -1,6 +1,6 @@
 import { Profile } from './profile.model';
 import SocialLinks from '@/features/social/SocialLinks';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 import Image from 'next/image';
 
 export default function ProfileCardContent({ profile, isDev }: { profile: Profile; isDev: boolean }) {
@@ -42,11 +42,11 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
         />
       </div>
 
-      <div className="text-[1.75rem] sm:text-[2rem] md:text-[2.1rem] font-extrabold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2 text-center break-words max-w-full px-2">
+      <div className="text-[1.75rem] sm:text-[2rem] md:text-[2.1rem] font-extrabold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2 text-center break-keep max-w-full px-2">
         {profile.name}
       </div>
 
-      <div className="text-[1.1rem] sm:text-[1.2rem] md:text-[1.25rem] text-[#2c2c2c] dark:text-[#A1A1AA] font-semibold tracking-tight mb-3 text-center break-words max-w-full px-2">
+      <div className="text-[1.1rem] sm:text-[1.2rem] md:text-[1.25rem] text-[#2c2c2c] dark:text-[#A1A1AA] font-semibold tracking-tight mb-3 text-center break-keep max-w-full px-2">
         {profile.tagline}
       </div>
 
@@ -105,7 +105,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
                       text-[0.85rem] sm:text-[0.95rem] font-semibold tracking-tight
                       shadow-sm border border-[#5a5a5a]
                       flex items-center cursor-default opacity-60
-                      break-all max-w-full
+                      break-keep max-w-full
                     `}
                   >
                     {item.label}
@@ -140,7 +140,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
         <div className="text-[0.9rem] sm:text-[1rem] font-bold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">{t('introduction')}</div>
         <div className="space-y-3 sm:space-y-4 text-[#2c2c2c] dark:text-[#C4C4C8] text-[0.95rem] sm:text-[1.05rem] leading-6 sm:leading-7 font-medium">
           {profile.intro.map((p, i) => (
-            <p key={i} className="break-words whitespace-pre-wrap overflow-wrap-anywhere">{p}</p>
+            <p key={i} className="break-keep whitespace-pre-wrap overflow-wrap-anywhere">{p}</p>
           ))}
         </div>
       </div>

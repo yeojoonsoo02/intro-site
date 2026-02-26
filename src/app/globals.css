@@ -108,20 +108,14 @@ body {
 
 /* Global text wrapping for CJK and long text */
 * {
-  word-wrap: break-word;
   overflow-wrap: break-word;
-  word-break: break-word; /* For CJK text */
+  word-break: keep-all; /* CJK: 띄어쓰기 기준으로 줄바꿈 */
 }
 
 /* Specific handling for paragraphs and text containers */
 p, div, span, li, td, th {
-  word-wrap: break-word;
   overflow-wrap: break-word;
-  word-break: break-word;
-  hyphens: auto;
-  -webkit-hyphens: auto;
-  -moz-hyphens: auto;
-  -ms-hyphens: auto;
+  word-break: keep-all;
 }
 
 button, input, textarea {

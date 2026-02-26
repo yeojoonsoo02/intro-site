@@ -15,7 +15,7 @@ import { db } from '@/lib/firebase';
 import CommentItem from './CommentItem';
 import { Comment } from './comment.model';
 import styles from './comment.module.css';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 
 export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
   const [input, setInput] = useState('');

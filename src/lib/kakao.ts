@@ -37,8 +37,8 @@ export function buildKakaoTemplate(question: string, answer: string): KakaoTempl
     object_type: 'text',
     text: `Q: ${question} A: ${answer}`,
     link: {
-      web_url: 'https://example.com',
-      mobile_web_url: 'https://m.example.com',
+      web_url: process.env.NEXT_PUBLIC_APP_URL || 'https://yeojoonsoo02.vercel.app',
+      mobile_web_url: process.env.NEXT_PUBLIC_APP_URL || 'https://yeojoonsoo02.vercel.app',
     },
   }
 }
