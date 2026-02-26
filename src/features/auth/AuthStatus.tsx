@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useAuth } from "@/lib/AuthProvider";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "react-i18next";
 
 export default function AuthStatus() {
   const { t } = useTranslation();

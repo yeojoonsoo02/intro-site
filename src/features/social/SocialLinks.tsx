@@ -1,17 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useTheme } from '@/lib/ThemeProvider';
 
 export default function SocialLinks({ colored = false, isDev = false }: { colored?: boolean; isDev?: boolean }) {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  useEffect(() => {
-    const match = window.matchMedia('(prefers-color-scheme: dark)');
-    setIsDarkMode(match.matches);
-    const handler = (e: MediaQueryListEvent) => setIsDarkMode(e.matches);
-    match.addEventListener('change', handler);
-    return () => match.removeEventListener('change', handler);
-  }, []);
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === 'dark';
 
   const githubColor = isDarkMode ? '#e4e4e7' : '#3f3f46';
   const isNormal = !isDev;

@@ -240,7 +240,7 @@ input:focus, textarea:focus {
 }
 
 .admin-modal .modal-btn.cancel:hover {
-  background: #e5e7eb;
+  background: var(--input-border);
 }
 
 ::-webkit-input-placeholder { color: var(--muted); }

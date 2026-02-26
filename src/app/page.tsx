@@ -5,8 +5,6 @@ import VisitorCount from '@/features/visitors/VisitorCount';
 import FlippableProfileCard from '@/features/profile/FlippableProfileCard';
 import AuthButton from '@/features/auth/AuthButton';
 
-export const dynamic = "force-dynamic";
-
 export default function Home() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [angle, setAngle] = useState(0);

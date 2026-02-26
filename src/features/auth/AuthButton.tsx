@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "react-i18next";
 
 export default function AuthButton({ onAdminChange, visible }: { onAdminChange?: (isAdmin: boolean) => void; visible?: boolean }) {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -75,7 +75,7 @@ export default function AuthButton({ onAdminChange, visible }: { onAdminChange?:
               placeholder={t('passwordPlaceholder')}
               autoFocus
               maxLength={32}
-              aria-label="관리자 비밀번호"
+              aria-label={t('passwordPlaceholder')}
             />
             {error && <div className="text-red-500 text-xs mt-1">{error}</div>}
             <div className="modal-actions mt-2">
