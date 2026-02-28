@@ -46,7 +46,9 @@ export default function PromptBox({
       const reply = data.reply || data.text;
       if (reply) {
         setMessages((m) => [...m, { role: "assistant", text: reply }]);
-        void savePrompt(prompt, reply);
+        savePrompt(prompt, reply).catch((err) =>
+          console.error("Failed to save prompt:", err)
+        );
       }
       if (typeof data.remaining === "number") {
         setRemaining(data.remaining);

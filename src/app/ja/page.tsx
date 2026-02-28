@@ -1,16 +1,24 @@
-"use client";
-
-import { useEffect } from "react";
-import i18n from "@/lib/i18n";
+import type { Metadata } from "next";
 import Home from "../page";
+import LangInit from "@/lib/LangInit";
+
+export const metadata: Metadata = {
+  title: "日本語",
+  description:
+    "ヨ・ジュンスの自己紹介サイトです。プロフィール、趣味、技術スタック、AIチャットなどをご覧いただけます。",
+  openGraph: {
+    locale: "ja_JP",
+  },
+  alternates: {
+    canonical: "https://yeoweb.vercel.app/ja",
+  },
+};
 
 export default function HomeJa() {
-  useEffect(() => {
-    i18n.changeLanguage("ja");
-    if (typeof window !== "undefined") {
-      localStorage.setItem("lang", "ja");
-      document.documentElement.lang = "ja";
-    }
-  }, []);
-  return <Home />;
+  return (
+    <>
+      <LangInit lang="ja" />
+      <Home />
+    </>
+  );
 }

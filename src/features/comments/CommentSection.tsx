@@ -42,24 +42,46 @@ export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
 
   const addComment = async () => {
     if (!input.trim()) return;
+    const text = input;
+    const tempId = `temp-${Date.now()}`;
+    const now = Timestamp.now();
+
+    // Optimistic update
+    const tempComment: Comment = {
+      id: tempId,
+      text,
+      createdAt: now,
+    };
+    setComments((prev) => [tempComment, ...prev]);
+    setInput('');
+
     try {
-      await addDoc(collection(db, 'comments'), {
-        text: input,
-        createdAt: Timestamp.now(),
+      const docRef = await addDoc(collection(db, 'comments'), {
+        text,
+        createdAt: now,
       });
-      setInput('');
-      loadComments();
+      // Replace temp ID with real ID
+      setComments((prev) =>
+        prev.map((c) => (c.id === tempId ? { ...c, id: docRef.id } : c))
+      );
     } catch (err) {
       console.error('Failed to add comment:', err);
+      // Rollback
+      setComments((prev) => prev.filter((c) => c.id !== tempId));
     }
   };
 
   const deleteComment = async (id: string) => {
+    // Optimistic update
+    const prev = comments;
+    setComments((c) => c.filter((item) => item.id !== id));
+
     try {
       await deleteDoc(doc(db, 'comments', id));
-      loadComments();
     } catch (err) {
       console.error('Failed to delete comment:', err);
+      // Rollback
+      setComments(prev);
     }
   };
 

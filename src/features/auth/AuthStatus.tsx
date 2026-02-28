@@ -28,6 +28,7 @@ export default function AuthStatus() {
           width={32}
           height={32}
           className="rounded-full"
+          referrerPolicy="no-referrer"
         />
       ) : (
         <span className="text-sm">{user.email}</span>

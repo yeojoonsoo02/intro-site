@@ -29,11 +29,10 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
   const frontRef = useRef<HTMLDivElement>(null);
   const backRef = useRef<HTMLDivElement>(null);
 
-  const { isFlipped, ...pointerHandlers } = useCardFlip({
+  const { isFlipped: _isFlipped, ...pointerHandlers } = useCardFlip({
     innerRef,
     onAngleChange,
   });
-  void isFlipped;
 
   useEffect(() => {
     // Fetch language-specific profiles

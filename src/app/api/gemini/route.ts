@@ -22,6 +22,15 @@ export async function POST(req: NextRequest) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message }),
       })
+      if (!res.ok) {
+        console.error('External API error:', res.status, res.statusText)
+        return NextResponse.json({ error: 'External API error' }, { status: 502 })
+      }
+      const contentType = res.headers.get('content-type') ?? ''
+      if (!contentType.includes('application/json')) {
+        console.error('External API returned non-JSON:', contentType)
+        return NextResponse.json({ error: 'Invalid response from external API' }, { status: 502 })
+      }
       const data = await res.json()
       const reply = data.reply ?? data.text
       const remaining = data.remaining ?? data.count

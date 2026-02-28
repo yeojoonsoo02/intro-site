@@ -22,7 +22,7 @@ export default function Dashboard() {
   return (
     <main className="flex flex-col items-center gap-4 mt-20">
       {photoURL && (
-        <Image src={photoURL} alt="profile" width={80} height={80} className="rounded-full" />
+        <Image src={photoURL} alt="profile" width={80} height={80} className="rounded-full" referrerPolicy="no-referrer" />
       )}
       <div>{displayName}</div>
       <div>{email}</div>

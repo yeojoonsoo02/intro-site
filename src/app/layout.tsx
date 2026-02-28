@@ -6,10 +6,35 @@ import { ThemeProvider } from "@/lib/ThemeProvider";
 import TopBar from "@/features/nav/TopBar";
 
 export const metadata: Metadata = {
-  title: "yeojoonsoo02",
-  description: "yeojoonsoo02",
-  icons: {
-    icon: "/favicon.ico?v=1",
+  metadataBase: new URL("https://yeoweb.vercel.app"),
+  title: {
+    default: "여준수 | 자기소개 사이트",
+    template: "%s | 여준수",
+  },
+  description:
+    "여준수의 자기소개 사이트입니다. 프로필, 취미, 기술 스택, AI 채팅 등을 확인할 수 있습니다.",
+  openGraph: {
+    title: "여준수 | 자기소개 사이트",
+    description:
+      "여준수의 자기소개 사이트입니다. 프로필, 취미, 기술 스택, AI 채팅 등을 확인할 수 있습니다.",
+    url: "https://yeoweb.vercel.app",
+    siteName: "여준수 자기소개",
+    locale: "ko_KR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "여준수 | 자기소개 사이트",
+    description:
+      "여준수의 자기소개 사이트입니다. 프로필, 취미, 기술 스택, AI 채팅 등을 확인할 수 있습니다.",
+  },
+  alternates: {
+    canonical: "https://yeoweb.vercel.app",
+    languages: {
+      ko: "/ko",
+      ja: "/ja",
+      zh: "/zh",
+    },
   },
 };
 
