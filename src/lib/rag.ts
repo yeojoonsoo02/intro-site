@@ -55,11 +55,16 @@ export function invalidateCache() {
 // --- Knowledge context ---
 
 export async function getKnowledgeContext(): Promise<string> {
-  const custom = await loadCustomEntries()
-  if (custom.length === 0) return KNOWLEDGE
+  try {
+    const custom = await loadCustomEntries()
+    if (custom.length === 0) return KNOWLEDGE
 
-  const customText = custom.map((e) => e.text).join('\n')
-  return `${KNOWLEDGE}\n\n# 추가 정보\n${customText}`
+    const customText = custom.map((e) => e.text).join('\n')
+    return `${KNOWLEDGE}\n\n# 추가 정보\n${customText}`
+  } catch {
+    // Firestore unavailable — still return static knowledge
+    return KNOWLEDGE
+  }
 }
 
 // --- Custom knowledge CRUD ---
