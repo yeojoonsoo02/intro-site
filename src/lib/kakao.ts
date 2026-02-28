@@ -1,5 +1,3 @@
-import axios from 'axios'
-
 export interface KakaoTemplate {
   object_type: 'text'
   text: string
@@ -17,16 +15,14 @@ export async function sendKakaoMemo(template: KakaoTemplate) {
   payload.append('template_object', JSON.stringify(template))
 
   try {
-    await axios.post(
-      'https://kapi.kakao.com/v2/api/talk/memo/send',
-      payload.toString(),
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    )
+    await fetch('https://kapi.kakao.com/v2/api/talk/memo/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: payload.toString(),
+    })
   } catch (err) {
     console.error('Failed to send Kakao memo:', err)
   }

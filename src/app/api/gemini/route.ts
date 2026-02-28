@@ -37,7 +37,9 @@ export async function POST(req: NextRequest) {
       const limit = data.limit
       const used = data.used
       const reset = data.reset
-      await sendQuestionAnswer(message, reply, userInfo)
+      sendQuestionAnswer(message, reply, userInfo).catch((err) =>
+        console.error('Webhook error:', err)
+      )
       return NextResponse.json({ reply, remaining, limit, used, reset })
     } catch (err) {
       console.error('Proxy error', err)
@@ -50,7 +52,9 @@ export async function POST(req: NextRequest) {
     const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
     const result = await model.generateContent(message)
     const reply = result.response.text()
-    await sendQuestionAnswer(message, reply, userInfo)
+    sendQuestionAnswer(message, reply, userInfo).catch((err) =>
+      console.error('Webhook error:', err)
+    )
     return NextResponse.json({ reply, remaining: null })
   } catch (err) {
     console.error('Gemini API error', err)

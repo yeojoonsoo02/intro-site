@@ -31,6 +31,8 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
           alt={t('profilePhoto', { defaultValue: 'profile photo' })}
           width={144}
           height={144}
+          priority
+          sizes="(max-width: 640px) 120px, 144px"
           className={`
             w-[120px] h-[120px] sm:w-[144px] sm:h-[144px]
             rounded-full border-[4px] sm:border-[6px] border-[color:var(--primary)]

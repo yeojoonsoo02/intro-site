@@ -1,12 +1,16 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/lib/AuthProvider'
 import { useTheme } from '@/lib/ThemeProvider'
 import i18n from '@/lib/i18n'
-import PromptBox from '@/features/prompt/PromptBox'
+
+const PromptBox = dynamic(() => import('@/features/prompt/PromptBox'), {
+  ssr: false,
+})
 
 const LANGS = [
   { code: 'ko', label: '한국어' },
@@ -29,17 +33,17 @@ export default function TopBar() {
     return () => clearTimeout(timer)
   }, [])
 
-  const changeLanguage = (l: string) => {
+  const changeLanguage = useCallback((l: string) => {
     if (!i18n) return
     i18n.changeLanguage(l)
     document.documentElement.lang = l
     localStorage.setItem('lang', l)
-  }
+  }, [])
 
-  const togglePrompt = () => {
+  const togglePrompt = useCallback(() => {
     setPromptOpen((v) => !v)
     setMenuOpen(false)
-  }
+  }, [])
 
   return (
     <>

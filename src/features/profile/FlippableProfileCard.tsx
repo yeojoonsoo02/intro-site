@@ -1,7 +1,7 @@
 // FlippableProfileCard.tsx
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Profile } from './profile.model';
 import {
   fetchProfile,
@@ -73,17 +73,17 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
     };
   }, [profile, devProfile]);
 
-  const handleProfileChange = async (next: Profile) => {
+  const handleProfileChange = useCallback(async (next: Profile) => {
     setProfile(next);
     const currentLang = i18n.language || 'en';
     await saveProfile(next, currentLang);
-  };
+  }, [i18n.language]);
 
-  const handleDevProfileChange = async (next: Profile) => {
+  const handleDevProfileChange = useCallback(async (next: Profile) => {
     setDevProfile(next);
     const currentLang = i18n.language || 'en';
     await saveDevProfile(next, currentLang);
-  };
+  }, [i18n.language]);
 
   return (
     <section
