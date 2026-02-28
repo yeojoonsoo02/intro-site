@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { sendQuestionAnswer } from '@/lib/webhook'
-import { retrieveContext } from '@/lib/rag'
+import { getKnowledgeContext } from '@/lib/rag'
 
 const DEFAULT_URL =
   'https://gemini-api-565729687872.asia-northeast3.run.app/chat'
@@ -11,13 +11,12 @@ const SYSTEM_PROMPT_BASE = `당신은 여준수의 자기소개 사이트에 있
 컨텍스트에 없는 정보는 "해당 정보는 아직 등록되지 않았습니다"라고 답변하세요.
 답변은 한국어로 해주세요 (질문이 다른 언어면 해당 언어로).`
 
-async function buildSystemPrompt(message: string): Promise<string> {
+async function buildSystemPrompt(): Promise<string> {
   try {
-    const context = await retrieveContext(message)
-    if (!context) return SYSTEM_PROMPT_BASE
+    const context = await getKnowledgeContext()
     return `${SYSTEM_PROMPT_BASE}\n\n### 여준수 정보:\n${context}`
   } catch (err) {
-    console.error('RAG retrieval error:', err)
+    console.error('Knowledge context error:', err)
     return SYSTEM_PROMPT_BASE
   }
 }
@@ -36,12 +35,10 @@ export async function POST(req: NextRequest) {
     try {
       let augmentedMessage = message
       try {
-        const context = await retrieveContext(message)
-        if (context) {
-          augmentedMessage = `${SYSTEM_PROMPT_BASE}\n\n### 여준수 정보:\n${context}\n\n### 사용자 질문:\n${message}`
-        }
+        const context = await getKnowledgeContext()
+        augmentedMessage = `${SYSTEM_PROMPT_BASE}\n\n### 여준수 정보:\n${context}\n\n### 사용자 질문:\n${message}`
       } catch {
-        // RAG unavailable, send original message
+        // Knowledge context unavailable, send original message
       }
 
       const res = await fetch(url, {
@@ -75,7 +72,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const systemPrompt = await buildSystemPrompt(message)
+    const systemPrompt = await buildSystemPrompt()
     const genAI = new GoogleGenerativeAI(apiKey)
     const model = genAI.getGenerativeModel({
       model: 'gemini-2.0-flash',

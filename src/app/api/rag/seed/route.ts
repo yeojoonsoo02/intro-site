@@ -1,26 +1,78 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { seedKnowledge } from '@/lib/rag'
+import {
+  addCustomKnowledge,
+  listCustomKnowledge,
+  deleteCustomKnowledge,
+} from '@/lib/rag'
+
+function isAuthorized(req: NextRequest): boolean {
+  const adminSecret = process.env.ADMIN_SECRET
+  if (!adminSecret) return true
+  return req.headers.get('x-admin-secret') === adminSecret
+}
 
 export async function POST(req: NextRequest) {
-  // Simple secret-based auth for admin-only endpoint
-  const authHeader = req.headers.get('x-admin-secret')
-  const adminSecret = process.env.ADMIN_SECRET
-  if (adminSecret && authHeader !== adminSecret) {
+  if (!isAuthorized(req)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {
-    const body = await req.json().catch(() => ({}))
-    const lang = body.lang as string | undefined
+    const body = await req.json()
+    const { text, category } = body
 
-    const count = await seedKnowledge(lang)
-    const langs = lang ? [lang] : ['ko', 'en', 'ja', 'zh']
+    if (!text || typeof text !== 'string') {
+      return NextResponse.json(
+        { error: 'Missing or invalid "text" field' },
+        { status: 400 },
+      )
+    }
 
-    return NextResponse.json({ count, langs })
+    const id = await addCustomKnowledge(text, category)
+    return NextResponse.json({ id })
   } catch (err) {
-    console.error('Seed error:', err)
+    console.error('Add custom knowledge error:', err)
     return NextResponse.json(
-      { error: 'Failed to seed knowledge base' },
+      { error: 'Failed to add custom knowledge' },
+      { status: 500 },
+    )
+  }
+}
+
+export async function GET() {
+  try {
+    const entries = await listCustomKnowledge()
+    return NextResponse.json({ entries })
+  } catch (err) {
+    console.error('List custom knowledge error:', err)
+    return NextResponse.json(
+      { error: 'Failed to list custom knowledge' },
+      { status: 500 },
+    )
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  if (!isAuthorized(req)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  try {
+    const body = await req.json()
+    const { id } = body
+
+    if (!id || typeof id !== 'string') {
+      return NextResponse.json(
+        { error: 'Missing or invalid "id" field' },
+        { status: 400 },
+      )
+    }
+
+    await deleteCustomKnowledge(id)
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    console.error('Delete custom knowledge error:', err)
+    return NextResponse.json(
+      { error: 'Failed to delete custom knowledge' },
       { status: 500 },
     )
   }
