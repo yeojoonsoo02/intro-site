@@ -38,6 +38,10 @@ export default function PromptBox({
           userInfo: user?.email ?? null,
         }),
       });
+      if (!res.ok) {
+        setMessages((m) => [...m, { role: "assistant", text: t('errorOccurred') }]);
+        return;
+      }
       const data = await res.json();
       const reply = data.reply || data.text;
       if (reply) {

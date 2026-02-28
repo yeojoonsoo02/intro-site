@@ -25,29 +25,42 @@ export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
 
   const loadComments = async () => {
     setLoading(true);
-    const q = query(collection(db, 'comments'), orderBy('createdAt', 'desc'));
-    const snapshot = await getDocs(q);
-    const data = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Comment[];
-    setComments(data);
-    setLoading(false);
+    try {
+      const q = query(collection(db, 'comments'), orderBy('createdAt', 'desc'));
+      const snapshot = await getDocs(q);
+      const data = snapshot.docs.map((d) => ({
+        id: d.id,
+        ...d.data(),
+      })) as Comment[];
+      setComments(data);
+    } catch (err) {
+      console.error('Failed to load comments:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const addComment = async () => {
     if (!input.trim()) return;
-    await addDoc(collection(db, 'comments'), {
-      text: input,
-      createdAt: Timestamp.now(),
-    });
-    setInput('');
-    loadComments();
+    try {
+      await addDoc(collection(db, 'comments'), {
+        text: input,
+        createdAt: Timestamp.now(),
+      });
+      setInput('');
+      loadComments();
+    } catch (err) {
+      console.error('Failed to add comment:', err);
+    }
   };
 
   const deleteComment = async (id: string) => {
-    await deleteDoc(doc(db, 'comments', id));
-    loadComments();
+    try {
+      await deleteDoc(doc(db, 'comments', id));
+      loadComments();
+    } catch (err) {
+      console.error('Failed to delete comment:', err);
+    }
   };
 
   useEffect(() => {
