@@ -2,19 +2,26 @@ import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { sendQuestionAnswer } from '@/lib/webhook'
 import { getKnowledgeContext } from '@/lib/rag'
+import { saveChatLog } from '@/lib/chatLog'
 
 const DEFAULT_URL =
   'https://gemini-api-565729687872.asia-northeast3.run.app/chat'
 
-const SYSTEM_PROMPT_BASE = `당신은 여준수의 자기소개 사이트에 있는 AI 어시스턴트입니다.
-아래 컨텍스트는 여준수에 대한 정보입니다. 이 정보를 바탕으로 질문에 친절하게 답변하세요.
-컨텍스트에 없는 정보는 "해당 정보는 아직 등록되지 않았습니다"라고 답변하세요.
-답변은 한국어로 해주세요 (질문이 다른 언어면 해당 언어로).`
+const SYSTEM_PROMPT_BASE = `너는 "여준수" 본인이야. 자기소개 사이트를 방문한 사람들과 직접 대화하는 거야.
+아래 정보가 너(여준수)에 대한 실제 정보야. 이걸 바탕으로 1인칭("나", "내가")으로 자연스럽게 대화해.
+
+규칙:
+- 너는 AI가 아니라 여준수 본인으로 말해. "저는 여준수입니다" 같은 딱딱한 말투 대신 "나는 준수야" 같이 편하게.
+- 반말과 존댓말은 상대에 맞춰서 유연하게. 기본은 편한 존댓말("~해요", "~이에요").
+- 정보에 없는 질문은 "음, 그건 아직 안 알려줬네요! 궁금한 거 있으면 더 물어봐요 ㅎㅎ" 식으로 자연스럽게.
+- 마크다운 문법(*, #, - 등) 사용하지 마. 일반 텍스트로만 답변해.
+- 답변은 길지 않게, 실제 사람이 카톡하듯이 짧고 자연스럽게.
+- 질문이 영어/일본어/중국어면 해당 언어로 답변해.`
 
 async function buildSystemPrompt(): Promise<string> {
   try {
     const context = await getKnowledgeContext()
-    return `${SYSTEM_PROMPT_BASE}\n\n### 여준수 정보:\n${context}`
+    return `${SYSTEM_PROMPT_BASE}\n\n### 나(여준수)에 대한 정보:\n${context}`
   } catch (err) {
     console.error('Knowledge context error:', err)
     return SYSTEM_PROMPT_BASE
@@ -36,7 +43,7 @@ export async function POST(req: NextRequest) {
       let augmentedMessage = message
       try {
         const context = await getKnowledgeContext()
-        augmentedMessage = `${SYSTEM_PROMPT_BASE}\n\n### 여준수 정보:\n${context}\n\n### 사용자 질문:\n${message}`
+        augmentedMessage = `${SYSTEM_PROMPT_BASE}\n\n### 나(여준수)에 대한 정보:\n${context}\n\n### 사용자 질문:\n${message}`
       } catch {
         // Knowledge context unavailable, send original message
       }
@@ -61,6 +68,7 @@ export async function POST(req: NextRequest) {
       const limit = data.limit
       const used = data.used
       const reset = data.reset
+      saveChatLog(message, reply, userInfo).catch(() => {})
       sendQuestionAnswer(message, reply, userInfo).catch((err) =>
         console.error('Webhook error:', err)
       )
@@ -80,6 +88,7 @@ export async function POST(req: NextRequest) {
     })
     const result = await model.generateContent(message)
     const reply = result.response.text()
+    saveChatLog(message, reply, userInfo).catch(() => {})
     sendQuestionAnswer(message, reply, userInfo).catch((err) =>
       console.error('Webhook error:', err)
     )
