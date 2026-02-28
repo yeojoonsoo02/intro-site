@@ -1,9 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { sendQuestionAnswer } from '@/lib/webhook'
+import { retrieveContext } from '@/lib/rag'
 
 const DEFAULT_URL =
   'https://gemini-api-565729687872.asia-northeast3.run.app/chat'
+
+const SYSTEM_PROMPT_BASE = `당신은 여준수의 자기소개 사이트에 있는 AI 어시스턴트입니다.
+아래 컨텍스트는 여준수에 대한 정보입니다. 이 정보를 바탕으로 질문에 친절하게 답변하세요.
+컨텍스트에 없는 정보는 "해당 정보는 아직 등록되지 않았습니다"라고 답변하세요.
+답변은 한국어로 해주세요 (질문이 다른 언어면 해당 언어로).`
+
+async function buildSystemPrompt(message: string): Promise<string> {
+  try {
+    const context = await retrieveContext(message)
+    if (!context) return SYSTEM_PROMPT_BASE
+    return `${SYSTEM_PROMPT_BASE}\n\n### 여준수 정보:\n${context}`
+  } catch (err) {
+    console.error('RAG retrieval error:', err)
+    return SYSTEM_PROMPT_BASE
+  }
+}
 
 export async function POST(req: NextRequest) {
   const body = await req.json()
@@ -14,13 +31,23 @@ export async function POST(req: NextRequest) {
   }
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
-    // If no API key, forward to external server
+    // If no API key, forward to external server with RAG context
     const url = process.env.NEXT_PUBLIC_GEMINI_API_URL ?? DEFAULT_URL
     try {
+      let augmentedMessage = message
+      try {
+        const context = await retrieveContext(message)
+        if (context) {
+          augmentedMessage = `${SYSTEM_PROMPT_BASE}\n\n### 여준수 정보:\n${context}\n\n### 사용자 질문:\n${message}`
+        }
+      } catch {
+        // RAG unavailable, send original message
+      }
+
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({ message: augmentedMessage }),
       })
       if (!res.ok) {
         console.error('External API error:', res.status, res.statusText)
@@ -48,8 +75,12 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const systemPrompt = await buildSystemPrompt(message)
     const genAI = new GoogleGenerativeAI(apiKey)
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-2.0-flash',
+      systemInstruction: systemPrompt,
+    })
     const result = await model.generateContent(message)
     const reply = result.response.text()
     sendQuestionAnswer(message, reply, userInfo).catch((err) =>
