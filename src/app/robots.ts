@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/api/", "/dashboard", "/login"],
     },
-    sitemap: "https://yeoweb.vercel.app/sitemap.xml",
+    sitemap: "https://yeojoonsoo02.com/sitemap.xml",
   };
 }

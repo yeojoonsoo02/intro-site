@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     locale: "zh_CN",
   },
   alternates: {
-    canonical: "https://yeoweb.vercel.app/zh",
+    canonical: "https://yeojoonsoo02.com/zh",
   },
 };
 
