@@ -3,6 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 import { sendQuestionAnswer } from '@/lib/webhook'
 import { getKnowledgeContext } from '@/lib/rag'
 import { saveChatLog } from '@/lib/chatLog'
+import { sendTelegramMessage, formatChatNotification, isTelegramConfigured } from '@/lib/telegram'
 
 const DEFAULT_URL =
   'https://gemini-api-565729687872.asia-northeast3.run.app/chat'
@@ -72,6 +73,9 @@ export async function POST(req: NextRequest) {
       sendQuestionAnswer(message, reply, userInfo).catch((err) =>
         console.error('Webhook error:', err)
       )
+      if (isTelegramConfigured()) {
+        sendTelegramMessage(formatChatNotification(message, reply)).catch(() => {})
+      }
       return NextResponse.json({ reply, remaining, limit, used, reset })
     } catch (err) {
       console.error('Proxy error', err)
@@ -92,6 +96,9 @@ export async function POST(req: NextRequest) {
     sendQuestionAnswer(message, reply, userInfo).catch((err) =>
       console.error('Webhook error:', err)
     )
+    if (isTelegramConfigured()) {
+      sendTelegramMessage(formatChatNotification(message, reply)).catch(() => {})
+    }
     return NextResponse.json({ reply, remaining: null })
   } catch (err) {
     console.error('Gemini API error', err)
