@@ -1,9 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import VisitorCount from '@/features/visitors/VisitorCount';
 import FlippableProfileCard from '@/features/profile/FlippableProfileCard';
-import AuthButton from '@/features/auth/AuthButton';
+
+const AuthButton = dynamic(() => import('@/features/auth/AuthButton'), {
+  ssr: false,
+});
 
 export default function Home() {
   const [isAdmin, setIsAdmin] = useState(false);

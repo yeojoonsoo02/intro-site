@@ -11,9 +11,13 @@ import {
 } from './profile.api';
 import { DEFAULT_PROFILES } from './defaultProfiles';
 import { useTranslation } from 'react-i18next';
+import dynamic from 'next/dynamic';
 import ProfileCardContent from './ProfileCardContent';
-import ProfileEditForm from './ProfileEditForm';
 import useCardFlip from './useCardFlip';
+
+const ProfileEditForm = dynamic(() => import('./ProfileEditForm'), {
+  ssr: false,
+});
 
 type Props = {
   isAdmin?: boolean;
