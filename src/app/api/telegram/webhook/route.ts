@@ -5,6 +5,9 @@ import {
   addDoc,
   getDocs,
   deleteDoc,
+  query,
+  orderBy,
+  limit,
   Timestamp,
 } from 'firebase/firestore'
 import { addCustomKnowledge, invalidateCache } from '@/lib/rag'
@@ -40,6 +43,17 @@ export async function POST(req: NextRequest) {
     // Command: /clear — clear all pending
     if (text === '/clear') {
       return handleClear()
+    }
+
+    // Command: /questions — list recent chat questions
+    if (text === '/questions') {
+      return handleQuestions()
+    }
+
+    // Command: /answer N <text> — answer a specific question
+    const answerMatch = text.match(/^\/answer\s+(\d+)\s+([\s\S]+)/)
+    if (answerMatch) {
+      return handleAnswer(parseInt(answerMatch[1]), answerMatch[2].trim())
     }
 
     // Reply to a Q&A notification — save as pending knowledge
@@ -125,6 +139,97 @@ async function handlePending() {
 
   await sendTelegramMessage(msg)
   return NextResponse.json({ ok: true })
+}
+
+async function getRecentQuestions(count: number) {
+  const q = query(
+    collection(db, 'chat_logs'),
+    orderBy('createdAt', 'desc'),
+    limit(count),
+  )
+  const snap = await getDocs(q)
+  return snap.docs.map((d) => {
+    const data = d.data()
+    return { question: data.question as string, answer: data.answer as string }
+  })
+}
+
+async function handleQuestions() {
+  try {
+    const questions = await getRecentQuestions(10)
+    if (questions.length === 0) {
+      await sendTelegramMessage('📭 아직 질문이 없어요.')
+      return NextResponse.json({ ok: true })
+    }
+
+    let msg = `📋 최근 질문 (${questions.length}개)\n\n`
+    questions.forEach((item, i) => {
+      const qPreview =
+        item.question.length > 50
+          ? item.question.slice(0, 50) + '...'
+          : item.question
+      const aPreview =
+        item.answer.length > 50
+          ? item.answer.slice(0, 50) + '...'
+          : item.answer
+      msg += `<b>${i + 1}.</b> ${escapeHtml(qPreview)}\n   → ${escapeHtml(aPreview)}\n\n`
+    })
+    msg += '<i>/answer N 답변내용 으로 정확한 답변을 추가하세요.</i>'
+
+    await sendTelegramMessage(msg)
+    return NextResponse.json({ ok: true })
+  } catch (err) {
+    console.error('handleQuestions error:', err)
+    await sendTelegramMessage('❌ 질문 목록을 불러오지 못했어요.')
+    return NextResponse.json({ ok: true })
+  }
+}
+
+async function handleAnswer(num: number, answerText: string) {
+  try {
+    const questions = await getRecentQuestions(10)
+    if (questions.length === 0) {
+      await sendTelegramMessage('📭 질문이 없어요.')
+      return NextResponse.json({ ok: true })
+    }
+
+    if (num < 1 || num > questions.length) {
+      await sendTelegramMessage(
+        `⚠️ 1~${questions.length} 사이 번호를 입력해주세요.`,
+      )
+      return NextResponse.json({ ok: true })
+    }
+
+    const target = questions[num - 1]
+    const knowledgeText = `Q: ${target.question}\nA: ${answerText}`
+
+    await addDoc(collection(db, 'knowledge_pending'), {
+      text: knowledgeText,
+      source: 'telegram_answer',
+      originalQuestion: target.question,
+      createdAt: Timestamp.now(),
+    })
+
+    const qPreview =
+      target.question.length > 40
+        ? target.question.slice(0, 40) + '...'
+        : target.question
+    await sendTelegramMessage(
+      `✅ "${escapeHtml(qPreview)}"에 대한 답변을 대기열에 저장했어요.\n/sync 로 지식에 반영하세요.`,
+    )
+    return NextResponse.json({ ok: true })
+  } catch (err) {
+    console.error('handleAnswer error:', err)
+    await sendTelegramMessage('❌ 답변 저장에 실패했어요.')
+    return NextResponse.json({ ok: true })
+  }
+}
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
 }
 
 async function handleClear() {
