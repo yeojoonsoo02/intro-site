@@ -1,3 +1,21 @@
+// --- Telegram types ---
+
+export interface TelegramMessage {
+  message_id: number
+  date: number
+  chat: { id: number }
+  from?: { id: number; is_bot: boolean; first_name: string }
+  text?: string
+  reply_to_message?: TelegramMessage
+}
+
+export interface TelegramUpdate {
+  update_id: number
+  message?: TelegramMessage
+}
+
+// --- Config ---
+
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID
 
@@ -8,6 +26,17 @@ function getApiUrl(method: string) {
 export function isTelegramConfigured(): boolean {
   return !!(BOT_TOKEN && CHAT_ID)
 }
+
+// --- Shared utils ---
+
+export function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+}
+
+// --- API ---
 
 export async function sendTelegramMessage(
   text: string,
@@ -41,11 +70,4 @@ export function formatChatNotification(
   const q = escapeHtml(question)
   const a = escapeHtml(answer.length > 500 ? answer.slice(0, 500) + '...' : answer)
   return `<b>💬 새 질문</b>\n\n<b>Q:</b> ${q}\n\n<b>A:</b> ${a}\n\n<i>이 메시지에 답장하면 지식으로 저장됩니다.</i>`
-}
-
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
 }

@@ -28,26 +28,37 @@ const SYSTEM_PROMPT_BASE = `너는 여준수 본인이야. 자기소개 사이�
 - "탁구랑 수영 요즘 하고 있어"
 - "그건 잘 모르겠는데? 다음에 물어볼땐 다시 대답해줄게"`
 
+// --- [11] System prompt caching ---
+let cachedSystemPrompt: string | null = null
+let systemPromptCacheTime = 0
+const SYSTEM_PROMPT_TTL = 5 * 60 * 1000
+
 async function buildSystemPrompt(): Promise<string> {
+  const now = Date.now()
+  if (cachedSystemPrompt && now - systemPromptCacheTime < SYSTEM_PROMPT_TTL) {
+    return cachedSystemPrompt
+  }
+
   try {
     const context = await getKnowledgeContext()
-    return `${SYSTEM_PROMPT_BASE}\n\n### 나(여준수)에 대한 정보:\n${context}`
+    cachedSystemPrompt = `${SYSTEM_PROMPT_BASE}\n\n### 나(여준수)에 대한 정보:\n${context}`
+    systemPromptCacheTime = now
+    return cachedSystemPrompt
   } catch (err) {
     console.error('Knowledge context error:', err)
     return SYSTEM_PROMPT_BASE
   }
 }
 
-// --- Simple rate limiter (per serverless instance) ---
+// --- Rate limiter ---
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
-const RATE_LIMIT_MAX = 20 // max requests
-const RATE_LIMIT_WINDOW = 60 * 60 * 1000 // 1 hour
+const RATE_LIMIT_MAX = 20
+const RATE_LIMIT_WINDOW = 60 * 60 * 1000
 let lastCleanup = Date.now()
 
 function checkRateLimit(ip: string): { allowed: boolean; remaining: number } {
   const now = Date.now()
 
-  // Lazy cleanup expired entries
   if (now - lastCleanup > 10 * 60 * 1000) {
     for (const [key, val] of rateLimitMap) {
       if (now > val.resetAt) rateLimitMap.delete(key)
@@ -70,10 +81,28 @@ function checkRateLimit(ip: string): { allowed: boolean; remaining: number } {
   return { allowed: true, remaining: RATE_LIMIT_MAX - entry.count }
 }
 
+// --- [7] userInfo validation ---
+function sanitizeUserInfo(data: unknown): Record<string, unknown> | null {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return null
+  const raw = data as Record<string, unknown>
+  const safe: Record<string, unknown> = {}
+  for (const [key, val] of Object.entries(raw)) {
+    if (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean') {
+      safe[key] = val
+    }
+  }
+  return Object.keys(safe).length > 0 ? safe : null
+}
+
+// --- [8] Side-effect error logger ---
+function logSideEffect(context: string, err: unknown) {
+  const msg = err instanceof Error ? err.message : String(err)
+  console.error(`[${context}] ${msg}`)
+}
+
 const MAX_MESSAGE_LENGTH = 2000
 
 export async function POST(req: NextRequest) {
-  // Rate limiting
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
   const rateLimit = checkRateLimit(ip)
   if (!rateLimit.allowed) {
@@ -85,7 +114,7 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json()
   const message = body.message || body.prompt
-  const userInfo = body.userInfo
+  const userInfo = sanitizeUserInfo(body.userInfo)
   if (!message || typeof message !== 'string') {
     return NextResponse.json({ error: 'Missing prompt' }, { status: 400 })
   }
@@ -95,18 +124,14 @@ export async function POST(req: NextRequest) {
       { status: 400 },
     )
   }
+
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
-    // If no API key, forward to external server with RAG context
+    // Forward to external server with RAG context
     const url = process.env.NEXT_PUBLIC_GEMINI_API_URL ?? DEFAULT_URL
     try {
-      let augmentedMessage = message
-      try {
-        const context = await getKnowledgeContext()
-        augmentedMessage = `${SYSTEM_PROMPT_BASE}\n\n### 나(여준수)에 대한 정보:\n${context}\n\n### 사용자 질문:\n${message}`
-      } catch {
-        // Knowledge context unavailable, send original message
-      }
+      const systemPrompt = await buildSystemPrompt()
+      const augmentedMessage = `${systemPrompt}\n\n### 사용자 질문:\n${message}`
 
       const res = await fetch(url, {
         method: 'POST',
@@ -124,18 +149,14 @@ export async function POST(req: NextRequest) {
       }
       const data = await res.json()
       const reply = data.reply ?? data.text
-      const remaining = data.remaining ?? data.count
-      const limit = data.limit
-      const used = data.used
-      const reset = data.reset
-      saveChatLog(message, reply, userInfo).catch(() => {})
-      sendQuestionAnswer(message, reply, userInfo).catch((err) =>
-        console.error('Webhook error:', err)
-      )
-      if (isTelegramConfigured()) {
-        sendTelegramMessage(formatChatNotification(message, reply)).catch(() => {})
-      }
-      return NextResponse.json({ reply, remaining, limit, used, reset })
+      fireSideEffects(message, reply, userInfo)
+      return NextResponse.json({
+        reply,
+        remaining: data.remaining ?? data.count,
+        limit: data.limit,
+        used: data.used,
+        reset: data.reset,
+      })
     } catch (err) {
       console.error('Proxy error', err)
       return NextResponse.json({ error: 'Failed to fetch response' }, { status: 500 })
@@ -151,16 +172,29 @@ export async function POST(req: NextRequest) {
     })
     const result = await model.generateContent(message)
     const reply = result.response.text()
-    saveChatLog(message, reply, userInfo).catch(() => {})
-    sendQuestionAnswer(message, reply, userInfo).catch((err) =>
-      console.error('Webhook error:', err)
-    )
-    if (isTelegramConfigured()) {
-      sendTelegramMessage(formatChatNotification(message, reply)).catch(() => {})
-    }
+    fireSideEffects(message, reply, userInfo)
     return NextResponse.json({ reply, remaining: null })
   } catch (err) {
     console.error('Gemini API error', err)
     return NextResponse.json({ error: 'Failed to fetch response' }, { status: 500 })
+  }
+}
+
+// [8] Consolidated side-effects with proper logging
+function fireSideEffects(
+  message: string,
+  reply: string,
+  userInfo: Record<string, unknown> | null,
+) {
+  saveChatLog(message, reply, userInfo ?? undefined).catch((err) =>
+    logSideEffect('ChatLog', err),
+  )
+  sendQuestionAnswer(message, reply, userInfo ? JSON.stringify(userInfo) : undefined).catch((err) =>
+    logSideEffect('Webhook', err),
+  )
+  if (isTelegramConfigured()) {
+    sendTelegramMessage(formatChatNotification(message, reply)).catch((err) =>
+      logSideEffect('Telegram', err),
+    )
   }
 }

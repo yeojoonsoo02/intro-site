@@ -7,9 +7,11 @@ import {
   serverTimestamp,
 } from '@/lib/serverDb'
 import { addCustomKnowledge, invalidateCache } from '@/lib/rag'
-import { sendTelegramMessage } from '@/lib/telegram'
+import { sendTelegramMessage, escapeHtml, type TelegramUpdate } from '@/lib/telegram'
 
-// Verify request comes from Telegram using secret token
+const MAX_ANSWER_LENGTH = 2000
+let syncInProgress = false
+
 function verifyTelegramRequest(req: NextRequest): boolean {
   const secret = process.env.TELEGRAM_WEBHOOK_SECRET
   if (!secret) return false
@@ -17,14 +19,13 @@ function verifyTelegramRequest(req: NextRequest): boolean {
   return token === secret
 }
 
-// Telegram webhook - receives bot updates
 export async function POST(req: NextRequest) {
   if (!verifyTelegramRequest(req)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {
-    const update = await req.json()
+    const update = (await req.json()) as TelegramUpdate
     const message = update.message
     if (!message?.text) {
       return NextResponse.json({ ok: true })
@@ -45,7 +46,12 @@ export async function POST(req: NextRequest) {
 
     const answerMatch = text.match(/^\/answer\s+(\d+)\s+([\s\S]+)/)
     if (answerMatch) {
-      return handleAnswer(parseInt(answerMatch[1]), answerMatch[2].trim())
+      const answerText = answerMatch[2].trim()
+      if (answerText.length > MAX_ANSWER_LENGTH) {
+        await sendTelegramMessage(`⚠️ 답변이 너무 깁니다. ${MAX_ANSWER_LENGTH}자 이하로 입력해주세요.`)
+        return NextResponse.json({ ok: true })
+      }
+      return handleAnswer(parseInt(answerMatch[1]), answerText)
     }
 
     if (message.reply_to_message) {
@@ -90,25 +96,35 @@ async function handleReply(replyText: string, originalText?: string) {
 }
 
 async function handleSync() {
-  const snap = await serverGet('knowledge_pending')
-  if (snap.empty) {
-    await sendTelegramMessage('📭 대기열이 비어있어요.')
+  if (syncInProgress) {
+    await sendTelegramMessage('⏳ 이미 동기화 중이에요. 잠시 후 다시 시도해주세요.')
     return NextResponse.json({ ok: true })
   }
 
-  const texts = snap.docs.map((d) => d.data().text as string)
+  syncInProgress = true
+  try {
+    const snap = await serverGet('knowledge_pending')
+    if (snap.empty) {
+      await sendTelegramMessage('📭 대기열이 비어있어요.')
+      return NextResponse.json({ ok: true })
+    }
 
-  for (const text of texts) {
-    await addCustomKnowledge(text, 'telegram')
+    const texts = snap.docs.map((d) => d.data().text as string)
+
+    for (const text of texts) {
+      await addCustomKnowledge(text, 'telegram')
+    }
+
+    const batch = serverBatch()
+    snap.docs.forEach((d) => batch.delete(d.ref))
+    await batch.commit()
+    invalidateCache()
+
+    await sendTelegramMessage(`✅ ${texts.length}개 지식이 반영되었어요!`)
+    return NextResponse.json({ ok: true })
+  } finally {
+    syncInProgress = false
   }
-
-  const batch = serverBatch()
-  snap.docs.forEach((d) => batch.delete(d.ref))
-  await batch.commit()
-  invalidateCache()
-
-  await sendTelegramMessage(`✅ ${texts.length}개 지식이 반영되었어요!`)
-  return NextResponse.json({ ok: true })
 }
 
 async function handlePending() {
@@ -211,13 +227,6 @@ async function handleAnswer(num: number, answerText: string) {
     await sendTelegramMessage('❌ 답변 저장에 실패했어요.')
     return NextResponse.json({ ok: true })
   }
-}
-
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
 }
 
 async function handleClear() {
