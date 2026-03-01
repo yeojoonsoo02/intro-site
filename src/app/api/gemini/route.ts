@@ -114,7 +114,52 @@ function logSideEffect(context: string, err: unknown) {
 
 const MAX_MESSAGE_LENGTH = 2000
 
+// --- Bot detection ---
+const BOT_UA_PATTERNS = /bot|crawl|spider|scrape|headless|phantom|selenium|puppeteer|playwright|wget|curl|httpie|python-requests|node-fetch|axios|go-http|java\//i
+
+function isBot(req: NextRequest): boolean {
+  const ua = req.headers.get('user-agent') || ''
+  if (!ua || ua.length < 10) return true
+  if (BOT_UA_PATTERNS.test(ua)) return true
+  // Reject requests without typical browser headers
+  const accept = req.headers.get('accept') || ''
+  const origin = req.headers.get('origin') || ''
+  const referer = req.headers.get('referer') || ''
+  if (!origin && !referer) return true
+  if (!accept.includes('json') && !accept.includes('*/*')) return true
+  return false
+}
+
+// --- Global daily budget cap ---
+let dailyRequestCount = 0
+let dailyResetDate = new Date().toDateString()
+const DAILY_MAX_REQUESTS = 500
+
+function checkDailyBudget(): boolean {
+  const today = new Date().toDateString()
+  if (today !== dailyResetDate) {
+    dailyRequestCount = 0
+    dailyResetDate = today
+  }
+  if (dailyRequestCount >= DAILY_MAX_REQUESTS) return false
+  dailyRequestCount++
+  return true
+}
+
 export async function POST(req: NextRequest) {
+  // Bot filtering
+  if (isBot(req)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
+  // Daily budget cap
+  if (!checkDailyBudget()) {
+    return NextResponse.json(
+      { error: 'Daily limit reached. Please try again tomorrow.' },
+      { status: 429 },
+    )
+  }
+
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
   const rateLimit = checkRateLimit(ip)
   if (!rateLimit.allowed) {
