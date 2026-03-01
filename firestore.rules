@@ -29,7 +29,7 @@ service cloud.firestore {
     }
 
     // Visitor counter: public read/write (increment only)
-    match /visitors/{doc} {
+    match /counters/{doc} {
       allow read: if true;
       allow write: if true;
     }

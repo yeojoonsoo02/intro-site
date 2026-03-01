@@ -8,14 +8,14 @@ import { useAuth } from "@/lib/AuthProvider";
 export const dynamic = "force-dynamic";
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) router.replace("/login");
-  }, [user, router]);
+    if (!loading && !user) router.replace("/login");
+  }, [user, loading, router]);
 
-  if (!user) return null;
+  if (loading || !user) return null;
 
   const { displayName, email, photoURL } = user;
 

@@ -68,21 +68,21 @@ export default function TopBar() {
             </svg>
           </button>
           {menuOpen && (
-            <div className="absolute right-0 mt-2 w-48 rounded-xl overflow-hidden bg-[#2563eb] text-white shadow-lg backdrop-blur flex flex-col text-sm divide-y divide-white/30 py-2">
+            <div className="absolute right-0 mt-2 w-48 rounded-xl overflow-hidden bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 shadow-lg border border-gray-200 dark:border-gray-700 backdrop-blur flex flex-col text-sm divide-y divide-gray-200 dark:divide-gray-700 py-2">
               <button
                 onClick={togglePrompt}
-                className="block w-full text-left px-4 py-3 hover:bg-blue-600"
+                className="block w-full text-left px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 {t('prompt')}
               </button>
-              <div className="pt-2 mt-2 border-t border-white/30">
+              <div className="pt-2 mt-2 border-t border-gray-200 dark:border-gray-700">
                 <div className="px-4 pb-2 text-xs font-semibold opacity-80">
                   {t('theme', { defaultValue: 'Theme' })}
                 </div>
                 <button
                   onClick={() => setTheme('light')}
-                  className={`block w-full text-left px-4 py-2 hover:bg-blue-600 flex items-center justify-between ${
-                    theme === 'light' ? 'bg-blue-700' : ''
+                  className={`block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between ${
+                    theme === 'light' ? 'bg-gray-200 dark:bg-gray-600' : ''
                   }`}
                 >
                   <span>{t('themeLight', { defaultValue: 'Light Mode' })}</span>
@@ -90,8 +90,8 @@ export default function TopBar() {
                 </button>
                 <button
                   onClick={() => setTheme('dark')}
-                  className={`block w-full text-left px-4 py-2 hover:bg-blue-600 flex items-center justify-between ${
-                    theme === 'dark' ? 'bg-blue-700' : ''
+                  className={`block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between ${
+                    theme === 'dark' ? 'bg-gray-200 dark:bg-gray-600' : ''
                   }`}
                 >
                   <span>{t('themeDark', { defaultValue: 'Dark Mode' })}</span>
@@ -99,8 +99,8 @@ export default function TopBar() {
                 </button>
                 <button
                   onClick={() => setTheme('system')}
-                  className={`block w-full text-left px-4 py-2 hover:bg-blue-600 flex items-center justify-between ${
-                    theme === 'system' ? 'bg-blue-700' : ''
+                  className={`block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between ${
+                    theme === 'system' ? 'bg-gray-200 dark:bg-gray-600' : ''
                   }`}
                 >
                   <span>{t('themeSystem', { defaultValue: 'System Theme' })}</span>
@@ -113,7 +113,7 @@ export default function TopBar() {
                     login()
                     setMenuOpen(false)
                   }}
-                  className="block w-full text-left px-4 py-3 hover:bg-blue-600"
+                  className="block w-full text-left px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   {t('signIn')}
                 </button>
@@ -127,7 +127,7 @@ export default function TopBar() {
                         alt={user.displayName || 'profile'}
                         width={28}
                         height={28}
-                        className="rounded-full border border-white/40"
+                        className="rounded-full border border-gray-300 dark:border-gray-600"
                         referrerPolicy="no-referrer"
                       />
                     )}
@@ -140,16 +140,16 @@ export default function TopBar() {
                       logout()
                       setMenuOpen(false)
                     }}
-                    className="block w-full text-left text-white/70 hover:text-white text-xs"
+                    className="block w-full text-left text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white text-xs"
                   >
                     {t('logout')}
                   </button>
                 </div>
               )}
-              <div className="pt-2 mt-2 border-t border-white/30">
+              <div className="pt-2 mt-2 border-t border-gray-200 dark:border-gray-700">
                 <button
                   onClick={() => setLangOpen((o) => !o)}
-                  className="w-full flex items-center justify-between px-4 py-3 hover:bg-blue-600 font-semibold"
+                  className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 font-semibold"
                 >
                   <span>{t('language')}</span>
                   <svg
@@ -171,7 +171,7 @@ export default function TopBar() {
                           setMenuOpen(false)
                           setLangOpen(false)
                         }}
-                        className="block w-full text-left px-2 py-1 rounded hover:bg-white/10 text-base font-medium"
+                        className="block w-full text-left px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-base font-medium"
                       >
                         {l.label}
                       </button>
@@ -190,7 +190,7 @@ export default function TopBar() {
             setPromptOpen(true)
             setInviteVisible(false)
           }}
-          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 px-6 py-2 rounded-[24px] bg-[#357AE8] text-white text-sm leading-[1.4] shadow transition-transform hover:shadow-lg hover:scale-105 flex items-center break-keep whitespace-pre-wrap overflow-wrap-anywhere"
+          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 px-6 py-2 rounded-[24px] bg-blue-500 dark:bg-blue-600 text-white text-sm leading-[1.4] shadow transition-transform hover:shadow-lg hover:scale-105 flex items-center break-keep whitespace-pre-wrap overflow-wrap-anywhere"
         >
           <span className="mr-1.5" aria-hidden>🚀</span>
           {t('chatInvite')}

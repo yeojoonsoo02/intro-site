@@ -5,12 +5,14 @@ import { auth, provider, signInWithPopup, signOut, onAuthStateChanged } from "@/
 
 interface AuthContextValue {
   user: User | null;
+  loading: boolean;
   login: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue>({
   user: null,
+  loading: true,
   login: async () => {},
   logout: async () => {},
 });
@@ -21,9 +23,13 @@ export function useAuth() {
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => setUser(u));
+    const unsub = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+      setLoading(false);
+    });
     return () => unsub();
   }, []);
 
@@ -36,7 +42,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
