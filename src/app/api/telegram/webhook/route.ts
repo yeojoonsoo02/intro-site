@@ -13,8 +13,20 @@ import {
 import { addCustomKnowledge, invalidateCache } from '@/lib/rag'
 import { sendTelegramMessage } from '@/lib/telegram'
 
+// Verify request comes from Telegram using secret token
+function verifyTelegramRequest(req: NextRequest): boolean {
+  const secret = process.env.TELEGRAM_WEBHOOK_SECRET
+  if (!secret) return false
+  const token = req.headers.get('X-Telegram-Bot-Api-Secret-Token')
+  return token === secret
+}
+
 // Telegram webhook - receives bot updates
 export async function POST(req: NextRequest) {
+  if (!verifyTelegramRequest(req)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   try {
     const update = await req.json()
     const message = update.message

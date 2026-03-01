@@ -38,12 +38,60 @@ async function buildSystemPrompt(): Promise<string> {
   }
 }
 
+// --- Simple rate limiter (per serverless instance) ---
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
+const RATE_LIMIT_MAX = 20 // max requests
+const RATE_LIMIT_WINDOW = 60 * 60 * 1000 // 1 hour
+
+function checkRateLimit(ip: string): { allowed: boolean; remaining: number } {
+  const now = Date.now()
+  const entry = rateLimitMap.get(ip)
+
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW })
+    return { allowed: true, remaining: RATE_LIMIT_MAX - 1 }
+  }
+
+  if (entry.count >= RATE_LIMIT_MAX) {
+    return { allowed: false, remaining: 0 }
+  }
+
+  entry.count++
+  return { allowed: true, remaining: RATE_LIMIT_MAX - entry.count }
+}
+
+// Cleanup stale entries every 10 minutes
+setInterval(() => {
+  const now = Date.now()
+  for (const [ip, entry] of rateLimitMap) {
+    if (now > entry.resetAt) rateLimitMap.delete(ip)
+  }
+}, 10 * 60 * 1000)
+
+const MAX_MESSAGE_LENGTH = 2000
+
 export async function POST(req: NextRequest) {
+  // Rate limiting
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  const { allowed, remaining } = checkRateLimit(ip)
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      { status: 429, headers: { 'X-RateLimit-Remaining': '0' } },
+    )
+  }
+
   const body = await req.json()
   const message = body.message || body.prompt
   const userInfo = body.userInfo
-  if (!message) {
+  if (!message || typeof message !== 'string') {
     return NextResponse.json({ error: 'Missing prompt' }, { status: 400 })
+  }
+  if (message.length > MAX_MESSAGE_LENGTH) {
+    return NextResponse.json(
+      { error: `Message too long (max ${MAX_MESSAGE_LENGTH} chars)` },
+      { status: 400 },
+    )
   }
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {

@@ -7,7 +7,7 @@ import {
 
 function isAuthorized(req: NextRequest): boolean {
   const adminSecret = process.env.ADMIN_SECRET
-  if (!adminSecret) return true
+  if (!adminSecret) return false
   return req.headers.get('x-admin-secret') === adminSecret
 }
 

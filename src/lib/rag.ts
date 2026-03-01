@@ -22,6 +22,7 @@ type CustomEntry = {
 
 let cachedCustom: CustomEntry[] | null = null
 let cacheTimestamp = 0
+let cachePromise: Promise<CustomEntry[]> | null = null
 const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
 
 async function loadCustomEntries(): Promise<CustomEntry[]> {
@@ -30,26 +31,38 @@ async function loadCustomEntries(): Promise<CustomEntry[]> {
     return cachedCustom
   }
 
-  const snap = await getDocs(collection(db, 'knowledge_custom'))
-  const entries: CustomEntry[] = []
-  snap.forEach((d) => {
-    const data = d.data()
-    entries.push({
-      id: d.id,
-      text: data.text,
-      category: data.category,
-      createdAt: data.createdAt,
-    })
-  })
+  // Deduplicate concurrent requests
+  if (cachePromise) return cachePromise
 
-  cachedCustom = entries
-  cacheTimestamp = now
-  return entries
+  cachePromise = (async () => {
+    try {
+      const snap = await getDocs(collection(db, 'knowledge_custom'))
+      const entries: CustomEntry[] = []
+      snap.forEach((d) => {
+        const data = d.data()
+        entries.push({
+          id: d.id,
+          text: data.text,
+          category: data.category,
+          createdAt: data.createdAt,
+        })
+      })
+
+      cachedCustom = entries
+      cacheTimestamp = Date.now()
+      return entries
+    } finally {
+      cachePromise = null
+    }
+  })()
+
+  return cachePromise
 }
 
 export function invalidateCache() {
   cachedCustom = null
   cacheTimestamp = 0
+  cachePromise = null
 }
 
 // --- Knowledge context ---
