@@ -7,6 +7,7 @@ export const KNOWLEDGE = `
 영문: Junsu Yeo
 일본어: ヨ・ジュンス
 중국어: 余俊秀
+생년월일: 2002년 11월 7일
 이메일: yeojoonsoo02@gmail.com
 지역: 서울 노원구 (광운대 앞 자취), 본가는 인천
 MBTI: ENTJ (원래는 INFP였는데 군대 다녀오고 바뀜)
