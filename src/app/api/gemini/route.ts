@@ -42,9 +42,19 @@ async function buildSystemPrompt(): Promise<string> {
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
 const RATE_LIMIT_MAX = 20 // max requests
 const RATE_LIMIT_WINDOW = 60 * 60 * 1000 // 1 hour
+let lastCleanup = Date.now()
 
 function checkRateLimit(ip: string): { allowed: boolean; remaining: number } {
   const now = Date.now()
+
+  // Lazy cleanup expired entries
+  if (now - lastCleanup > 10 * 60 * 1000) {
+    for (const [key, val] of rateLimitMap) {
+      if (now > val.resetAt) rateLimitMap.delete(key)
+    }
+    lastCleanup = now
+  }
+
   const entry = rateLimitMap.get(ip)
 
   if (!entry || now > entry.resetAt) {
@@ -60,21 +70,13 @@ function checkRateLimit(ip: string): { allowed: boolean; remaining: number } {
   return { allowed: true, remaining: RATE_LIMIT_MAX - entry.count }
 }
 
-// Cleanup stale entries every 10 minutes
-setInterval(() => {
-  const now = Date.now()
-  for (const [ip, entry] of rateLimitMap) {
-    if (now > entry.resetAt) rateLimitMap.delete(ip)
-  }
-}, 10 * 60 * 1000)
-
 const MAX_MESSAGE_LENGTH = 2000
 
 export async function POST(req: NextRequest) {
   // Rate limiting
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
-  const { allowed, remaining } = checkRateLimit(ip)
-  if (!allowed) {
+  const rateLimit = checkRateLimit(ip)
+  if (!rateLimit.allowed) {
     return NextResponse.json(
       { error: 'Too many requests. Please try again later.' },
       { status: 429, headers: { 'X-RateLimit-Remaining': '0' } },
