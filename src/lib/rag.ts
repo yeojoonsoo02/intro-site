@@ -1,12 +1,4 @@
-import { db } from '@/lib/firebase'
-import {
-  collection,
-  getDocs,
-  addDoc,
-  deleteDoc,
-  doc,
-  Timestamp,
-} from 'firebase/firestore'
+import { serverAdd, serverGet, serverDeleteDoc, serverTimestamp } from '@/lib/serverDb'
 import { KNOWLEDGE } from '@/data/knowledge'
 
 // --- Types ---
@@ -15,7 +7,7 @@ type CustomEntry = {
   id: string
   text: string
   category: string
-  createdAt: Timestamp
+  createdAt: unknown
 }
 
 // --- In-memory cache ---
@@ -36,16 +28,15 @@ async function loadCustomEntries(): Promise<CustomEntry[]> {
 
   cachePromise = (async () => {
     try {
-      const snap = await getDocs(collection(db, 'knowledge_custom'))
-      const entries: CustomEntry[] = []
-      snap.forEach((d) => {
+      const snap = await serverGet('knowledge_custom')
+      const entries: CustomEntry[] = snap.docs.map((d) => {
         const data = d.data()
-        entries.push({
+        return {
           id: d.id,
-          text: data.text,
-          category: data.category,
+          text: data.text as string,
+          category: data.category as string,
           createdAt: data.createdAt,
-        })
+        }
       })
 
       cachedCustom = entries
@@ -86,13 +77,13 @@ export async function addCustomKnowledge(
   text: string,
   category: string = 'custom',
 ): Promise<string> {
-  const docRef = await addDoc(collection(db, 'knowledge_custom'), {
+  const id = await serverAdd('knowledge_custom', {
     text,
     category,
-    createdAt: Timestamp.now(),
+    createdAt: serverTimestamp(),
   })
   invalidateCache()
-  return docRef.id
+  return id
 }
 
 export async function listCustomKnowledge(): Promise<CustomEntry[]> {
@@ -100,6 +91,6 @@ export async function listCustomKnowledge(): Promise<CustomEntry[]> {
 }
 
 export async function deleteCustomKnowledge(id: string): Promise<void> {
-  await deleteDoc(doc(db, 'knowledge_custom', id))
+  await serverDeleteDoc('knowledge_custom', id)
   invalidateCache()
 }

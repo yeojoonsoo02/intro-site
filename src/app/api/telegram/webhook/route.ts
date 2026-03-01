@@ -1,15 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/firebase'
 import {
-  collection,
-  addDoc,
-  getDocs,
-  deleteDoc,
-  query,
-  orderBy,
-  limit,
-  Timestamp,
-} from 'firebase/firestore'
+  serverAdd,
+  serverGet,
+  serverQuery,
+  serverBatch,
+  serverTimestamp,
+} from '@/lib/serverDb'
 import { addCustomKnowledge, invalidateCache } from '@/lib/rag'
 import { sendTelegramMessage } from '@/lib/telegram'
 
@@ -42,43 +38,25 @@ export async function POST(req: NextRequest) {
 
     const text = message.text.trim()
 
-    // Command: /sync — move all pending to knowledge_custom
-    if (text === '/sync') {
-      return handleSync()
-    }
+    if (text === '/sync') return handleSync()
+    if (text === '/pending') return handlePending()
+    if (text === '/clear') return handleClear()
+    if (text === '/questions') return handleQuestions()
 
-    // Command: /pending — list pending knowledge
-    if (text === '/pending') {
-      return handlePending()
-    }
-
-    // Command: /clear — clear all pending
-    if (text === '/clear') {
-      return handleClear()
-    }
-
-    // Command: /questions — list recent chat questions
-    if (text === '/questions') {
-      return handleQuestions()
-    }
-
-    // Command: /answer N <text> — answer a specific question
     const answerMatch = text.match(/^\/answer\s+(\d+)\s+([\s\S]+)/)
     if (answerMatch) {
       return handleAnswer(parseInt(answerMatch[1]), answerMatch[2].trim())
     }
 
-    // Reply to a Q&A notification — save as pending knowledge
     if (message.reply_to_message) {
       return handleReply(text, message.reply_to_message.text)
     }
 
-    // Direct text message (not a reply) — save as pending knowledge
     if (!text.startsWith('/')) {
-      await addDoc(collection(db, 'knowledge_pending'), {
+      await serverAdd('knowledge_pending', {
         text,
         source: 'telegram_direct',
-        createdAt: Timestamp.now(),
+        createdAt: serverTimestamp(),
       })
       await sendTelegramMessage('✅ 대기열에 저장했어요. /sync 로 지식에 반영하세요.')
       return NextResponse.json({ ok: true })
@@ -92,7 +70,6 @@ export async function POST(req: NextRequest) {
 }
 
 async function handleReply(replyText: string, originalText?: string) {
-  // Extract original question from the notification format
   let context = ''
   if (originalText) {
     const qMatch = originalText.match(/Q:\s*(.+?)(?:\n|$)/)
@@ -101,13 +78,11 @@ async function handleReply(replyText: string, originalText?: string) {
     }
   }
 
-  const textToSave = context || replyText
-
-  await addDoc(collection(db, 'knowledge_pending'), {
-    text: textToSave,
+  await serverAdd('knowledge_pending', {
+    text: context || replyText,
     source: 'telegram_reply',
     originalQuestion: originalText || null,
-    createdAt: Timestamp.now(),
+    createdAt: serverTimestamp(),
   })
 
   await sendTelegramMessage('✅ 대기열에 저장했어요. /sync 로 지식에 반영하세요.')
@@ -115,27 +90,29 @@ async function handleReply(replyText: string, originalText?: string) {
 }
 
 async function handleSync() {
-  const snap = await getDocs(collection(db, 'knowledge_pending'))
+  const snap = await serverGet('knowledge_pending')
   if (snap.empty) {
     await sendTelegramMessage('📭 대기열이 비어있어요.')
     return NextResponse.json({ ok: true })
   }
 
-  let count = 0
-  for (const d of snap.docs) {
-    const data = d.data()
-    await addCustomKnowledge(data.text, 'telegram')
-    await deleteDoc(d.ref)
-    count++
+  const texts = snap.docs.map((d) => d.data().text as string)
+
+  for (const text of texts) {
+    await addCustomKnowledge(text, 'telegram')
   }
+
+  const batch = serverBatch()
+  snap.docs.forEach((d) => batch.delete(d.ref))
+  await batch.commit()
   invalidateCache()
 
-  await sendTelegramMessage(`✅ ${count}개 지식이 반영되었어요!`)
+  await sendTelegramMessage(`✅ ${texts.length}개 지식이 반영되었어요!`)
   return NextResponse.json({ ok: true })
 }
 
 async function handlePending() {
-  const snap = await getDocs(collection(db, 'knowledge_pending'))
+  const snap = await serverGet('knowledge_pending')
   if (snap.empty) {
     await sendTelegramMessage('📭 대기열이 비어있어요.')
     return NextResponse.json({ ok: true })
@@ -143,7 +120,7 @@ async function handlePending() {
 
   let msg = `📋 대기 중인 지식 (${snap.size}개)\n\n`
   snap.docs.forEach((d, i) => {
-    const text = d.data().text
+    const text = d.data().text as string
     const preview = text.length > 80 ? text.slice(0, 80) + '...' : text
     msg += `${i + 1}. ${preview}\n`
   })
@@ -154,12 +131,11 @@ async function handlePending() {
 }
 
 async function getRecentQuestions(count: number) {
-  const q = query(
-    collection(db, 'chat_logs'),
-    orderBy('createdAt', 'desc'),
-    limit(count),
-  )
-  const snap = await getDocs(q)
+  const snap = await serverQuery('chat_logs', {
+    orderByField: 'createdAt',
+    orderDir: 'desc',
+    limitCount: count,
+  })
   return snap.docs.map((d) => {
     const data = d.data()
     return { question: data.question as string, answer: data.answer as string }
@@ -215,11 +191,11 @@ async function handleAnswer(num: number, answerText: string) {
     const target = questions[num - 1]
     const knowledgeText = `Q: ${target.question}\nA: ${answerText}`
 
-    await addDoc(collection(db, 'knowledge_pending'), {
+    await serverAdd('knowledge_pending', {
       text: knowledgeText,
       source: 'telegram_answer',
       originalQuestion: target.question,
-      createdAt: Timestamp.now(),
+      createdAt: serverTimestamp(),
     })
 
     const qPreview =
@@ -245,15 +221,15 @@ function escapeHtml(text: string): string {
 }
 
 async function handleClear() {
-  const snap = await getDocs(collection(db, 'knowledge_pending'))
+  const snap = await serverGet('knowledge_pending')
   if (snap.empty) {
     await sendTelegramMessage('📭 이미 비어있어요.')
     return NextResponse.json({ ok: true })
   }
 
-  for (const d of snap.docs) {
-    await deleteDoc(d.ref)
-  }
+  const batch = serverBatch()
+  snap.docs.forEach((d) => batch.delete(d.ref))
+  await batch.commit()
 
   await sendTelegramMessage(`🗑️ ${snap.size}개 대기 항목을 삭제했어요.`)
   return NextResponse.json({ ok: true })

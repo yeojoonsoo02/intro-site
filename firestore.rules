@@ -1,0 +1,48 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Server-only collections (Admin SDK bypasses rules)
+    match /chat_logs/{doc} {
+      allow read, write: if false;
+    }
+    match /knowledge_custom/{doc} {
+      allow read, write: if false;
+    }
+    match /knowledge_pending/{doc} {
+      allow read, write: if false;
+    }
+
+    // Profiles: public read, admin write
+    match /profiles/{doc} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && request.auth.token.email == "yeojoonsoo02@gmail.com";
+    }
+
+    // Comments: public read, authenticated write
+    match /comments/{doc} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if false;
+    }
+
+    // Visitor counter: public read/write (increment only)
+    match /visitors/{doc} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Prompt logs: public create only
+    match /prompt_logs/{doc} {
+      allow create: if true;
+      allow read, update, delete: if false;
+    }
+
+    // Deny everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

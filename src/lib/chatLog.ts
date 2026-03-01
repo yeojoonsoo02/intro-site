@@ -1,5 +1,4 @@
-import { db } from '@/lib/firebase'
-import { collection, addDoc, Timestamp } from 'firebase/firestore'
+import { serverAdd, serverTimestamp } from '@/lib/serverDb'
 
 export async function saveChatLog(
   question: string,
@@ -7,11 +6,11 @@ export async function saveChatLog(
   userInfo?: Record<string, unknown>,
 ) {
   try {
-    await addDoc(collection(db, 'chat_logs'), {
+    await serverAdd('chat_logs', {
       question,
       answer,
       userInfo: userInfo || null,
-      createdAt: Timestamp.now(),
+      createdAt: serverTimestamp(),
     })
   } catch (err) {
     console.error('Chat log save error:', err)
