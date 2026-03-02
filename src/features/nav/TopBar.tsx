@@ -27,6 +27,7 @@ export default function TopBar() {
   const [promptOpen, setPromptOpen] = useState(false)
   const [inviteVisible, setInviteVisible] = useState(false)
   const [langOpen, setLangOpen] = useState(false)
+  const [themeOpen, setThemeOpen] = useState(false)
 
   useEffect(() => {
     const timer = setTimeout(() => setInviteVisible(true), 10000)
@@ -76,36 +77,51 @@ export default function TopBar() {
                 {t('prompt')}
               </button>
               <div className="pt-2 mt-2 border-t border-gray-200 dark:border-gray-700">
-                <div className="px-4 pb-2 text-xs font-semibold opacity-80">
-                  {t('theme', { defaultValue: 'Theme' })}
-                </div>
                 <button
-                  onClick={() => setTheme('light')}
-                  className={`block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between ${
-                    theme === 'light' ? 'bg-gray-200 dark:bg-gray-600' : ''
-                  }`}
+                  onClick={() => setThemeOpen((o) => !o)}
+                  className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 font-semibold"
                 >
-                  <span>{t('themeLight', { defaultValue: 'Light Mode' })}</span>
-                  <span className="text-lg ml-2">☀️</span>
+                  <span>{t('theme', { defaultValue: 'Theme' })}</span>
+                  <svg
+                    className={`w-4 h-4 ml-1 transition-transform ${themeOpen ? 'rotate-180' : ''}`}
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path fillRule="evenodd" d="M5 7l5 5 5-5H5z" clipRule="evenodd" />
+                  </svg>
                 </button>
-                <button
-                  onClick={() => setTheme('dark')}
-                  className={`block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between ${
-                    theme === 'dark' ? 'bg-gray-200 dark:bg-gray-600' : ''
-                  }`}
-                >
-                  <span>{t('themeDark', { defaultValue: 'Dark Mode' })}</span>
-                  <span className="text-lg ml-2">🌙</span>
-                </button>
-                <button
-                  onClick={() => setTheme('system')}
-                  className={`block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between ${
-                    theme === 'system' ? 'bg-gray-200 dark:bg-gray-600' : ''
-                  }`}
-                >
-                  <span>{t('themeSystem', { defaultValue: 'System Theme' })}</span>
-                  <span className="text-lg ml-2">💻</span>
-                </button>
+                {themeOpen && (
+                  <div className="px-5 pb-2 space-y-1">
+                    <button
+                      onClick={() => { setTheme('light'); setMenuOpen(false); setThemeOpen(false) }}
+                      className={`w-full flex items-center justify-between px-2 py-1 rounded text-base font-medium hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                        theme === 'light' ? 'bg-gray-200 dark:bg-gray-600' : ''
+                      }`}
+                    >
+                      <span>{t('themeLight', { defaultValue: 'Light Mode' })}</span>
+                      <span className="text-lg">☀️</span>
+                    </button>
+                    <button
+                      onClick={() => { setTheme('dark'); setMenuOpen(false); setThemeOpen(false) }}
+                      className={`w-full flex items-center justify-between px-2 py-1 rounded text-base font-medium hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                        theme === 'dark' ? 'bg-gray-200 dark:bg-gray-600' : ''
+                      }`}
+                    >
+                      <span>{t('themeDark', { defaultValue: 'Dark Mode' })}</span>
+                      <span className="text-lg">🌙</span>
+                    </button>
+                    <button
+                      onClick={() => { setTheme('system'); setMenuOpen(false); setThemeOpen(false) }}
+                      className={`w-full flex items-center justify-between px-2 py-1 rounded text-base font-medium hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                        theme === 'system' ? 'bg-gray-200 dark:bg-gray-600' : ''
+                      }`}
+                    >
+                      <span>{t('themeSystem', { defaultValue: 'System Theme' })}</span>
+                      <span className="text-lg">💻</span>
+                    </button>
+                  </div>
+                )}
               </div>
               {!user && (
                 <button
