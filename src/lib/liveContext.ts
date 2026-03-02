@@ -3,6 +3,7 @@ const TTL = 2 * 60 * 1000
 
 let cached: string | null = null
 let cacheTime = 0
+let cachePromise: Promise<string> | null = null
 
 type MealEntry = {
   mealType: string
@@ -180,25 +181,33 @@ export async function getLiveContext(): Promise<string> {
     return cached
   }
 
+  if (cachePromise) return cachePromise
+
   const apiKey = process.env.CONTEXT_API_KEY
   if (!apiKey) return ''
 
-  try {
-    const res = await fetch(API_URL, {
-      headers: { Authorization: `Bearer ${apiKey}` },
-    })
-    if (!res.ok) {
-      console.error('Live context API error:', res.status)
-      return cached || ''
-    }
-    const json: ContextResponse = await res.json()
-    if (!json.success) return cached || ''
+  cachePromise = (async () => {
+    try {
+      const res = await fetch(API_URL, {
+        headers: { Authorization: `Bearer ${apiKey}` },
+      })
+      if (!res.ok) {
+        console.error('Live context API error:', res.status)
+        return cached || ''
+      }
+      const json: ContextResponse = await res.json()
+      if (!json.success) return cached || ''
 
-    cached = formatLiveData(json)
-    cacheTime = now
-    return cached
-  } catch (err) {
-    console.error('Live context fetch error:', err)
-    return cached || ''
-  }
+      cached = formatLiveData(json)
+      cacheTime = Date.now()
+      return cached
+    } catch (err) {
+      console.error('Live context fetch error:', err)
+      return cached || ''
+    } finally {
+      cachePromise = null
+    }
+  })()
+
+  return cachePromise
 }

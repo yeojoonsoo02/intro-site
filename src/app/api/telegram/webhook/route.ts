@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import crypto from 'crypto'
 import {
   serverAdd,
   serverGet,
@@ -16,7 +17,11 @@ function verifyTelegramRequest(req: NextRequest): boolean {
   const secret = process.env.TELEGRAM_WEBHOOK_SECRET
   if (!secret) return false
   const token = req.headers.get('X-Telegram-Bot-Api-Secret-Token')
-  return token === secret
+  if (!token) return false
+  const tokenBuf = Buffer.from(token)
+  const secretBuf = Buffer.from(secret)
+  if (tokenBuf.length !== secretBuf.length) return false
+  return crypto.timingSafeEqual(tokenBuf, secretBuf)
 }
 
 export async function POST(req: NextRequest) {

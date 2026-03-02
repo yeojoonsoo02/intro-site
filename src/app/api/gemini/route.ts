@@ -66,14 +66,23 @@ async function buildSystemPrompt(): Promise<string> {
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
 const RATE_LIMIT_MAX = 20
 const RATE_LIMIT_WINDOW = 60 * 60 * 1000
+const RATE_LIMIT_MAP_MAX = 500
 let lastCleanup = Date.now()
 
 function checkRateLimit(ip: string): { allowed: boolean; remaining: number } {
   const now = Date.now()
 
-  if (now - lastCleanup > 10 * 60 * 1000) {
+  if (now - lastCleanup > 2 * 60 * 1000) {
     for (const [key, val] of rateLimitMap) {
       if (now > val.resetAt) rateLimitMap.delete(key)
+    }
+    if (rateLimitMap.size > RATE_LIMIT_MAP_MAX) {
+      const excess = rateLimitMap.size - RATE_LIMIT_MAP_MAX
+      const keys = rateLimitMap.keys()
+      for (let i = 0; i < excess; i++) {
+        const k = keys.next().value
+        if (k) rateLimitMap.delete(k)
+      }
     }
     lastCleanup = now
   }
