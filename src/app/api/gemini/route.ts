@@ -215,6 +215,9 @@ export async function POST(req: NextRequest) {
       }
       const data = await res.json()
       const reply = data.reply ?? data.text
+      if (!reply) {
+        return NextResponse.json({ error: 'Empty response from AI' }, { status: 502 })
+      }
       fireSideEffects(message, reply, userInfo)
       return NextResponse.json({
         reply,
@@ -238,6 +241,9 @@ export async function POST(req: NextRequest) {
     })
     const result = await model.generateContent(message)
     const reply = result.response.text()
+    if (!reply) {
+      return NextResponse.json({ error: 'Empty response from AI' }, { status: 502 })
+    }
     fireSideEffects(message, reply, userInfo)
     return NextResponse.json({ reply, remaining: null })
   } catch (err) {

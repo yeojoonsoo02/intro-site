@@ -39,7 +39,7 @@
   "hideConversation": "Hide conversation",
   "showConversation": "Show conversation",
   "close": "Close",
-  "max30Chars": "Maximum 30 characters allowed",
+  "maxChars": "Maximum 200 characters allowed",
   "remaining": "Questions left: {{count}}",
   "typing": "typing",
   "noQuestionsLeft": "No questions left. Please try again tomorrow."
@@ -50,4 +50,7 @@
   ,"theme": "Theme"
   ,"deleteComment": "Delete comment"
 ,"errorOccurred": "An error occurred. Please try again later."
+,"welcomeUser": "Welcome, {{name}}"
+,"goHome": "Go to Home"
+,"user": "User"
 }

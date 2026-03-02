@@ -39,7 +39,7 @@
   "hideConversation": "대화 숨기기",
   "showConversation": "대화 보기",
   "close": "닫기",
-  "max30Chars": "최대 30자까지만 입력 가능합니다",
+  "maxChars": "최대 200자까지 입력 가능합니다",
   "remaining": "남은 질문 횟수: {{count}}",
   "typing": "작성 중",
   "noQuestionsLeft": "남은 질문 횟수가 없습니다. 내일 다시 시도하세요."
@@ -50,4 +50,7 @@
   ,"theme": "테마"
   ,"deleteComment": "댓글 삭제"
 ,"errorOccurred": "오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+,"welcomeUser": "{{name}}님, 환영합니다"
+,"goHome": "홈으로 돌아가기"
+,"user": "사용자"
 }

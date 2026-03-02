@@ -12,7 +12,7 @@ export default function LoginPage() {
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (user) router.replace("/");
+    if (user) router.replace("/dashboard");
   }, [user, router]);
 
   if (loading) return null;

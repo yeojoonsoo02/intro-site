@@ -15,7 +15,7 @@ export async function sendKakaoMemo(template: KakaoTemplate) {
   payload.append('template_object', JSON.stringify(template))
 
   try {
-    await fetch('https://kapi.kakao.com/v2/api/talk/memo/send', {
+    const res = await fetch('https://kapi.kakao.com/v2/api/talk/memo/send', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -23,6 +23,9 @@ export async function sendKakaoMemo(template: KakaoTemplate) {
       },
       body: payload.toString(),
     })
+    if (!res.ok) {
+      console.error('Kakao API error:', res.status, res.statusText)
+    }
   } catch (err) {
     console.error('Failed to send Kakao memo:', err)
   }

@@ -142,8 +142,8 @@ export default function PromptBox({
             value={text}
             onChange={(e) => {
               let val = e.target.value
-              if (val.length > 30) {
-                val = val.slice(0, 30)
+              if (val.length > 200) {
+                val = val.slice(0, 200)
                 setShowLimit(true)
                 if (timerRef.current) clearTimeout(timerRef.current)
                 timerRef.current = setTimeout(() => setShowLimit(false), 2000)
@@ -166,7 +166,7 @@ export default function PromptBox({
           <p className="text-right text-xs text-gray-600 dark:text-gray-400">{t('remaining', { count: remaining })}</p>
         )}
         {showLimit && (
-          <p className="text-xs text-red-600">{t('max30Chars')}</p>
+          <p className="text-xs text-red-600">{t('maxChars')}</p>
         )}
           <p className="text-xs text-gray-400 text-center">{t('aiDisclaimer')}</p>
         </div>

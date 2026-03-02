@@ -39,7 +39,7 @@
   "hideConversation": "会話を隠す",
   "showConversation": "会話を表示",
   "close": "閉じる",
-  "max30Chars": "最大30文字まで入力できます",
+  "maxChars": "最大200文字まで入力できます",
   "remaining": "残りの質問数: {{count}}",
   "typing": "入力中",
   "noQuestionsLeft": "残りの質問回数がありません。明日またお試しください。"
@@ -50,4 +50,7 @@
   ,"themeSystem": "システムテーマ"
   ,"deleteComment": "コメント削除"
 ,"errorOccurred": "エラーが発生しました。しばらくしてからもう一度お試しください。"
+,"welcomeUser": "{{name}}さん、ようこそ"
+,"goHome": "ホームに戻る"
+,"user": "ユーザー"
 }
