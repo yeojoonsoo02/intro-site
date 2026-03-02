@@ -7,9 +7,8 @@ export default function AuthButton({ onAdminChange, visible }: { onAdminChange?:
   const [showModal, setShowModal] = useState(false);
   const [pw, setPw] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
-
-  const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
 
   const handleLogin = () => setShowModal(true);
 
@@ -19,14 +18,31 @@ export default function AuthButton({ onAdminChange, visible }: { onAdminChange?:
     setError("");
   };
 
-  const handleModalSubmit = (e?: React.FormEvent) => {
+  const handleModalSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (pw === adminPassword) {
-      setIsAdmin(true);
-      if (onAdminChange) onAdminChange(true);
-      handleModalClose();
-    } else {
+    if (loading) return;
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/auth/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: pw }),
+      });
+
+      if (res.ok) {
+        setIsAdmin(true);
+        if (onAdminChange) onAdminChange(true);
+        handleModalClose();
+      } else {
+        setError(t('wrongPassword'));
+      }
+    } catch {
       setError(t('wrongPassword'));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -76,11 +92,14 @@ export default function AuthButton({ onAdminChange, visible }: { onAdminChange?:
               autoFocus
               maxLength={32}
               aria-label={t('passwordPlaceholder')}
+              disabled={loading}
             />
             {error && <div className="text-red-500 text-xs mt-1">{error}</div>}
             <div className="modal-actions mt-2">
-              <button type="button" className="modal-btn cancel" onClick={handleModalClose}>{t('cancel')}</button>
-              <button type="submit" className="modal-btn">{t('confirm')}</button>
+              <button type="button" className="modal-btn cancel" onClick={handleModalClose} disabled={loading}>{t('cancel')}</button>
+              <button type="submit" className="modal-btn" disabled={loading}>
+                {loading ? '...' : t('confirm')}
+              </button>
             </div>
           </form>
         </div>

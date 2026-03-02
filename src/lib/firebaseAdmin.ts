@@ -15,9 +15,19 @@ try {
         ? getApps()[0]
         : initializeApp({ credential: cert(JSON.parse(key)) })
     adminDb = getFirestore(app)
+    console.log('[firebaseAdmin] Admin SDK initialized successfully')
+  } else {
+    console.warn(
+      '[firebaseAdmin] FIREBASE_SERVICE_ACCOUNT_KEY not set — falling back to Client SDK',
+    )
   }
 } catch (err) {
-  console.error('Firebase Admin init failed:', err)
+  const message = err instanceof Error ? err.message : String(err)
+  console.error(`[firebaseAdmin] Admin SDK init FAILED: ${message}`)
+  console.warn(
+    '[firebaseAdmin] All Firestore operations will use Client SDK (Firestore Rules apply)',
+  )
+  adminDb = null
 }
 
 export { adminDb, FieldValue }
