@@ -12,7 +12,7 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
       "Hi, I'm Junsu, a college student and developer.",
       'In my free time I enjoy exploring new technologies and working on personal projects.',
     ],
-    region: 'Incheon, South Korea',
+    region: 'Wolgyedong, Seoul, South Korea',
   },
   ko: {
     name: '여준수',
@@ -24,7 +24,7 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
       '안녕하세요, 저는 대학생 개발자 준수입니다.',
       '여가 시간에는 새로운 기술을 탐구하고 개인 프로젝트를 진행하는 것을 좋아합니다.',
     ],
-    region: '인천, 대한민국',
+    region: '서울 월계동, 대한민국',
   },
   ja: {
     name: '여준수 (ヨ・ジュンス)',
@@ -36,7 +36,7 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
       'こんにちは、私は大学生開発者のジュンスです。',
       '余暇には新しい技術を探求し、個人プロジェクトに取り組むことを楽しんでいます。',
     ],
-    region: '仁川, 韓国',
+    region: 'ソウル月渓洞, 韓国',
   },
   zh: {
     name: '余俊秀',
@@ -48,6 +48,6 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
       '你好，我是大学生开发者俊秀。',
       '在空闲时间，我喜欢探索新技术并从事个人项目。',
     ],
-    region: '仁川，韩国',
+    region: '首尔月桂洞，韩国',
   },
 };
