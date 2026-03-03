@@ -1,5 +1,6 @@
 import { serverAdd, serverGet, serverDeleteDoc, serverTimestamp } from '@/lib/serverDb'
-import { KNOWLEDGE } from '@/data/knowledge'
+import { splitKnowledge } from '@/lib/chunks'
+import { searchChunks, searchCustom, invalidateEmbeddingCache } from '@/lib/embeddings'
 
 // --- Types ---
 
@@ -54,19 +55,56 @@ export function invalidateCache() {
   cachedCustom = null
   cacheTimestamp = 0
   cachePromise = null
+  invalidateEmbeddingCache()
 }
 
-// --- Knowledge context ---
+// --- Knowledge context (RAG) ---
 
-export async function getKnowledgeContext(): Promise<string> {
+export async function getKnowledgeContext(query: string): Promise<string> {
+  try {
+    const chunks = splitKnowledge()
+    const basicChunk = chunks.find((c) => c.id === 'basic')
+
+    // Search for top 3 relevant chunks
+    const relevant = await searchChunks(query, 3)
+
+    // Always include basic info, deduplicate if already in results
+    const resultChunks = basicChunk && !relevant.some((c) => c.id === 'basic')
+      ? [basicChunk, ...relevant]
+      : relevant
+
+    let context = resultChunks.map((c) => `# ${c.text}`).join('\n\n')
+
+    // Search custom knowledge
+    try {
+      const custom = await loadCustomEntries()
+      if (custom.length > 0) {
+        const customTexts = custom.map((e) => e.text)
+        const matched = await searchCustom(query, customTexts)
+        if (matched.length > 0) {
+          context += `\n\n# 추가 정보\n${matched.join('\n')}`
+        }
+      }
+    } catch {
+      // Firestore unavailable — skip custom knowledge
+    }
+
+    return context
+  } catch (err) {
+    // Embedding API unavailable — fallback to full knowledge
+    console.error('RAG search failed, falling back to full context:', err)
+    return fallbackFullContext()
+  }
+}
+
+async function fallbackFullContext(): Promise<string> {
+  const { KNOWLEDGE } = await import('@/data/knowledge')
   try {
     const custom = await loadCustomEntries()
     if (custom.length === 0) return KNOWLEDGE
-
     const customText = custom.map((e) => e.text).join('\n')
     return `${KNOWLEDGE}\n\n# 추가 정보\n${customText}`
   } catch {
-    // Firestore unavailable — still return static knowledge
     return KNOWLEDGE
   }
 }
