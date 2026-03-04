@@ -36,7 +36,7 @@ export default function SocialLinks({ colored = false, isDev = false }: { colore
       ),
     },
     {
-      href: isNormal ? 'https://open.kakao.com/o/somekakaolink' : 'https://pf.kakao.com/_dFqxdn',
+      href: isNormal ? 'https://pf.kakao.com/_dFqxdn' : 'https://pf.kakao.com/_dFqxdn',
       label: isNormal ? '여준수 카카오톡' : '개발자 카카오톡',
       color: '#fee500',
       icon: (

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { useTranslation } from 'react-i18next'
@@ -28,11 +28,25 @@ export default function TopBar() {
   const [inviteVisible, setInviteVisible] = useState(false)
   const [langOpen, setLangOpen] = useState(false)
   const [themeOpen, setThemeOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const timer = setTimeout(() => setInviteVisible(true), 10000)
     return () => clearTimeout(timer)
   }, [])
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false)
+        setLangOpen(false)
+        setThemeOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [menuOpen])
 
   const changeLanguage = useCallback((l: string) => {
     if (!i18n) return
@@ -49,7 +63,7 @@ export default function TopBar() {
   return (
     <>
       <div className="fixed top-2 right-2 sm:right-4 z-50">
-        <div className="relative">
+        <div className="relative" ref={menuRef}>
           <button
             type="button"
             aria-label="menu"
