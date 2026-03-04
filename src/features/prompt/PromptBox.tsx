@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { savePrompt } from "./prompt.api";
 import { useAuth } from "@/lib/AuthProvider";
 
+const MAX_CHARS = 200;
+
 export default function PromptBox({
   open,
   onClose,
@@ -17,15 +19,17 @@ export default function PromptBox({
   const [loading, setLoading] = useState(false);
   const [dots, setDots] = useState(1);
   const [collapsed, setCollapsed] = useState(false);
-  const [showLimit, setShowLimit] = useState(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [limitExhausted, setLimitExhausted] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const { t } = useTranslation();
   const { user } = useAuth();
 
+  const canSend = text.trim().length > 0 && !loading && !limitExhausted;
+
   const sendPrompt = async () => {
     const prompt = text.trim();
-    if (!prompt) return;
+    if (!prompt || loading) return;
     setMessages((m) => [...m, { role: "user", text: prompt }]);
     setText("");
     setLoading(true);
@@ -46,19 +50,17 @@ export default function PromptBox({
       const reply = data.reply || data.text;
       if (reply) {
         setMessages((m) => [...m, { role: "assistant", text: reply }]);
-        savePrompt(prompt, reply).catch((err) =>
-          console.error("Failed to save prompt:", err)
-        );
+        savePrompt(prompt, reply).catch(() => {});
       }
       if (typeof data.remaining === "number") {
         setRemaining(data.remaining);
-        if (data.remaining === 0) alert(t('noQuestionsLeft'));
+        if (data.remaining === 0) setLimitExhausted(true);
       }
       if (typeof window !== "undefined") {
         window.dispatchEvent(new Event("ai-chat"));
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
+      setMessages((m) => [...m, { role: "assistant", text: t('errorOccurred') }]);
     } finally {
       setLoading(false);
     }
@@ -72,10 +74,10 @@ export default function PromptBox({
   }, [messages, collapsed, open]);
 
   useEffect(() => {
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, []);
+    if (open && inputRef.current) {
+      setTimeout(() => inputRef.current?.focus(), 300);
+    }
+  }, [open]);
 
   useEffect(() => {
     if (loading) {
@@ -89,15 +91,26 @@ export default function PromptBox({
 
   return (
     <div
-      className={`fixed bottom-0 left-0 w-full bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border-t border-gray-200 dark:border-gray-600 p-3 transition-transform duration-300 z-40 ${open ? "translate-y-0" : "translate-y-full pointer-events-none"}`}
+      className={`fixed bottom-0 left-0 w-full backdrop-blur-md border-t p-3 transition-transform duration-300 z-40 ${
+        open ? "translate-y-0" : "translate-y-full pointer-events-none"
+      }`}
+      style={{
+        background: "color-mix(in srgb, var(--card-bg) 85%, transparent)",
+        borderColor: "var(--border)",
+      }}
     >
       <div className="max-w-xl mx-auto flex flex-col gap-2">
+        {/* 헤더 */}
         <div className="flex justify-between items-center">
           <button
             type="button"
             aria-label={collapsed ? t('showConversation') : t('hideConversation')}
             onClick={() => setCollapsed((v) => !v)}
-            className="text-sm px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white/40 dark:bg-gray-700/40 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="text-xs px-2.5 py-1 rounded-md transition-colors"
+            style={{
+              border: "1px solid var(--border)",
+              color: "var(--muted)",
+            }}
           >
             {collapsed ? t('showConversation') : t('hideConversation')}
           </button>
@@ -105,71 +118,114 @@ export default function PromptBox({
             type="button"
             onClick={onClose}
             aria-label={t('close')}
-            className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="w-7 h-7 flex items-center justify-center rounded-full transition-colors hover:opacity-70"
+            style={{ color: "var(--muted)" }}
           >
-            <span className="text-xl leading-none">×</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
           </button>
         </div>
+
+        {/* 메시지 영역 */}
         {!collapsed && (
           <div
             ref={containerRef}
-            className="max-h-80 overflow-y-auto space-y-2"
+            className="max-h-72 overflow-y-auto space-y-2 scroll-smooth"
           >
+            {messages.length === 0 && !loading && (
+              <p className="text-center text-xs py-4" style={{ color: "var(--muted)" }}>
+                {t('typeYourPrompt')}
+              </p>
+            )}
             {messages.map((m, i) => (
-              <div key={i} className="space-y-1">
-                <div
-                  className={`text-sm leading-relaxed break-keep whitespace-pre-wrap overflow-wrap-anywhere max-w-[85%] sm:max-w-[75%] px-3 py-2 rounded-md ${
-                    m.role === 'user'
-                      ? 'ml-auto bg-blue-500 text-white'
-                      : 'mr-auto bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
-                  }`}
-                >
-                  {m.text}
-                </div>
+              <div
+                key={i}
+                className={`text-sm leading-relaxed break-keep whitespace-pre-wrap overflow-wrap-anywhere max-w-[85%] sm:max-w-[75%] px-3 py-2 rounded-xl ${
+                  m.role === 'user'
+                    ? 'ml-auto rounded-br-sm'
+                    : 'mr-auto rounded-bl-sm'
+                }`}
+                style={
+                  m.role === 'user'
+                    ? { background: "var(--primary)", color: "var(--primary-contrast)" }
+                    : { background: "color-mix(in srgb, var(--foreground) 8%, transparent)", color: "var(--foreground)" }
+                }
+              >
+                {m.text}
               </div>
             ))}
             {loading && (
-              <div className="text-sm leading-relaxed break-keep whitespace-pre-wrap overflow-wrap-anywhere max-w-[85%] sm:max-w-[75%] mr-auto bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-3 py-2 rounded-md">
-                {t('typing')}
-                {'.'.repeat(dots)}
+              <div
+                className="text-sm max-w-[85%] sm:max-w-[75%] mr-auto px-3 py-2 rounded-xl rounded-bl-sm"
+                style={{ background: "color-mix(in srgb, var(--foreground) 8%, transparent)", color: "var(--muted)" }}
+              >
+                {t('typing')}{'.'.repeat(dots)}
               </div>
             )}
           </div>
         )}
+
+        {/* 한도 초과 메시지 */}
+        {limitExhausted && (
+          <p className="text-xs text-center py-1" style={{ color: "var(--muted)" }}>
+            {t('noQuestionsLeft')}
+          </p>
+        )}
+
+        {/* 입력 영역 */}
         <div className="flex items-center gap-2">
-          <input
-            type="text"
-            value={text}
-            onChange={(e) => {
-              let val = e.target.value
-              if (val.length > 200) {
-                val = val.slice(0, 200)
-                setShowLimit(true)
-                if (timerRef.current) clearTimeout(timerRef.current)
-                timerRef.current = setTimeout(() => setShowLimit(false), 2000)
-              }
-              setText(val)
+          <div className="flex-1 relative">
+            <input
+              ref={inputRef}
+              type="text"
+              value={text}
+              disabled={loading || limitExhausted}
+              onChange={(e) => setText(e.target.value.slice(0, MAX_CHARS))}
+              onKeyDown={(e) => e.key === "Enter" && canSend && sendPrompt()}
+              placeholder={limitExhausted ? t('noQuestionsLeft') : t('typeYourPrompt')}
+              className="w-full rounded-lg px-3 py-2 pr-12 text-sm transition-colors disabled:opacity-50"
+              style={{
+                background: "color-mix(in srgb, var(--foreground) 5%, transparent)",
+                border: "1px solid var(--border)",
+                color: "var(--foreground)",
+              }}
+            />
+            {text.length > 0 && (
+              <span
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[0.65rem] tabular-nums"
+                style={{ color: text.length >= MAX_CHARS ? "#ef4444" : "var(--muted)" }}
+              >
+                {text.length}/{MAX_CHARS}
+              </span>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={sendPrompt}
+            disabled={!canSend}
+            className="text-sm px-3.5 py-2 rounded-lg font-medium transition-opacity disabled:opacity-30"
+            style={{
+              background: "var(--primary)",
+              color: "var(--primary-contrast)",
             }}
-            onKeyDown={(e) => e.key === "Enter" && sendPrompt()}
-            placeholder={t('typeYourPrompt')}
-            className="flex-1 border border-gray-300 dark:border-gray-500 rounded-md px-3 py-2 bg-white/50 dark:bg-gray-700/40 text-gray-700 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-500"
-          />
-        <button
-          type="button"
-          onClick={sendPrompt}
-          className="bg-blue-500/80 hover:bg-blue-600 text-white text-sm px-3 py-2 rounded-md"
-        >
-          {t('send')}
-        </button>
+          >
+            {t('send')}
+          </button>
         </div>
-        {remaining !== null && (
-          <p className="text-right text-xs text-gray-600 dark:text-gray-400">{t('remaining', { count: remaining })}</p>
-        )}
-        {showLimit && (
-          <p className="text-xs text-red-600">{t('maxChars')}</p>
-        )}
-          <p className="text-xs text-gray-400 text-center">{t('aiDisclaimer')}</p>
+
+        {/* 하단 정보 */}
+        <div className="flex justify-between items-center">
+          <p className="text-[0.65rem]" style={{ color: "var(--muted)", opacity: 0.7 }}>
+            {t('aiDisclaimer')}
+          </p>
+          {remaining !== null && !limitExhausted && (
+            <p className="text-[0.65rem] tabular-nums" style={{ color: "var(--muted)" }}>
+              {t('remaining', { count: remaining })}
+            </p>
+          )}
         </div>
       </div>
-    );
-  }
+    </div>
+  );
+}

@@ -9,10 +9,8 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
     <div
       className={`
         w-full
-        bg-[#27272A] dark:bg-[#27272A]
         rounded-[20px] sm:rounded-[28px]
-        border-[2px] sm:border-[3px] border-[#5a5a5a]
-        shadow-[0_8px_36px_0_rgba(0,0,0,0.3),0_2px_10px_0_rgba(0,0,0,0.15)]
+        border-[2px] sm:border-[3px]
         p-6 sm:p-8 md:p-10 flex flex-col items-center
         transition-transform duration-300
         group
@@ -20,12 +18,14 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
         will-change-transform
       `}
       style={{
-        background: "var(--card-bg, #27272A)",
+        background: "var(--card-bg)",
+        borderColor: "var(--border)",
+        boxShadow: "0 8px 36px 0 rgba(0,0,0,0.08), 0 2px 10px 0 rgba(0,0,0,0.04)",
         minHeight: 420,
-        color: "var(--foreground, #1e1e1e)", // 진한 텍스트 색 (라이트 모드용)
+        color: "var(--foreground)",
       }}
     >
-      <div className="mb-3 sm:mb-4">
+      <div className="mb-4 sm:mb-5">
         <Image
           src={profile.photo}
           alt={t('profilePhoto', { defaultValue: 'profile photo' })}
@@ -44,33 +44,42 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
         />
       </div>
 
-      <div className="text-[1.75rem] sm:text-[2rem] md:text-[2.1rem] font-extrabold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2 text-center break-keep max-w-full px-2">
+      <div
+        className="text-[1.75rem] sm:text-[2.1rem] font-extrabold tracking-tight mb-1.5 text-center break-keep max-w-full px-2"
+        style={{ color: "var(--foreground)" }}
+      >
         {profile.name}
       </div>
 
-      <div className="text-[1.1rem] sm:text-[1.2rem] md:text-[1.25rem] text-[#2c2c2c] dark:text-[#A1A1AA] font-semibold tracking-tight mb-3 text-center break-keep max-w-full px-2">
+      <div
+        className="text-[1.05rem] sm:text-[1.15rem] font-medium tracking-tight mb-4 text-center break-keep max-w-full px-2"
+        style={{ color: "var(--muted)" }}
+      >
         {profile.tagline}
       </div>
 
       <div className="flex items-center justify-center gap-3 sm:gap-4 mb-4 sm:mb-6 flex-wrap">
         <a
           href={`mailto:${profile.email}`}
-          className="flex items-center gap-1.5 text-[#2c2c2c] dark:text-[#A1A1AA] hover:text-[color:var(--primary)] transition-colors text-sm sm:text-base font-medium min-w-0"
+          className="flex items-center gap-1.5 transition-colors text-sm sm:text-base font-medium min-w-0 hover:opacity-80"
+          style={{ color: "var(--muted)" }}
         >
-          <svg width="20" height="20" fill="currentColor" aria-hidden="true" className="shrink-0">
-            <rect width="20" height="20" rx="4" fill="none" />
-            <path d="M3 5.5A2.5 2.5 0 0 1 5.5 3h9A2.5 2.5 0 0 1 17 5.5v9A2.5 2.5 0 0 1 14.5 17h-9A2.5 2.5 0 0 1 3 14.5v-9Zm2.2.5 4.3 3.7a1 1 0 0 0 1.3 0l4.3-3.7" stroke="currentColor" strokeWidth="1.2" fill="none"/>
+          <svg width="18" height="18" fill="none" aria-hidden="true" className="shrink-0">
+            <path d="M2 4.5A2.5 2.5 0 0 1 4.5 2h9A2.5 2.5 0 0 1 16 4.5v9A2.5 2.5 0 0 1 13.5 16h-9A2.5 2.5 0 0 1 2 13.5v-9Zm1.8.5 3.8 3.3a1 1 0 0 0 1.3 0l3.8-3.3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
           <span className="break-all">{profile.email}</span>
         </a>
         <SocialLinks colored isDev={isDev} />
       </div>
 
-      <div className="w-full h-px bg-[#393940] my-4 sm:my-6" />
+      <div className="w-full h-px my-4 sm:my-5" style={{ background: "var(--border)" }} />
 
       {/* 관심사 또는 기술 */}
-      <div className="w-full text-center mb-4 sm:mb-6">
-        <div className="text-[0.9rem] sm:text-[1rem] font-bold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">
+      <div className="w-full text-center mb-5 sm:mb-6">
+        <div
+          className="text-[0.8rem] sm:text-[0.85rem] font-bold uppercase tracking-widest mb-3"
+          style={{ color: "var(--muted)" }}
+        >
           {isDev ? t('mainSkills') : t('hobbies')}
         </div>
         <div className="flex flex-wrap justify-center gap-2">
@@ -96,19 +105,22 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
             })
             .filter(item => item.label !== '')
             .map((item, idx) => {
+              const baseClass = `
+                rounded-full px-3 sm:px-4 py-1 sm:py-1.5
+                text-[0.82rem] sm:text-[0.9rem] font-medium tracking-tight
+                flex items-center break-keep max-w-full
+                transition-colors
+              `;
               if (!item.url) {
                 return (
                   <span
                     key={item.label + idx}
-                    className={`
-                      bg-[#e6e6e6] dark:bg-[#323236]
-                      text-[#1e1e1e]/70 dark:text-[#E4E4E7]/70
-                      rounded-full px-3 sm:px-4 py-1 sm:py-1.5
-                      text-[0.85rem] sm:text-[0.95rem] font-semibold tracking-tight
-                      shadow-sm border border-[#5a5a5a]
-                      flex items-center cursor-default opacity-60
-                      break-keep max-w-full
-                    `}
+                    className={baseClass}
+                    style={{
+                      background: "color-mix(in srgb, var(--foreground) 8%, transparent)",
+                      color: "var(--muted)",
+                      border: "1px solid var(--border)",
+                    }}
                   >
                     {item.label}
                   </span>
@@ -120,15 +132,12 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`
-                    bg-[#e6e6e6] dark:bg-[#323236]
-                    text-[#1e1e1e] dark:text-[#E4E4E7]
-                    rounded-full px-3 sm:px-4 py-1 sm:py-1.5
-                    text-[0.85rem] sm:text-[0.95rem] font-semibold tracking-tight
-                    shadow-sm border border-[#5a5a5a]
-                    flex items-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors
-                    break-keep overflow-wrap-anywhere max-w-full
-                  `}
+                  className={`${baseClass} hover:opacity-80`}
+                  style={{
+                    background: "color-mix(in srgb, var(--primary) 10%, transparent)",
+                    color: "var(--foreground)",
+                    border: "1px solid color-mix(in srgb, var(--primary) 25%, transparent)",
+                  }}
                 >
                   {item.label}
                 </a>
@@ -138,9 +147,17 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       </div>
 
       {/* 소개 */}
-      <div className="w-full text-center mb-4 sm:mb-6">
-        <div className="text-[0.9rem] sm:text-[1rem] font-bold tracking-tight text-[#1e1e1e] dark:text-[#E4E4E7] mb-2">{t('introduction')}</div>
-        <div className="space-y-3 sm:space-y-4 text-[#2c2c2c] dark:text-[#C4C4C8] text-[0.95rem] sm:text-[1.05rem] leading-[1.8] sm:leading-7 font-medium">
+      <div className="w-full text-center mb-4 sm:mb-5">
+        <div
+          className="text-[0.8rem] sm:text-[0.85rem] font-bold uppercase tracking-widest mb-3"
+          style={{ color: "var(--muted)" }}
+        >
+          {t('introduction')}
+        </div>
+        <div
+          className="space-y-3 sm:space-y-4 text-[0.95rem] sm:text-[1.02rem] leading-[1.85] font-normal"
+          style={{ color: "var(--foreground)", opacity: 0.8 }}
+        >
           {profile.intro.map((p, i) => (
             <p key={i} className="break-keep whitespace-pre-wrap overflow-wrap-anywhere">{p}</p>
           ))}
@@ -148,9 +165,12 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       </div>
 
       {/* 지역 */}
-      <div className="mt-3 sm:mt-4 text-[0.85rem] sm:text-[0.95rem] flex items-center justify-center text-[#4b4b4b] dark:text-[#B0B0B8] font-semibold tracking-tight">
-        <span className="mr-1" aria-hidden>📍</span>
-        {t('region')}: {profile.region}
+      <div
+        className="mt-2 sm:mt-3 text-[0.82rem] sm:text-[0.9rem] flex items-center justify-center font-medium"
+        style={{ color: "var(--muted)" }}
+      >
+        <span className="mr-1.5" aria-hidden>📍</span>
+        {profile.region}
       </div>
     </div>
   );

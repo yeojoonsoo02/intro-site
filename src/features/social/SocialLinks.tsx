@@ -15,11 +15,11 @@ export default function SocialLinks({ colored = false, isDev = false }: { colore
       label: isNormal ? '여준수 블로그' : '개발자 블로그',
       color: '#03c75a',
       icon: (
-        <span className="relative flex items-center justify-center w-6 h-6">
-          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <span className="relative flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6">
+          <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <rect width="24" height="24" rx="5" fill="#03c75a" />
           </svg>
-          <span className="absolute inset-0 flex items-center justify-center font-bold text-white text-[0.75rem] select-none" style={{ fontFamily: 'sans-serif', letterSpacing: '-1px', transform: 'translateX(-1px)' }}>N</span>
+          <span className="absolute inset-0 flex items-center justify-center font-bold text-white text-[0.65rem] sm:text-[0.75rem] select-none" style={{ fontFamily: 'sans-serif', letterSpacing: '-1px', transform: 'translateX(-1px)' }}>N</span>
         </span>
       ),
     },
@@ -28,7 +28,7 @@ export default function SocialLinks({ colored = false, isDev = false }: { colore
       label: isNormal ? '여준수 인스타그램' : '개발자 인스타그램',
       color: '#e1306c',
       icon: (
-        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <rect width="24" height="24" rx="6" fill="#e1306c" />
           <circle cx="12" cy="12" r="5" stroke="#fff" strokeWidth="2" fill="none" />
           <circle cx="18" cy="6" r="1.2" fill="#fff" />
@@ -40,8 +40,8 @@ export default function SocialLinks({ colored = false, isDev = false }: { colore
       label: isNormal ? '여준수 카카오톡' : '개발자 카카오톡',
       color: '#fee500',
       icon: (
-        <span className="relative flex items-center justify-center w-6 h-6">
-          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <span className="relative flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6">
+          <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <ellipse cx="12" cy="10" rx="10" ry="8" fill="#fee500" />
             <path d="M7 17 L5 22 L13 18 Z" fill="#fee500" transform="rotate(-10 8 20)" />
           </svg>
@@ -53,8 +53,8 @@ export default function SocialLinks({ colored = false, isDev = false }: { colore
       label: '프로젝트(GitHub)',
       color: githubColor,
       icon: (
-        <span className="relative flex items-center justify-center w-6 h-6" style={{ backgroundColor: githubColor + '22', borderRadius: '50%' }}>
-          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <span className="relative flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 rounded-full" style={{ backgroundColor: githubColor + '22' }}>
+          <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path
               fillRule="evenodd"
               clipRule="evenodd"
@@ -68,7 +68,7 @@ export default function SocialLinks({ colored = false, isDev = false }: { colore
   ];
 
   return (
-    <nav className="flex justify-center items-center gap-4 sm:gap-5 mt-4 flex-wrap w-full">
+    <nav className="flex justify-center items-center gap-3 sm:gap-4 mt-3 flex-wrap w-full">
       {SNS.map(({ href, label, color, icon }) => (
         <a
           key={href}
@@ -76,36 +76,13 @@ export default function SocialLinks({ colored = false, isDev = false }: { colore
           target="_blank"
           rel="noopener noreferrer"
           aria-label={label}
-          className="sns-icon transition-colors"
-          style={colored ? { color, background: color + '22' } : undefined}
+          className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full transition-opacity hover:opacity-70"
+          style={colored ? { color, background: color + '18' } : { color: "var(--muted)" }}
         >
           <span className="sr-only">{label}</span>
           <span className="flex items-center justify-center">{icon}</span>
         </a>
       ))}
-      <style jsx>{`
-        .sns-icon {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 50%;
-          background: none;
-          width: 2.4rem;
-          height: 2.4rem;
-          transition: color 0.18s, background 0.18s;
-          color: var(--muted);
-        }
-        .sns-icon:hover {
-          color: var(--primary);
-          background: rgba(37, 99, 235, 0.08);
-        }
-        @media (max-width: 600px) {
-          .sns-icon {
-            width: 2rem;
-            height: 2rem;
-          }
-        }
-      `}</style>
     </nav>
   );
 }
