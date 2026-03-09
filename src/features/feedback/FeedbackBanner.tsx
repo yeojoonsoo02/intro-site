@@ -37,7 +37,8 @@ export default function FeedbackBanner({
       onTouchMove={(e) => {
         if (startY !== null && e.touches[0].clientY - startY > 50) hide()
       }}
-      className="fixed top-4 right-4 w-80 max-w-[calc(100%-2rem)] bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border border-gray-200 dark:border-gray-600 rounded-xl p-3 shadow z-50"
+      className="fixed top-4 right-4 w-80 max-w-[calc(100%-2rem)] backdrop-blur-md border rounded-xl p-3 shadow z-50"
+      style={{ background: "color-mix(in srgb, var(--card-bg) 85%, transparent)", borderColor: "var(--border)" }}
     >
       <p className="mb-2 text-sm leading-relaxed break-keep whitespace-pre-wrap overflow-wrap-anywhere">{t('feedbackMessage')}</p>
       <div className="text-right">
@@ -47,7 +48,8 @@ export default function FeedbackBanner({
             onShowComments()
             hide()
           }}
-          className="px-3 py-1 text-sm rounded-md bg-gradient-to-r from-teal-400 via-blue-500 to-indigo-500 text-white hover:opacity-90"
+          className="px-3 py-1 text-sm rounded-md hover:opacity-90"
+          style={{ background: "var(--primary)", color: "var(--primary-contrast)" }}
         >
           {t('goToComments')}
         </button>

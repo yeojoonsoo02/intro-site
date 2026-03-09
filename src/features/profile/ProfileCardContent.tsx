@@ -52,7 +52,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       </div>
 
       <div
-        className="text-[1.05rem] sm:text-[1.15rem] font-medium tracking-tight mb-4 text-center break-keep max-w-full px-2"
+        className="text-[0.95rem] sm:text-[1.05rem] font-medium tracking-tight mb-4 text-center break-keep max-w-full px-2"
         style={{ color: "var(--muted)" }}
       >
         {profile.tagline}
@@ -72,17 +72,17 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
         <SocialLinks colored isDev={isDev} />
       </div>
 
-      <div className="w-full h-px my-4 sm:my-5" style={{ background: "var(--border)" }} />
+      <div className="w-12 h-[2px] mx-auto my-4 sm:my-5" style={{ background: "var(--border)" }} />
 
       {/* 관심사 또는 기술 */}
-      <div className="w-full text-center mb-5 sm:mb-6">
+      <div className="w-full text-left mb-5 sm:mb-6">
         <div
-          className="text-[0.8rem] sm:text-[0.85rem] font-bold uppercase tracking-widest mb-3"
+          className="text-[0.8rem] sm:text-[0.85rem] font-bold tracking-wide mb-3"
           style={{ color: "var(--muted)" }}
         >
           {isDev ? t('mainSkills') : t('hobbies')}
         </div>
-        <div className="flex flex-wrap justify-center gap-2">
+        <div className="flex flex-wrap gap-2">
           {profile.interests
             .map(item => {
               if (typeof item === 'string') {
@@ -105,21 +105,33 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
             })
             .filter(item => item.label !== '')
             .map((item, idx) => {
-              const baseClass = `
-                rounded-full px-3 sm:px-4 py-1 sm:py-1.5
-                text-[0.82rem] sm:text-[0.9rem] font-medium tracking-tight
-                flex items-center break-keep max-w-full
-                transition-colors
-              `;
+              const isFirst = idx === 0;
+              const baseClass = isFirst
+                ? `
+                  rounded-full px-4 py-2
+                  text-[0.95rem] font-semibold tracking-tight
+                  flex items-center break-keep max-w-full
+                  transition-colors
+                `
+                : `
+                  rounded-full px-3 sm:px-4 py-1 sm:py-1.5
+                  text-[0.82rem] sm:text-[0.9rem] font-medium tracking-tight
+                  flex items-center break-keep max-w-full
+                  transition-colors
+                `;
               if (!item.url) {
                 return (
                   <span
                     key={item.label + idx}
                     className={baseClass}
                     style={{
-                      background: "color-mix(in srgb, var(--foreground) 8%, transparent)",
-                      color: "var(--muted)",
-                      border: "1px solid var(--border)",
+                      background: isFirst
+                        ? "color-mix(in srgb, var(--primary) 12%, transparent)"
+                        : "color-mix(in srgb, var(--foreground) 8%, transparent)",
+                      color: isFirst ? "var(--foreground)" : "var(--muted)",
+                      border: isFirst
+                        ? "1px solid color-mix(in srgb, var(--primary) 30%, transparent)"
+                        : "1px solid var(--border)",
                     }}
                   >
                     {item.label}
@@ -134,9 +146,13 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
                   rel="noopener noreferrer"
                   className={`${baseClass} hover:opacity-80`}
                   style={{
-                    background: "color-mix(in srgb, var(--primary) 10%, transparent)",
+                    background: isFirst
+                      ? "color-mix(in srgb, var(--primary) 18%, transparent)"
+                      : "color-mix(in srgb, var(--primary) 10%, transparent)",
                     color: "var(--foreground)",
-                    border: "1px solid color-mix(in srgb, var(--primary) 25%, transparent)",
+                    border: isFirst
+                      ? "1px solid color-mix(in srgb, var(--primary) 40%, transparent)"
+                      : "1px solid color-mix(in srgb, var(--primary) 25%, transparent)",
                   }}
                 >
                   {item.label}
@@ -147,16 +163,20 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       </div>
 
       {/* 소개 */}
-      <div className="w-full text-center mb-4 sm:mb-5">
+      <div className="w-full text-left mb-4 sm:mb-5">
         <div
-          className="text-[0.8rem] sm:text-[0.85rem] font-bold uppercase tracking-widest mb-3"
+          className="text-[0.8rem] sm:text-[0.85rem] font-bold tracking-wide mb-3"
           style={{ color: "var(--muted)" }}
         >
           {t('introduction')}
         </div>
         <div
-          className="space-y-3 sm:space-y-4 text-[0.95rem] sm:text-[1.02rem] leading-[1.85] font-normal"
-          style={{ color: "var(--foreground)", opacity: 0.8 }}
+          className="space-y-3 sm:space-y-4 text-[0.95rem] sm:text-[1.02rem] leading-[1.85] font-normal pl-4"
+          style={{
+            color: "var(--foreground)",
+            opacity: 0.8,
+            borderLeft: "3px solid var(--accent, var(--primary))",
+          }}
         >
           {profile.intro.map((p, i) => (
             <p key={i} className="break-keep whitespace-pre-wrap overflow-wrap-anywhere">{p}</p>
