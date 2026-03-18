@@ -12,7 +12,7 @@ function getModel() {
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) throw new Error('GEMINI_API_KEY not set')
   const genAI = new GoogleGenerativeAI(apiKey)
-  return genAI.getGenerativeModel({ model: 'text-embedding-004' })
+  return genAI.getGenerativeModel({ model: 'gemini-embedding-001' })
 }
 
 async function embed(text: string): Promise<number[]> {
