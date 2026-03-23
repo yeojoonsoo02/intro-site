@@ -105,33 +105,21 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
             })
             .filter(item => item.label !== '')
             .map((item, idx) => {
-              const isFirst = idx === 0;
-              const baseClass = isFirst
-                ? `
-                  rounded-full px-4 py-2
-                  text-[0.95rem] font-semibold tracking-tight
-                  flex items-center break-keep max-w-full
-                  transition-colors
-                `
-                : `
-                  rounded-full px-3 sm:px-4 py-1 sm:py-1.5
-                  text-[0.82rem] sm:text-[0.9rem] font-medium tracking-tight
-                  flex items-center break-keep max-w-full
-                  transition-colors
-                `;
+              const baseClass = `
+                rounded-full px-3 sm:px-4 py-1 sm:py-1.5
+                text-[0.82rem] sm:text-[0.9rem] font-medium tracking-tight
+                flex items-center break-keep max-w-full
+                transition-colors
+              `;
               if (!item.url) {
                 return (
                   <span
                     key={item.label + idx}
                     className={baseClass}
                     style={{
-                      background: isFirst
-                        ? "color-mix(in srgb, var(--primary) 12%, transparent)"
-                        : "color-mix(in srgb, var(--foreground) 8%, transparent)",
-                      color: isFirst ? "var(--foreground)" : "var(--muted)",
-                      border: isFirst
-                        ? "1px solid color-mix(in srgb, var(--primary) 30%, transparent)"
-                        : "1px solid var(--border)",
+                      background: "color-mix(in srgb, var(--foreground) 8%, transparent)",
+                      color: "var(--muted)",
+                      border: "1px solid var(--border)",
                     }}
                   >
                     {item.label}
@@ -146,13 +134,9 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
                   rel="noopener noreferrer"
                   className={`${baseClass} hover:opacity-80`}
                   style={{
-                    background: isFirst
-                      ? "color-mix(in srgb, var(--primary) 18%, transparent)"
-                      : "color-mix(in srgb, var(--primary) 10%, transparent)",
+                    background: "color-mix(in srgb, var(--primary) 10%, transparent)",
                     color: "var(--foreground)",
-                    border: isFirst
-                      ? "1px solid color-mix(in srgb, var(--primary) 40%, transparent)"
-                      : "1px solid color-mix(in srgb, var(--primary) 25%, transparent)",
+                    border: "1px solid color-mix(in srgb, var(--primary) 25%, transparent)",
                   }}
                 >
                   {item.label}
