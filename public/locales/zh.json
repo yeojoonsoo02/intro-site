@@ -1,5 +1,5 @@
 {
-  "prompt": "提示",
+  "prompt": "AI聊天",
   "signIn": "登录",
   "logout": "登出",
   "commentPlaceholder": "输入评论",
@@ -39,7 +39,7 @@
   "hideConversation": "隐藏对话",
   "showConversation": "显示对话",
   "close": "关闭",
-  "maxChars": "最多允许 200 个字符",
+  "flipCard": "翻转卡片",
   "remaining": "剩余问题数: {{count}}",
   "typing": "输入中",
   "noQuestionsLeft": "已无剩余提问次数，请明天再试。"

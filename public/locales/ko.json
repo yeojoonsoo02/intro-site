@@ -1,5 +1,5 @@
 {
-  "prompt": "프롬프트",
+  "prompt": "AI 채팅",
   "signIn": "로그인",
   "logout": "로그아웃",
   "commentPlaceholder": "댓글을 입력하세요",
@@ -39,7 +39,7 @@
   "hideConversation": "대화 숨기기",
   "showConversation": "대화 보기",
   "close": "닫기",
-  "maxChars": "최대 200자까지 입력 가능합니다",
+  "flipCard": "카드 뒤집기",
   "remaining": "남은 질문 횟수: {{count}}",
   "typing": "작성 중",
   "noQuestionsLeft": "남은 질문 횟수가 없습니다. 내일 다시 시도하세요."

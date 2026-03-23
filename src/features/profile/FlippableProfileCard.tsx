@@ -43,7 +43,10 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
     const currentLang = i18n.language || 'en';
     fetchProfile(currentLang).then(p => setProfile(p ?? DEFAULT_PROFILES[currentLang] ?? DEFAULT_PROFILES['en']));
     fetchDevProfile(currentLang).then(p => setDevProfile(p ?? DEFAULT_PROFILES[currentLang] ?? DEFAULT_PROFILES['en']));
+  }, [i18n.language]);
 
+  // 마운트 시 1회만 흔들림 애니메이션 실행
+  useEffect(() => {
     if (innerRef.current) {
       innerRef.current.animate(
         [
@@ -54,7 +57,8 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
         { duration: 800, easing: 'ease-in-out', delay: 500 }
       );
     }
-  }, [i18n.language]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Adjust container height based on content of both faces
   useEffect(() => {

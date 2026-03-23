@@ -1,5 +1,5 @@
 {
-  "prompt": "Prompt",
+  "prompt": "AI Chat",
   "signIn": "Sign In",
   "logout": "Logout",
   "commentPlaceholder": "Enter a comment",
@@ -39,7 +39,7 @@
   "hideConversation": "Hide conversation",
   "showConversation": "Show conversation",
   "close": "Close",
-  "maxChars": "Maximum 200 characters allowed",
+  "flipCard": "Flip card",
   "remaining": "Questions left: {{count}}",
   "typing": "typing",
   "noQuestionsLeft": "No questions left. Please try again tomorrow."

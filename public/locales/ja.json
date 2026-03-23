@@ -1,5 +1,5 @@
 {
-  "prompt": "プロンプト",
+  "prompt": "AIチャット",
   "signIn": "ログイン",
   "logout": "ログアウト",
   "commentPlaceholder": "コメントを入力してください",
@@ -39,7 +39,7 @@
   "hideConversation": "会話を隠す",
   "showConversation": "会話を表示",
   "close": "閉じる",
-  "maxChars": "最大200文字まで入力できます",
+  "flipCard": "カードを裏返す",
   "remaining": "残りの質問数: {{count}}",
   "typing": "入力中",
   "noQuestionsLeft": "残りの質問回数がありません。明日またお試しください。"
