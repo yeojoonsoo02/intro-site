@@ -27,8 +27,7 @@ type Props = {
 export default function FlippableProfileCard({ isAdmin = false, onAngleChange }: Props) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [devProfile, setDevProfile] = useState<Profile | null>(null);
-  const [hintVisible, setHintVisible] = useState(true);
-  const { i18n, t } = useTranslation();
+  const { i18n } = useTranslation();
   const innerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLElement>(null);
   const frontRef = useRef<HTMLDivElement>(null);
@@ -36,10 +35,7 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
 
   const { isFlipped: _isFlipped, ...pointerHandlers } = useCardFlip({
     innerRef,
-    onAngleChange: (angle: number) => {
-      onAngleChange?.(angle);
-      if (hintVisible && angle > 10) setHintVisible(false);
-    },
+    onAngleChange,
   });
 
   useEffect(() => {
@@ -143,16 +139,6 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
           )}
         </div>
       </div>
-
-      {/* 스와이프 힌트 */}
-      {hintVisible && (
-        <p
-          className="text-center text-[0.75rem] mt-4 animate-pulse select-none"
-          style={{ color: "var(--muted)", opacity: 0.6 }}
-        >
-          {t('swipeHint')}
-        </p>
-      )}
     </section>
   );
 }

@@ -135,9 +135,33 @@ export default function PromptBox({
             className="max-h-60 sm:max-h-72 overflow-y-auto space-y-2 scroll-smooth overscroll-contain"
           >
             {messages.length === 0 && !loading && (
-              <p className="text-center text-xs py-4" style={{ color: "var(--muted)" }}>
-                {t('typeYourPrompt')}
-              </p>
+              <div className="py-3 space-y-2">
+                <p className="text-center text-xs mb-3" style={{ color: "var(--muted)" }}>
+                  {t('typeYourPrompt')}
+                </p>
+                <div className="flex flex-wrap gap-1.5 justify-center">
+                  {[
+                    t('suggestQ1', { defaultValue: '지금 어디야?' }),
+                    t('suggestQ2', { defaultValue: '취미가 뭐야?' }),
+                    t('suggestQ3', { defaultValue: '좋아하는 음식은?' }),
+                    t('suggestQ4', { defaultValue: '요즘 뭐 하고 지내?' }),
+                  ].map((q) => (
+                    <button
+                      key={q}
+                      type="button"
+                      onClick={() => { setText(q); inputRef.current?.focus(); }}
+                      className="text-xs px-3 py-1.5 rounded-full transition-colors hover:opacity-70"
+                      style={{
+                        border: "1px solid var(--border)",
+                        color: "var(--muted)",
+                        background: "color-mix(in srgb, var(--foreground) 3%, transparent)",
+                      }}
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              </div>
             )}
             {messages.map((m, i) => (
               <div
