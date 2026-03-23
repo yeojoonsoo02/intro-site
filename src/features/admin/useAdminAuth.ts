@@ -1,11 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+const SESSION_KEY = 'admin_authenticated';
 
 export function useAdminAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (sessionStorage.getItem(SESSION_KEY) === 'true') {
+      setIsAuthenticated(true);
+    }
+    setReady(true);
+  }, []);
 
   const authenticate = async (password: string): Promise<boolean> => {
     setLoading(true);
@@ -17,6 +27,7 @@ export function useAdminAuth() {
         body: JSON.stringify({ password }),
       });
       if (res.ok) {
+        sessionStorage.setItem(SESSION_KEY, 'true');
         setIsAuthenticated(true);
         return true;
       }
@@ -30,7 +41,10 @@ export function useAdminAuth() {
     }
   };
 
-  const logout = () => setIsAuthenticated(false);
+  const logout = () => {
+    sessionStorage.removeItem(SESSION_KEY);
+    setIsAuthenticated(false);
+  };
 
-  return { isAuthenticated, loading, error, authenticate, logout };
+  return { isAuthenticated, loading, error, ready, authenticate, logout };
 }

@@ -30,7 +30,7 @@ export default function SkillsSection({ categories }: { categories: SkillCategor
             </h3>
             <div className="space-y-2">
               {cat.items.map((skill, idx) => (
-                <div key={idx} className="flex items-center justify-between">
+                <div key={`${cat.id}-${skill.name}-${idx}`} className="flex items-center justify-between">
                   <span className="text-sm" style={{ color: 'var(--foreground)' }}>
                     {skill.name}
                   </span>

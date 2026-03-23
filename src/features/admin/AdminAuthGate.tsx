@@ -5,10 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { useAdminAuth } from './useAdminAuth';
 
 export default function AdminAuthGate({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, loading, error, authenticate } = useAdminAuth();
+  const { isAuthenticated, loading, error, ready, authenticate } = useAdminAuth();
   const [pw, setPw] = useState('');
   const { t } = useTranslation();
 
+  if (!ready) return null;
   if (isAuthenticated) return <>{children}</>;
 
   const handleSubmit = async (e: React.FormEvent) => {

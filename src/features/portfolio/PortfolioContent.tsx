@@ -21,10 +21,11 @@ import type {
   TimelineItem,
 } from './portfolio.model';
 
-const HeroEditor = dynamic(() => import('@/features/admin/HeroEditor'), { ssr: false });
-const ProjectEditor = dynamic(() => import('@/features/admin/ProjectEditor'), { ssr: false });
-const SkillsEditor = dynamic(() => import('@/features/admin/SkillsEditor'), { ssr: false });
-const TimelineEditor = dynamic(() => import('@/features/admin/TimelineEditor'), { ssr: false });
+// 관리자 모드에서만 로드되는 에디터 (공개 페이지 번들에 포함 안 됨)
+const HeroEditor = dynamic(() => import('@/features/admin/HeroEditor'), { ssr: false, loading: () => null });
+const ProjectEditor = dynamic(() => import('@/features/admin/ProjectEditor'), { ssr: false, loading: () => null });
+const SkillsEditor = dynamic(() => import('@/features/admin/SkillsEditor'), { ssr: false, loading: () => null });
+const TimelineEditor = dynamic(() => import('@/features/admin/TimelineEditor'), { ssr: false, loading: () => null });
 
 const LANGS = [
   { code: 'ko', label: '한국어' },
@@ -40,6 +41,7 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
   const [skills, setSkills] = useState<SkillCategory[]>([]);
   const [timeline, setTimeline] = useState<TimelineItem[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [adminLang, setAdminLang] = useState(i18n.language || 'ko');
@@ -48,6 +50,7 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
 
   const loadData = useCallback(async () => {
     setLoaded(false);
+    setLoadError(null);
     try {
       const [h, p, s, tl] = await Promise.all([
         fetchHero(lang), fetchProjects(lang), fetchSkills(lang), fetchTimeline(lang),
@@ -56,7 +59,9 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
       setProjects(p);
       setSkills(s);
       setTimeline(tl);
-    } catch {
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to load data';
+      setLoadError(msg);
       setHero({ headline: '', subline: '' });
       setProjects([]);
       setSkills([]);
@@ -92,6 +97,20 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
 
   return (
     <div className="max-w-2xl mx-auto px-5 sm:px-6 pt-16 sm:pt-20 pb-20">
+      {/* 에러 메시지 */}
+      {loadError && (
+        <div
+          className="mb-6 p-4 rounded-xl text-sm"
+          style={{
+            background: 'color-mix(in srgb, #ef4444 10%, transparent)',
+            color: '#ef4444',
+            border: '1px solid color-mix(in srgb, #ef4444 25%, transparent)',
+          }}
+        >
+          {loadError}
+        </div>
+      )}
+
       {/* 관리자 상단바 */}
       {isAdmin && (
         <div className="flex items-center justify-between mb-8">
