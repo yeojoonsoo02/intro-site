@@ -1,16 +1,14 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import AdminAuthGate from '@/features/admin/AdminAuthGate';
-
-const AdminDashboard = dynamic(() => import('@/features/admin/AdminDashboard'), {
-  ssr: false,
-});
+import PortfolioContent from '@/features/portfolio/PortfolioContent';
 
 export default function AdminPage() {
   return (
     <AdminAuthGate>
-      <AdminDashboard />
+      <main style={{ background: 'var(--background)' }}>
+        <PortfolioContent isAdmin />
+      </main>
     </AdminAuthGate>
   );
 }
