@@ -46,8 +46,15 @@ export default function TopBar() {
         setMenuOpen(false)
       }
     }
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false)
+    }
     document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+    document.addEventListener('keydown', handleEscape)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEscape)
+    }
   }, [menuOpen])
 
   const changeLanguage = useCallback((l: string) => {
@@ -77,6 +84,8 @@ export default function TopBar() {
           <button
             type="button"
             aria-label="menu"
+            aria-expanded={menuOpen}
+            aria-haspopup="true"
             onClick={() => setMenuOpen(!menuOpen)}
             className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full backdrop-blur shadow-sm transition-colors"
             style={{

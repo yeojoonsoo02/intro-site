@@ -44,12 +44,12 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
         />
       </div>
 
-      <div
+      <h1
         className="text-[1.75rem] sm:text-[2.1rem] font-extrabold tracking-tight mb-1.5 text-center break-keep max-w-full px-2"
         style={{ color: "var(--foreground)" }}
       >
         {profile.name}
-      </div>
+      </h1>
 
       <div
         className="text-[0.95rem] sm:text-[1.05rem] font-medium tracking-tight mb-4 text-center break-keep max-w-full px-2"
@@ -157,8 +157,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
         <div
           className="space-y-3 sm:space-y-4 text-[0.95rem] sm:text-[1.02rem] leading-[1.85] font-normal pl-4"
           style={{
-            color: "var(--foreground)",
-            opacity: 0.8,
+            color: "var(--muted)",
             borderLeft: "3px solid var(--accent, var(--primary))",
           }}
         >

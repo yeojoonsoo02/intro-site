@@ -27,13 +27,13 @@ type Props = {
 export default function FlippableProfileCard({ isAdmin = false, onAngleChange }: Props) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [devProfile, setDevProfile] = useState<Profile | null>(null);
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const innerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLElement>(null);
   const frontRef = useRef<HTMLDivElement>(null);
   const backRef = useRef<HTMLDivElement>(null);
 
-  const { isFlipped: _isFlipped, ...pointerHandlers } = useCardFlip({
+  const { isFlipped, ...pointerHandlers } = useCardFlip({
     innerRef,
     onAngleChange,
   });
@@ -95,6 +95,9 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
       style={{ perspective: 1200, overflow: 'visible', touchAction: 'pan-y' }}
       {...pointerHandlers}
       ref={containerRef}
+      tabIndex={0}
+      role="button"
+      aria-label={t('flipCard', { defaultValue: isFlipped ? '일반 프로필 보기' : '개발자 프로필 보기' })}
     >
       <div
         className="relative w-full"

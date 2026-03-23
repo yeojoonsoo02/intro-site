@@ -133,6 +133,8 @@ export default function PromptBox({
           <div
             ref={containerRef}
             className="max-h-60 sm:max-h-72 overflow-y-auto space-y-2 scroll-smooth overscroll-contain"
+            role="log"
+            aria-live="polite"
           >
             {messages.length === 0 && !loading && (
               <div className="py-3 space-y-2">

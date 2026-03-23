@@ -75,11 +75,24 @@ export default function useCardFlip({ innerRef, onAngleChange }: UseCardFlipProp
     (e.target as Element).releasePointerCapture(e.pointerId);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (!innerRef.current) return;
+      currentAngle.current += 180;
+      setIsFlipped(currentAngle.current % 360 !== 0);
+      innerRef.current.style.transition = 'transform 0.4s ease';
+      innerRef.current.style.transform = `rotateY(${currentAngle.current}deg)`;
+      onAngleChange?.(currentAngle.current);
+    }
+  };
+
   return {
     onPointerDown: handlePointerDown,
     onPointerMove: handlePointerMove,
     onPointerUp: handlePointerEnd,
     onPointerCancel: handlePointerEnd,
+    onKeyDown: handleKeyDown,
     isFlipped,
   };
 }

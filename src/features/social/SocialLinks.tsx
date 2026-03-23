@@ -79,7 +79,6 @@ export default function SocialLinks({ colored = false, isDev = false }: { colore
           className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full transition-opacity hover:opacity-70"
           style={colored ? { color, background: color + '18' } : { color: "var(--muted)" }}
         >
-          <span className="sr-only">{label}</span>
           <span className="flex items-center justify-center">{icon}</span>
         </a>
       ))}

@@ -19,13 +19,32 @@ export default function LoginPage() {
   if (user) return null;
 
   return (
-    <main className="flex flex-col items-center justify-center gap-4 mt-20">
-      <button
-        className="bg-blue-500 text-white px-4 py-2 rounded"
-        onClick={() => login()}
+    <main className="min-h-screen flex items-center justify-center" style={{ background: "var(--background)" }}>
+      <div
+        className="w-full max-w-sm rounded-2xl p-8 flex flex-col items-center gap-6 mx-4"
+        style={{
+          background: "var(--card-bg)",
+          boxShadow: "var(--card-shadow)",
+          border: "1px solid var(--border)",
+        }}
       >
-        {t('loginWithGoogle')}
-      </button>
+        <h1
+          className="text-xl font-bold"
+          style={{ color: "var(--foreground)" }}
+        >
+          {t('signIn')}
+        </h1>
+        <button
+          className="w-full py-3 rounded-lg font-medium transition-opacity hover:opacity-90"
+          style={{
+            background: "var(--primary)",
+            color: "var(--primary-contrast)",
+          }}
+          onClick={() => login()}
+        >
+          {t('loginWithGoogle')}
+        </button>
+      </div>
     </main>
   );
 }

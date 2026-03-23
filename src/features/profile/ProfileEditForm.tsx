@@ -7,6 +7,12 @@ type Props = {
   label: string;
 };
 
+const inputStyle = {
+  background: "var(--input-bg)",
+  color: "var(--foreground)",
+  border: "1px solid var(--input-border)",
+};
+
 export default function ProfileEditForm({ profile, onChange, label }: Props) {
   const { t } = useTranslation();
   const interests = profile.interests.map(item =>
@@ -53,14 +59,16 @@ export default function ProfileEditForm({ profile, onChange, label }: Props) {
       {interests.map((item, idx) => (
         <div key={idx} className="flex gap-2 items-center">
           <input
-            className="flex-1 rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm border border-gray-300 dark:border-gray-600"
+            className="flex-1 rounded p-2 text-sm"
+            style={inputStyle}
             value={item.label}
             onChange={e => handleItemChange(idx, 'label', e.target.value)}
             placeholder={t(label)}
             onBlur={() => handleBlur(idx)}
           />
           <input
-            className="flex-1 rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm border border-gray-300 dark:border-gray-600"
+            className="flex-1 rounded p-2 text-sm"
+            style={inputStyle}
             value={item.url}
             onChange={e => handleItemChange(idx, 'url', e.target.value)}
             placeholder={t('linkUrl', 'Link (URL)')}
@@ -69,7 +77,8 @@ export default function ProfileEditForm({ profile, onChange, label }: Props) {
           <button
             type="button"
             onClick={() => handleRemove(idx)}
-            className="text-red-500 ml-1 text-xs px-2 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900"
+            className="text-xs px-2 py-1 rounded transition-opacity hover:opacity-70"
+            style={{ color: "#ef4444" }}
             aria-label={t('deleteItem', 'Delete item')}
           >
             ❌
@@ -79,19 +88,25 @@ export default function ProfileEditForm({ profile, onChange, label }: Props) {
       <button
         type="button"
         onClick={handleAdd}
-        className="text-sm px-3 py-1 rounded bg-[#e6e6e6] dark:bg-[#323236] text-[#1e1e1e] dark:text-[#E4E4E7]"
+        className="text-sm px-3 py-1 rounded transition-opacity hover:opacity-80"
+        style={{
+          background: "color-mix(in srgb, var(--foreground) 10%, transparent)",
+          color: "var(--foreground)",
+        }}
       >
         + {t('addItem', 'Add item')}
       </button>
       <textarea
-        className="w-full rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm border border-gray-300 dark:border-gray-600"
+        className="w-full rounded p-2 text-sm"
+        style={inputStyle}
         rows={3}
         value={profile.intro.join('\n')}
         onChange={e => onChange({ ...profile, intro: e.target.value.split('\n').filter(Boolean) })}
         placeholder={t('introPlaceholder', 'Introduction (multiple lines allowed)')}
       />
       <input
-        className="w-full rounded bg-[#f4f4f4] dark:bg-[#232334] text-[#18181b] dark:text-white p-2 text-sm border border-gray-300 dark:border-gray-600"
+        className="w-full rounded p-2 text-sm"
+        style={inputStyle}
         value={profile.region}
         onChange={e => onChange({ ...profile, region: e.target.value })}
         placeholder={t('regionPlaceholder', 'Region')}
