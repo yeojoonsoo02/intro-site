@@ -76,7 +76,7 @@ export default function SocialLinks({ colored = false, isDev = false }: { colore
           target="_blank"
           rel="noopener noreferrer"
           aria-label={label}
-          className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full transition-opacity hover:opacity-70"
+          className="flex items-center justify-center w-10 h-10 sm:w-9 sm:h-9 rounded-full transition-opacity hover:opacity-70"
           style={colored ? { color, background: color + '18' } : { color: "var(--muted)" }}
         >
           <span className="sr-only">{label}</span>

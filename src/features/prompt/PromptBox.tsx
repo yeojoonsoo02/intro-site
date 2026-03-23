@@ -97,6 +97,7 @@ export default function PromptBox({
       style={{
         background: "color-mix(in srgb, var(--card-bg) 85%, transparent)",
         borderColor: "var(--border)",
+        paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))",
       }}
     >
       <div className="max-w-xl mx-auto flex flex-col gap-2">
@@ -106,7 +107,7 @@ export default function PromptBox({
             type="button"
             aria-label={collapsed ? t('showConversation') : t('hideConversation')}
             onClick={() => setCollapsed((v) => !v)}
-            className="text-xs px-2.5 py-1 rounded-md transition-colors"
+            className="text-xs px-3 py-2 rounded-md transition-colors"
             style={{
               border: "1px solid var(--border)",
               color: "var(--muted)",
@@ -118,7 +119,7 @@ export default function PromptBox({
             type="button"
             onClick={onClose}
             aria-label={t('close')}
-            className="w-7 h-7 flex items-center justify-center rounded-full transition-colors hover:opacity-70"
+            className="w-9 h-9 flex items-center justify-center rounded-full transition-colors hover:opacity-70"
             style={{ color: "var(--muted)" }}
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -131,7 +132,7 @@ export default function PromptBox({
         {!collapsed && (
           <div
             ref={containerRef}
-            className="max-h-72 overflow-y-auto space-y-2 scroll-smooth"
+            className="max-h-60 sm:max-h-72 overflow-y-auto space-y-2 scroll-smooth overscroll-contain"
           >
             {messages.length === 0 && !loading && (
               <p className="text-center text-xs py-4" style={{ color: "var(--muted)" }}>
@@ -184,11 +185,12 @@ export default function PromptBox({
               onChange={(e) => setText(e.target.value.slice(0, MAX_CHARS))}
               onKeyDown={(e) => e.key === "Enter" && canSend && sendPrompt()}
               placeholder={limitExhausted ? t('noQuestionsLeft') : t('typeYourPrompt')}
-              className="w-full rounded-lg px-3 py-2 pr-12 text-sm transition-colors disabled:opacity-50"
+              className="w-full rounded-lg px-3 py-2.5 pr-12 transition-colors disabled:opacity-50"
               style={{
                 background: "color-mix(in srgb, var(--foreground) 5%, transparent)",
                 border: "1px solid var(--border)",
                 color: "var(--foreground)",
+                fontSize: "16px",
               }}
             />
             {text.length > 0 && (
@@ -204,7 +206,7 @@ export default function PromptBox({
             type="button"
             onClick={sendPrompt}
             disabled={!canSend}
-            className="text-sm px-3.5 py-2 rounded-lg font-medium transition-opacity disabled:opacity-30"
+            className="text-sm px-4 py-2.5 rounded-lg font-medium transition-opacity disabled:opacity-30"
             style={{
               background: "var(--primary)",
               color: "var(--primary-contrast)",

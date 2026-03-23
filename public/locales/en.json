@@ -53,4 +53,5 @@
 ,"welcomeUser": "Welcome, {{name}}"
 ,"goHome": "Go to Home"
 ,"user": "User"
+,"swipeHint": "← Swipe to see dev profile →"
 }
