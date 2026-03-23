@@ -115,6 +115,17 @@ export default function TopBar() {
                 color: "var(--foreground)",
               }}
             >
+              {/* 포트폴리오 */}
+              <a
+                href="/portfolio"
+                onClick={closeMenu}
+                className="w-full text-left px-4 py-2.5 transition-colors hover:opacity-70 block"
+              >
+                {t('portfolio')}
+              </a>
+
+              <div className="h-px mx-3" style={{ background: "var(--border)" }} />
+
               {/* AI 채팅 */}
               <button
                 onClick={togglePrompt}
