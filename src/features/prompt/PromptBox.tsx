@@ -27,8 +27,8 @@ export default function PromptBox({
 
   const canSend = text.trim().length > 0 && !loading && !limitExhausted;
 
-  const sendPrompt = async () => {
-    const prompt = text.trim();
+  const sendPromptWithText = async (directText?: string) => {
+    const prompt = (directText ?? text).trim();
     if (!prompt || loading) return;
     setMessages((m) => [...m, { role: "user", text: prompt }]);
     setText("");
@@ -151,7 +151,7 @@ export default function PromptBox({
                     <button
                       key={q}
                       type="button"
-                      onClick={() => { setText(q); inputRef.current?.focus(); }}
+                      onClick={() => sendPromptWithText(q)}
                       className="text-xs px-3 py-1.5 rounded-full transition-colors hover:opacity-70"
                       style={{
                         border: "1px solid var(--border)",
@@ -209,7 +209,7 @@ export default function PromptBox({
               value={text}
               disabled={loading || limitExhausted}
               onChange={(e) => setText(e.target.value.slice(0, MAX_CHARS))}
-              onKeyDown={(e) => e.key === "Enter" && canSend && sendPrompt()}
+              onKeyDown={(e) => e.key === "Enter" && canSend && sendPromptWithText()}
               placeholder={limitExhausted ? t('noQuestionsLeft') : t('typeYourPrompt')}
               className="w-full rounded-lg px-3 py-2.5 pr-12 transition-colors disabled:opacity-50"
               style={{
@@ -230,7 +230,7 @@ export default function PromptBox({
           </div>
           <button
             type="button"
-            onClick={sendPrompt}
+            onClick={() => sendPromptWithText()}
             disabled={!canSend}
             className="text-sm px-4 py-2.5 rounded-lg font-medium transition-opacity disabled:opacity-30"
             style={{
