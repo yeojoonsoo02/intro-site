@@ -100,7 +100,7 @@ export default function PromptBox({
         paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))",
       }}
     >
-      <div className="max-w-xl mx-auto flex flex-col gap-2">
+      <div className="max-w-xl mx-auto flex flex-col gap-3">
         {/* 헤더 */}
         <div className="flex justify-between items-center">
           <button
