@@ -48,13 +48,20 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
 
   const loadData = useCallback(async () => {
     setLoaded(false);
-    const [h, p, s, tl] = await Promise.all([
-      fetchHero(lang), fetchProjects(lang), fetchSkills(lang), fetchTimeline(lang),
-    ]);
-    setHero(h ?? { headline: '', subline: '' });
-    setProjects(p);
-    setSkills(s);
-    setTimeline(tl);
+    try {
+      const [h, p, s, tl] = await Promise.all([
+        fetchHero(lang), fetchProjects(lang), fetchSkills(lang), fetchTimeline(lang),
+      ]);
+      setHero(h ?? { headline: '', subline: '' });
+      setProjects(p);
+      setSkills(s);
+      setTimeline(tl);
+    } catch {
+      setHero({ headline: '', subline: '' });
+      setProjects([]);
+      setSkills([]);
+      setTimeline([]);
+    }
     setLoaded(true);
   }, [lang]);
 
