@@ -14,108 +14,70 @@ export default function AdminAuthGate({ children }: { children: React.ReactNode 
   if (!ready || authLoading) return null;
   if (isAuthenticated && user) return <>{children}</>;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) {
-      await login();
-      return;
-    }
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (loading) return;
     await authenticate(pw);
   };
 
   return (
-    <main
-      className="min-h-screen flex items-center justify-center px-4"
-      style={{ background: 'var(--background)' }}
-    >
-      <div
-        className="w-full max-w-sm rounded-2xl p-8 flex flex-col gap-6"
-        style={{
-          background: 'var(--card-bg)',
-          boxShadow: 'var(--card-shadow)',
-          border: '1px solid var(--border)',
-        }}
-      >
-        {/* 헤더 */}
-        <div className="text-center">
-          <div
-            className="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center text-lg"
-            style={{
-              background: 'color-mix(in srgb, var(--primary) 12%, transparent)',
-              color: 'var(--primary)',
-            }}
-          >
-            🔒
-          </div>
-          <h1 className="text-lg font-bold" style={{ color: 'var(--foreground)' }}>
-            {t('adminAuthTitle')}
-          </h1>
-          <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>
-            {t('adminAuthDesc')}
-          </p>
-        </div>
-
-        {/* Step 1: Google 로그인 */}
-        {!user && (
-          <button
-            type="button"
-            onClick={() => login()}
-            className="w-full py-3 rounded-lg font-medium transition-opacity hover:opacity-90"
-            style={{
-              background: 'var(--primary)',
-              color: 'var(--primary-contrast)',
-            }}
-          >
-            Google {t('signIn')}
-          </button>
-        )}
-
-        {/* Step 2: 비밀번호 입력 */}
-        {user && !isAuthenticated && (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm"
-              style={{
-                background: 'color-mix(in srgb, var(--primary) 8%, transparent)',
-                color: 'var(--foreground)',
-              }}
-            >
-              <span>✓</span>
-              <span className="truncate">{user.email}</span>
-            </div>
-            <input
-              type="password"
-              value={pw}
-              onChange={(e) => setPw(e.target.value)}
-              placeholder={t('passwordPlaceholder')}
-              className="w-full rounded-lg px-3 py-2.5"
-              style={{
-                background: 'var(--input-bg)',
-                border: '1px solid var(--input-border)',
-                color: 'var(--foreground)',
-                fontSize: '16px',
-              }}
-              autoFocus
-            />
-            {error && (
-              <p className="text-sm text-center" style={{ color: '#ef4444' }}>
-                {t(error)}
-              </p>
-            )}
+    <div className="admin-modal-backdrop">
+      {/* Step 1: Google 로그인 */}
+      {!user && (
+        <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="text-lg font-semibold mb-1">{t('adminAuthTitle')}</div>
+          <div className="text-sm text-muted mb-2">Google 계정으로 로그인해주세요.</div>
+          <div className="modal-actions mt-2">
             <button
-              type="submit"
-              disabled={loading || !pw.trim()}
-              className="w-full py-3 rounded-lg font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
+              type="button"
+              className="modal-btn"
+              onClick={() => login()}
+            >
+              Google {t('signIn')}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 2: 비밀번호 입력 */}
+      {user && !isAuthenticated && (
+        <form
+          className="admin-modal"
+          onClick={(e) => e.stopPropagation()}
+          onSubmit={handleSubmit}
+          autoComplete="off"
+        >
+          <div className="text-lg font-semibold mb-1">{t('adminAuthTitle')}</div>
+          <div className="text-sm text-muted mb-1">
+            <span
+              className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs"
               style={{
-                background: 'var(--primary)',
-                color: 'var(--primary-contrast)',
+                background: 'color-mix(in srgb, var(--primary) 10%, transparent)',
+                color: 'var(--primary)',
               }}
             >
-              {loading ? t('loading') : t('confirm')}
+              ✓ {user.email}
+            </span>
+          </div>
+          <div className="text-sm text-muted mb-2">{t('adminAuthDesc')}</div>
+          <input
+            type="password"
+            value={pw}
+            onChange={(e) => { setPw(e.target.value); }}
+            placeholder={t('passwordPlaceholder')}
+            autoFocus
+            maxLength={32}
+            disabled={loading}
+          />
+          {error && <div className="text-red-500 text-xs mt-1">{t(error)}</div>}
+          <div className="modal-actions mt-2">
+            <a href="/" className="modal-btn cancel">{t('cancel')}</a>
+            <button type="submit" className="modal-btn" disabled={loading || !pw.trim()}>
+              {loading ? '...' : t('confirm')}
             </button>
-          </form>
-        )}
-      </div>
-    </main>
+          </div>
+        </form>
+      )}
+    </div>
   );
 }
