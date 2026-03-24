@@ -111,15 +111,21 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
         </div>
       )}
 
-      {/* 관리자 상단바 */}
+      {/* 관리자 상단 고정바 */}
       {isAdmin && (
-        <div className="flex items-center justify-between mb-8">
+        <div
+          className="sticky top-0 z-30 -mx-5 sm:-mx-6 px-5 sm:px-6 py-3 mb-8 flex items-center justify-between backdrop-blur-md"
+          style={{
+            background: 'color-mix(in srgb, var(--background) 85%, transparent)',
+            borderBottom: '1px solid var(--border)',
+          }}
+        >
           <div className="flex gap-1.5">
             {LANGS.map((l) => (
               <button
                 key={l.code}
                 onClick={() => setAdminLang(l.code)}
-                className="px-2.5 py-1 rounded-lg text-xs font-medium transition-opacity"
+                className="px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all"
                 style={
                   adminLang === l.code
                     ? { background: 'var(--primary)', color: 'var(--primary-contrast)' }
@@ -133,7 +139,7 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
           <button
             onClick={handleSave}
             disabled={saving}
-            className="px-4 py-1.5 rounded-lg text-xs font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="px-5 py-1.5 rounded-lg text-sm font-medium transition-all hover:opacity-90 disabled:opacity-50"
             style={{
               background: saved ? '#22c55e' : 'var(--primary)',
               color: saved ? '#fff' : 'var(--primary-contrast)',
@@ -147,7 +153,16 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
       {/* 히어로 */}
       <PortfolioHero data={hero} />
       {isAdmin && hero && (
-        <div className="mb-12 -mt-10 rounded-xl p-4" style={{ border: '1px dashed var(--border)' }}>
+        <div
+          className="mb-14 -mt-10 rounded-xl p-5"
+          style={{
+            background: 'color-mix(in srgb, var(--primary) 4%, transparent)',
+            border: '1px dashed color-mix(in srgb, var(--primary) 25%, transparent)',
+          }}
+        >
+          <p className="text-xs font-bold mb-3" style={{ color: 'var(--primary)' }}>
+            ✏️ {t('hero')}
+          </p>
           <HeroEditor data={hero} onChange={setHero} />
         </div>
       )}
@@ -155,7 +170,16 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
       {/* 프로젝트 */}
       <ProjectGallery items={projects} />
       {isAdmin && (
-        <div className="mb-12 -mt-10 rounded-xl p-4" style={{ border: '1px dashed var(--border)' }}>
+        <div
+          className="mb-14 -mt-10 rounded-xl p-5"
+          style={{
+            background: 'color-mix(in srgb, var(--primary) 4%, transparent)',
+            border: '1px dashed color-mix(in srgb, var(--primary) 25%, transparent)',
+          }}
+        >
+          <p className="text-xs font-bold mb-3" style={{ color: 'var(--primary)' }}>
+            ✏️ {t('projects')}
+          </p>
           <ProjectEditor items={projects} onChange={setProjects} />
         </div>
       )}
@@ -163,7 +187,16 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
       {/* 기술 스택 */}
       <SkillsSection categories={skills} />
       {isAdmin && (
-        <div className="mb-12 -mt-10 rounded-xl p-4" style={{ border: '1px dashed var(--border)' }}>
+        <div
+          className="mb-14 -mt-10 rounded-xl p-5"
+          style={{
+            background: 'color-mix(in srgb, var(--primary) 4%, transparent)',
+            border: '1px dashed color-mix(in srgb, var(--primary) 25%, transparent)',
+          }}
+        >
+          <p className="text-xs font-bold mb-3" style={{ color: 'var(--primary)' }}>
+            ✏️ {t('skills')}
+          </p>
           <SkillsEditor categories={skills} onChange={setSkills} />
         </div>
       )}
@@ -171,7 +204,16 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
       {/* 타임라인 */}
       <TimelineSection items={timeline} />
       {isAdmin && (
-        <div className="mb-12 -mt-10 rounded-xl p-4" style={{ border: '1px dashed var(--border)' }}>
+        <div
+          className="mb-14 -mt-10 rounded-xl p-5"
+          style={{
+            background: 'color-mix(in srgb, var(--primary) 4%, transparent)',
+            border: '1px dashed color-mix(in srgb, var(--primary) 25%, transparent)',
+          }}
+        >
+          <p className="text-xs font-bold mb-3" style={{ color: 'var(--primary)' }}>
+            ✏️ {t('timeline')}
+          </p>
           <TimelineEditor items={timeline} onChange={setTimeline} />
         </div>
       )}
@@ -184,10 +226,11 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
         <button
           onClick={handleSave}
           disabled={saving}
-          className="w-full py-3 rounded-lg font-medium text-sm transition-opacity hover:opacity-90 disabled:opacity-50 mt-8"
+          className="w-full py-3.5 rounded-xl font-medium text-sm transition-all hover:opacity-90 disabled:opacity-50 mt-8"
           style={{
             background: saved ? '#22c55e' : 'var(--primary)',
             color: saved ? '#fff' : 'var(--primary-contrast)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
           }}
         >
           {saving ? t('loading') : saved ? `✓ ${t('saved')}` : t('save')}
