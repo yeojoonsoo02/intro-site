@@ -40,9 +40,11 @@ export default function ProjectGallery({ items }: { items: Project[] }) {
   };
 
   return (
-    <section
+    <div
       id="projects"
-      ref={ref as React.RefObject<HTMLElement>}
+      ref={ref}
+      role="region"
+      aria-label="projects"
       className="mb-16 sm:mb-20 scroll-mt-24 transition-all duration-700"
       style={{
         opacity: inView ? 1 : 0,
@@ -101,6 +103,8 @@ export default function ProjectGallery({ items }: { items: Project[] }) {
             {project.thumbnail ? (
               <div
                 className="w-full h-40 sm:h-48 bg-cover bg-center"
+                role="img"
+                aria-label={`${project.title} thumbnail`}
                 style={{ backgroundImage: `url(${project.thumbnail})` }}
               />
             ) : (
@@ -177,6 +181,6 @@ export default function ProjectGallery({ items }: { items: Project[] }) {
           </div>
         ))}
       </div>
-    </section>
+    </div>
   );
 }

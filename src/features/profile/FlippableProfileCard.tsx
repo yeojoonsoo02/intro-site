@@ -57,7 +57,6 @@ export default function FlippableProfileCard({ isAdmin = false, onAngleChange }:
         { duration: 800, easing: 'ease-in-out', delay: 500 }
       );
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Adjust container height based on content of both faces

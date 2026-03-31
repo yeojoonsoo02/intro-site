@@ -26,16 +26,17 @@ export default function SectionNav() {
     );
     heroObs.observe(heroEl);
 
-    const sectionEls = SECTIONS.map((s) => document.getElementById(s.id)).filter(Boolean) as HTMLElement[];
+    const sectionEls = SECTIONS.map((s) => document.getElementById(s.id)).filter((el): el is HTMLElement => el !== null);
     const sectionObs = new IntersectionObserver(
       (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActive(entry.target.id);
-          }
+        const mostVisible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (mostVisible) {
+          setActive(mostVisible.target.id);
         }
       },
-      { threshold: 0.3, rootMargin: '-80px 0px -40% 0px' },
+      { threshold: [0.1, 0.3, 0.5], rootMargin: '-80px 0px -40% 0px' },
     );
     sectionEls.forEach((el) => sectionObs.observe(el));
 

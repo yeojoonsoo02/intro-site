@@ -9,9 +9,11 @@ export default function ContactSection() {
   const { ref, inView } = useInView();
 
   return (
-    <section
+    <div
       id="contact"
-      ref={ref as React.RefObject<HTMLElement>}
+      ref={ref}
+      role="region"
+      aria-label="contact"
       className="mb-12 scroll-mt-24 transition-all duration-700"
       style={{
         opacity: inView ? 1 : 0,
@@ -39,6 +41,6 @@ export default function ContactSection() {
           <SocialLinks colored isDev={false} />
         </div>
       </div>
-    </section>
+    </div>
   );
 }

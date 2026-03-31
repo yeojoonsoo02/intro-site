@@ -11,9 +11,11 @@ export default function SummarySection({ data }: { data: PortfolioSummary | null
   if (!data) return null;
 
   return (
-    <section
+    <div
       id="summary"
-      ref={ref as React.RefObject<HTMLElement>}
+      ref={ref}
+      role="region"
+      aria-label="summary"
       className="mb-14 sm:mb-16 scroll-mt-24 transition-all duration-700"
       style={{
         opacity: inView ? 1 : 0,
@@ -65,6 +67,6 @@ export default function SummarySection({ data }: { data: PortfolioSummary | null
           ))}
         </div>
       )}
-    </section>
+    </div>
   );
 }

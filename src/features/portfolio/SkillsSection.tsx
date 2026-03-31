@@ -17,9 +17,11 @@ export default function SkillsSection({ categories }: { categories: SkillCategor
   if (categories.length === 0) return null;
 
   return (
-    <section
+    <div
       id="skills"
-      ref={ref as React.RefObject<HTMLElement>}
+      ref={ref}
+      role="region"
+      aria-label="skills"
       className="mb-10 sm:mb-14 scroll-mt-24 transition-all duration-700"
       style={{
         opacity: inView ? 1 : 0,
@@ -71,6 +73,6 @@ export default function SkillsSection({ categories }: { categories: SkillCategor
           </div>
         ))}
       </div>
-    </section>
+    </div>
   );
 }

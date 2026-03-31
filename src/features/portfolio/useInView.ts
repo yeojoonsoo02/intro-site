@@ -12,8 +12,8 @@ export default function useInView({
   threshold = 0.15,
   rootMargin = '0px 0px -40px 0px',
   triggerOnce = true,
-}: UseInViewOptions = {}): { ref: React.RefObject<HTMLElement | null>; inView: boolean } {
-  const ref = useRef<HTMLElement | null>(null);
+}: UseInViewOptions = {}): { ref: React.RefObject<HTMLDivElement>; inView: boolean } {
+  const ref = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
 
   useEffect(() => {

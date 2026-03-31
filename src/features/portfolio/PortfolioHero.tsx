@@ -9,9 +9,11 @@ export default function PortfolioHero({ data }: { data: HeroType | null }) {
   if (!data) return null;
 
   return (
-    <section
+    <div
       id="hero"
-      ref={ref as React.RefObject<HTMLElement>}
+      ref={ref}
+      role="region"
+      aria-label="hero"
       className="mb-20 sm:mb-28 scroll-mt-16 transition-all duration-700"
       style={{
         opacity: inView ? 1 : 0,
@@ -33,6 +35,6 @@ export default function PortfolioHero({ data }: { data: HeroType | null }) {
       >
         {data.subline}
       </p>
-    </section>
+    </div>
   );
 }

@@ -20,9 +20,11 @@ export default function TimelineSection({ items }: { items: TimelineItem[] }) {
   const sorted = [...items].sort((a, b) => a.order - b.order);
 
   return (
-    <section
+    <div
       id="timeline"
-      ref={ref as React.RefObject<HTMLElement>}
+      ref={ref}
+      role="region"
+      aria-label="timeline"
       className="mb-20 sm:mb-24 scroll-mt-24 transition-all duration-700"
       style={{
         opacity: inView ? 1 : 0,
@@ -87,6 +89,6 @@ export default function TimelineSection({ items }: { items: TimelineItem[] }) {
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 }

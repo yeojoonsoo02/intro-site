@@ -55,23 +55,18 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
   const loadData = useCallback(async () => {
     setLoaded(false);
     setLoadError(null);
-    try {
-      const [h, sm, p, s, tl] = await Promise.all([
-        fetchHero(lang), fetchSummary(lang), fetchProjects(lang), fetchSkills(lang), fetchTimeline(lang),
-      ]);
-      setHero(h ?? { headline: '', subline: '' });
-      setSummary(sm);
-      setProjects(p);
-      setSkills(s);
-      setTimeline(tl);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Failed to load data';
-      setLoadError(msg);
-      setHero({ headline: '', subline: '' });
-      setSummary(null);
-      setProjects([]);
-      setSkills([]);
-      setTimeline([]);
+    const [h, sm, p, s, tl] = await Promise.allSettled([
+      fetchHero(lang), fetchSummary(lang), fetchProjects(lang), fetchSkills(lang), fetchTimeline(lang),
+    ]);
+    setHero(h.status === 'fulfilled' && h.value ? h.value : { headline: '', subline: '' });
+    setSummary(sm.status === 'fulfilled' ? sm.value : null);
+    setProjects(p.status === 'fulfilled' ? p.value : []);
+    setSkills(s.status === 'fulfilled' ? s.value : []);
+    setTimeline(tl.status === 'fulfilled' ? tl.value : []);
+
+    const failures = [h, sm, p, s, tl].filter((r) => r.status === 'rejected');
+    if (failures.length > 0) {
+      setLoadError(`${failures.length}개 섹션 로드 실패`);
     }
     setLoaded(true);
   }, [lang]);
