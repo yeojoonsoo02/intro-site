@@ -55,21 +55,38 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
   const loadData = useCallback(async () => {
     setLoaded(false);
     setLoadError(null);
-    const [h, sm, p, s, tl] = await Promise.allSettled([
-      fetchHero(lang), fetchSummary(lang), fetchProjects(lang), fetchSkills(lang), fetchTimeline(lang),
-    ]);
-    setHero(h.status === 'fulfilled' && h.value ? h.value : { headline: '', subline: '' });
-    setSummary(sm.status === 'fulfilled' ? sm.value : null);
-    setProjects(p.status === 'fulfilled' ? p.value : []);
-    setSkills(s.status === 'fulfilled' ? s.value : []);
-    setTimeline(tl.status === 'fulfilled' ? tl.value : []);
-
-    const failures = [h, sm, p, s, tl].filter((r) => r.status === 'rejected');
-    if (failures.length > 0) {
-      setLoadError(`${failures.length}개 섹션 로드 실패`);
+    try {
+      // 공개 페이지: Admin SDK API로 읽기 (Firestore 규칙 우회)
+      // 관리자: 클라이언트 SDK로 직접 읽기 (쓰기 필요)
+      if (!isAdmin) {
+        const res = await fetch(`/api/portfolio?lang=${lang}`);
+        if (!res.ok) throw new Error('API fetch failed');
+        const data = await res.json();
+        setHero(data.hero ?? { headline: '', subline: '' });
+        setSummary(data.summary ?? null);
+        setProjects(data.projects ?? []);
+        setSkills(data.skills ?? []);
+        setTimeline(data.timeline ?? []);
+      } else {
+        const [h, sm, p, s, tl] = await Promise.allSettled([
+          fetchHero(lang), fetchSummary(lang), fetchProjects(lang), fetchSkills(lang), fetchTimeline(lang),
+        ]);
+        setHero(h.status === 'fulfilled' && h.value ? h.value : { headline: '', subline: '' });
+        setSummary(sm.status === 'fulfilled' ? sm.value : null);
+        setProjects(p.status === 'fulfilled' ? p.value : []);
+        setSkills(s.status === 'fulfilled' ? s.value : []);
+        setTimeline(tl.status === 'fulfilled' ? tl.value : []);
+        const failures = [h, sm, p, s, tl].filter((r) => r.status === 'rejected');
+        if (failures.length > 0) {
+          setLoadError(`${failures.length}개 섹션 로드 실패`);
+        }
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to load data';
+      setLoadError(msg);
     }
     setLoaded(true);
-  }, [lang]);
+  }, [lang, isAdmin]);
 
   useEffect(() => { loadData(); }, [loadData]);
 
