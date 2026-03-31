@@ -2,21 +2,37 @@
 
 import { useTranslation } from 'react-i18next';
 import type { SkillCategory } from './portfolio.model';
+import useInView from './useInView';
+
+function levelLabel(level: number, t: (key: string, options?: Record<string, string>) => string): { text: string; color: string; bg: string } {
+  if (level >= 4) return { text: t('skillPrimary', { defaultValue: '주력' }), color: 'var(--primary)', bg: 'color-mix(in srgb, var(--primary) 10%, transparent)' };
+  if (level >= 2) return { text: t('skillExperienced', { defaultValue: '경험' }), color: 'var(--accent)', bg: 'color-mix(in srgb, var(--accent) 10%, transparent)' };
+  return { text: t('skillLearning', { defaultValue: '학습 중' }), color: 'var(--muted)', bg: 'color-mix(in srgb, var(--foreground) 6%, transparent)' };
+}
 
 export default function SkillsSection({ categories }: { categories: SkillCategory[] }) {
   const { t } = useTranslation();
+  const { ref, inView } = useInView();
 
   if (categories.length === 0) return null;
 
   return (
-    <section className="mb-16 sm:mb-20">
+    <section
+      id="skills"
+      ref={ref as React.RefObject<HTMLElement>}
+      className="mb-10 sm:mb-14 scroll-mt-24 transition-all duration-700"
+      style={{
+        opacity: inView ? 1 : 0,
+        transform: inView ? 'translateY(0)' : 'translateY(24px)',
+      }}
+    >
       <h2
         className="text-sm font-bold tracking-wide mb-6"
         style={{ color: 'var(--muted)' }}
       >
         {t('skills')}
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <div className="space-y-6">
         {categories.map((cat) => (
           <div key={cat.id}>
             <h3
@@ -28,28 +44,29 @@ export default function SkillsSection({ categories }: { categories: SkillCategor
             >
               {cat.name}
             </h3>
-            <div className="space-y-2">
-              {cat.items.map((skill, idx) => (
-                <div key={`${cat.id}-${skill.name}-${idx}`} className="flex items-center justify-between">
-                  <span className="text-sm" style={{ color: 'var(--foreground)' }}>
+            <div className="flex flex-wrap gap-2">
+              {cat.items.map((skill, idx) => {
+                const badge = levelLabel(skill.level, t);
+                return (
+                  <span
+                    key={`${cat.id}-${skill.name}-${idx}`}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm"
+                    style={{
+                      background: badge.bg,
+                      border: `1px solid color-mix(in srgb, ${badge.color} 20%, transparent)`,
+                      color: 'var(--foreground)',
+                    }}
+                  >
                     {skill.name}
+                    <span
+                      className="text-[0.65rem] font-medium px-1.5 py-0.5 rounded"
+                      style={{ color: badge.color, opacity: 0.8 }}
+                    >
+                      {badge.text}
+                    </span>
                   </span>
-                  <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map((n) => (
-                      <div
-                        key={n}
-                        className="w-2 h-2 rounded-full"
-                        style={{
-                          background:
-                            n <= skill.level
-                              ? 'var(--primary)'
-                              : 'color-mix(in srgb, var(--foreground) 12%, transparent)',
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         ))}

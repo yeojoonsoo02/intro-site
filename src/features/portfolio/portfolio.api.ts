@@ -1,6 +1,6 @@
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import type { Project, SkillCategory, TimelineItem, PortfolioHero } from './portfolio.model';
+import type { Project, SkillCategory, TimelineItem, PortfolioHero, PortfolioSummary } from './portfolio.model';
 
 function portfolioDoc(type: string, lang: string = 'ko') {
   return doc(db, 'portfolio', `${type}_${lang}`);
@@ -46,4 +46,13 @@ export async function fetchTimeline(lang: string = 'ko'): Promise<TimelineItem[]
 }
 export async function saveTimeline(items: TimelineItem[], lang: string = 'ko') {
   await setDoc(portfolioDoc('timeline', lang), { items }, { merge: true });
+}
+
+// Summary
+export async function fetchSummary(lang: string = 'ko'): Promise<PortfolioSummary | null> {
+  const snap = await getDoc(portfolioDoc('summary', lang));
+  return snap.exists() ? (snap.data() as PortfolioSummary) : null;
+}
+export async function saveSummary(data: PortfolioSummary, lang: string = 'ko') {
+  await setDoc(portfolioDoc('summary', lang), data, { merge: true });
 }

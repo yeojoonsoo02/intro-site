@@ -71,7 +71,13 @@ export default function AdminAuthGate({ children }: { children: React.ReactNode 
           />
           {error && <div className="text-red-500 text-xs mt-1">{t(error)}</div>}
           <div className="modal-actions mt-2">
-            <a href="/" className="modal-btn cancel">{t('cancel')}</a>
+            <a
+              href="/"
+              className="modal-btn cancel"
+              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              {t('cancel')}
+            </a>
             <button type="submit" className="modal-btn" disabled={loading || !pw.trim()}>
               {loading ? '...' : t('confirm')}
             </button>

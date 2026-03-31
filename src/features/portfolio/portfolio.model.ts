@@ -8,6 +8,7 @@ export interface Project {
   repoUrl?: string;
   featured: boolean;
   order: number;
+  category?: 'web' | 'mobile' | 'ai' | 'other';
 }
 
 export interface SkillItem {
@@ -33,4 +34,9 @@ export interface TimelineItem {
 export interface PortfolioHero {
   headline: string;
   subline: string;
+}
+
+export interface PortfolioSummary {
+  bio: string;
+  highlights: { label: string; value: string }[];
 }
