@@ -50,8 +50,12 @@ export async function saveTimeline(items: TimelineItem[], lang: string = 'ko') {
 
 // Summary
 export async function fetchSummary(lang: string = 'ko'): Promise<PortfolioSummary | null> {
-  const snap = await getDoc(portfolioDoc('summary', lang));
-  return snap.exists() ? (snap.data() as PortfolioSummary) : null;
+  try {
+    const snap = await getDoc(portfolioDoc('summary', lang));
+    return snap.exists() ? (snap.data() as PortfolioSummary) : null;
+  } catch {
+    return null;
+  }
 }
 export async function saveSummary(data: PortfolioSummary, lang: string = 'ko') {
   await setDoc(portfolioDoc('summary', lang), data, { merge: true });
