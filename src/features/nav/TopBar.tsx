@@ -26,8 +26,6 @@ export default function TopBar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [promptOpen, setPromptOpen] = useState(false)
   const [inviteVisible, setInviteVisible] = useState(false)
-  const [langOpen, setLangOpen] = useState(false)
-  const [themeOpen, setThemeOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -36,11 +34,7 @@ export default function TopBar() {
   }, [])
 
   useEffect(() => {
-    if (!menuOpen) {
-      setLangOpen(false)
-      setThemeOpen(false)
-      return
-    }
+    if (!menuOpen) return
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setMenuOpen(false)
@@ -108,141 +102,114 @@ export default function TopBar() {
           </button>
           {menuOpen && (
             <div
-              className="absolute right-0 mt-2 w-48 rounded-xl overflow-hidden backdrop-blur shadow-lg flex flex-col text-sm py-1"
+              className="absolute right-0 mt-2 w-48 rounded-xl overflow-hidden backdrop-blur shadow-lg flex flex-col text-sm"
               style={{
                 background: "var(--card-bg)",
                 border: "1px solid var(--border)",
                 color: "var(--foreground)",
               }}
             >
-              {/* 포트폴리오 */}
-              <a
-                href="/portfolio"
-                onClick={closeMenu}
-                className="w-full text-left px-4 py-2.5 transition-colors hover:opacity-70 block"
-              >
-                {t('portfolio')}
-              </a>
-
-              <div className="h-px mx-3" style={{ background: "var(--border)" }} />
-
-              {/* AI 채팅 */}
-              <button
-                onClick={togglePrompt}
-                className="w-full text-left px-4 py-2.5 transition-colors hover:opacity-70"
-              >
-                {t('prompt')}
-              </button>
-
-              <div className="h-px mx-3" style={{ background: "var(--border)" }} />
-
-              {/* 테마 */}
-              <button
-                onClick={() => setThemeOpen((o) => !o)}
-                className="w-full flex items-center justify-between px-4 py-2.5 font-medium transition-colors hover:opacity-70"
-              >
-                <span>{t('theme', { defaultValue: 'Theme' })}</span>
-                <svg
-                  className={`w-3.5 h-3.5 ml-1 transition-transform duration-200 ${themeOpen ? 'rotate-180' : ''}`}
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  aria-hidden="true"
+              {/* ── 탐색 ── */}
+              <div className="py-1">
+                <a
+                  href="/portfolio"
+                  onClick={closeMenu}
+                  className="w-full text-left px-4 py-2.5 transition-colors hover:opacity-70 block"
                 >
-                  <path fillRule="evenodd" d="M5 7l5 5 5-5H5z" clipRule="evenodd" />
-                </svg>
-              </button>
-              {themeOpen && (
-                <div className="px-4 pb-2 space-y-0.5">
+                  {t('portfolio')}
+                </a>
+                <button
+                  onClick={togglePrompt}
+                  className="w-full text-left px-4 py-2.5 transition-colors hover:opacity-70"
+                >
+                  {t('prompt')}
+                </button>
+              </div>
+
+              <div className="h-px mx-3" style={{ background: "var(--border)" }} />
+
+              {/* ── 설정 ── */}
+              <div className="py-1">
+                <p className="px-4 pt-1.5 pb-1 text-[0.65rem] font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
+                  {t('theme', { defaultValue: 'Theme' })}
+                </p>
+                <div className="px-4 pb-1.5 flex gap-1">
                   {themeOptions.map((opt) => (
                     <button
                       key={opt.key}
                       onClick={() => { setTheme(opt.key); closeMenu() }}
-                      className="w-full flex items-center justify-between px-2 py-1.5 rounded-md text-sm transition-colors hover:opacity-70"
+                      className="flex-1 flex items-center justify-center py-1.5 rounded-md text-sm transition-colors"
                       style={theme === opt.key ? {
                         background: "color-mix(in srgb, var(--primary) 12%, transparent)",
                         color: "var(--primary)",
-                      } : {}}
+                      } : { color: "var(--muted)" }}
+                      aria-label={t(`theme${opt.key.charAt(0).toUpperCase() + opt.key.slice(1)}`, { defaultValue: opt.key })}
                     >
-                      <span>{t(`theme${opt.key.charAt(0).toUpperCase() + opt.key.slice(1)}`, { defaultValue: opt.key })}</span>
                       <span className="text-base">{opt.icon}</span>
                     </button>
                   ))}
                 </div>
-              )}
 
-              <div className="h-px mx-3" style={{ background: "var(--border)" }} />
-
-              {/* 로그인/프로필 */}
-              {!user && (
-                <button
-                  onClick={() => { login(); closeMenu() }}
-                  className="w-full text-left px-4 py-2.5 transition-colors hover:opacity-70"
-                >
-                  {t('signIn')}
-                </button>
-              )}
-              {user && (
-                <div className="px-4 py-2.5">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    {user.photoURL && (
-                      <Image
-                        src={user.photoURL}
-                        alt={user.displayName || 'profile'}
-                        width={24}
-                        height={24}
-                        className="rounded-full"
-                        style={{ border: "1px solid var(--border)" }}
-                        referrerPolicy="no-referrer"
-                      />
-                    )}
-                    <span className="text-sm font-medium truncate">
-                      {user.displayName || user.email}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => { logout(); closeMenu() }}
-                    className="text-xs transition-colors hover:opacity-70"
-                    style={{ color: "var(--muted)" }}
-                  >
-                    {t('logout')}
-                  </button>
-                </div>
-              )}
-
-              <div className="h-px mx-3" style={{ background: "var(--border)" }} />
-
-              {/* 언어 */}
-              <button
-                onClick={() => setLangOpen((o) => !o)}
-                className="w-full flex items-center justify-between px-4 py-2.5 font-medium transition-colors hover:opacity-70"
-              >
-                <span>{t('language')}</span>
-                <svg
-                  className={`w-3.5 h-3.5 ml-1 transition-transform duration-200 ${langOpen ? 'rotate-180' : ''}`}
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  <path fillRule="evenodd" d="M5 7l5 5 5-5H5z" clipRule="evenodd" />
-                </svg>
-              </button>
-              {langOpen && (
-                <div className="px-4 pb-2 space-y-0.5">
+                <p className="px-4 pt-1.5 pb-1 text-[0.65rem] font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
+                  {t('language')}
+                </p>
+                <div className="px-4 pb-1.5 flex gap-1">
                   {LANGS.map((l) => (
                     <button
                       key={l.code}
                       onClick={() => { changeLanguage(l.code); closeMenu() }}
-                      className="w-full text-left px-2 py-1.5 rounded-md text-sm transition-colors hover:opacity-70"
+                      className="flex-1 py-1.5 rounded-md text-xs font-medium transition-colors"
                       style={i18n.language === l.code ? {
                         background: "color-mix(in srgb, var(--primary) 12%, transparent)",
                         color: "var(--primary)",
-                      } : {}}
+                      } : { color: "var(--muted)" }}
                     >
-                      {l.label}
+                      {l.code.toUpperCase()}
                     </button>
                   ))}
                 </div>
-              )}
+              </div>
+
+              <div className="h-px mx-3" style={{ background: "var(--border)" }} />
+
+              {/* ── 계정 ── */}
+              <div className="py-1">
+                {!user && (
+                  <button
+                    onClick={() => { login(); closeMenu() }}
+                    className="w-full text-left px-4 py-2.5 transition-colors hover:opacity-70"
+                  >
+                    {t('signIn')}
+                  </button>
+                )}
+                {user && (
+                  <div className="px-4 py-2 flex items-center justify-between">
+                    <div className="flex items-center gap-2 min-w-0">
+                      {user.photoURL && (
+                        <Image
+                          src={user.photoURL}
+                          alt={user.displayName || 'profile'}
+                          width={24}
+                          height={24}
+                          className="rounded-full shrink-0"
+                          style={{ border: "1px solid var(--border)" }}
+                          referrerPolicy="no-referrer"
+                        />
+                      )}
+                      <span className="text-sm font-medium truncate">
+                        {user.displayName || user.email}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => { logout(); closeMenu() }}
+                      className="text-xs shrink-0 ml-2 transition-colors hover:opacity-70"
+                      style={{ color: "var(--muted)" }}
+                    >
+                      {t('logout')}
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
