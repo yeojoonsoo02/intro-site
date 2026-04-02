@@ -10,6 +10,7 @@ import SkillsSection from './SkillsSection';
 import TimelineSection from './TimelineSection';
 import ContactSection from './ContactSection';
 import SectionNav from './SectionNav';
+import LoginBlur from './LoginBlur';
 import {
   fetchHero, saveHero,
   fetchProjects, saveProjects,
@@ -198,29 +199,25 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
         {/* 2. 요약 (새 섹션) */}
         <SummarySection data={summary} />
 
-        {/* 3. 기술 스택 (Skills → Projects 순서로 변경) */}
-        <SkillsSection categories={skills} />
-        {isAdmin && editorBox(
-          `✏️ ${t('skills')}`,
-          <SkillsEditor categories={skills} onChange={setSkills} />,
+        {/* 3~6: 로그인 시 상세 공개 (관리자는 항상 공개) */}
+        {isAdmin ? (
+          <>
+            <SkillsSection categories={skills} />
+            {editorBox(`✏️ ${t('skills')}`, <SkillsEditor categories={skills} onChange={setSkills} />)}
+            <ProjectGallery items={projects} />
+            {editorBox(`✏️ ${t('projects')}`, <ProjectEditor items={projects} onChange={setProjects} />)}
+            <TimelineSection items={timeline} />
+            {editorBox(`✏️ ${t('timeline')}`, <TimelineEditor items={timeline} onChange={setTimeline} />)}
+            <ContactSection />
+          </>
+        ) : (
+          <LoginBlur>
+            <SkillsSection categories={skills} />
+            <ProjectGallery items={projects} />
+            <TimelineSection items={timeline} />
+            <ContactSection />
+          </LoginBlur>
         )}
-
-        {/* 4. 프로젝트 */}
-        <ProjectGallery items={projects} />
-        {isAdmin && editorBox(
-          `✏️ ${t('projects')}`,
-          <ProjectEditor items={projects} onChange={setProjects} />,
-        )}
-
-        {/* 5. 타임라인 */}
-        <TimelineSection items={timeline} />
-        {isAdmin && editorBox(
-          `✏️ ${t('timeline')}`,
-          <TimelineEditor items={timeline} onChange={setTimeline} />,
-        )}
-
-        {/* 6. 연락처 */}
-        <ContactSection />
 
         {/* 하단 저장 버튼 */}
         {isAdmin && (
