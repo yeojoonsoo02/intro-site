@@ -21,10 +21,12 @@ service cloud.firestore {
         && request.auth.token.email == "yeojoonsoo02@gmail.com";
     }
 
-    // Comments: public read, authenticated write
+    // Comments: public read, create with validation
     match /comments/{doc} {
       allow read: if true;
-      allow create: if true;
+      allow create: if request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() < 1000;
       allow update, delete: if false;
     }
 
@@ -41,9 +43,10 @@ service cloud.firestore {
         && request.auth.token.email == "yeojoonsoo02@gmail.com";
     }
 
-    // Prompt logs: public create only
+    // Prompt logs: create with validation only
     match /prompt_logs/{doc} {
-      allow create: if true;
+      allow create: if request.resource.data.question is string
+        && request.resource.data.question.size() < 2000;
       allow read, update, delete: if false;
     }
 

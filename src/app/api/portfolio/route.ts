@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebaseAdmin';
 
+const ALLOWED_LANGS = ['ko', 'en', 'ja', 'zh'];
+
 export async function GET(req: NextRequest): Promise<NextResponse> {
-  const lang = req.nextUrl.searchParams.get('lang') || 'ko';
+  const rawLang = req.nextUrl.searchParams.get('lang') || 'ko';
+  const lang = ALLOWED_LANGS.includes(rawLang) ? rawLang : 'ko';
 
   if (!adminDb) {
     return NextResponse.json({ error: 'Admin SDK not available' }, { status: 500 });
