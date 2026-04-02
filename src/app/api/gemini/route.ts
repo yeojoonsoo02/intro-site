@@ -84,13 +84,15 @@ async function buildSystemPrompt(query: string): Promise<string> {
 
 // --- Rate limiter ---
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
-const RATE_LIMIT_MAX = 20
+const RATE_LIMIT_MAX_GUEST = 5
+const RATE_LIMIT_MAX_USER = 20
 const RATE_LIMIT_WINDOW = 60 * 60 * 1000
 const RATE_LIMIT_MAP_MAX = 500
 let lastCleanup = Date.now()
 
-function checkRateLimit(ip: string): { allowed: boolean; remaining: number } {
+function checkRateLimit(ip: string, isLoggedIn: boolean): { allowed: boolean; remaining: number } {
   const now = Date.now()
+  const max = isLoggedIn ? RATE_LIMIT_MAX_USER : RATE_LIMIT_MAX_GUEST
 
   if (now - lastCleanup > 2 * 60 * 1000) {
     for (const [key, val] of rateLimitMap) {
@@ -111,15 +113,15 @@ function checkRateLimit(ip: string): { allowed: boolean; remaining: number } {
 
   if (!entry || now > entry.resetAt) {
     rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW })
-    return { allowed: true, remaining: RATE_LIMIT_MAX - 1 }
+    return { allowed: true, remaining: max - 1 }
   }
 
-  if (entry.count >= RATE_LIMIT_MAX) {
+  if (entry.count >= max) {
     return { allowed: false, remaining: 0 }
   }
 
   entry.count++
-  return { allowed: true, remaining: RATE_LIMIT_MAX - entry.count }
+  return { allowed: true, remaining: max - entry.count }
 }
 
 // --- [7] userInfo validation ---
@@ -189,18 +191,19 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
-  const rateLimit = checkRateLimit(ip)
-  if (!rateLimit.allowed) {
-    return NextResponse.json(
-      { error: 'Too many requests. Please try again later.' },
-      { status: 429, headers: { 'X-RateLimit-Remaining': '0' } },
-    )
-  }
-
   const body = await req.json()
   const message = body.message || body.prompt
   const userInfo = sanitizeUserInfo(body.userInfo)
+  const isLoggedIn = !!(userInfo && typeof userInfo === 'object' && 'email' in userInfo && userInfo.email)
+
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  const rateLimit = checkRateLimit(ip, isLoggedIn)
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.', remaining: 0, isLoggedIn },
+      { status: 429, headers: { 'X-RateLimit-Remaining': '0' } },
+    )
+  }
   if (!message || typeof message !== 'string') {
     return NextResponse.json({ error: 'Missing prompt' }, { status: 400 })
   }

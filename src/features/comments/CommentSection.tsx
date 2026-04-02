@@ -16,12 +16,14 @@ import CommentItem from './CommentItem';
 import { Comment } from './comment.model';
 import styles from './comment.module.css';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/lib/AuthProvider';
 
 export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
   const [input, setInput] = useState('');
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
+  const { user, login } = useAuth();
 
   const loadComments = async () => {
     setLoading(true);
@@ -41,15 +43,16 @@ export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
   };
 
   const addComment = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || !user) return;
     const text = input;
+    const author = user.displayName || user.email || '';
     const tempId = `temp-${Date.now()}`;
     const now = Timestamp.now();
 
-    // Optimistic update
     const tempComment: Comment = {
       id: tempId,
       text,
+      author,
       createdAt: now,
     };
     setComments((prev) => [tempComment, ...prev]);
@@ -58,6 +61,7 @@ export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
     try {
       const docRef = await addDoc(collection(db, 'comments'), {
         text,
+        author,
         createdAt: now,
       });
       // Replace temp ID with real ID
@@ -91,26 +95,40 @@ export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
 
   return (
     <div className="w-full">
-      <div className="flex gap-2 mb-2">
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && addComment()}
-          placeholder={t('commentPlaceholder')}
-          className={
-            styles.input +
-            " flex-1 bg-card text-[color:var(--foreground)] border border-[color:var(--input-border)] placeholder:text-[color:var(--muted)]"
-          }
-          maxLength={100}
-        />
+      {user ? (
+        <div className="flex gap-2 mb-2">
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && addComment()}
+            placeholder={t('commentPlaceholder')}
+            className={
+              styles.input +
+              " flex-1 bg-card text-[color:var(--foreground)] border border-[color:var(--input-border)] placeholder:text-[color:var(--muted)]"
+            }
+            maxLength={100}
+          />
+          <button
+            onClick={addComment}
+            className="bg-[color:var(--primary)] text-[color:var(--primary-contrast)] px-4 py-2 rounded-lg hover:bg-[color:var(--button-hover)] transition text-sm font-semibold min-w-[44px]"
+            aria-label={t('submit')}
+          >
+            {t('submit')}
+          </button>
+        </div>
+      ) : (
         <button
-          onClick={addComment}
-          className="bg-[color:var(--primary)] text-[color:var(--primary-contrast)] px-4 py-2 rounded-lg hover:bg-[color:var(--button-hover)] transition text-sm font-semibold min-w-[44px]"
-          aria-label={t('submit')}
+          onClick={() => login()}
+          className="w-full mb-2 py-2.5 rounded-lg text-sm font-medium transition-opacity hover:opacity-90"
+          style={{
+            background: 'color-mix(in srgb, var(--primary) 10%, transparent)',
+            color: 'var(--primary)',
+            border: '1px solid color-mix(in srgb, var(--primary) 25%, transparent)',
+          }}
         >
-          {t('submit')}
+          {t('loginToComment')}
         </button>
-      </div>
+      )}
       <ul className="space-y-2">
         {loading ? (
           <li className="text-center text-muted py-4">{t('loadingComments')}</li>
@@ -121,6 +139,7 @@ export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
             <CommentItem
               key={c.id}
               text={c.text}
+              author={c.author}
               date={c.createdAt?.toDate ? c.createdAt.toDate().toLocaleString() : ''}
               onDelete={() => deleteComment(c.id)}
               isAdmin={isAdmin}

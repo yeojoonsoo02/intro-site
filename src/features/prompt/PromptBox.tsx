@@ -4,7 +4,8 @@ import { useTranslation } from "react-i18next";
 import { savePrompt } from "./prompt.api";
 import { useAuth } from "@/lib/AuthProvider";
 
-const MAX_CHARS = 200;
+const MAX_CHARS_GUEST = 200;
+const MAX_CHARS_USER = 500;
 
 export default function PromptBox({
   open,
@@ -23,8 +24,9 @@ export default function PromptBox({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, login } = useAuth();
 
+  const maxChars = user ? MAX_CHARS_USER : MAX_CHARS_GUEST;
   const canSend = text.trim().length > 0 && !loading && !limitExhausted;
 
   const sendPromptWithText = async (directText?: string) => {
@@ -208,7 +210,7 @@ export default function PromptBox({
               type="text"
               value={text}
               disabled={loading || limitExhausted}
-              onChange={(e) => setText(e.target.value.slice(0, MAX_CHARS))}
+              onChange={(e) => setText(e.target.value.slice(0, maxChars))}
               onKeyDown={(e) => e.key === "Enter" && canSend && sendPromptWithText()}
               placeholder={limitExhausted ? t('noQuestionsLeft') : t('typeYourPrompt')}
               className="w-full rounded-lg px-3 py-2.5 pr-12 transition-colors disabled:opacity-50"
@@ -222,9 +224,9 @@ export default function PromptBox({
             {text.length > 0 && (
               <span
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-[0.65rem] tabular-nums"
-                style={{ color: text.length >= MAX_CHARS ? "#ef4444" : "var(--muted)" }}
+                style={{ color: text.length >= maxChars ? "#ef4444" : "var(--muted)" }}
               >
-                {text.length}/{MAX_CHARS}
+                {text.length}/{maxChars}
               </span>
             )}
           </div>
@@ -243,15 +245,30 @@ export default function PromptBox({
         </div>
 
         {/* 하단 정보 */}
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center gap-2">
           <p className="text-[0.65rem]" style={{ color: "var(--muted)", opacity: 0.7 }}>
             {t('aiDisclaimer')}
           </p>
-          {remaining !== null && !limitExhausted && (
-            <p className="text-[0.65rem] tabular-nums" style={{ color: "var(--muted)" }}>
-              {t('remaining', { count: remaining })}
-            </p>
-          )}
+          <div className="flex items-center gap-2 shrink-0">
+            {!user && (
+              <button
+                type="button"
+                onClick={() => login()}
+                className="text-[0.65rem] px-2 py-0.5 rounded transition-colors hover:opacity-80"
+                style={{
+                  color: "var(--primary)",
+                  border: "1px solid color-mix(in srgb, var(--primary) 30%, transparent)",
+                }}
+              >
+                {t('loginForMore')}
+              </button>
+            )}
+            {remaining !== null && !limitExhausted && (
+              <p className="text-[0.65rem] tabular-nums" style={{ color: "var(--muted)" }}>
+                {t('remaining', { count: remaining })}
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </div>
