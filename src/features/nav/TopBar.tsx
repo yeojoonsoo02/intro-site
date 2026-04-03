@@ -26,6 +26,7 @@ export default function TopBar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [promptOpen, setPromptOpen] = useState(false)
   const [inviteVisible, setInviteVisible] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -102,7 +103,7 @@ export default function TopBar() {
           </button>
           {menuOpen && (
             <div
-              className="absolute right-0 mt-2 w-48 rounded-xl overflow-hidden backdrop-blur shadow-lg flex flex-col text-sm"
+              className="absolute right-0 mt-2 w-56 rounded-xl overflow-hidden backdrop-blur shadow-lg flex flex-col text-sm"
               style={{
                 background: "var(--card-bg)",
                 border: "1px solid var(--border)",
@@ -128,46 +129,66 @@ export default function TopBar() {
 
               <div className="h-px mx-3" style={{ background: "var(--border)" }} />
 
-              {/* ── 설정 ── */}
+              {/* ── 설정 (접기/펼치기) ── */}
               <div className="py-1">
-                <p className="px-4 pt-1.5 pb-1 text-[0.65rem] font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
-                  {t('theme', { defaultValue: 'Theme' })}
-                </p>
-                <div className="px-4 pb-1.5 flex gap-1">
-                  {themeOptions.map((opt) => (
-                    <button
-                      key={opt.key}
-                      onClick={() => { setTheme(opt.key); closeMenu() }}
-                      className="flex-1 flex items-center justify-center py-1.5 rounded-md text-sm transition-colors"
-                      style={theme === opt.key ? {
-                        background: "color-mix(in srgb, var(--primary) 12%, transparent)",
-                        color: "var(--primary)",
-                      } : { color: "var(--muted)" }}
-                      aria-label={t(`theme${opt.key.charAt(0).toUpperCase() + opt.key.slice(1)}`, { defaultValue: opt.key })}
-                    >
-                      <span className="text-base">{opt.icon}</span>
-                    </button>
-                  ))}
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setSettingsOpen((v) => !v)}
+                  className="w-full flex items-center justify-between px-4 py-2 text-[0.7rem] font-semibold uppercase tracking-widest transition-colors hover:opacity-70"
+                  style={{ color: "var(--muted)" }}
+                >
+                  <span>{t('settings', { defaultValue: '설정' })}</span>
+                  <svg
+                    width="12" height="12" viewBox="0 0 12 12" fill="none"
+                    className={`transition-transform duration-200 ${settingsOpen ? 'rotate-180' : ''}`}
+                    aria-hidden="true"
+                  >
+                    <path d="M3 4.5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
 
-                <p className="px-4 pt-1.5 pb-1 text-[0.65rem] font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
-                  {t('language')}
-                </p>
-                <div className="px-4 pb-1.5 flex gap-1">
-                  {LANGS.map((l) => (
-                    <button
-                      key={l.code}
-                      onClick={() => { changeLanguage(l.code); closeMenu() }}
-                      className="flex-1 py-1.5 rounded-md text-xs font-medium transition-colors"
-                      style={i18n.language === l.code ? {
-                        background: "color-mix(in srgb, var(--primary) 12%, transparent)",
-                        color: "var(--primary)",
-                      } : { color: "var(--muted)" }}
-                    >
-                      {l.code.toUpperCase()}
-                    </button>
-                  ))}
-                </div>
+                {settingsOpen && (
+                  <div>
+                    <p className="px-4 pt-1 pb-1 text-[0.65rem] font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
+                      {t('theme', { defaultValue: 'Theme' })}
+                    </p>
+                    <div className="px-4 pb-1.5 flex gap-1">
+                      {themeOptions.map((opt) => (
+                        <button
+                          key={opt.key}
+                          onClick={() => { setTheme(opt.key); closeMenu(); setSettingsOpen(false) }}
+                          className="flex-1 flex items-center justify-center py-1.5 rounded-md text-sm transition-colors"
+                          style={theme === opt.key ? {
+                            background: "color-mix(in srgb, var(--primary) 12%, transparent)",
+                            color: "var(--primary)",
+                          } : { color: "var(--muted)" }}
+                          aria-label={t(`theme${opt.key.charAt(0).toUpperCase() + opt.key.slice(1)}`, { defaultValue: opt.key })}
+                        >
+                          <span className="text-base">{opt.icon}</span>
+                        </button>
+                      ))}
+                    </div>
+
+                    <p className="px-4 pt-1.5 pb-1 text-[0.65rem] font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
+                      {t('language')}
+                    </p>
+                    <div className="px-4 pb-1.5 flex gap-1">
+                      {LANGS.map((l) => (
+                        <button
+                          key={l.code}
+                          onClick={() => { changeLanguage(l.code); closeMenu(); setSettingsOpen(false) }}
+                          className="flex-1 py-1.5 rounded-md text-xs font-medium transition-colors"
+                          style={i18n.language === l.code ? {
+                            background: "color-mix(in srgb, var(--primary) 12%, transparent)",
+                            color: "var(--primary)",
+                          } : { color: "var(--muted)" }}
+                        >
+                          {l.code.toUpperCase()}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="h-px mx-3" style={{ background: "var(--border)" }} />
