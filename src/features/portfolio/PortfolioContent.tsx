@@ -9,7 +9,6 @@ import ProjectGallery from './ProjectGallery';
 import SkillsSection from './SkillsSection';
 import TimelineSection from './TimelineSection';
 import ContactSection from './ContactSection';
-import SectionNav from './SectionNav';
 import LoginBlur from './LoginBlur';
 import {
   fetchHero, saveHero,
@@ -133,8 +132,6 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
 
   return (
     <>
-      {!isAdmin && <SectionNav />}
-
       <div className="max-w-2xl mx-auto px-5 sm:px-6 pt-16 sm:pt-20 pb-20">
         {/* 에러 메시지 */}
         {loadError && (
