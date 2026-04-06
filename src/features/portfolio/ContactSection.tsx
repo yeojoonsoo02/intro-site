@@ -33,7 +33,7 @@ export default function ContactSection() {
           style={{ color: 'var(--foreground)' }}
         >
           <svg width="16" height="16" fill="none" aria-hidden="true" className="shrink-0">
-            <path d="M1.5 3.5A2 2 0 0 1 3.5 1.5h9A2 2 0 0 1 14.5 3.5v9a2 2 0 0 1-2 2h-9a-2 2 0 0 1-2-2v-9Zm1.5.4 3.2 2.8a.8.8 0 0 0 1 0L10.5 3.9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M1.5 3.5A2 2 0 0 1 3.5 1.5h9A2 2 0 0 1 14.5 3.5v9a2 2 0 0 1-2 2h-9a2 2 0 0 1-2-2v-9Zm1.5.4 3.2 2.8a.8.8 0 0 0 1 0L10.5 3.9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
           yeojoonsoo02@gmail.com
         </a>
