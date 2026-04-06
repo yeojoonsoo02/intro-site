@@ -186,19 +186,15 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
           </div>
         )}
 
-        {/* 1. 히어로 */}
-        <PortfolioHero data={hero} />
-        {isAdmin && hero && editorBox(
-          `✏️ ${t('hero')}`,
-          <HeroEditor data={hero} onChange={setHero} />,
-        )}
-
-        {/* 2. 요약 (새 섹션) */}
-        <SummarySection data={summary} />
-
-        {/* 3~6: 로그인 시 상세 공개 (관리자는 항상 공개) */}
+        {/* 관리자: 모든 섹션 + 에디터 표시 */}
         {isAdmin ? (
           <>
+            <PortfolioHero data={hero} />
+            {hero && editorBox(
+              `✏️ ${t('hero')}`,
+              <HeroEditor data={hero} onChange={setHero} />,
+            )}
+            <SummarySection data={summary} />
             <SkillsSection categories={skills} />
             {editorBox(`✏️ ${t('skills')}`, <SkillsEditor categories={skills} onChange={setSkills} />)}
             <ProjectGallery items={projects} />
@@ -209,6 +205,8 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
           </>
         ) : (
           <LoginBlur>
+            <PortfolioHero data={hero} />
+            <SummarySection data={summary} />
             <SkillsSection categories={skills} />
             <ProjectGallery items={projects} />
             <TimelineSection items={timeline} />
