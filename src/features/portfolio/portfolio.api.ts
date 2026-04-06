@@ -1,6 +1,6 @@
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import type { Project, SkillCategory, TimelineItem, PortfolioHero, PortfolioSummary, Certification, Testimonial, Education } from './portfolio.model';
+import type { Project, SkillCategory, TimelineItem, PortfolioHero, PortfolioSummary, Certification, Testimonial, Education, PersonalInfoItem, GoalItem, ValueQuote, RoutineStep, HobbyCategory } from './portfolio.model';
 
 function portfolioDoc(type: string, lang: string = 'ko') {
   return doc(db, 'portfolio', `${type}_${lang}`);
@@ -92,4 +92,59 @@ export async function fetchEducation(lang: string = 'ko'): Promise<Education[]> 
 }
 export async function saveEducation(items: Education[], lang: string = 'ko'): Promise<void> {
   await setDoc(portfolioDoc('education', lang), { items }, { merge: true });
+}
+
+// Personal Info
+export async function fetchPersonalInfo(lang: string = 'ko'): Promise<PersonalInfoItem[]> {
+  const snap = await getDoc(portfolioDoc('personalInfo', lang));
+  if (!snap.exists()) return [];
+  const data = snap.data() as { items?: PersonalInfoItem[] };
+  return data.items ?? [];
+}
+export async function savePersonalInfo(items: PersonalInfoItem[], lang: string = 'ko'): Promise<void> {
+  await setDoc(portfolioDoc('personalInfo', lang), { items }, { merge: true });
+}
+
+// Goals
+export async function fetchGoals(lang: string = 'ko'): Promise<GoalItem[]> {
+  const snap = await getDoc(portfolioDoc('goals', lang));
+  if (!snap.exists()) return [];
+  const data = snap.data() as { items?: GoalItem[] };
+  return data.items ?? [];
+}
+export async function saveGoals(items: GoalItem[], lang: string = 'ko'): Promise<void> {
+  await setDoc(portfolioDoc('goals', lang), { items }, { merge: true });
+}
+
+// Values
+export async function fetchValues(lang: string = 'ko'): Promise<ValueQuote[]> {
+  const snap = await getDoc(portfolioDoc('values', lang));
+  if (!snap.exists()) return [];
+  const data = snap.data() as { items?: ValueQuote[] };
+  return data.items ?? [];
+}
+export async function saveValues(items: ValueQuote[], lang: string = 'ko'): Promise<void> {
+  await setDoc(portfolioDoc('values', lang), { items }, { merge: true });
+}
+
+// Routine
+export async function fetchRoutine(lang: string = 'ko'): Promise<RoutineStep[]> {
+  const snap = await getDoc(portfolioDoc('routine', lang));
+  if (!snap.exists()) return [];
+  const data = snap.data() as { items?: RoutineStep[] };
+  return data.items ?? [];
+}
+export async function saveRoutine(items: RoutineStep[], lang: string = 'ko'): Promise<void> {
+  await setDoc(portfolioDoc('routine', lang), { items }, { merge: true });
+}
+
+// Hobbies
+export async function fetchHobbies(lang: string = 'ko'): Promise<HobbyCategory[]> {
+  const snap = await getDoc(portfolioDoc('hobbies', lang));
+  if (!snap.exists()) return [];
+  const data = snap.data() as { categories?: HobbyCategory[] };
+  return data.categories ?? [];
+}
+export async function saveHobbies(categories: HobbyCategory[], lang: string = 'ko'): Promise<void> {
+  await setDoc(portfolioDoc('hobbies', lang), { categories }, { merge: true });
 }

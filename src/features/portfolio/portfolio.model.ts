@@ -67,3 +67,33 @@ export interface Education {
   description?: string;
   order: number;
 }
+
+export interface PersonalInfoItem {
+  label: string;
+  value: string;
+}
+
+export interface GoalItem {
+  id: string;
+  content: string;
+  order: number;
+}
+
+export interface ValueQuote {
+  id: string;
+  content: string;
+  order: number;
+}
+
+export interface RoutineStep {
+  id: string;
+  time: string;
+  content: string;
+  order: number;
+}
+
+export interface HobbyCategory {
+  id: string;
+  name: string;
+  items: string[];
+}

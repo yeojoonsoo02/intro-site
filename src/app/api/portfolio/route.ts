@@ -16,6 +16,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const docs = [
     'hero', 'summary', 'projects', 'skills', 'timeline',
     'certifications', 'testimonials', 'education',
+    'personalInfo', 'goals', 'values', 'routine', 'hobbies',
   ];
   const snaps = await Promise.allSettled(
     docs.map((d) => col.doc(`${d}_${lang}`).get()),
@@ -35,5 +36,10 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     certifications: getData(5)?.items ?? [],
     testimonials: getData(6)?.items ?? [],
     education: getData(7)?.items ?? [],
+    personalInfo: getData(8)?.items ?? [],
+    goals: getData(9)?.items ?? [],
+    values: getData(10)?.items ?? [],
+    routine: getData(11)?.items ?? [],
+    hobbies: getData(12)?.categories ?? [],
   });
 }
