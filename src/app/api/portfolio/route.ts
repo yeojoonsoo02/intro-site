@@ -13,35 +13,27 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   const col = adminDb.collection('portfolio');
 
-  const [heroSnap, summarySnap, projectsSnap, skillsSnap, timelineSnap] =
-    await Promise.allSettled([
-      col.doc(`hero_${lang}`).get(),
-      col.doc(`summary_${lang}`).get(),
-      col.doc(`projects_${lang}`).get(),
-      col.doc(`skills_${lang}`).get(),
-      col.doc(`timeline_${lang}`).get(),
-    ]);
+  const docs = [
+    'hero', 'summary', 'projects', 'skills', 'timeline',
+    'certifications', 'testimonials', 'education',
+  ];
+  const snaps = await Promise.allSettled(
+    docs.map((d) => col.doc(`${d}_${lang}`).get()),
+  );
 
-  const hero =
-    heroSnap.status === 'fulfilled' && heroSnap.value.exists
-      ? heroSnap.value.data()
+  const getData = (idx: number) =>
+    snaps[idx].status === 'fulfilled' && snaps[idx].value.exists
+      ? snaps[idx].value.data()
       : null;
-  const summary =
-    summarySnap.status === 'fulfilled' && summarySnap.value.exists
-      ? summarySnap.value.data()
-      : null;
-  const projects =
-    projectsSnap.status === 'fulfilled' && projectsSnap.value.exists
-      ? (projectsSnap.value.data()?.items ?? [])
-      : [];
-  const skills =
-    skillsSnap.status === 'fulfilled' && skillsSnap.value.exists
-      ? (skillsSnap.value.data()?.categories ?? [])
-      : [];
-  const timeline =
-    timelineSnap.status === 'fulfilled' && timelineSnap.value.exists
-      ? (timelineSnap.value.data()?.items ?? [])
-      : [];
 
-  return NextResponse.json({ hero, summary, projects, skills, timeline });
+  return NextResponse.json({
+    hero: getData(0),
+    summary: getData(1),
+    projects: getData(2)?.items ?? [],
+    skills: getData(3)?.categories ?? [],
+    timeline: getData(4)?.items ?? [],
+    certifications: getData(5)?.items ?? [],
+    testimonials: getData(6)?.items ?? [],
+    education: getData(7)?.items ?? [],
+  });
 }

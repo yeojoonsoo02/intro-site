@@ -9,6 +9,12 @@ import ProjectGallery from './ProjectGallery';
 import SkillsSection from './SkillsSection';
 import TimelineSection from './TimelineSection';
 import ContactSection from './ContactSection';
+import CertificationsSection from './CertificationsSection';
+import TestimonialsSection from './TestimonialsSection';
+import EducationSection from './EducationSection';
+import GithubActivity from './GithubActivity';
+import BlogPosts from './BlogPosts';
+import ResumeDownload from './ResumeDownload';
 import LoginBlur from './LoginBlur';
 import {
   fetchHero, saveHero,
@@ -16,6 +22,9 @@ import {
   fetchSkills, saveSkills,
   fetchTimeline, saveTimeline,
   fetchSummary, saveSummary,
+  fetchCertifications, saveCertifications,
+  fetchTestimonials, saveTestimonials,
+  fetchEducation, saveEducation,
 } from './portfolio.api';
 import type {
   PortfolioHero as HeroType,
@@ -23,6 +32,9 @@ import type {
   SkillCategory,
   TimelineItem,
   PortfolioSummary,
+  Certification,
+  Testimonial,
+  Education,
 } from './portfolio.model';
 
 const HeroEditor = dynamic(() => import('@/features/admin/HeroEditor'), { ssr: false, loading: () => null });
@@ -44,6 +56,9 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
   const [projects, setProjects] = useState<Project[]>([]);
   const [skills, setSkills] = useState<SkillCategory[]>([]);
   const [timeline, setTimeline] = useState<TimelineItem[]>([]);
+  const [certifications, setCertifications] = useState<Certification[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [education, setEducation] = useState<Education[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -67,16 +82,23 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
         setProjects(data.projects ?? []);
         setSkills(data.skills ?? []);
         setTimeline(data.timeline ?? []);
+        setCertifications(data.certifications ?? []);
+        setTestimonials(data.testimonials ?? []);
+        setEducation(data.education ?? []);
       } else {
-        const [h, sm, p, s, tl] = await Promise.allSettled([
+        const [h, sm, p, s, tl, cert, test, edu] = await Promise.allSettled([
           fetchHero(lang), fetchSummary(lang), fetchProjects(lang), fetchSkills(lang), fetchTimeline(lang),
+          fetchCertifications(lang), fetchTestimonials(lang), fetchEducation(lang),
         ]);
         setHero(h.status === 'fulfilled' && h.value ? h.value : { headline: '', subline: '' });
         setSummary(sm.status === 'fulfilled' ? sm.value : null);
         setProjects(p.status === 'fulfilled' ? p.value : []);
         setSkills(s.status === 'fulfilled' ? s.value : []);
         setTimeline(tl.status === 'fulfilled' ? tl.value : []);
-        const failures = [h, sm, p, s, tl].filter((r) => r.status === 'rejected');
+        setCertifications(cert.status === 'fulfilled' ? cert.value : []);
+        setTestimonials(test.status === 'fulfilled' ? test.value : []);
+        setEducation(edu.status === 'fulfilled' ? edu.value : []);
+        const failures = [h, sm, p, s, tl, cert, test, edu].filter((r) => r.status === 'rejected');
         if (failures.length > 0) {
           setLoadError(`${failures.length}개 섹션 로드 실패`);
         }
@@ -99,6 +121,9 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
       saveProjects(projects, lang),
       saveSkills(skills, lang),
       saveTimeline(timeline, lang),
+      saveCertifications(certifications, lang),
+      saveTestimonials(testimonials, lang),
+      saveEducation(education, lang),
     ];
     if (summary) saves.push(saveSummary(summary, lang));
     await Promise.all(saves);
@@ -195,10 +220,15 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
               <HeroEditor data={hero} onChange={setHero} />,
             )}
             <SummarySection data={summary} />
+            <EducationSection items={education} />
             <SkillsSection categories={skills} />
             {editorBox(`✏️ ${t('skills')}`, <SkillsEditor categories={skills} onChange={setSkills} />)}
+            <CertificationsSection items={certifications} />
             <ProjectGallery items={projects} />
             {editorBox(`✏️ ${t('projects')}`, <ProjectEditor items={projects} onChange={setProjects} />)}
+            <TestimonialsSection items={testimonials} />
+            <GithubActivity />
+            <BlogPosts />
             <TimelineSection items={timeline} />
             {editorBox(`✏️ ${t('timeline')}`, <TimelineEditor items={timeline} onChange={setTimeline} />)}
             <ContactSection />
@@ -206,9 +236,17 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
         ) : (
           <LoginBlur>
             <PortfolioHero data={hero} />
+            <div className="flex justify-end mb-6">
+              <ResumeDownload />
+            </div>
             <SummarySection data={summary} />
+            <EducationSection items={education} />
             <SkillsSection categories={skills} />
+            <CertificationsSection items={certifications} />
             <ProjectGallery items={projects} />
+            <TestimonialsSection items={testimonials} />
+            <GithubActivity />
+            <BlogPosts />
             <TimelineSection items={timeline} />
             <ContactSection />
           </LoginBlur>

@@ -40,3 +40,30 @@ export interface PortfolioSummary {
   bio: string;
   highlights: { label: string; value: string }[];
 }
+
+export interface Certification {
+  id: string;
+  name: string;
+  issuer: string;
+  date: string;
+  url?: string;
+  order: number;
+}
+
+export interface Testimonial {
+  id: string;
+  name: string;
+  role: string;
+  content: string;
+  order: number;
+}
+
+export interface Education {
+  id: string;
+  school: string;
+  major: string;
+  period: string;
+  gpa?: string;
+  description?: string;
+  order: number;
+}

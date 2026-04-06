@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import Link from 'next/link';
 import type { Project } from './portfolio.model';
 import useInView from './useInView';
 
@@ -154,26 +155,22 @@ export default function ProjectGallery({ items }: { items: Project[] }) {
                 </div>
               )}
               <div className="flex gap-3">
+                <Link
+                  href={`/portfolio/${project.id}`}
+                  className="text-xs font-medium transition-opacity hover:opacity-70"
+                  style={{ color: 'var(--primary)' }}
+                >
+                  {t('projectDetail')} &rarr;
+                </Link>
                 {project.liveUrl && (
                   <a
                     href={project.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs font-medium transition-opacity hover:opacity-70"
-                    style={{ color: 'var(--primary)' }}
-                  >
-                    {t('viewLive')} &rarr;
-                  </a>
-                )}
-                {project.repoUrl && (
-                  <a
-                    href={project.repoUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs font-medium transition-opacity hover:opacity-70"
                     style={{ color: 'var(--muted)' }}
                   >
-                    {t('viewRepo')} &rarr;
+                    {t('viewLive')} &rarr;
                   </a>
                 )}
               </div>

@@ -1,6 +1,6 @@
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import type { Project, SkillCategory, TimelineItem, PortfolioHero, PortfolioSummary } from './portfolio.model';
+import type { Project, SkillCategory, TimelineItem, PortfolioHero, PortfolioSummary, Certification, Testimonial, Education } from './portfolio.model';
 
 function portfolioDoc(type: string, lang: string = 'ko') {
   return doc(db, 'portfolio', `${type}_${lang}`);
@@ -59,4 +59,37 @@ export async function fetchSummary(lang: string = 'ko'): Promise<PortfolioSummar
 }
 export async function saveSummary(data: PortfolioSummary, lang: string = 'ko') {
   await setDoc(portfolioDoc('summary', lang), data, { merge: true });
+}
+
+// Certifications
+export async function fetchCertifications(lang: string = 'ko'): Promise<Certification[]> {
+  const snap = await getDoc(portfolioDoc('certifications', lang));
+  if (!snap.exists()) return [];
+  const data = snap.data() as { items?: Certification[] };
+  return data.items ?? [];
+}
+export async function saveCertifications(items: Certification[], lang: string = 'ko'): Promise<void> {
+  await setDoc(portfolioDoc('certifications', lang), { items }, { merge: true });
+}
+
+// Testimonials
+export async function fetchTestimonials(lang: string = 'ko'): Promise<Testimonial[]> {
+  const snap = await getDoc(portfolioDoc('testimonials', lang));
+  if (!snap.exists()) return [];
+  const data = snap.data() as { items?: Testimonial[] };
+  return data.items ?? [];
+}
+export async function saveTestimonials(items: Testimonial[], lang: string = 'ko'): Promise<void> {
+  await setDoc(portfolioDoc('testimonials', lang), { items }, { merge: true });
+}
+
+// Education
+export async function fetchEducation(lang: string = 'ko'): Promise<Education[]> {
+  const snap = await getDoc(portfolioDoc('education', lang));
+  if (!snap.exists()) return [];
+  const data = snap.data() as { items?: Education[] };
+  return data.items ?? [];
+}
+export async function saveEducation(items: Education[], lang: string = 'ko'): Promise<void> {
+  await setDoc(portfolioDoc('education', lang), { items }, { merge: true });
 }
