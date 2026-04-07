@@ -2,7 +2,7 @@
 
 import { useTranslation } from 'react-i18next';
 import type { HobbyCategory } from './portfolio.model';
-import useInView from './useInView';
+import SectionWrapper from './SectionWrapper';
 
 const CAT_COLORS: Record<string, string> = {
   sports: 'var(--primary)',
@@ -14,28 +14,10 @@ const CAT_COLORS: Record<string, string> = {
 
 export default function HobbiesSection({ categories }: { categories: HobbyCategory[] }) {
   const { t } = useTranslation();
-  const { ref, inView } = useInView();
-
   if (categories.length === 0) return null;
 
   return (
-    <div
-      id="hobbies"
-      ref={ref}
-      role="region"
-      aria-label="hobbies"
-      className="mb-14 sm:mb-16 scroll-mt-24 transition-all duration-700"
-      style={{
-        opacity: inView ? 1 : 0,
-        transform: inView ? 'translateY(0)' : 'translateY(24px)',
-      }}
-    >
-      <h2
-        className="text-sm font-bold tracking-wide mb-6"
-        style={{ color: 'var(--muted)' }}
-      >
-        {t('hobbiesInterests')}
-      </h2>
+    <SectionWrapper id="hobbies" title={t('hobbiesInterests')}>
       <div className="space-y-5">
         {categories.map((cat) => {
           const color = CAT_COLORS[cat.id] ?? 'var(--muted)';
@@ -66,6 +48,6 @@ export default function HobbiesSection({ categories }: { categories: HobbyCatego
           );
         })}
       </div>
-    </div>
+    </SectionWrapper>
   );
 }

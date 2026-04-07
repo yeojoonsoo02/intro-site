@@ -2,34 +2,16 @@
 
 import { useTranslation } from 'react-i18next';
 import type { Testimonial } from './portfolio.model';
-import useInView from './useInView';
+import SectionWrapper from './SectionWrapper';
 
 export default function TestimonialsSection({ items }: { items: Testimonial[] }) {
   const { t } = useTranslation();
-  const { ref, inView } = useInView();
-
   if (items.length === 0) return null;
 
   const sorted = [...items].sort((a, b) => a.order - b.order);
 
   return (
-    <div
-      id="testimonials"
-      ref={ref}
-      role="region"
-      aria-label="testimonials"
-      className="mb-14 sm:mb-16 scroll-mt-24 transition-all duration-700"
-      style={{
-        opacity: inView ? 1 : 0,
-        transform: inView ? 'translateY(0)' : 'translateY(24px)',
-      }}
-    >
-      <h2
-        className="text-sm font-bold tracking-wide mb-6"
-        style={{ color: 'var(--muted)' }}
-      >
-        {t('testimonials')}
-      </h2>
+    <SectionWrapper id="testimonials" title={t('testimonials')}>
       <div className="space-y-4">
         {sorted.map((item) => (
           <blockquote
@@ -54,6 +36,6 @@ export default function TestimonialsSection({ items }: { items: Testimonial[] })
           </blockquote>
         ))}
       </div>
-    </div>
+    </SectionWrapper>
   );
 }

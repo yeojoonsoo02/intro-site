@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import useInView from './useInView';
+import SectionWrapper from './SectionWrapper';
 
 interface GithubRepo {
   name: string;
@@ -28,7 +28,6 @@ const LANG_COLORS: Record<string, string> = {
 
 export default function GithubActivity({ username = 'yeojoonsoo02' }: { username?: string }) {
   const { t } = useTranslation();
-  const { ref, inView } = useInView();
   const [stats, setStats] = useState<GithubStats | null>(null);
 
   useEffect(() => {
@@ -41,17 +40,7 @@ export default function GithubActivity({ username = 'yeojoonsoo02' }: { username
   if (!stats) return null;
 
   return (
-    <div
-      id="github"
-      ref={ref}
-      role="region"
-      aria-label="github activity"
-      className="mb-14 sm:mb-16 scroll-mt-24 transition-all duration-700"
-      style={{
-        opacity: inView ? 1 : 0,
-        transform: inView ? 'translateY(0)' : 'translateY(24px)',
-      }}
-    >
+    <SectionWrapper id="github">
       <div className="flex items-center gap-2 mb-6">
         <h2
           className="text-sm font-bold tracking-wide"
@@ -114,6 +103,6 @@ export default function GithubActivity({ username = 'yeojoonsoo02' }: { username
           </a>
         ))}
       </div>
-    </div>
+    </SectionWrapper>
   );
 }

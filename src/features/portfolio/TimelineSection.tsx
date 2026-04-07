@@ -2,7 +2,7 @@
 
 import { useTranslation } from 'react-i18next';
 import type { TimelineItem } from './portfolio.model';
-import useInView from './useInView';
+import SectionWrapper from './SectionWrapper';
 
 const TYPE_COLORS: Record<string, string> = {
   work: 'var(--primary)',
@@ -13,30 +13,12 @@ const TYPE_COLORS: Record<string, string> = {
 
 export default function TimelineSection({ items }: { items: TimelineItem[] }) {
   const { t } = useTranslation();
-  const { ref, inView } = useInView();
-
   if (items.length === 0) return null;
 
   const sorted = [...items].sort((a, b) => a.order - b.order);
 
   return (
-    <div
-      id="timeline"
-      ref={ref}
-      role="region"
-      aria-label="timeline"
-      className="mb-20 sm:mb-24 scroll-mt-24 transition-all duration-700"
-      style={{
-        opacity: inView ? 1 : 0,
-        transform: inView ? 'translateY(0)' : 'translateY(24px)',
-      }}
-    >
-      <h2
-        className="text-sm font-bold tracking-wide mb-6"
-        style={{ color: 'var(--muted)' }}
-      >
-        {t('timeline')}
-      </h2>
+    <SectionWrapper id="timeline" title={t('timeline')} className="mb-20 sm:mb-24">
       <div className="relative pl-6">
         {/* 세로선 */}
         <div
@@ -89,6 +71,6 @@ export default function TimelineSection({ items }: { items: TimelineItem[] }) {
           ))}
         </div>
       </div>
-    </div>
+    </SectionWrapper>
   );
 }

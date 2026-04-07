@@ -7,17 +7,13 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/lib/AuthProvider'
 import { useTheme } from '@/lib/ThemeProvider'
 import i18n from '@/lib/i18n'
+import { SUPPORTED_LANGS } from '@/lib/i18n-config'
 
 const PromptBox = dynamic(() => import('@/features/prompt/PromptBox'), {
   ssr: false,
 })
 
-const LANGS = [
-  { code: 'ko', label: '한국어' },
-  { code: 'en', label: 'English' },
-  { code: 'zh', label: '中文' },
-  { code: 'ja', label: '日本語' },
-]
+const LANGS = SUPPORTED_LANGS
 
 export default function TopBar() {
   const { user, login, logout } = useAuth()

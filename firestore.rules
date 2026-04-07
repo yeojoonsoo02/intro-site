@@ -13,6 +13,9 @@ service cloud.firestore {
     match /knowledge_pending/{doc} {
       allow read, write: if false;
     }
+    match /rate_limits/{doc} {
+      allow read, write: if false;
+    }
 
     // Profiles: public read, admin write
     match /profiles/{doc} {

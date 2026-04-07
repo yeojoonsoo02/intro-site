@@ -5,6 +5,7 @@ import { getKnowledgeContext } from '@/lib/rag'
 import { getLiveContext } from '@/lib/liveContext'
 import { saveChatLog } from '@/lib/chatLog'
 import { sendTelegramMessage, formatChatNotification, isTelegramConfigured } from '@/lib/telegram'
+import { checkRateLimit, checkDailyBudget } from '@/lib/rateLimit'
 
 const DEFAULT_URL =
   'https://gemini-api-565729687872.asia-northeast3.run.app/chat'
@@ -82,47 +83,7 @@ async function buildSystemPrompt(query: string): Promise<string> {
   }
 }
 
-// --- Rate limiter ---
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
-const RATE_LIMIT_MAX_GUEST = 5
-const RATE_LIMIT_MAX_USER = 20
-const RATE_LIMIT_WINDOW = 60 * 60 * 1000
-const RATE_LIMIT_MAP_MAX = 500
-let lastCleanup = Date.now()
-
-function checkRateLimit(ip: string, isLoggedIn: boolean): { allowed: boolean; remaining: number } {
-  const now = Date.now()
-  const max = isLoggedIn ? RATE_LIMIT_MAX_USER : RATE_LIMIT_MAX_GUEST
-
-  if (now - lastCleanup > 2 * 60 * 1000) {
-    for (const [key, val] of rateLimitMap) {
-      if (now > val.resetAt) rateLimitMap.delete(key)
-    }
-    if (rateLimitMap.size > RATE_LIMIT_MAP_MAX) {
-      const excess = rateLimitMap.size - RATE_LIMIT_MAP_MAX
-      const keys = rateLimitMap.keys()
-      for (let i = 0; i < excess; i++) {
-        const k = keys.next().value
-        if (k) rateLimitMap.delete(k)
-      }
-    }
-    lastCleanup = now
-  }
-
-  const entry = rateLimitMap.get(ip)
-
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW })
-    return { allowed: true, remaining: max - 1 }
-  }
-
-  if (entry.count >= max) {
-    return { allowed: false, remaining: 0 }
-  }
-
-  entry.count++
-  return { allowed: true, remaining: max - entry.count }
-}
+// Rate limiter imported from @/lib/rateLimit (Firestore-based, works across serverless instances)
 
 // --- [7] userInfo validation ---
 function sanitizeUserInfo(data: unknown): Record<string, unknown> | null {
@@ -161,21 +122,7 @@ function isBot(req: NextRequest): boolean {
   return false
 }
 
-// --- Global daily budget cap ---
-let dailyRequestCount = 0
-let dailyResetDate = new Date().toDateString()
-const DAILY_MAX_REQUESTS = 500
-
-function checkDailyBudget(): boolean {
-  const today = new Date().toDateString()
-  if (today !== dailyResetDate) {
-    dailyRequestCount = 0
-    dailyResetDate = today
-  }
-  if (dailyRequestCount >= DAILY_MAX_REQUESTS) return false
-  dailyRequestCount++
-  return true
-}
+// Daily budget imported from @/lib/rateLimit (Firestore-based)
 
 export async function POST(req: NextRequest) {
   // Bot filtering
@@ -184,7 +131,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Daily budget cap
-  if (!checkDailyBudget()) {
+  if (!(await checkDailyBudget())) {
     return NextResponse.json(
       { error: 'Daily limit reached. Please try again tomorrow.' },
       { status: 429 },
@@ -197,7 +144,7 @@ export async function POST(req: NextRequest) {
   const isLoggedIn = !!(userInfo && typeof userInfo === 'object' && 'email' in userInfo && userInfo.email)
 
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
-  const rateLimit = checkRateLimit(ip, isLoggedIn)
+  const rateLimit = await checkRateLimit(ip, isLoggedIn)
   if (!rateLimit.allowed) {
     return NextResponse.json(
       { error: 'Too many requests. Please try again later.', remaining: 0, isLoggedIn },

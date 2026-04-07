@@ -4,11 +4,10 @@ import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import type { Project } from './portfolio.model';
-import useInView from './useInView';
+import SectionWrapper from './SectionWrapper';
 
 export default function ProjectGallery({ items }: { items: Project[] }) {
   const { t } = useTranslation();
-  const { ref, inView } = useInView();
   const [filter, setFilter] = useState('all');
 
   const categories = useMemo(() => {
@@ -41,17 +40,7 @@ export default function ProjectGallery({ items }: { items: Project[] }) {
   };
 
   return (
-    <div
-      id="projects"
-      ref={ref}
-      role="region"
-      aria-label="projects"
-      className="mb-16 sm:mb-20 scroll-mt-24 transition-all duration-700"
-      style={{
-        opacity: inView ? 1 : 0,
-        transform: inView ? 'translateY(0)' : 'translateY(24px)',
-      }}
-    >
+    <SectionWrapper id="projects" className="mb-16 sm:mb-20">
       <h2
         className="text-base sm:text-lg font-bold tracking-tight mb-5"
         style={{ color: 'var(--foreground)' }}
@@ -178,6 +167,6 @@ export default function ProjectGallery({ items }: { items: Project[] }) {
           </div>
         ))}
       </div>
-    </div>
+    </SectionWrapper>
   );
 }

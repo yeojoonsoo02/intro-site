@@ -41,5 +41,9 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     values: getData(10)?.items ?? [],
     routine: getData(11)?.items ?? [],
     hobbies: getData(12)?.categories ?? [],
+  }, {
+    headers: {
+      'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+    },
   });
 }

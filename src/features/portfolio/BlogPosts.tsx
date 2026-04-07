@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import useInView from './useInView';
+import SectionWrapper from './SectionWrapper';
 
 interface BlogPost {
   title: string;
@@ -13,7 +13,6 @@ interface BlogPost {
 
 export default function BlogPosts() {
   const { t } = useTranslation();
-  const { ref, inView } = useInView();
   const [posts, setPosts] = useState<BlogPost[]>([]);
 
   useEffect(() => {
@@ -26,23 +25,7 @@ export default function BlogPosts() {
   if (posts.length === 0) return null;
 
   return (
-    <div
-      id="blog"
-      ref={ref}
-      role="region"
-      aria-label="blog posts"
-      className="mb-14 sm:mb-16 scroll-mt-24 transition-all duration-700"
-      style={{
-        opacity: inView ? 1 : 0,
-        transform: inView ? 'translateY(0)' : 'translateY(24px)',
-      }}
-    >
-      <h2
-        className="text-sm font-bold tracking-wide mb-6"
-        style={{ color: 'var(--muted)' }}
-      >
-        {t('blogPosts')}
-      </h2>
+    <SectionWrapper id="blog" title={t('blogPosts')}>
       <div className="space-y-3">
         {posts.map((post, i) => (
           <a
@@ -81,6 +64,6 @@ export default function BlogPosts() {
           </a>
         ))}
       </div>
-    </div>
+    </SectionWrapper>
   );
 }

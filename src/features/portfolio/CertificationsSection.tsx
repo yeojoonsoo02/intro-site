@@ -2,34 +2,16 @@
 
 import { useTranslation } from 'react-i18next';
 import type { Certification } from './portfolio.model';
-import useInView from './useInView';
+import SectionWrapper from './SectionWrapper';
 
 export default function CertificationsSection({ items }: { items: Certification[] }) {
   const { t } = useTranslation();
-  const { ref, inView } = useInView();
-
   if (items.length === 0) return null;
 
   const sorted = [...items].sort((a, b) => a.order - b.order);
 
   return (
-    <div
-      id="certifications"
-      ref={ref}
-      role="region"
-      aria-label="certifications"
-      className="mb-14 sm:mb-16 scroll-mt-24 transition-all duration-700"
-      style={{
-        opacity: inView ? 1 : 0,
-        transform: inView ? 'translateY(0)' : 'translateY(24px)',
-      }}
-    >
-      <h2
-        className="text-sm font-bold tracking-wide mb-6"
-        style={{ color: 'var(--muted)' }}
-      >
-        {t('certifications')}
-      </h2>
+    <SectionWrapper id="certifications" title={t('certifications')}>
       <div className="space-y-3">
         {sorted.map((cert) => (
           <div
@@ -71,6 +53,6 @@ export default function CertificationsSection({ items }: { items: Certification[
           </div>
         ))}
       </div>
-    </div>
+    </SectionWrapper>
   );
 }

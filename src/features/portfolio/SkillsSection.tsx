@@ -2,7 +2,7 @@
 
 import { useTranslation } from 'react-i18next';
 import type { SkillCategory } from './portfolio.model';
-import useInView from './useInView';
+import SectionWrapper from './SectionWrapper';
 
 function levelLabel(level: number, t: (key: string, options?: Record<string, string>) => string): { text: string; color: string; bg: string } {
   if (level >= 4) return { text: t('skillPrimary', { defaultValue: '주력' }), color: 'var(--primary)', bg: 'color-mix(in srgb, var(--primary) 10%, transparent)' };
@@ -12,28 +12,11 @@ function levelLabel(level: number, t: (key: string, options?: Record<string, str
 
 export default function SkillsSection({ categories }: { categories: SkillCategory[] }) {
   const { t } = useTranslation();
-  const { ref, inView } = useInView();
 
   if (categories.length === 0) return null;
 
   return (
-    <div
-      id="skills"
-      ref={ref}
-      role="region"
-      aria-label="skills"
-      className="mb-10 sm:mb-14 scroll-mt-24 transition-all duration-700"
-      style={{
-        opacity: inView ? 1 : 0,
-        transform: inView ? 'translateY(0)' : 'translateY(24px)',
-      }}
-    >
-      <h2
-        className="text-sm font-bold tracking-wide mb-6"
-        style={{ color: 'var(--muted)' }}
-      >
-        {t('skills')}
-      </h2>
+    <SectionWrapper id="skills" title={t('skills')} className="mb-10 sm:mb-14">
       <div className="space-y-6">
         {categories.map((cat) => (
           <div key={cat.id}>
@@ -73,6 +56,6 @@ export default function SkillsSection({ categories }: { categories: SkillCategor
           </div>
         ))}
       </div>
-    </div>
+    </SectionWrapper>
   );
 }

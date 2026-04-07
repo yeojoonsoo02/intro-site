@@ -2,30 +2,12 @@
 
 import { useTranslation } from 'react-i18next';
 import SocialLinks from '@/features/social/SocialLinks';
-import useInView from './useInView';
+import SectionWrapper from './SectionWrapper';
 
 export default function ContactSection() {
   const { t } = useTranslation();
-  const { ref, inView } = useInView();
-
   return (
-    <div
-      id="contact"
-      ref={ref}
-      role="region"
-      aria-label="contact"
-      className="mb-12 scroll-mt-24 transition-all duration-700"
-      style={{
-        opacity: inView ? 1 : 0,
-        transform: inView ? 'translateY(0)' : 'translateY(24px)',
-      }}
-    >
-      <h2
-        className="text-sm font-bold tracking-wide mb-4"
-        style={{ color: 'var(--muted)' }}
-      >
-        {t('contact')}
-      </h2>
+    <SectionWrapper id="contact" title={t('contact')} className="mb-12">
       <div className="flex flex-col gap-3">
         <a
           href="mailto:yeojoonsoo02@gmail.com"
@@ -41,6 +23,6 @@ export default function ContactSection() {
           <SocialLinks colored isDev={false} />
         </div>
       </div>
-    </div>
+    </SectionWrapper>
   );
 }
