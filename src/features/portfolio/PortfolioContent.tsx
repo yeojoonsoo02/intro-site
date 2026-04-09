@@ -12,7 +12,6 @@ import ContactSection from './ContactSection';
 import CertificationsSection from './CertificationsSection';
 import TestimonialsSection from './TestimonialsSection';
 import EducationSection from './EducationSection';
-import GithubActivity from './GithubActivity';
 import BlogPosts from './BlogPosts';
 import PersonalInfoCard from './PersonalInfoCard';
 import GoalsSection from './GoalsSection';
@@ -77,7 +76,6 @@ function PortfolioSections({ data, isAdmin, setData, t }: {
       )}
       <TestimonialsSection items={data.testimonials} />
       <HobbiesSection categories={data.hobbies} />
-      <GithubActivity />
       <BlogPosts />
       <TimelineSection items={data.timeline} />
       {isAdmin && (
