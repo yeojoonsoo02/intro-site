@@ -21,14 +21,9 @@ export default function TopBar() {
   const { theme, setTheme } = useTheme()
   const [menuOpen, setMenuOpen] = useState(false)
   const [promptOpen, setPromptOpen] = useState(false)
-  const [inviteVisible, setInviteVisible] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    const timer = setTimeout(() => setInviteVisible(true), 10000)
-    return () => clearTimeout(timer)
-  }, [])
 
   useEffect(() => {
     if (!menuOpen) return
@@ -232,40 +227,6 @@ export default function TopBar() {
         </div>
       </div>
 
-      {/* 채팅 초대 배너 */}
-      {inviteVisible && !promptOpen && (
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 flex items-center gap-1">
-          <button
-            type="button"
-            onClick={() => {
-              setPromptOpen(true)
-              setInviteVisible(false)
-            }}
-            className="px-5 py-2 rounded-full text-sm font-medium shadow-md transition-transform hover:scale-105 flex items-center break-keep"
-            style={{
-              background: "var(--primary)",
-              color: "var(--primary-contrast)",
-            }}
-          >
-            {t('chatInvite')}
-          </button>
-          <button
-            type="button"
-            onClick={() => setInviteVisible(false)}
-            aria-label={t('close')}
-            className="w-9 h-9 flex items-center justify-center rounded-full shadow-md transition-opacity hover:opacity-70"
-            style={{
-              background: "var(--card-bg)",
-              color: "var(--muted)",
-              border: "1px solid var(--border)",
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-              <path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-          </button>
-        </div>
-      )}
 
       <PromptBox open={promptOpen} onClose={() => setPromptOpen(false)} />
     </>

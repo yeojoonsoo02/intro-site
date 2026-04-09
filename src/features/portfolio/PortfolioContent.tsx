@@ -14,7 +14,6 @@ import TestimonialsSection from './TestimonialsSection';
 import EducationSection from './EducationSection';
 import GithubActivity from './GithubActivity';
 import BlogPosts from './BlogPosts';
-import ResumeDownload from './ResumeDownload';
 import PersonalInfoCard from './PersonalInfoCard';
 import GoalsSection from './GoalsSection';
 import ValuesSection from './ValuesSection';
@@ -54,11 +53,6 @@ function PortfolioSections({ data, isAdmin, setData, t }: {
   const sections = (
     <>
       <PortfolioHero data={data.hero} />
-      {!isAdmin && (
-        <div className="flex justify-end mb-6">
-          <ResumeDownload />
-        </div>
-      )}
       {isAdmin && data.hero && (
         <EditorBox label={`✏️ ${t('hero')}`}>
           <HeroEditor data={data.hero} onChange={(hero) => setData((d) => ({ ...d, hero }))} />
