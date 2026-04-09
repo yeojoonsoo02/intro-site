@@ -17,7 +17,6 @@ import BlogPosts from './BlogPosts';
 import PersonalInfoCard from './PersonalInfoCard';
 import GoalsSection from './GoalsSection';
 import ValuesSection from './ValuesSection';
-import RoutineSection from './RoutineSection';
 import HobbiesSection from './HobbiesSection';
 import LoginBlur from './LoginBlur';
 import { usePortfolioData } from './usePortfolioData';
@@ -78,7 +77,6 @@ function PortfolioSections({ data, isAdmin, setData, t }: {
       )}
       <TestimonialsSection items={data.testimonials} />
       <HobbiesSection categories={data.hobbies} />
-      <RoutineSection items={data.routine} />
       <GithubActivity />
       <BlogPosts />
       <TimelineSection items={data.timeline} />
