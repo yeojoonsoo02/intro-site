@@ -9,7 +9,6 @@ import ProjectGallery from './ProjectGallery';
 import SkillsSection from './SkillsSection';
 import TimelineSection from './TimelineSection';
 import ContactSection from './ContactSection';
-import CertificationsSection from './CertificationsSection';
 import EducationSection from './EducationSection';
 import PersonalInfoCard from './PersonalInfoCard';
 import GoalsSection from './GoalsSection';
@@ -65,7 +64,6 @@ function PortfolioSections({ data, isAdmin, setData, t }: {
           <SkillsEditor categories={data.skills} onChange={(skills) => setData((d) => ({ ...d, skills }))} />
         </EditorBox>
       )}
-      <CertificationsSection items={data.certifications} />
       <ProjectGallery items={data.projects} />
       {isAdmin && (
         <EditorBox label={`✏️ ${t('projects')}`}>
