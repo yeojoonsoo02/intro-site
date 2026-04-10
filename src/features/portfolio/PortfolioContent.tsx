@@ -10,7 +10,6 @@ import SkillsSection from './SkillsSection';
 import TimelineSection from './TimelineSection';
 import ContactSection from './ContactSection';
 import CertificationsSection from './CertificationsSection';
-import TestimonialsSection from './TestimonialsSection';
 import EducationSection from './EducationSection';
 import PersonalInfoCard from './PersonalInfoCard';
 import GoalsSection from './GoalsSection';
@@ -73,7 +72,6 @@ function PortfolioSections({ data, isAdmin, setData, t }: {
           <ProjectEditor items={data.projects} onChange={(projects) => setData((d) => ({ ...d, projects }))} />
         </EditorBox>
       )}
-      <TestimonialsSection items={data.testimonials} />
       <HobbiesSection categories={data.hobbies} />
       <TimelineSection items={data.timeline} />
       {isAdmin && (
