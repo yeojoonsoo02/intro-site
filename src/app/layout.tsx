@@ -4,6 +4,8 @@ import AuthProvider from "@/lib/AuthProvider";
 import I18nProvider from "@/lib/I18nProvider";
 import { ThemeProvider } from "@/lib/ThemeProvider";
 import TopBar from "@/features/nav/TopBar";
+import SEOProfile from "@/components/seo/SEOProfile";
+import JsonLd from "@/components/seo/JsonLd";
 
 const SITE_URL = "https://yeojoonsoo02.com";
 const SITE_NAME = "여준수 (Yeo Joonsoo)";
@@ -100,6 +102,8 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       </head>
       <body className="antialiased relative">
+        <JsonLd />
+        <SEOProfile lang="ko" />
         <ThemeProvider>
           <AuthProvider>
             <I18nProvider>

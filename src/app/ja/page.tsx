@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import HomeClient from "../HomeClient";
-import SEOProfile from "@/components/seo/SEOProfile";
-import JsonLd from "@/components/seo/JsonLd";
 import LangInit from "@/lib/LangInit";
 
 export const metadata: Metadata = {
@@ -37,8 +35,6 @@ export const metadata: Metadata = {
 export default function HomeJa() {
   return (
     <>
-      <JsonLd />
-      <SEOProfile lang="ja" />
       <LangInit lang="ja" />
       <HomeClient />
     </>
