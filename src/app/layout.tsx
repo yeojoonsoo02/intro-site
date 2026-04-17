@@ -5,35 +5,80 @@ import I18nProvider from "@/lib/I18nProvider";
 import { ThemeProvider } from "@/lib/ThemeProvider";
 import TopBar from "@/features/nav/TopBar";
 
+const SITE_URL = "https://yeojoonsoo02.com";
+const SITE_NAME = "여준수 (Yeo Joonsoo)";
+const DEFAULT_TITLE = "여준수 (Yeo Joonsoo) — 대학생 개발자 자기소개 · 포트폴리오";
+const DEFAULT_DESC =
+  "여준수(Yeo Joonsoo) 공식 자기소개 사이트. 대학생 개발자의 프로필, 프론트엔드 개발, AI 연구, 개인 프로젝트, 기술 스택 및 연락처를 확인할 수 있습니다.";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://yeojoonsoo02.com"),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "여준수 | 자기소개 사이트",
+    default: DEFAULT_TITLE,
     template: "%s | 여준수",
   },
-  description:
-    "여준수의 자기소개 사이트입니다. 프로필, 취미, 기술 스택, AI 채팅 등을 확인할 수 있습니다.",
+  description: DEFAULT_DESC,
+  applicationName: SITE_NAME,
+  authors: [{ name: "여준수", url: SITE_URL }],
+  creator: "여준수",
+  publisher: "여준수",
+  keywords: [
+    "여준수",
+    "Yeo Joonsoo",
+    "yeojoonsoo",
+    "yeojoonsoo02",
+    "여준수 개발자",
+    "여준수 포트폴리오",
+    "여준수 프로필",
+    "여준수 자기소개",
+    "대학생 개발자",
+    "프론트엔드 개발자",
+    "Junsu Yeo",
+    "余俊秀",
+    "ヨ・ジュンス",
+  ],
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
+  },
   openGraph: {
-    title: "여준수 | 자기소개 사이트",
-    description:
-      "여준수의 자기소개 사이트입니다. 프로필, 취미, 기술 스택, AI 채팅 등을 확인할 수 있습니다.",
-    url: "https://yeojoonsoo02.com",
-    siteName: "여준수 자기소개",
-    locale: "ko_KR",
     type: "website",
+    url: SITE_URL,
+    siteName: "여준수 | 자기소개 사이트",
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESC,
+    locale: "ko_KR",
+    alternateLocale: ["en_US", "ja_JP", "zh_CN"],
+    images: [
+      {
+        url: "/profile.jpg",
+        width: 800,
+        height: 800,
+        alt: "여준수 (Yeo Joonsoo) 프로필 사진",
+      },
+    ],
   },
   twitter: {
-    card: "summary",
-    title: "여준수 | 자기소개 사이트",
-    description:
-      "여준수의 자기소개 사이트입니다. 프로필, 취미, 기술 스택, AI 채팅 등을 확인할 수 있습니다.",
+    card: "summary_large_image",
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESC,
+    images: ["/profile.jpg"],
   },
   alternates: {
-    canonical: "https://yeojoonsoo02.com",
+    canonical: SITE_URL,
     languages: {
-      ko: "/ko",
-      ja: "/ja",
-      zh: "/zh",
+      ko: `${SITE_URL}/ko`,
+      en: SITE_URL,
+      ja: `${SITE_URL}/ja`,
+      zh: `${SITE_URL}/zh`,
+      "x-default": SITE_URL,
     },
   },
   verification: {
@@ -41,6 +86,7 @@ export const metadata: Metadata = {
       "naver-site-verification": "5adb43fad5cb5127cf287096d862f052ae1dd921",
     },
   },
+  category: "personal",
 };
 
 export default function RootLayout({
