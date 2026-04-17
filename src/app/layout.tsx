@@ -36,6 +36,11 @@ export const metadata: Metadata = {
       zh: "/zh",
     },
   },
+  verification: {
+    other: {
+      "naver-site-verification": "5adb43fad5cb5127cf287096d862f052ae1dd921",
+    },
+  },
 };
 
 export default function RootLayout({
