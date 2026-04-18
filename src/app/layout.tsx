@@ -100,6 +100,12 @@ export default function RootLayout({
     <html lang="ko" suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="여준수 블로그 RSS"
+          href="/rss.xml"
+        />
       </head>
       <body className="antialiased relative">
         <JsonLd />
