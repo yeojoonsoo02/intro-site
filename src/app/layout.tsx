@@ -8,10 +8,10 @@ import SEOProfile from "@/components/seo/SEOProfile";
 import JsonLd from "@/components/seo/JsonLd";
 
 const SITE_URL = "https://yeojoonsoo02.com";
-const SITE_NAME = "여준수 (Yeo Joonsoo)";
-const DEFAULT_TITLE = "여준수 (Yeo Joonsoo) — 대학생 개발자 자기소개 · 포트폴리오";
+const SITE_NAME = "여준수 (Yeojunsu)";
+const DEFAULT_TITLE = "여준수 (Yeojunsu) — 대학생 개발자 자기소개 · 포트폴리오";
 const DEFAULT_DESC =
-  "여준수(Yeo Joonsoo) 공식 자기소개 사이트. 대학생 개발자의 프로필, 프론트엔드 개발, AI 연구, 개인 프로젝트, 기술 스택 및 연락처를 확인할 수 있습니다.";
+  "여준수(Yeojunsu) 공식 자기소개 사이트. 대학생 개발자의 프로필, 프론트엔드 개발, AI 연구, 개인 프로젝트, 기술 스택 및 연락처를 확인할 수 있습니다.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   publisher: "여준수",
   keywords: [
     "여준수",
-    "Yeo Joonsoo",
+    "Yeojunsu",
     "yeojoonsoo",
     "yeojoonsoo02",
     "여준수 개발자",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     "여준수 자기소개",
     "대학생 개발자",
     "프론트엔드 개발자",
-    "Junsu Yeo",
+    "Yeojunsu",
     "余俊秀",
     "ヨ・ジュンス",
   ],

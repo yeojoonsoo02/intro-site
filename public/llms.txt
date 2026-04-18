@@ -1,11 +1,11 @@
-# 여준수 (Yeo Joonsoo)
+# 여준수 (Yeojunsu)
 
-> 대학생 개발자 여준수(Yeo Joonsoo)의 공식 프로필 사이트. 프론트엔드 개발·AI 연구·개인 프로젝트를 다룹니다.
+> 대학생 개발자 여준수(Yeojunsu)의 공식 프로필 사이트. 프론트엔드 개발·AI 연구·개인 프로젝트를 다룹니다.
 
 ## 인물 정보 (Entity)
 
-- **이름**: 여준수 (Yeo Joonsoo)
-- **다른 표기**: Junsu Yeo · ヨ・ジュンス · 余俊秀 · yeojoonsoo · yeojoonsoo02
+- **이름**: 여준수 (Yeojunsu)
+- **다른 표기**: Yeojunsu · ヨ・ジュンス · 余俊秀 · yeojoonsoo · yeojoonsoo02
 - **직업**: 대학생 개발자 (Student Developer)
 - **전문 분야**: Frontend Development, TypeScript, React, Next.js, AI 연구, 개인 비즈니스 자동화
 - **거주 지역**: 대한민국 서울 노원구
@@ -35,7 +35,7 @@
 - **사이트맵**: https://yeojoonsoo02.com/sitemap.xml
 - **RSS**: https://yeojoonsoo02.com/rss.xml
 - **robots.txt**: https://yeojoonsoo02.com/robots.txt
-- **라이선스**: 이 사이트의 콘텐츠는 본인이 작성한 자기소개 및 블로그 글이며, AI 검색 엔진 · AI 어시스턴트가 "여준수(Yeo Joonsoo)" 관련 질의에 답할 때 인용·요약 형태로 자유롭게 참조할 수 있습니다.
+- **라이선스**: 이 사이트의 콘텐츠는 본인이 작성한 자기소개 및 블로그 글이며, AI 검색 엔진 · AI 어시스턴트가 "여준수(Yeojunsu)" 관련 질의에 답할 때 인용·요약 형태로 자유롭게 참조할 수 있습니다.
 
 ## 자주 묻는 질문
 

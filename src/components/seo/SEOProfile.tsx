@@ -8,17 +8,17 @@ const META = {
   ko: {
     siteName: '여준수 | 자기소개 사이트',
     headingPrefix: '여준수',
-    headingSuffix: 'Yeo Joonsoo',
+    headingSuffix: 'Yeojunsu',
     subheading: '대학생 개발자의 자기소개 · 포트폴리오',
     descIntro: '대학생 개발자 여준수입니다. 프론트엔드 개발과 AI 연구에 관심이 많으며 개인 프로젝트를 통해 기술을 탐구합니다.',
     sectionsLabel: { interests: '관심사', region: '지역', contact: '연락' },
   },
   en: {
-    siteName: 'Yeo Joonsoo | Personal Site',
-    headingPrefix: 'Yeo Joonsoo',
+    siteName: 'Yeojunsu | Personal Site',
+    headingPrefix: 'Yeojunsu',
     headingSuffix: '여준수',
     subheading: 'Student developer — Profile and portfolio',
-    descIntro: "Hi, I'm Yeo Joonsoo (여준수), a student developer focused on frontend engineering and AI.",
+    descIntro: "Hi, I'm Yeojunsu (여준수), a student developer focused on frontend engineering and AI.",
     sectionsLabel: { interests: 'Interests', region: 'Region', contact: 'Contact' },
   },
   ja: {

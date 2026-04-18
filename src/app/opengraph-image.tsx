@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
-export const alt = '여준수 (Yeo Joonsoo) — 대학생 개발자 자기소개';
+export const alt = '여준수 (Yeojunsu) — 대학생 개발자 자기소개';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -51,7 +51,7 @@ export default function OpengraphImage() {
               marginLeft: 28,
             }}
           >
-            Yeo Joonsoo
+            Yeojunsu
           </span>
         </div>
         <div

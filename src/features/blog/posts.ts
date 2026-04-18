@@ -13,10 +13,10 @@ export const BLOG_POSTS: BlogPost[] = [
     slug: 'hello-yeojoonsoo',
     title: '안녕하세요, 여준수입니다',
     description:
-      '대학생 개발자 여준수(Yeo Joonsoo)의 자기소개 사이트에 오신 것을 환영합니다. 제가 누구이고 무엇을 만들며 어디로 가는지 간단히 기록합니다.',
+      '대학생 개발자 여준수(Yeojunsu)의 자기소개 사이트에 오신 것을 환영합니다. 제가 누구이고 무엇을 만들며 어디로 가는지 간단히 기록합니다.',
     publishedAt: '2026-04-18',
     tags: ['자기소개', '여준수', '개발자', '블로그'],
-    content: `안녕하세요, 대학생 개발자 **여준수(Yeo Joonsoo)** 입니다.
+    content: `안녕하세요, 대학생 개발자 **여준수(Yeojunsu)** 입니다.
 
 이 사이트 yeojoonsoo02.com 은 저의 공식 프로필 사이트입니다. 앞으로 이 공간에 제가 만드는 프로덕트, 공부하는 기술, 고민하는 문제들을 기록하려 합니다.
 
@@ -35,7 +35,7 @@ export const BLOG_POSTS: BlogPost[] = [
 
 부담 없이 들러주시고, 궁금한 점이 있다면 yeojoonsoo02@gmail.com 또는 GitHub [yeojoonsoo02](https://github.com/yeojoonsoo02) 로 연락 주세요.
 
-— 여준수 (Yeo Joonsoo)
+— 여준수 (Yeojunsu)
 `,
   },
 ];

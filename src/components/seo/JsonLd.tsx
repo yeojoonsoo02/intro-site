@@ -7,8 +7,8 @@ const personEntity = {
   '@id': `${SITE_URL}#person`,
   name: '여준수',
   alternateName: [
-    'Yeo Joonsoo',
-    'Junsu Yeo',
+    'Yeojunsu',
+    '여준수',
     'ヨ・ジュンス',
     '余俊秀',
     'yeojoonsoo',
@@ -23,7 +23,7 @@ const personEntity = {
   email: 'mailto:yeojoonsoo02@gmail.com',
   jobTitle: '대학생 개발자 (Student Developer)',
   description:
-    '대학생 개발자 여준수(Yeo Joonsoo). 프론트엔드 개발과 AI 연구에 관심을 두고 개인 프로젝트를 운영합니다.',
+    '대학생 개발자 여준수(Yeojunsu). 프론트엔드 개발과 AI 연구에 관심을 두고 개인 프로젝트를 운영합니다.',
   knowsLanguage: ['ko', 'en', 'ja', 'zh'],
   knowsAbout: [
     'Frontend Development',
@@ -52,9 +52,9 @@ const profilePageSchema = {
   '@type': 'ProfilePage',
   '@id': `${SITE_URL}#profilepage`,
   url: SITE_URL,
-  name: '여준수 (Yeo Joonsoo) — 공식 프로필',
+  name: '여준수 (Yeojunsu) — 공식 프로필',
   description:
-    '대학생 개발자 여준수(Yeo Joonsoo)의 공식 프로필 페이지. 자기소개, 기술 스택, 관심사, 연락처.',
+    '대학생 개발자 여준수(Yeojunsu)의 공식 프로필 페이지. 자기소개, 기술 스택, 관심사, 연락처.',
   dateCreated: SITE_CREATED,
   dateModified: SITE_MODIFIED,
   inLanguage: 'ko-KR',
@@ -67,7 +67,7 @@ const websiteSchema = {
   '@type': 'WebSite',
   '@id': `${SITE_URL}#website`,
   name: '여준수 | 자기소개 사이트',
-  alternateName: 'Yeo Joonsoo Personal Site',
+  alternateName: 'Yeojunsu Personal Site',
   url: SITE_URL,
   inLanguage: ['ko-KR', 'en', 'ja-JP', 'zh-CN'],
   author: { '@id': `${SITE_URL}#person` },
@@ -92,7 +92,7 @@ const faqSchema = {
       acceptedAnswer: {
         '@type': 'Answer',
         text:
-          '여준수(Yeo Joonsoo)는 서울에 거주하는 대학생 개발자입니다. 프론트엔드 개발과 AI 연구를 중심으로 개인 프로젝트를 운영하고 있습니다.',
+          '여준수(Yeojunsu)는 서울에 거주하는 대학생 개발자입니다. 프론트엔드 개발과 AI 연구를 중심으로 개인 프로젝트를 운영하고 있습니다.',
       },
     },
     {

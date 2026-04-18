@@ -33,12 +33,12 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>여준수 (Yeo Joonsoo) 블로그</title>
+    <title>여준수 (Yeojunsu) 블로그</title>
     <link>${SITE_URL}</link>
     <atom:link href="${SITE_URL}/rss.xml" rel="self" type="application/rss+xml" />
     <description>대학생 개발자 여준수의 개발 일지와 프로젝트 회고</description>
     <language>ko-KR</language>
-    <copyright>© 여준수 (Yeo Joonsoo)</copyright>
+    <copyright>© 여준수 (Yeojunsu)</copyright>
     <managingEditor>yeojoonsoo02@gmail.com (여준수)</managingEditor>
     <webMaster>yeojoonsoo02@gmail.com (여준수)</webMaster>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>

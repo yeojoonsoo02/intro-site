@@ -3,7 +3,7 @@ import type { Profile } from './profile.model';
 // Language-specific default profiles with translated content
 export const DEFAULT_PROFILES: Record<string, Profile> = {
   en: {
-    name: 'Junsu Yeo',
+    name: 'Yeojunsu',
     tagline: 'Student Developer',
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',

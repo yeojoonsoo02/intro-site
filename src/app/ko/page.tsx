@@ -3,12 +3,12 @@ import HomeClient from "../HomeClient";
 import LangInit from "@/lib/LangInit";
 
 export const metadata: Metadata = {
-  title: "여준수 (Yeo Joonsoo) — 자기소개 · 프로필",
+  title: "여준수 (Yeojunsu) — 자기소개 · 프로필",
   description:
     "대학생 개발자 여준수의 자기소개 사이트입니다. 프론트엔드 개발, AI 연구, 개인 프로젝트, 기술 스택과 연락처를 확인할 수 있습니다.",
   keywords: [
     "여준수",
-    "Yeo Joonsoo",
+    "Yeojunsu",
     "yeojoonsoo",
     "yeojoonsoo02",
     "여준수 개발자",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     "프론트엔드 개발자",
   ],
   openGraph: {
-    title: "여준수 (Yeo Joonsoo) — 자기소개",
+    title: "여준수 (Yeojunsu) — 자기소개",
     description:
       "대학생 개발자 여준수의 자기소개 · 프로필 · 연락처",
     locale: "ko_KR",

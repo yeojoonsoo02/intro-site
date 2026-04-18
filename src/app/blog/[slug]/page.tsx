@@ -19,7 +19,7 @@ export async function generateMetadata(
   return {
     title: `${post.title} — 여준수`,
     description: post.description,
-    keywords: ['여준수', 'Yeo Joonsoo', ...post.tags],
+    keywords: ['여준수', 'Yeojunsu', ...post.tags],
     alternates: { canonical: `${SITE_URL}/blog/${post.slug}` },
     openGraph: {
       type: 'article',
@@ -87,7 +87,7 @@ export default async function BlogPostPage(
           <div className="mt-3 flex items-center gap-3 text-sm text-gray-500">
             <time dateTime={post.publishedAt}>{post.publishedAt}</time>
             <span>·</span>
-            <span>여준수 (Yeo Joonsoo)</span>
+            <span>여준수 (Yeojunsu)</span>
           </div>
           <div className="mt-2 flex flex-wrap gap-2 text-xs text-gray-500">
             {post.tags.map((t) => (

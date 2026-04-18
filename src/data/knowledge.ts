@@ -4,7 +4,7 @@
 export const KNOWLEDGE = `
 # 기본 정보
 이름: 여준수
-영문: Junsu Yeo
+영문: Yeojunsu
 일본어: ヨ・ジュンス
 중국어: 余俊秀
 생년월일: 2002년 11월 7일

@@ -7,11 +7,11 @@ const SITE_URL = 'https://yeojoonsoo02.com';
 export const metadata: Metadata = {
   title: '여준수 블로그 — 개발·자기소개·회고',
   description:
-    '대학생 개발자 여준수(Yeo Joonsoo)가 쓰는 개발 일지와 프로젝트 회고 모음. 프론트엔드, Next.js, AI, 개인 브랜딩에 대한 기록.',
+    '대학생 개발자 여준수(Yeojunsu)가 쓰는 개발 일지와 프로젝트 회고 모음. 프론트엔드, Next.js, AI, 개인 브랜딩에 대한 기록.',
   keywords: [
     '여준수',
     '여준수 블로그',
-    'Yeo Joonsoo blog',
+    'Yeojunsu blog',
     '개발자 블로그',
     '프론트엔드 회고',
     'Next.js',
@@ -58,7 +58,7 @@ export default function BlogIndex() {
       <header className="mb-10">
         <h1 className="text-3xl font-bold">여준수 블로그</h1>
         <p className="mt-3 text-gray-600 dark:text-gray-400">
-          대학생 개발자 여준수(Yeo Joonsoo)의 개발 일지와 프로젝트 회고.
+          대학생 개발자 여준수(Yeojunsu)의 개발 일지와 프로젝트 회고.
         </p>
       </header>
 

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   keywords: [
     "여준수",
     "余俊秀",
-    "Yeo Joonsoo",
+    "Yeojunsu",
     "yeojoonsoo",
     "大学生开发者",
     "前端开发者",
