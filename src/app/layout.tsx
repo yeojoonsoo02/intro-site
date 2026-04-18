@@ -58,20 +58,13 @@ export const metadata: Metadata = {
     description: DEFAULT_DESC,
     locale: "ko_KR",
     alternateLocale: ["en_US", "ja_JP", "zh_CN"],
-    images: [
-      {
-        url: "/profile.jpg",
-        width: 800,
-        height: 800,
-        alt: "여준수 (Yeo Joonsoo) 프로필 사진",
-      },
-    ],
+    // OG 이미지는 app/opengraph-image.tsx 파일 컨벤션으로 자동 주입됨(1200x630 동적 생성)
   },
   twitter: {
     card: "summary_large_image",
     title: DEFAULT_TITLE,
     description: DEFAULT_DESC,
-    images: ["/profile.jpg"],
+    // Twitter 이미지도 app/twitter-image.tsx 파일 컨벤션으로 자동 주입
   },
   alternates: {
     canonical: SITE_URL,
