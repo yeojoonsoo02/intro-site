@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/lib/ThemeProvider";
 import TopBar from "@/features/nav/TopBar";
 import SEOProfile from "@/components/seo/SEOProfile";
 import JsonLd from "@/components/seo/JsonLd";
+import { buildHreflangLanguages } from "@/lib/seo-utils";
 
 const SITE_URL = "https://yeojoonsoo02.com";
 const SITE_NAME = "여준수 (Yeojunsu)";
@@ -77,18 +78,7 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: SITE_URL,
-    languages: {
-      ko: `${SITE_URL}/ko`,
-      en: SITE_URL,
-      ja: `${SITE_URL}/ja`,
-      zh: `${SITE_URL}/zh`,
-      es: `${SITE_URL}/es`,
-      fr: `${SITE_URL}/fr`,
-      de: `${SITE_URL}/de`,
-      pt: `${SITE_URL}/pt`,
-      ru: `${SITE_URL}/ru`,
-      "x-default": SITE_URL,
-    },
+    languages: buildHreflangLanguages(),
   },
   verification: {
     other: {

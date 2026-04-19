@@ -2,18 +2,43 @@ import { NextRequest, NextResponse } from 'next/server';
 import { BLOG_POSTS } from '@/features/blog/posts';
 
 const SITE_URL = 'https://yeojoonsoo02.com';
-const HOST = 'yeojoonsoo02.com';
-const INDEXNOW_KEY = 'c9d7fcf005e94200e508c6d6a8263bc6';
+const SITE_HOST = 'yeojoonsoo02.com';
+// IndexNow 키는 프로토콜상 퍼블릭으로 서빙되어야 하지만 소스 하드코딩은 피하기 위해 env로 분리.
+// env 미설정 시 안전 fallback (기존 배포된 공개 키 파일과 일치)
+const INDEXNOW_KEY = process.env.INDEXNOW_KEY || 'c9d7fcf005e94200e508c6d6a8263bc6';
 const KEY_LOCATION = `${SITE_URL}/${INDEXNOW_KEY}.txt`;
 
-// IndexNow는 여러 엔드포인트가 서로 동기화되므로 한 곳에만 제출하면 Bing·Naver·Yandex·Seznam 전부 전파됨.
+// 한 엔드포인트만 호출해도 Bing·Naver·Yandex·Seznam 등 IndexNow 참여 엔진 모두 전파됨
 const ENDPOINT = 'https://api.indexnow.org/IndexNow';
 
-const DEFAULT_URLS = [
+// 도메인 밖 URL 제출 시도·대량 URL 공격 방어
+const MAX_URLS_PER_REQUEST = 50;
+
+function isValidSiteUrl(u: unknown): u is string {
+  if (typeof u !== 'string') return false;
+  try {
+    const url = new URL(u);
+    return url.protocol === 'https:' && url.hostname === SITE_HOST;
+  } catch {
+    return false;
+  }
+}
+
+function sanitizeUrls(input: unknown): string[] {
+  if (!Array.isArray(input)) return [];
+  return input.filter(isValidSiteUrl).slice(0, MAX_URLS_PER_REQUEST);
+}
+
+const DEFAULT_URLS: string[] = [
   `${SITE_URL}/`,
   `${SITE_URL}/ko`,
   `${SITE_URL}/ja`,
   `${SITE_URL}/zh`,
+  `${SITE_URL}/es`,
+  `${SITE_URL}/fr`,
+  `${SITE_URL}/de`,
+  `${SITE_URL}/pt`,
+  `${SITE_URL}/ru`,
   `${SITE_URL}/about`,
   `${SITE_URL}/faq`,
   `${SITE_URL}/blog`,
@@ -26,7 +51,7 @@ const DEFAULT_URLS = [
 
 async function submit(urlList: string[]) {
   const payload = {
-    host: HOST,
+    host: SITE_HOST,
     key: INDEXNOW_KEY,
     keyLocation: KEY_LOCATION,
     urlList,
@@ -41,11 +66,10 @@ async function submit(urlList: string[]) {
   return { status: res.status, ok: res.ok, urlCount: urlList.length };
 }
 
-// 환경변수 INDEXNOW_ADMIN_KEY가 설정되어 있으면 요청에 같은 값을 함께 보내야 허용.
-// 쿼리 ?key=... 또는 Authorization: Bearer <key> 헤더 중 하나면 됨. 미설정 시에는 통과(DEV 편의).
+// 관리자 키 검증 — INDEXNOW_ADMIN_KEY 환경변수 값과 일치해야 실행됨
 function authorized(req: NextRequest): boolean {
   const expected = process.env.INDEXNOW_ADMIN_KEY;
-  if (!expected) return true;
+  if (!expected) return true; // env 미설정이면 통과 (DEV 편의)
   const q = req.nextUrl.searchParams.get('key');
   const auth = req.headers.get('authorization') || '';
   const bearer = auth.toLowerCase().startsWith('bearer ') ? auth.slice(7) : '';
@@ -56,15 +80,23 @@ function unauthorized() {
   return NextResponse.json({ success: false, error: 'unauthorized' }, { status: 401 });
 }
 
-// GET /api/indexnow?key=<INDEXNOW_ADMIN_KEY> — 전체 URL 제출
-// GET /api/indexnow?url=<url>&key=<INDEXNOW_ADMIN_KEY> — 특정 URL만 제출
+// GET /api/indexnow?key=<admin> — 전체 기본 URL 일괄 제출
+// GET /api/indexnow?url=<site-url>&key=<admin> — 특정 한 URL만 제출(도메인 제한)
 export async function GET(req: NextRequest) {
   if (!authorized(req)) return unauthorized();
 
-  const url = req.nextUrl.searchParams.get('url');
+  const oneUrl = req.nextUrl.searchParams.get('url');
 
   try {
-    const urls = url ? [url] : DEFAULT_URLS;
+    let urls: string[];
+    if (oneUrl) {
+      if (!isValidSiteUrl(oneUrl)) {
+        return NextResponse.json({ success: false, error: 'invalid url' }, { status: 400 });
+      }
+      urls = [oneUrl];
+    } else {
+      urls = DEFAULT_URLS;
+    }
     const result = await submit(urls);
     return NextResponse.json({ success: true, ...result, submitted: urls });
   } catch (error) {
@@ -75,13 +107,15 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST /api/indexnow — body: { urls?: string[] }, auth: Bearer 또는 ?key
+// POST /api/indexnow  body: { urls?: string[] }
+// - urls는 우리 도메인 URL만, 최대 50개로 제한
 export async function POST(req: NextRequest) {
   if (!authorized(req)) return unauthorized();
 
   try {
-    const body = (await req.json()) as { urls?: string[] };
-    const urls = Array.isArray(body.urls) && body.urls.length > 0 ? body.urls : DEFAULT_URLS;
+    const body = (await req.json().catch(() => ({}))) as { urls?: unknown };
+    const validated = sanitizeUrls(body.urls);
+    const urls = validated.length > 0 ? validated : DEFAULT_URLS;
     const result = await submit(urls);
     return NextResponse.json({ success: true, ...result, submitted: urls });
   } catch (error) {

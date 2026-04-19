@@ -1,6 +1,8 @@
+import { FEATURED_FAQ } from '@/data/faq';
+
 const SITE_URL = 'https://yeojoonsoo02.com';
 const SITE_CREATED = '2026-02-28';
-const SITE_MODIFIED = '2026-04-18';
+const SITE_MODIFIED = '2026-04-19';
 
 const personEntity = {
   '@type': 'Person',
@@ -104,41 +106,11 @@ const websiteSchema = {
 const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: [
-    {
-      '@type': 'Question',
-      name: '여준수는 누구인가요?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: '여준수(Yeojunsu)는 대학생 개발자입니다. 공식 사이트는 https://yeojoonsoo02.com 입니다.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: '여준수의 공식 사이트는 어디인가요?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: `여준수의 공식 사이트는 ${SITE_URL} 입니다.`,
-      },
-    },
-    {
-      '@type': 'Question',
-      name: '여준수와 연락하려면 어떻게 하나요?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text:
-          '이메일 yeojoonsoo02@gmail.com 또는 GitHub(github.com/yeojoonsoo02) 로 연락할 수 있습니다.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: '여준수의 관심사는 무엇인가요?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: '프론트엔드 개발, AI 연구, 음악, 여행입니다.',
-      },
-    },
-  ],
+  mainEntity: FEATURED_FAQ.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a },
+  })),
 };
 
 const breadcrumbSchema = {

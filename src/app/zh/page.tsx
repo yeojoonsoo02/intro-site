@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import HomeClient from "../HomeClient";
 import LangInit from "@/lib/LangInit";
+import { buildHreflangLanguages } from "@/lib/seo-utils";
 
 export const metadata: Metadata = {
   title: "여준수 (余俊秀) — 个人介绍 · 简介",
@@ -20,18 +21,7 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: "https://yeojoonsoo02.com/zh",
-    languages: {
-      ko: "https://yeojoonsoo02.com/ko",
-      en: "https://yeojoonsoo02.com",
-      ja: "https://yeojoonsoo02.com/ja",
-      zh: "https://yeojoonsoo02.com/zh",
-      es: "https://yeojoonsoo02.com/es",
-      fr: "https://yeojoonsoo02.com/fr",
-      de: "https://yeojoonsoo02.com/de",
-      pt: "https://yeojoonsoo02.com/pt",
-      ru: "https://yeojoonsoo02.com/ru",
-      "x-default": "https://yeojoonsoo02.com",
-    },
+    languages: buildHreflangLanguages(),
   },
 };
 
