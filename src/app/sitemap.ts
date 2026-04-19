@@ -2,7 +2,8 @@ import type { MetadataRoute } from 'next';
 import { BLOG_POSTS } from '@/features/blog/posts';
 
 const SITE_URL = 'https://yeojoonsoo02.com';
-const LAST_MOD = new Date('2026-04-18');
+const LAST_MOD = new Date('2026-04-19');
+const PROFILE_IMAGE = `${SITE_URL}/profile.jpg`;
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const core: MetadataRoute.Sitemap = [
@@ -11,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: LAST_MOD,
       changeFrequency: 'weekly',
       priority: 1.0,
+      images: [PROFILE_IMAGE],
       alternates: {
         languages: {
           ko: `${SITE_URL}/ko`,
@@ -25,6 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: LAST_MOD,
       changeFrequency: 'weekly',
       priority: 0.9,
+      images: [PROFILE_IMAGE],
     },
     {
       url: `${SITE_URL}/ja`,

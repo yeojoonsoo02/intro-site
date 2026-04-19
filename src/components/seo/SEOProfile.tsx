@@ -51,6 +51,12 @@ export default function SEOProfile({ lang = 'ko' }: SEOProfileProps) {
       <h1>
         {meta.headingPrefix} ({meta.headingSuffix}) — {profile.tagline}
       </h1>
+      <img
+        src="/profile.jpg"
+        alt="여준수 (Yeojunsu) 대학생 개발자 프로필 사진"
+        width={800}
+        height={800}
+      />
       <p>{meta.subheading}</p>
       <p>{meta.descIntro}</p>
       {profile.intro?.map((line, i) => (
