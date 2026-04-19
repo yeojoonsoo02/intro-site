@@ -9,6 +9,9 @@ export function generateStaticParams() {
   return BLOG_POSTS.map((p) => ({ slug: p.slug }));
 }
 
+// BLOG_POSTS에 없는 slug는 즉시 404. generateStaticParams가 빈 배열일 때도 안전.
+export const dynamicParams = false;
+
 export async function generateMetadata(
   props: { params: Promise<{ slug: string }> },
 ): Promise<Metadata> {
