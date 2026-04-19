@@ -10,8 +10,14 @@ interface GithubRepo {
   fork: boolean;
 }
 
+// 허용 사용자만 조회 가능 (공격자가 다른 계정을 찌르며 GitHub 60/h 쿼터 소진 방지)
+const ALLOWED_USERS = new Set(['yeojoonsoo02']);
+
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const user = req.nextUrl.searchParams.get('user') || 'yeojoonsoo02';
+  if (!ALLOWED_USERS.has(user)) {
+    return NextResponse.json({ error: 'user not allowed' }, { status: 400 });
+  }
 
   try {
     const [userRes, reposRes] = await Promise.all([
@@ -45,10 +51,15 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         updated_at: r.updated_at,
       }));
 
-    return NextResponse.json({
-      publicRepos: userData.public_repos,
-      repos,
-    });
+    return NextResponse.json(
+      { publicRepos: userData.public_repos, repos },
+      {
+        headers: {
+          // 외부 GitHub API 호출 비용·쿼터 보호를 위해 CDN에 1시간 캐시
+          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
+        },
+      },
+    );
   } catch {
     return NextResponse.json({ error: 'Failed to fetch GitHub data' }, { status: 500 });
   }

@@ -1,9 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebaseAdmin';
+import { checkRateLimit } from '@/lib/rateLimit';
 
-const ALLOWED_LANGS = ['ko', 'en', 'ja', 'zh'];
+const ALLOWED_LANGS = ['ko', 'en', 'ja', 'zh', 'es', 'fr', 'de', 'pt', 'ru'];
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
+  // 봇·공격자가 반복 호출해 Firestore 읽기 비용 유발하는 것을 차단
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  const rateLimit = await checkRateLimit(`pf_${ip}`, false);
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      { status: 429, headers: { 'Retry-After': '60' } },
+    );
+  }
+
   const rawLang = req.nextUrl.searchParams.get('lang') || 'ko';
   const lang = ALLOWED_LANGS.includes(rawLang) ? rawLang : 'ko';
 
@@ -43,7 +54,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     hobbies: getData(12)?.categories ?? [],
   }, {
     headers: {
-      'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+      // CDN·엣지 캐시로 Firestore 중복 접근 최소화(5분 fresh + 30분 SWR)
+      'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=1800',
     },
   });
 }

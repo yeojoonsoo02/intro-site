@@ -34,10 +34,17 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-    // Visitor counter: public read/write (increment only)
+    // Visitor counter: 누구나 읽기 가능하나 쓰기는 "정확히 1씩 증가"만 허용.
+    // 악성 봇의 무한 증가·초기화·임의 값 삽입 차단(비용 상승 방지).
     match /counters/{doc} {
       allow read: if true;
-      allow write: if true;
+      allow create: if request.resource.data.keys().hasOnly(['count', 'updatedAt'])
+        && request.resource.data.count == 1
+        && request.resource.data.count is int;
+      allow update: if request.resource.data.keys().hasOnly(['count', 'updatedAt'])
+        && request.resource.data.count is int
+        && request.resource.data.count == resource.data.count + 1;
+      allow delete: if false;
     }
 
     // Portfolio: public read, admin write
@@ -47,9 +54,12 @@ service cloud.firestore {
         && request.auth.token.email == "yeojoonsoo02@gmail.com";
     }
 
-    // Prompt logs: create with validation only
+    // Prompt logs: 인증된 사용자만 create + 엄격한 검증.
+    // (이전에 인증 없이 허용되어 악성 로그 주입 가능했던 문제 해결)
     match /prompt_logs/{doc} {
-      allow create: if request.resource.data.question is string
+      allow create: if request.auth != null
+        && request.resource.data.question is string
+        && request.resource.data.question.size() > 0
         && request.resource.data.question.size() < 2000;
       allow read, update, delete: if false;
     }
