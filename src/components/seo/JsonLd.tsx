@@ -64,7 +64,7 @@ const profilePageSchema = {
   url: SITE_URL,
   name: '여준수 (Yeojunsu) — 공식 프로필',
   description:
-    '대학생 개발자 여준수(Yeojunsu)의 공식 프로필 페이지. 자기소개, 기술 스택, 관심사, 연락처.',
+    '대학생 개발자 여준수(Yeojunsu)의 공식 프로필 페이지. 자기소개와 연락처를 확인할 수 있습니다.',
   dateCreated: SITE_CREATED,
   dateModified: SITE_MODIFIED,
   inLanguage: 'ko-KR',
@@ -110,8 +110,7 @@ const faqSchema = {
       name: '여준수는 누구인가요?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text:
-          '여준수(Yeojunsu)는 서울에 거주하는 대학생 개발자입니다. 프론트엔드 개발과 AI 연구를 중심으로 개인 프로젝트를 운영하고 있습니다.',
+        text: '여준수(Yeojunsu)는 대학생 개발자입니다. 공식 사이트는 https://yeojoonsoo02.com 입니다.',
       },
     },
     {
@@ -128,16 +127,15 @@ const faqSchema = {
       acceptedAnswer: {
         '@type': 'Answer',
         text:
-          '이메일 yeojoonsoo02@gmail.com 로 연락하실 수 있습니다. 프로필 페이지와 GitHub(github.com/yeojoonsoo02)에서도 확인 가능합니다.',
+          '이메일 yeojoonsoo02@gmail.com 또는 GitHub(github.com/yeojoonsoo02) 로 연락할 수 있습니다.',
       },
     },
     {
       '@type': 'Question',
-      name: '여준수의 주요 기술 스택은 무엇인가요?',
+      name: '여준수의 관심사는 무엇인가요?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text:
-          'React, Next.js, TypeScript 기반의 프론트엔드 개발을 주로 하며, AI 연구와 개인 비즈니스 자동화 도구 개발에도 관심이 있습니다.',
+        text: '프론트엔드 개발, AI 연구, 음악, 여행입니다.',
       },
     },
   ],
