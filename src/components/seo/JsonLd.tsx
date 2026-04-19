@@ -72,6 +72,15 @@ const profilePageSchema = {
   inLanguage: 'ko-KR',
   mainEntity: personEntity,
   about: personEntity,
+  speakable: {
+    '@type': 'SpeakableSpecification',
+    cssSelector: ['h1', 'h2', '.sr-only p'],
+  },
+  hasPart: [
+    { '@type': 'WebPage', '@id': `${SITE_URL}/about`, name: '공식 소개', url: `${SITE_URL}/about` },
+    { '@type': 'FAQPage', '@id': `${SITE_URL}/faq`, name: '자주 묻는 질문', url: `${SITE_URL}/faq` },
+    { '@type': 'Blog', '@id': `${SITE_URL}/blog`, name: '블로그', url: `${SITE_URL}/blog` },
+  ],
 };
 
 const websiteSchema = {

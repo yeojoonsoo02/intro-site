@@ -42,6 +42,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     },
     {
+      url: `${SITE_URL}/about`,
+      lastModified: LAST_MOD,
+      changeFrequency: 'monthly',
+      priority: 0.95,
+      images: [PROFILE_IMAGE],
+    },
+    {
+      url: `${SITE_URL}/faq`,
+      lastModified: LAST_MOD,
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
       url: `${SITE_URL}/portfolio`,
       lastModified: LAST_MOD,
       changeFrequency: 'weekly',
