@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import "./globals.css";
 import AuthProvider from "@/lib/AuthProvider";
 import I18nProvider from "@/lib/I18nProvider";
@@ -12,6 +13,20 @@ const SITE_NAME = "여준수 (Yeojunsu)";
 const DEFAULT_TITLE = "여준수 (Yeojunsu) — 대학생 개발자 자기소개";
 const DEFAULT_DESC =
   "여준수(Yeojunsu) 공식 자기소개 사이트. 대학생 개발자의 프로필과 연락처를 확인할 수 있습니다.";
+
+type Lang = 'ko' | 'en' | 'ja' | 'zh' | 'es' | 'fr' | 'de' | 'pt' | 'ru';
+
+function detectLang(pathname: string): Lang {
+  if (pathname.startsWith('/ko')) return 'ko';
+  if (pathname.startsWith('/ja')) return 'ja';
+  if (pathname.startsWith('/zh')) return 'zh';
+  if (pathname.startsWith('/es')) return 'es';
+  if (pathname.startsWith('/fr')) return 'fr';
+  if (pathname.startsWith('/de')) return 'de';
+  if (pathname.startsWith('/pt')) return 'pt';
+  if (pathname.startsWith('/ru')) return 'ru';
+  return 'en';
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -54,13 +69,11 @@ export const metadata: Metadata = {
     description: DEFAULT_DESC,
     locale: "ko_KR",
     alternateLocale: ["en_US", "ja_JP", "zh_CN", "es_ES", "fr_FR", "de_DE", "pt_BR", "ru_RU"],
-    // OG 이미지는 app/opengraph-image.tsx 파일 컨벤션으로 자동 주입됨(1200x630 동적 생성)
   },
   twitter: {
     card: "summary_large_image",
     title: DEFAULT_TITLE,
     description: DEFAULT_DESC,
-    // Twitter 이미지도 app/twitter-image.tsx 파일 컨벤션으로 자동 주입
   },
   alternates: {
     canonical: SITE_URL,
@@ -85,13 +98,17 @@ export const metadata: Metadata = {
   category: "personal",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const h = await headers();
+  const pathname = h.get('x-pathname') || '/';
+  const lang = detectLang(pathname);
+
   return (
-    <html lang="ko" suppressHydrationWarning>
+    <html lang={lang} suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <link
@@ -111,7 +128,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased relative">
         <JsonLd />
-        <SEOProfile lang="ko" />
+        <SEOProfile lang={lang} />
         <ThemeProvider>
           <AuthProvider>
             <I18nProvider>

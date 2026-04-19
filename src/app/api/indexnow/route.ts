@@ -41,9 +41,26 @@ async function submit(urlList: string[]) {
   return { status: res.status, ok: res.ok, urlCount: urlList.length };
 }
 
-// GET /api/indexnow — 사이트 전체 URL 제출(초기 색인용)
-// GET /api/indexnow?url=https://yeojoonsoo02.com/blog/foo — 특정 URL만 제출
+// 환경변수 INDEXNOW_ADMIN_KEY가 설정되어 있으면 요청에 같은 값을 함께 보내야 허용.
+// 쿼리 ?key=... 또는 Authorization: Bearer <key> 헤더 중 하나면 됨. 미설정 시에는 통과(DEV 편의).
+function authorized(req: NextRequest): boolean {
+  const expected = process.env.INDEXNOW_ADMIN_KEY;
+  if (!expected) return true;
+  const q = req.nextUrl.searchParams.get('key');
+  const auth = req.headers.get('authorization') || '';
+  const bearer = auth.toLowerCase().startsWith('bearer ') ? auth.slice(7) : '';
+  return q === expected || bearer === expected;
+}
+
+function unauthorized() {
+  return NextResponse.json({ success: false, error: 'unauthorized' }, { status: 401 });
+}
+
+// GET /api/indexnow?key=<INDEXNOW_ADMIN_KEY> — 전체 URL 제출
+// GET /api/indexnow?url=<url>&key=<INDEXNOW_ADMIN_KEY> — 특정 URL만 제출
 export async function GET(req: NextRequest) {
+  if (!authorized(req)) return unauthorized();
+
   const url = req.nextUrl.searchParams.get('url');
 
   try {
@@ -58,8 +75,10 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST /api/indexnow — body: { urls: string[] }
+// POST /api/indexnow — body: { urls?: string[] }, auth: Bearer 또는 ?key
 export async function POST(req: NextRequest) {
+  if (!authorized(req)) return unauthorized();
+
   try {
     const body = (await req.json()) as { urls?: string[] };
     const urls = Array.isArray(body.urls) && body.urls.length > 0 ? body.urls : DEFAULT_URLS;

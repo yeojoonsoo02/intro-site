@@ -31,14 +31,21 @@ const ROUTE_BY_LANG: Record<string, string> = {
   'ru-ru': '/ru',
 };
 
+// 모든 요청에 x-pathname 헤더를 심어 layout에서 경로별 lang 분기가 가능하게 함
+function withPathname(req: NextRequest): NextResponse {
+  const headers = new Headers(req.headers);
+  headers.set('x-pathname', req.nextUrl.pathname);
+  return NextResponse.next({ request: { headers } });
+}
+
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // 루트만 처리(그 외 경로는 통과)
-  if (pathname !== '/') return NextResponse.next();
+  // 루트가 아닌 경로는 x-pathname만 주입하고 통과
+  if (pathname !== '/') return withPathname(req);
 
   const ua = (req.headers.get('user-agent') || '').toLowerCase();
-  if (BOTS.test(ua)) return NextResponse.next();
+  if (BOTS.test(ua)) return withPathname(req);
 
   // 사용자가 직접 선택한 언어 쿠키가 있으면 최우선 존중
   const cookieLang = req.cookies.get('NEXT_LOCALE')?.value?.toLowerCase();
@@ -47,11 +54,11 @@ export function middleware(req: NextRequest) {
       ROUTE_BY_LANG[cookieLang] ?? ROUTE_BY_LANG[cookieLang.split('-')[0]];
     if (target) return NextResponse.redirect(new URL(target, req.url));
     // en으로 쿠키 설정된 경우에는 루트 유지
-    if (cookieLang.startsWith('en')) return NextResponse.next();
+    if (cookieLang.startsWith('en')) return withPathname(req);
   }
 
   const accept = req.headers.get('accept-language') || '';
-  if (!accept) return NextResponse.next();
+  if (!accept) return withPathname(req);
 
   const langs = accept
     .toLowerCase()
@@ -60,7 +67,7 @@ export function middleware(req: NextRequest) {
     .filter(Boolean);
 
   for (const lang of langs) {
-    if (lang.startsWith('en')) return NextResponse.next(); // 영어가 우선이면 루트 유지
+    if (lang.startsWith('en')) return withPathname(req); // 영어가 우선이면 루트 유지
     const full = ROUTE_BY_LANG[lang];
     const prefix = ROUTE_BY_LANG[lang.split('-')[0]];
     const target = full ?? prefix;
@@ -68,10 +75,10 @@ export function middleware(req: NextRequest) {
   }
 
   // 지원하지 않는 언어 → 영어(루트) 유지
-  return NextResponse.next();
+  return withPathname(req);
 }
 
 export const config = {
-  // 루트(/)만 매칭. 정적 자원과 API는 건드리지 않음
-  matcher: '/',
+  // _next 내부, api 내부, 정적 파일 확장자는 제외한 모든 경로에 matcher
+  matcher: ['/((?!_next/static|_next/image|favicon\\.ico|.*\\.(?:png|jpg|jpeg|gif|svg|webp|avif|ico|txt|xml|json|map|js|css|woff|woff2)$).*)'],
 };
