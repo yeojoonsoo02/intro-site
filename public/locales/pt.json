@@ -1,0 +1,141 @@
+{
+  "prompt": "AI Chat",
+  "signIn": "Sign In",
+  "logout": "Logout",
+  "commentPlaceholder": "Enter a comment",
+  "submit": "Submit",
+  "loadingComments": "Loading comments...",
+  "noComments": "No comments yet.",
+  "showComments": "💬 Show Comments",
+  "hideComments": "Hide Comments",
+  "visitorCount": "👀 Total visitors:",
+  "loading": "Loading...",
+  "adminLogout": "Exit Admin Mode",
+  "adminLogin": "🌐 Settings",
+  "adminAuthTitle": "Admin Authentication",
+  "adminAuthDesc": "Enter admin password.",
+  "passwordPlaceholder": "Password",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "loginWithGoogle": "Login with Google",
+  "typeYourPrompt": "Ask the AI",
+  "send": "Send",
+  "mainSkills": "Main Skills",
+  "hobbies": "Interests & Hobbies",
+  "introduction": "Introduction",
+  "region": "Region",
+  "language": "Language",
+  "wrongPassword": "Incorrect password.",
+  "profilePhoto": "profile photo",
+  "linkUrl": "Link (URL)",
+  "deleteItem": "Delete item",
+  "addItem": "Add item",
+  "introPlaceholder": "Introduction (multiple lines allowed)",
+  "regionPlaceholder": "Region"
+  ,"feedbackMessage": "Thank you for visiting! Please leave a quick opinion and feedback in the comments."
+  ,"goToComments": "Go to Comments"
+  ,"viewProfile": "View Profile",
+  "chatInvite": "Chat with AI Junsu",
+  "hideConversation": "Hide conversation",
+  "showConversation": "Show conversation",
+  "close": "Close",
+  "flipCard": "Flip card",
+  "remaining": "Questions left: {{count}}",
+  "typing": "typing",
+  "noQuestionsLeft": "No questions left. Please try again tomorrow."
+  ,"aiDisclaimer": "AI may occasionally provide inaccurate or misleading information."
+  ,"themeSystem": "System Theme"
+  ,"themeDark": "Dark Mode"
+  ,"themeLight": "Light Mode"
+  ,"theme": "Theme"
+  ,"deleteComment": "Delete comment"
+,"errorOccurred": "An error occurred. Please try again later."
+,"welcomeUser": "Welcome, {{name}}"
+,"goHome": "Go to Home"
+,"user": "User"
+,"swipeHint": "← Swipe to see dev profile →"
+,"suggestQ1": "Where are you now?"
+,"suggestQ2": "What are your hobbies?"
+,"suggestQ3": "What's your favorite food?"
+,"suggestQ4": "What have you been up to?"
+,"portfolio": "Portfolio"
+,"projects": "Projects"
+,"skills": "Skills"
+,"timeline": "Experience"
+,"contact": "Contact"
+,"adminDashboard": "Admin Dashboard"
+,"addProject": "Add Project"
+,"projectTitle": "Project Name"
+,"projectDesc": "Description"
+,"thumbnailUrl": "Thumbnail URL"
+,"liveUrl": "Live URL"
+,"repoUrl": "Repo URL"
+,"tags": "Tags (comma separated)"
+,"featured": "Featured"
+,"addCategory": "Add Category"
+,"addSkill": "Add Skill"
+,"skillName": "Skill Name"
+,"skillLevel": "Level"
+,"categoryName": "Category Name"
+,"addTimeline": "Add Experience"
+,"year": "Period"
+,"timelineTitle": "Title"
+,"timelineDesc": "Description"
+,"timelineType": "Type"
+,"work": "Work"
+,"education": "Education"
+,"project": "Project"
+,"etc": "Other"
+,"save": "Save"
+,"saved": "Saved"
+,"headline": "Headline"
+,"subline": "Subline"
+,"hero": "Hero"
+,"confirmDelete": "Are you sure you want to delete?"
+,"noProjects": "No projects yet."
+,"noSkills": "No skills yet."
+,"noTimeline": "No experience yet."
+,"viewLive": "View Site"
+,"viewRepo": "View Code"
+,"about": "About"
+,"allProjects": "All"
+,"skillPrimary": "Primary"
+,"skillExperienced": "Experienced"
+,"skillLearning": "Learning"
+,"loginForMore": "Sign in for more questions"
+,"loginToComment": "Sign in to comment"
+,"loginToView": "Sign in to view details"
+,"certifications": "Certifications & Awards"
+,"noCertifications": "No certifications yet."
+,"addCertification": "Add Certification"
+,"certName": "Name"
+,"certIssuer": "Issuer"
+,"certDate": "Date"
+,"certUrl": "Proof URL"
+,"testimonials": "Client Reviews"
+,"noTestimonials": "No reviews yet."
+,"addTestimonial": "Add Review"
+,"testimonialName": "Name"
+,"testimonialRole": "Role / Company"
+,"testimonialContent": "Review"
+,"educationSection": "Education"
+,"noEducation": "No education entries yet."
+,"addEducation": "Add Education"
+,"eduSchool": "School"
+,"eduMajor": "Major"
+,"eduPeriod": "Period"
+,"eduGpa": "GPA"
+,"eduDesc": "Description"
+,"githubActivity": "GitHub Activity"
+,"blogPosts": "Recent Blog Posts"
+,"readMore": "Read More"
+,"downloadResume": "Download Resume"
+,"projectDetail": "Project Detail"
+,"techStack": "Tech Stack"
+,"viewAllProjects": "View All Projects"
+,"recentProjects": "Recent Projects"
+,"goalsVision": "Goals & Vision"
+,"valuesMindet": "Values"
+,"dailyRoutine": "Daily Routine"
+,"hobbiesInterests": "Hobbies & Interests"
+}

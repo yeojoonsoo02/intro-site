@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     title: DEFAULT_TITLE,
     description: DEFAULT_DESC,
     locale: "ko_KR",
-    alternateLocale: ["en_US", "ja_JP", "zh_CN"],
+    alternateLocale: ["en_US", "ja_JP", "zh_CN", "es_ES", "fr_FR", "de_DE", "pt_BR", "ru_RU"],
     // OG 이미지는 app/opengraph-image.tsx 파일 컨벤션으로 자동 주입됨(1200x630 동적 생성)
   },
   twitter: {
@@ -69,6 +69,11 @@ export const metadata: Metadata = {
       en: SITE_URL,
       ja: `${SITE_URL}/ja`,
       zh: `${SITE_URL}/zh`,
+      es: `${SITE_URL}/es`,
+      fr: `${SITE_URL}/fr`,
+      de: `${SITE_URL}/de`,
+      pt: `${SITE_URL}/pt`,
+      ru: `${SITE_URL}/ru`,
       "x-default": SITE_URL,
     },
   },

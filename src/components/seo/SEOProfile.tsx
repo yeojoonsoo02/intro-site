@@ -1,35 +1,72 @@
 import { DEFAULT_PROFILES } from '@/features/profile/defaultProfiles';
 
+type Lang = 'ko' | 'en' | 'ja' | 'zh' | 'es' | 'fr' | 'de' | 'pt' | 'ru';
+
 interface SEOProfileProps {
-  lang?: 'ko' | 'en' | 'ja' | 'zh';
+  lang?: Lang;
 }
 
-const META = {
+const META: Record<Lang, {
+  siteName: string;
+  headingPrefix: string;
+  headingSuffix: string;
+  sectionsLabel: { interests: string; contact: string };
+}> = {
   ko: {
     siteName: '여준수 | 자기소개 사이트',
     headingPrefix: '여준수',
     headingSuffix: 'Yeojunsu',
-    sectionsLabel: { interests: '관심사', region: '지역', contact: '연락' },
+    sectionsLabel: { interests: '관심사', contact: '연락' },
   },
   en: {
     siteName: 'Yeojunsu | Personal Site',
     headingPrefix: 'Yeojunsu',
     headingSuffix: '여준수',
-    sectionsLabel: { interests: 'Interests', region: 'Region', contact: 'Contact' },
+    sectionsLabel: { interests: 'Interests', contact: 'Contact' },
   },
   ja: {
     siteName: '여준수 | 自己紹介サイト',
     headingPrefix: '여준수',
     headingSuffix: 'ヨ・ジュンス',
-    sectionsLabel: { interests: '興味', region: '地域', contact: '連絡先' },
+    sectionsLabel: { interests: '興味', contact: '連絡先' },
   },
   zh: {
     siteName: '여준수 | 个人介绍网站',
     headingPrefix: '여준수',
     headingSuffix: '余俊秀',
-    sectionsLabel: { interests: '兴趣', region: '地区', contact: '联系' },
+    sectionsLabel: { interests: '兴趣', contact: '联系' },
   },
-} as const;
+  es: {
+    siteName: 'Yeojunsu | Sitio personal',
+    headingPrefix: 'Yeojunsu',
+    headingSuffix: '여준수',
+    sectionsLabel: { interests: 'Intereses', contact: 'Contacto' },
+  },
+  fr: {
+    siteName: 'Yeojunsu | Site personnel',
+    headingPrefix: 'Yeojunsu',
+    headingSuffix: '여준수',
+    sectionsLabel: { interests: 'Intérêts', contact: 'Contact' },
+  },
+  de: {
+    siteName: 'Yeojunsu | Persönliche Seite',
+    headingPrefix: 'Yeojunsu',
+    headingSuffix: '여준수',
+    sectionsLabel: { interests: 'Interessen', contact: 'Kontakt' },
+  },
+  pt: {
+    siteName: 'Yeojunsu | Site pessoal',
+    headingPrefix: 'Yeojunsu',
+    headingSuffix: '여준수',
+    sectionsLabel: { interests: 'Interesses', contact: 'Contato' },
+  },
+  ru: {
+    siteName: 'Yeojunsu | Личный сайт',
+    headingPrefix: 'Yeojunsu',
+    headingSuffix: '여준수',
+    sectionsLabel: { interests: 'Интересы', contact: 'Контакты' },
+  },
+};
 
 export default function SEOProfile({ lang = 'ko' }: SEOProfileProps) {
   const profile = DEFAULT_PROFILES[lang] ?? DEFAULT_PROFILES.ko;
