@@ -62,25 +62,29 @@ export default function BlogIndex() {
         </p>
       </header>
 
-      <ul className="space-y-6">
-        {sorted.map((post) => (
-          <li key={post.slug} className="border-b border-gray-100 dark:border-gray-800 pb-6">
-            <Link href={`/blog/${post.slug}`} className="group block">
-              <h2 className="text-xl font-semibold group-hover:underline">
-                {post.title}
-              </h2>
-              <p className="mt-2 text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                {post.description}
-              </p>
-              <div className="mt-2 flex items-center gap-3 text-xs text-gray-500">
-                <time dateTime={post.publishedAt}>{post.publishedAt}</time>
-                <span>·</span>
-                <span>{post.tags.slice(0, 3).join(', ')}</span>
-              </div>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      {sorted.length === 0 ? (
+        <p className="text-sm text-gray-500">아직 발행된 글이 없습니다.</p>
+      ) : (
+        <ul className="space-y-6">
+          {sorted.map((post) => (
+            <li key={post.slug} className="border-b border-gray-100 dark:border-gray-800 pb-6">
+              <Link href={`/blog/${post.slug}`} className="group block">
+                <h2 className="text-xl font-semibold group-hover:underline">
+                  {post.title}
+                </h2>
+                <p className="mt-2 text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                  {post.description}
+                </p>
+                <div className="mt-2 flex items-center gap-3 text-xs text-gray-500">
+                  <time dateTime={post.publishedAt}>{post.publishedAt}</time>
+                  <span>·</span>
+                  <span>{post.tags.slice(0, 3).join(', ')}</span>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
 
       <nav className="mt-12 text-sm">
         <Link href="/" className="underline-offset-4 hover:underline">

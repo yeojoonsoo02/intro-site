@@ -5,14 +5,12 @@ import LangInit from "@/lib/LangInit";
 export const metadata: Metadata = {
   title: "여준수 (余俊秀) — 个人介绍 · 简介",
   description:
-    "大学生开发者 여준수（余俊秀）的个人介绍网站。可以查看前端开发、人工智能研究、个人项目、技术栈和联系方式。",
+    "大学生开发者 여준수（余俊秀）的个人介绍网站。可以查看简介与联系方式。",
   keywords: [
     "여준수",
     "余俊秀",
     "Yeojunsu",
-    "yeojoonsoo",
     "大学生开发者",
-    "前端开发者",
   ],
   openGraph: {
     title: "여준수 (余俊秀) — 个人介绍",

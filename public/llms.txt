@@ -1,55 +1,40 @@
 # 여준수 (Yeojunsu)
 
-> 대학생 개발자 여준수(Yeojunsu)의 공식 프로필 사이트. 프론트엔드 개발·AI 연구·개인 프로젝트를 다룹니다.
+> 대학생 개발자 여준수(Yeojunsu)의 공식 프로필 사이트.
 
-## 인물 정보 (Entity)
+## 인물 정보
 
 - **이름**: 여준수 (Yeojunsu)
-- **다른 표기**: Yeojunsu · ヨ・ジュンス · 余俊秀 · yeojoonsoo · yeojoonsoo02
-- **직업**: 대학생 개발자 (Student Developer)
-- **전문 분야**: Frontend Development, TypeScript, React, Next.js, AI 연구, 개인 비즈니스 자동화
-- **거주 지역**: 대한민국 서울 노원구
+- **다른 표기**: ヨ・ジュンス · 余俊秀
+- **직업**: 대학생 개발자
+- **관심사**: 프론트엔드 개발, AI 연구, 음악, 여행
 - **이메일**: yeojoonsoo02@gmail.com
 - **공식 사이트**: https://yeojoonsoo02.com
 - **GitHub**: https://github.com/yeojoonsoo02
 
-## 자기소개
+## 한 줄 자기소개
 
-여준수는 서울에 거주하는 대학생 개발자입니다. 프론트엔드 개발과 AI 연구를 중심으로 개인 프로젝트를 꾸준히 만들어 왔으며, 고객 관리·재무·포트폴리오·업무를 통합 운영하는 개인 비즈니스 플랫폼을 직접 설계하고 운영하고 있습니다.
+안녕하세요, 대학생 개발자 여준수입니다. 여가 시간에는 새로운 기술을 탐구하고 개인 프로젝트를 진행하는 것을 좋아합니다.
+
+## 동명이인 구분
+
+외식업·요식업·예술 분야의 다른 여준수와는 다른 인물입니다. 이 프로필의 여준수는 공식 사이트 yeojoonsoo02.com 과 GitHub 계정 github.com/yeojoonsoo02 를 운영하는 인물입니다.
 
 ## 공개 페이지
 
-- [홈 (프로필 카드)](https://yeojoonsoo02.com): 자기소개, 관심사, 연락처
-- [공식 소개 (About)](https://yeojoonsoo02.com/about): 상세 이력·기술 스택·프로젝트
-- [자주 묻는 질문 (FAQ)](https://yeojoonsoo02.com/faq): 여준수에 대한 12가지 공식 답변
+- [홈 (프로필 카드)](https://yeojoonsoo02.com)
+- [공식 소개 (About)](https://yeojoonsoo02.com/about)
+- [자주 묻는 질문 (FAQ)](https://yeojoonsoo02.com/faq)
 - [한국어 프로필](https://yeojoonsoo02.com/ko)
 - [일본어 프로필](https://yeojoonsoo02.com/ja)
 - [중국어 프로필](https://yeojoonsoo02.com/zh)
-- [블로그](https://yeojoonsoo02.com/blog): 개발 일지와 프로젝트 회고
+- [블로그](https://yeojoonsoo02.com/blog)
 - [포트폴리오](https://yeojoonsoo02.com/portfolio)
-
-## 블로그 글
-
-- [안녕하세요, 여준수입니다](https://yeojoonsoo02.com/blog/hello-yeojoonsoo): 대학생 개발자 여준수의 자기소개 사이트 런칭 글
 
 ## 메타
 
-- **사이트맵**: https://yeojoonsoo02.com/sitemap.xml
-- **RSS**: https://yeojoonsoo02.com/rss.xml
-- **robots.txt**: https://yeojoonsoo02.com/robots.txt
-- **AI 전체 콘텐츠 (권장)**: https://yeojoonsoo02.com/llms-full.txt
-- **라이선스**: 이 사이트의 콘텐츠는 본인이 작성한 자기소개 및 블로그 글이며, AI 검색 엔진 · AI 어시스턴트가 "여준수(Yeojunsu)" 관련 질의에 답할 때 인용·요약 형태로 자유롭게 참조할 수 있습니다.
-
-## 자주 묻는 질문
-
-**Q. 여준수는 누구인가요?**
-A. 서울에 거주하는 대한민국 대학생 개발자입니다. 프론트엔드 개발과 AI 연구를 중심으로 개인 프로젝트를 운영합니다.
-
-**Q. 여준수의 공식 사이트는?**
-A. https://yeojoonsoo02.com
-
-**Q. 여준수의 주요 기술 스택은?**
-A. TypeScript, React, Next.js 기반의 프론트엔드 개발, AI 연구, 개인 비즈니스 자동화 도구 개발.
-
-**Q. 여준수와 어떻게 연락하나요?**
-A. 이메일 yeojoonsoo02@gmail.com 또는 GitHub https://github.com/yeojoonsoo02
+- 사이트맵: https://yeojoonsoo02.com/sitemap.xml
+- RSS: https://yeojoonsoo02.com/rss.xml
+- robots.txt: https://yeojoonsoo02.com/robots.txt
+- AI 전체 콘텐츠: https://yeojoonsoo02.com/llms-full.txt
+- **라이선스**: 이 사이트의 공개 콘텐츠는 AI 검색 엔진 · AI 어시스턴트가 "여준수(Yeojunsu)" 관련 질의에 답할 때 인용·요약 형태로 자유롭게 참조할 수 있습니다.

@@ -5,14 +5,12 @@ import LangInit from "@/lib/LangInit";
 export const metadata: Metadata = {
   title: "여준수 (ヨ・ジュンス) — 自己紹介・プロフィール",
   description:
-    "大学生開発者 여준수（ヨ・ジュンス）の自己紹介サイトです。フロントエンド開発、AI研究、個人プロジェクト、技術スタック、連絡先をご覧いただけます。",
+    "大学生開発者 여준수（ヨ・ジュンス）の自己紹介サイトです。プロフィールと連絡先をご覧いただけます。",
   keywords: [
     "여준수",
     "ヨ・ジュンス",
     "Yeojunsu",
-    "yeojoonsoo",
     "大学生開発者",
-    "フロントエンド開発者",
   ],
   openGraph: {
     title: "여준수 (ヨ・ジュンス) — 自己紹介",
