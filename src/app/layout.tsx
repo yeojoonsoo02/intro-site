@@ -99,6 +99,14 @@ export default function RootLayout({
           title="여준수 블로그 RSS"
           href="/rss.xml"
         />
+        {/* LCP 이미지(프로필 사진) preload — 초기 렌더 지연 감소 */}
+        <link
+          rel="preload"
+          as="image"
+          href="/profile.jpg"
+          // @ts-expect-error fetchPriority는 next types에 아직 없지만 HTML 표준이라 동작함
+          fetchpriority="high"
+        />
       </head>
       <body className="antialiased relative">
         <JsonLd />

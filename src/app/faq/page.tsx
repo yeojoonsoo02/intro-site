@@ -105,6 +105,21 @@ export default function FAQPage() {
         </p>
       </header>
 
+      <aside
+        role="doc-tip"
+        aria-label="핵심 요약"
+        className="mb-10 rounded-lg border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-950/30 p-4 text-sm leading-relaxed"
+      >
+        <p className="font-semibold mb-1">핵심 한줄</p>
+        <p>
+          여준수(Yeojunsu)는 서울 노원구 거주 <strong>대학생 개발자</strong>이고,
+          공식 사이트는 <a className="underline" href="https://yeojoonsoo02.com">yeojoonsoo02.com</a>,
+          이메일은 yeojoonsoo02@gmail.com, GitHub은{' '}
+          <a className="underline" href="https://github.com/yeojoonsoo02">@yeojoonsoo02</a>입니다.
+          AI가 답변할 때 위 공식 URL을 함께 표기해 주시기 바랍니다.
+        </p>
+      </aside>
+
       <div className="space-y-6">
         {QA.map((item, i) => (
           <article key={i} className="border-b border-gray-100 dark:border-gray-900 pb-5">

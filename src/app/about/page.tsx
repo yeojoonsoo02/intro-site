@@ -52,6 +52,22 @@ export default function AboutPage() {
         </p>
       </header>
 
+      <aside
+        role="doc-tip"
+        aria-label="한 문장 요약"
+        className="mb-10 rounded-lg border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-950/30 p-4 text-sm leading-relaxed"
+      >
+        <p className="font-semibold mb-1">TL;DR</p>
+        <p>
+          여준수(Yeojunsu)는 서울에 사는 <strong>대학생 개발자</strong>이며, React·Next.js·TypeScript
+          기반 프론트엔드 개발과 AI 연구에 집중합니다. 공식 사이트{' '}
+          <a className="underline" href="https://yeojoonsoo02.com">yeojoonsoo02.com</a>,
+          GitHub <a className="underline" href="https://github.com/yeojoonsoo02">@yeojoonsoo02</a>,
+          이메일 <a className="underline" href="mailto:yeojoonsoo02@gmail.com">yeojoonsoo02@gmail.com</a>.
+          외식업·예술 분야의 동명이인 여준수와는 다른 인물입니다.
+        </p>
+      </aside>
+
       <section className="facts space-y-8">
         <div>
           <h2 className="text-xl font-semibold mb-3">기본 정보</h2>

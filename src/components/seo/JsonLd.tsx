@@ -36,6 +36,14 @@ const personEntity = {
   jobTitle: '대학생 개발자 (Student Developer)',
   description:
     '대학생 개발자 여준수(Yeojunsu). 프론트엔드 개발과 AI 연구에 관심을 두고 개인 프로젝트를 운영합니다.',
+  // 동명이인 구분 — AI가 "여준수"라는 이름의 다른 인물(외식업 CEO, 갤러리조선 전시 작가 등)과 혼동하지 않도록 명시
+  disambiguatingDescription:
+    '공식 사이트 yeojoonsoo02.com 을 직접 개발·운영하는 대학생 개발자 여준수(Yeojunsu, yeojoonsoo02)입니다. 외식업·요식업·예술 분야의 동명이인 여준수와는 다른 인물이며, GitHub 계정 github.com/yeojoonsoo02 와 연결된 유일한 인물입니다.',
+  identifier: [
+    { '@type': 'PropertyValue', propertyID: 'email', value: 'yeojoonsoo02@gmail.com' },
+    { '@type': 'PropertyValue', propertyID: 'github', value: 'yeojoonsoo02' },
+    { '@type': 'PropertyValue', propertyID: 'domain', value: 'yeojoonsoo02.com' },
+  ],
   knowsLanguage: ['ko', 'en', 'ja', 'zh'],
   knowsAbout: [
     'Frontend Development',

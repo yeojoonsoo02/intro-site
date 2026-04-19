@@ -56,6 +56,9 @@ export default function SEOProfile({ lang = 'ko' }: SEOProfileProps) {
         alt="여준수 (Yeojunsu) 대학생 개발자 프로필 사진"
         width={800}
         height={800}
+        loading="eager"
+        // @ts-expect-error fetchPriority는 React 타입에 아직 없지만 HTML 표준이라 동작함
+        fetchpriority="high"
       />
       <p>{meta.subheading}</p>
       <p>{meta.descIntro}</p>
