@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
 import { BLOG_POSTS } from '@/features/blog/posts';
 
 const SITE_URL = 'https://yeojoonsoo02.com';
@@ -7,6 +8,14 @@ const SITE_HOST = 'yeojoonsoo02.com';
 // env 미설정 시 안전 fallback (기존 배포된 공개 키 파일과 일치)
 const INDEXNOW_KEY = process.env.INDEXNOW_KEY || 'c9d7fcf005e94200e508c6d6a8263bc6';
 const KEY_LOCATION = `${SITE_URL}/${INDEXNOW_KEY}.txt`;
+
+function timingSafeMatch(provided: string, expected: string): boolean {
+  const expectedBuf = Buffer.from(expected, 'utf-8');
+  const providedBuf = Buffer.alloc(expectedBuf.length);
+  const raw = Buffer.from(provided, 'utf-8');
+  raw.copy(providedBuf, 0, 0, Math.min(raw.length, expectedBuf.length));
+  return crypto.timingSafeEqual(providedBuf, expectedBuf) && raw.length === expectedBuf.length;
+}
 
 // 한 엔드포인트만 호출해도 Bing·Naver·Yandex·Seznam 등 IndexNow 참여 엔진 모두 전파됨
 const ENDPOINT = 'https://api.indexnow.org/IndexNow';
@@ -66,14 +75,15 @@ async function submit(urlList: string[]) {
   return { status: res.status, ok: res.ok, urlCount: urlList.length };
 }
 
-// 관리자 키 검증 — INDEXNOW_ADMIN_KEY 환경변수 값과 일치해야 실행됨
+// 관리자 키 검증 — INDEXNOW_ADMIN_KEY 환경변수 값과 일치해야 실행됨.
+// env 미설정 시 요청 거부 (fail-closed): 이전의 dev-bypass는 프로덕션 배포 시 노출 위험이 있어 제거.
 function authorized(req: NextRequest): boolean {
   const expected = process.env.INDEXNOW_ADMIN_KEY;
-  if (!expected) return true; // env 미설정이면 통과 (DEV 편의)
-  const q = req.nextUrl.searchParams.get('key');
-  const auth = req.headers.get('authorization') || '';
+  if (!expected) return false;
+  const q = req.nextUrl.searchParams.get('key') ?? '';
+  const auth = req.headers.get('authorization') ?? '';
   const bearer = auth.toLowerCase().startsWith('bearer ') ? auth.slice(7) : '';
-  return q === expected || bearer === expected;
+  return timingSafeMatch(q, expected) || timingSafeMatch(bearer, expected);
 }
 
 function unauthorized() {

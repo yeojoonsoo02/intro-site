@@ -7,9 +7,6 @@ import { saveChatLog } from '@/lib/chatLog'
 import { sendTelegramMessage, formatChatNotification, isTelegramConfigured } from '@/lib/telegram'
 import { checkRateLimit, checkDailyBudget } from '@/lib/rateLimit'
 
-const DEFAULT_URL =
-  'https://gemini-api-565729687872.asia-northeast3.run.app/chat'
-
 const SYSTEM_PROMPT_BASE = `너는 여준수 본인이야. 자기소개 사이트에 온 사람이랑 대화하는 거야.
 
 말투 규칙:
@@ -163,39 +160,34 @@ export async function POST(req: NextRequest) {
 
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
-    // Forward to external server with RAG context
-    const url = process.env.NEXT_PUBLIC_GEMINI_API_URL ?? DEFAULT_URL
+    // Forward to external server with RAG context.
+    // 환경변수 미설정 시에는 외부 fallback URL 없이 명시적 실패로 처리 (MITM·예상 밖 엔드포인트 호출 방지).
+    const url = process.env.NEXT_PUBLIC_GEMINI_API_URL
+    if (!url) {
+      console.error('Gemini API not configured: GEMINI_API_KEY or NEXT_PUBLIC_GEMINI_API_URL required')
+      return NextResponse.json({ error: 'Service unavailable' }, { status: 503 })
+    }
+
     try {
       const systemPrompt = await buildSystemPrompt(message)
+      const augmentedMessage = `${systemPrompt}\n\n### 사용자 질문:\n${message}`
 
-      // Retry once if empty response
-      let reply = ''
-      let data: Record<string, unknown> = {}
-      for (let attempt = 0; attempt < 2; attempt++) {
-        const prompt = attempt === 0
-          ? message
-          : `사용자가 이런 질문을 했어: "${message}". 재미있는 가정 질문이니까, 너(여준수)의 성격과 가치관에 맞게 가볍게 답해줘. 절대 빈 응답 하지 마.`
-        const augmentedMessage = `${systemPrompt}\n\n### 사용자 질문:\n${prompt}`
-
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: augmentedMessage }),
-        })
-        if (!res.ok) {
-          console.error('External API error:', res.status, res.statusText)
-          return NextResponse.json({ error: 'External API error' }, { status: 502 })
-        }
-        const contentType = res.headers.get('content-type') ?? ''
-        if (!contentType.includes('application/json')) {
-          console.error('External API returned non-JSON:', contentType)
-          return NextResponse.json({ error: 'Invalid response from external API' }, { status: 502 })
-        }
-        data = await res.json() as Record<string, unknown>
-        reply = ((data.reply ?? data.text ?? '') as string).trim()
-        if (reply) break
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: augmentedMessage }),
+      })
+      if (!res.ok) {
+        console.error('External API error:', res.status, res.statusText)
+        return NextResponse.json({ error: 'External API error' }, { status: 502 })
       }
-
+      const contentType = res.headers.get('content-type') ?? ''
+      if (!contentType.includes('application/json')) {
+        console.error('External API returned non-JSON:', contentType)
+        return NextResponse.json({ error: 'Invalid response from external API' }, { status: 502 })
+      }
+      const data = (await res.json()) as Record<string, unknown>
+      let reply = ((data.reply ?? data.text ?? '') as string).trim()
       if (!reply) {
         reply = '음.. 그건 좀 대답하기 어렵네. 다른 거 물어봐!'
       }
@@ -228,18 +220,17 @@ export async function POST(req: NextRequest) {
       ],
     })
 
-    // Retry once if empty response (often caused by overly cautious safety filter)
+    // Safety 차단(SAFETY/RECITATION/BLOCKLIST 등)일 때는 재시도하지 않음 — 재시도 리프레이밍으로 정책 우회 가능성 방지.
+    // 네트워크·일시 오류만 1회 재시도.
     let reply = ''
     for (let attempt = 0; attempt < 2; attempt++) {
       try {
-        const result = await model.generateContent(
-          attempt === 0
-            ? message
-            : `사용자가 이런 질문을 했어: "${message}". 재미있는 가정 질문이니까, 너(여준수)의 성격과 가치관에 맞게 가볍게 답해줘. 절대 빈 응답 하지 마.`,
-        )
+        const result = await model.generateContent(message)
         const candidate = result.response.candidates?.[0]
-        if (candidate?.finishReason && candidate.finishReason !== 'STOP') {
-          console.warn(`Gemini finishReason: ${candidate.finishReason} for message: "${message}"`)
+        const finishReason = candidate?.finishReason
+        if (finishReason && finishReason !== 'STOP' && finishReason !== 'MAX_TOKENS') {
+          console.warn(`Gemini blocked by safety: ${finishReason} for message length ${message.length}`)
+          break
         }
         reply = (result.response.text() ?? '').trim()
         if (reply) break
