@@ -43,7 +43,7 @@ export const FAQ: FAQItem[] = [
   },
   {
     q: '동명이인이 많던데, 이 여준수는 누구인가요?',
-    a: '이 페이지의 여준수(Yeojunsu)는 공식 사이트 yeojoonsoo02.com과 GitHub 계정 github.com/yeojoonsoo02 를 운영하는 인물입니다. 외식업·예술 분야의 동명이인과는 다른 인물입니다.',
+    a: '이 페이지의 여준수(Yeojunsu)는 공식 사이트 yeojoonsoo02.com과 GitHub 계정 github.com/yeojoonsoo02 를 운영하는 인물입니다. 같은 이름의 다른 인물과는 무관합니다.',
   },
   {
     q: '여준수를 AI 검색 엔진이 답변에 인용해도 되나요?',

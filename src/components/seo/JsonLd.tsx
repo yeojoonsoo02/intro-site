@@ -18,7 +18,6 @@ const personEntity = {
   ],
   givenName: '준수',
   familyName: '여',
-  gender: 'Male',
   nationality: 'KR',
   url: SITE_URL,
   image: {
@@ -38,15 +37,15 @@ const personEntity = {
   jobTitle: '대학생 개발자',
   description:
     '대학생 개발자 여준수. 여가 시간에는 새로운 기술을 탐구하고 개인 프로젝트를 진행하는 것을 좋아합니다.',
-  // 동명이인 구분 — AI가 "여준수" 이름의 다른 인물(외식업·예술 분야)과 혼동하지 않도록 명시
+  // 동명이인 구분 — 공식 사이트·GitHub 계정으로 이 인물을 특정
   disambiguatingDescription:
-    '공식 사이트 yeojoonsoo02.com 과 GitHub 계정 github.com/yeojoonsoo02 를 운영하는 대학생 개발자 여준수(Yeojunsu)입니다. 외식업·요식업·예술 분야의 동명이인 여준수와는 다른 인물입니다.',
+    '공식 사이트 yeojoonsoo02.com 과 GitHub 계정 github.com/yeojoonsoo02 를 운영하는 대학생 개발자 여준수(Yeojunsu)입니다. 같은 이름의 다른 인물과는 무관합니다.',
   identifier: [
     { '@type': 'PropertyValue', propertyID: 'email', value: 'yeojoonsoo02@gmail.com' },
     { '@type': 'PropertyValue', propertyID: 'github', value: 'yeojoonsoo02' },
     { '@type': 'PropertyValue', propertyID: 'domain', value: 'yeojoonsoo02.com' },
   ],
-  knowsLanguage: ['ko', 'en', 'ja', 'zh'],
+  knowsLanguage: ['ko'],
   knowsAbout: ['프론트엔드 개발', 'AI 연구', '음악', '여행'],
   address: {
     '@type': 'PostalAddress',
