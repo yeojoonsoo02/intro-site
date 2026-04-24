@@ -3,154 +3,48 @@
 import { JOURNEY_ITEMS, type JourneyItem } from './journey.data';
 import PhotoSlot from './PhotoSlot';
 
-function Caption({ item }: { item: JourneyItem }) {
+function JourneyCard({ item, index }: { item: JourneyItem; index: number }) {
   return (
-    <>
-      <p
-        className="text-[0.65rem] tracking-[0.25em] uppercase mb-2"
-        style={{ color: 'var(--muted)' }}
-      >
-        {item.period || '시기 미정'}
-      </p>
-      <h2
-        className="text-2xl sm:text-3xl font-bold leading-tight"
-        style={{ color: 'var(--foreground)' }}
-      >
-        {item.label}
-      </h2>
-      {item.caption && (
-        <p
-          className="mt-3 text-sm leading-relaxed pl-3"
-          style={{
-            color: 'var(--muted)',
-            borderLeft: '2px solid var(--accent)',
-          }}
-        >
-          {item.caption}
-        </p>
-      )}
-    </>
-  );
-}
+    <article
+      className="card flex flex-col gap-4 p-5 sm:p-6"
+      style={{ border: '1px solid var(--border)' }}
+    >
+      <PhotoSlot index={index} photo={item.photo} alt={item.label} />
 
-function Entry({ item, index }: { item: JourneyItem; index: number }) {
-  switch (item.variant) {
-    case 'offset-left':
-      return (
-        <article className="grid grid-cols-12 gap-4 sm:gap-6 items-end">
-          <div className="col-span-6 sm:col-span-5">
-            <PhotoSlot
-              index={index}
-              photo={item.photo}
-              aspect={item.aspect}
-              alt={item.label}
-            />
-          </div>
-          <div className="col-span-6 sm:col-span-6 sm:col-start-8 pb-2">
-            <Caption item={item} />
-          </div>
-        </article>
-      );
-
-    case 'split-right':
-      return (
-        <article className="grid grid-cols-12 gap-4 sm:gap-10 items-center">
-          <div className="col-span-7 sm:col-span-6 order-2 sm:order-1">
-            <Caption item={item} />
-          </div>
-          <div className="col-span-5 sm:col-span-5 sm:col-start-8 order-1 sm:order-2">
-            <PhotoSlot
-              index={index}
-              photo={item.photo}
-              aspect={item.aspect}
-              alt={item.label}
-            />
-          </div>
-        </article>
-      );
-
-    case 'full-bleed':
-      return (
-        <article className="space-y-4">
-          <div className="-mx-4 sm:-mx-10">
-            <PhotoSlot
-              index={index}
-              photo={item.photo}
-              aspect={item.aspect}
-              alt={item.label}
-            />
-          </div>
-          <div className="max-w-md">
-            <Caption item={item} />
-          </div>
-        </article>
-      );
-
-    case 'split-left':
-      return (
-        <article className="grid grid-cols-12 gap-4 sm:gap-10 items-start">
-          <div className="col-span-7 sm:col-span-6">
-            <PhotoSlot
-              index={index}
-              photo={item.photo}
-              aspect={item.aspect}
-              alt={item.label}
-            />
-          </div>
-          <div className="col-span-5 sm:col-span-5 sm:col-start-8 pt-6">
-            <Caption item={item} />
-          </div>
-        </article>
-      );
-
-    case 'stacked':
-      return (
-        <article className="mx-auto max-w-sm text-center sm:text-left">
-          <div className="mb-5">
-            <PhotoSlot
-              index={index}
-              photo={item.photo}
-              aspect={item.aspect}
-              alt={item.label}
-            />
-          </div>
-          <Caption item={item} />
-        </article>
-      );
-
-    case 'portrait-right':
-      return (
-        <article className="grid grid-cols-12 gap-4 sm:gap-10 items-center">
-          <div className="col-span-7 sm:col-span-7 sm:pr-6">
-            <Caption item={item} />
-            <p
-              className="mt-6 text-xs"
+      <div className="flex flex-col gap-2">
+        <div className="flex items-baseline justify-between gap-3">
+          <h2
+            className="text-lg sm:text-xl font-bold leading-tight"
+            style={{ color: 'var(--foreground)' }}
+          >
+            {item.label}
+          </h2>
+          {item.period && (
+            <span
+              className="text-xs shrink-0"
               style={{ color: 'var(--muted)' }}
             >
-              / 가장 최근 모습
-            </p>
-          </div>
-          <div className="col-span-5 sm:col-span-4 sm:col-start-9">
-            <PhotoSlot
-              index={index}
-              photo={item.photo}
-              aspect={item.aspect}
-              alt={item.label}
-            />
-          </div>
-        </article>
-      );
+              {item.period}
+            </span>
+          )}
+        </div>
 
-    default:
-      return null;
-  }
+        <p
+          className="text-sm leading-relaxed"
+          style={{ color: item.caption ? 'var(--foreground)' : 'var(--muted)' }}
+        >
+          {item.caption || '사진과 설명을 곧 채울 예정입니다.'}
+        </p>
+      </div>
+    </article>
+  );
 }
 
 export default function JourneyGallery() {
   return (
-    <div className="space-y-24 sm:space-y-32">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
       {JOURNEY_ITEMS.map((item, i) => (
-        <Entry key={item.id} item={item} index={i} />
+        <JourneyCard key={item.id} item={item} index={i} />
       ))}
     </div>
   );

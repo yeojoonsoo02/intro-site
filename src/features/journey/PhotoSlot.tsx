@@ -1,35 +1,18 @@
 'use client';
 
 import Image from 'next/image';
-import type { JourneyAspect } from './journey.data';
 
 interface PhotoSlotProps {
   index: number;
   photo: string | null;
-  aspect: JourneyAspect;
   alt: string;
-  className?: string;
 }
 
-const ASPECT_CLASS: Record<JourneyAspect, string> = {
-  square: 'aspect-square',
-  portrait: 'aspect-[3/4]',
-  landscape: 'aspect-[4/3]',
-};
-
-export default function PhotoSlot({
-  index,
-  photo,
-  aspect,
-  alt,
-  className = '',
-}: PhotoSlotProps) {
-  const aspectClass = ASPECT_CLASS[aspect];
-
+export default function PhotoSlot({ index, photo, alt }: PhotoSlotProps) {
   if (photo) {
     return (
       <div
-        className={`relative overflow-hidden ${aspectClass} ${className}`}
+        className="relative w-full aspect-[4/3] overflow-hidden rounded-xl"
         style={{ background: 'var(--border)' }}
       >
         <Image
@@ -45,20 +28,31 @@ export default function PhotoSlot({
 
   return (
     <div
-      className={`relative ${aspectClass} ${className} flex flex-col items-center justify-center select-none`}
+      className="relative w-full aspect-[4/3] rounded-xl flex flex-col items-center justify-center select-none"
       style={{
-        background:
-          'repeating-linear-gradient(-45deg, color-mix(in srgb, var(--border) 60%, transparent) 0 1px, transparent 1px 14px)',
-        border: '1px solid var(--border)',
+        background: 'var(--background)',
+        border: '1px dashed var(--input-border)',
         color: 'var(--muted)',
       }}
       aria-label={`${alt} 사진 자리`}
       role="img"
     >
-      <span className="text-[0.6rem] tracking-[0.2em] uppercase">
-        photo {String(index + 1).padStart(2, '0')}
-      </span>
-      <span className="mt-1 text-xs">{alt}</span>
+      <svg
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+        <circle cx="8.5" cy="8.5" r="1.5" />
+        <polyline points="21 15 16 10 5 21" />
+      </svg>
+      <span className="mt-2 text-xs">사진 {String(index + 1).padStart(2, '0')}</span>
     </div>
   );
 }
