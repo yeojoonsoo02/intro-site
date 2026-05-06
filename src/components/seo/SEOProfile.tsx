@@ -80,6 +80,8 @@ export default function SEOProfile({ lang = 'ko' }: SEOProfileProps) {
       <h1>
         {meta.headingPrefix} ({meta.headingSuffix}) — {profile.tagline}
       </h1>
+      {/* sr-only SEO 영역 — Next/Image 최적화 불필요 (실제 LCP 이미지는 별도). */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/profile.jpg"
         alt="여준수 (Yeojunsu) 대학생 개발자 프로필 사진"

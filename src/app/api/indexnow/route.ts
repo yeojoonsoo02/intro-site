@@ -4,10 +4,9 @@ import { BLOG_POSTS } from '@/features/blog/posts';
 
 const SITE_URL = 'https://yeojoonsoo02.com';
 const SITE_HOST = 'yeojoonsoo02.com';
-// IndexNow 키는 프로토콜상 퍼블릭으로 서빙되어야 하지만 소스 하드코딩은 피하기 위해 env로 분리.
-// env 미설정 시 안전 fallback (기존 배포된 공개 키 파일과 일치)
-const INDEXNOW_KEY = process.env.INDEXNOW_KEY || 'c9d7fcf005e94200e508c6d6a8263bc6';
-const KEY_LOCATION = `${SITE_URL}/${INDEXNOW_KEY}.txt`;
+// IndexNow 사이트 키. 소스 하드코딩 금지 — 미설정이면 submit 자체를 거부.
+const INDEXNOW_KEY = process.env.INDEXNOW_KEY ?? '';
+const KEY_LOCATION = INDEXNOW_KEY ? `${SITE_URL}/${INDEXNOW_KEY}.txt` : '';
 
 function timingSafeMatch(provided: string, expected: string): boolean {
   const expectedBuf = Buffer.from(expected, 'utf-8');
@@ -59,6 +58,9 @@ const DEFAULT_URLS: string[] = [
 ];
 
 async function submit(urlList: string[]) {
+  if (!INDEXNOW_KEY) {
+    throw new Error('INDEXNOW_KEY is not configured');
+  }
   const payload = {
     host: SITE_HOST,
     key: INDEXNOW_KEY,

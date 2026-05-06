@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { FAQ } from '@/data/faq';
+import { safeJsonLd } from '@/lib/seo-utils';
 
 const SITE_URL = 'https://yeojoonsoo02.com';
 
@@ -37,7 +38,7 @@ export default function FAQPage() {
     <main className="max-w-2xl mx-auto px-4 sm:px-6 py-10">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(faqSchema) }}
       />
 
       <header className="mb-10">

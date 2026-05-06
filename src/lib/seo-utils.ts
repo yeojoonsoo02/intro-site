@@ -32,3 +32,13 @@ export function buildHreflangLanguages() {
 export function canonicalForLang(lang: SupportedLang): string {
   return LANG_URL[lang];
 }
+
+/**
+ * JSON-LD 안전 직렬화. </script> 등 HTML break-out 시퀀스를 차단해
+ * dangerouslySetInnerHTML 사용 시 XSS 표면을 제거한다.
+ */
+export function safeJsonLd(obj: unknown): string {
+  return JSON.stringify(obj)
+    .replace(/<\/script/gi, '<\\/script')
+    .replace(/<!--/g, '<\\!--');
+}

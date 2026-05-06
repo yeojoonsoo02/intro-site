@@ -7,14 +7,18 @@ export default function I18nProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(i18n.isInitialized);
 
   useEffect(() => {
-    if (!i18n.isInitialized) {
-      i18n.on('initialized', () => {
-        setReady(true);
-        document.documentElement.lang = i18n.language;
-      });
-    } else {
+    if (i18n.isInitialized) {
       document.documentElement.lang = i18n.language;
+      return;
     }
+    const handleInit = () => {
+      setReady(true);
+      document.documentElement.lang = i18n.language;
+    };
+    i18n.on('initialized', handleInit);
+    return () => {
+      i18n.off('initialized', handleInit);
+    };
   }, []);
 
   if (!ready) {

@@ -52,7 +52,9 @@ export default function PromptBox({
       const reply = data.reply || data.text;
       if (reply) {
         setMessages((m) => [...m, { role: "assistant", text: reply }]);
-        savePrompt(prompt, reply).catch(() => {});
+        savePrompt(prompt, reply).catch((err) => {
+          console.error('savePrompt failed:', err);
+        });
       }
       if (typeof data.remaining === "number") {
         setRemaining(data.remaining);

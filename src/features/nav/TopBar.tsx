@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/lib/AuthProvider'
 import { useTheme } from '@/lib/ThemeProvider'
@@ -108,13 +109,13 @@ export default function TopBar() {
             >
               {/* ── 탐색 ── */}
               <div className="py-1">
-                <a
+                <Link
                   href="/portfolio"
                   onClick={closeMenu}
                   className="w-full text-left px-4 py-2.5 transition-colors hover:opacity-70 block"
                 >
                   {t('portfolio')}
-                </a>
+                </Link>
                 <button
                   onClick={togglePrompt}
                   className="w-full text-left px-4 py-2.5 transition-colors hover:opacity-70"

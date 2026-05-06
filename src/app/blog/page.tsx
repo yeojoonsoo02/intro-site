@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { BLOG_POSTS } from '@/features/blog/posts';
+import { safeJsonLd } from '@/lib/seo-utils';
 
 const SITE_URL = 'https://yeojoonsoo02.com';
 
@@ -52,7 +53,7 @@ export default function BlogIndex() {
     <main className="max-w-2xl mx-auto px-4 sm:px-6 py-10">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogListSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(blogListSchema) }}
       />
 
       <header className="mb-10">

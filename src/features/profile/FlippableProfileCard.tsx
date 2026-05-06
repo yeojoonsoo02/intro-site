@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import dynamic from 'next/dynamic';
 import ProfileCardContent from './ProfileCardContent';
 import useCardFlip from './useCardFlip';
-import { useAdminAuth } from '@/features/admin/useAdminAuth';
+import { useAuth } from '@/lib/AuthProvider';
 
 const ProfileEditForm = dynamic(() => import('./ProfileEditForm'), {
   ssr: false,
@@ -25,7 +25,7 @@ interface Props {
 }
 
 export default function FlippableProfileCard({ onAngleChange }: Props) {
-  const { isAuthenticated: isAdmin } = useAdminAuth();
+  const { isAdmin } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [devProfile, setDevProfile] = useState<Profile | null>(null);
   const { i18n, t } = useTranslation();

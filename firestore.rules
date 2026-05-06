@@ -24,14 +24,17 @@ service cloud.firestore {
         && request.auth.token.email == "yeojoonsoo02@gmail.com";
     }
 
-    // Comments: public read, authenticated create with validation
+    // Comments: public read, authenticated create with validation, admin delete
+    // (이전엔 delete: false 였으나 클라이언트 UI에서 관리자 삭제가 작동하지 않아 일치시킴)
     match /comments/{doc} {
       allow read: if true;
       allow create: if request.auth != null
         && request.resource.data.text is string
         && request.resource.data.text.size() > 0
         && request.resource.data.text.size() < 1000;
-      allow update, delete: if false;
+      allow delete: if request.auth != null
+        && request.auth.token.email == "yeojoonsoo02@gmail.com";
+      allow update: if false;
     }
 
     // Visitor counter: 누구나 읽기 가능하나 쓰기는 "정확히 1씩 증가"만 허용.

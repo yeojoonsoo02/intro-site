@@ -103,6 +103,24 @@ function logSideEffect(context: string, err: unknown) {
 
 const MAX_MESSAGE_LENGTH = 2000
 
+// fallback Gemini API 호스트 화이트리스트 — env 오설정 시 임의 호스트로 SSRF 차단
+const ALLOWED_FALLBACK_HOSTS = new Set<string>([
+  'gemini-api-565729687872.asia-northeast3.run.app',
+])
+
+function resolveFallbackUrl(): string | null {
+  const url = process.env.GEMINI_API_FALLBACK_URL
+  if (!url) return null
+  try {
+    const parsed = new URL(url)
+    if (parsed.protocol !== 'https:') return null
+    if (!ALLOWED_FALLBACK_HOSTS.has(parsed.hostname)) return null
+    return parsed.toString()
+  } catch {
+    return null
+  }
+}
+
 // --- Bot detection ---
 const BOT_UA_PATTERNS = /bot|crawl|spider|scrape|headless|phantom|selenium|puppeteer|playwright|wget|curl|httpie|python-requests|node-fetch|axios|go-http|java\//i
 
@@ -138,7 +156,8 @@ export async function POST(req: NextRequest) {
   const body = await req.json()
   const message = body.message || body.prompt
   const userInfo = sanitizeUserInfo(body.userInfo)
-  const isLoggedIn = !!(userInfo && typeof userInfo === 'object' && 'email' in userInfo && userInfo.email)
+  const email = userInfo?.email
+  const isLoggedIn = typeof email === 'string' && email.length > 0
 
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
   const rateLimit = await checkRateLimit(ip, isLoggedIn)
@@ -161,10 +180,10 @@ export async function POST(req: NextRequest) {
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
     // Forward to external server with RAG context.
-    // 환경변수 미설정 시에는 외부 fallback URL 없이 명시적 실패로 처리 (MITM·예상 밖 엔드포인트 호출 방지).
-    const url = process.env.NEXT_PUBLIC_GEMINI_API_URL
+    // GEMINI_API_FALLBACK_URL은 서버 전용 + 호스트 화이트리스트 검증으로 SSRF 차단.
+    const url = resolveFallbackUrl()
     if (!url) {
-      console.error('Gemini API not configured: GEMINI_API_KEY or NEXT_PUBLIC_GEMINI_API_URL required')
+      console.error('Gemini API not configured: GEMINI_API_KEY missing and no allowed GEMINI_API_FALLBACK_URL')
       return NextResponse.json({ error: 'Service unavailable' }, { status: 503 })
     }
 

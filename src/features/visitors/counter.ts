@@ -20,5 +20,6 @@ export async function incrementVisitCount(callback?: (count: number) => void) {
     if (callback) callback(count);
   } catch (err) {
     console.error('👀 방문자 수 업데이트 실패:', err);
+    if (callback) callback(0);
   }
 }

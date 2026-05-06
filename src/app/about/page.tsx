@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { DEFAULT_PROFILES } from '@/features/profile/defaultProfiles';
+import { safeJsonLd } from '@/lib/seo-utils';
 
 const SITE_URL = 'https://yeojoonsoo02.com';
 
@@ -40,7 +41,7 @@ export default function AboutPage() {
     <main className="max-w-2xl mx-auto px-4 sm:px-6 py-10">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutPageSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(aboutPageSchema) }}
       />
 
       <header className="mb-10">

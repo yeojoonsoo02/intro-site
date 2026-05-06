@@ -1,4 +1,5 @@
 import { FEATURED_FAQ } from '@/data/faq';
+import { safeJsonLd } from '@/lib/seo-utils';
 
 const SITE_URL = 'https://yeojoonsoo02.com';
 const SITE_CREATED = '2026-02-28';
@@ -130,19 +131,19 @@ export default function JsonLd() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(profilePageSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(profilePageSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(websiteSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(faqSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
       />
     </>
   );
