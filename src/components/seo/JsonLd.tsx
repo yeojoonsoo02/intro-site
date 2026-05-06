@@ -46,7 +46,7 @@ const personEntity = {
     { '@type': 'PropertyValue', propertyID: 'github', value: 'yeojoonsoo02' },
     { '@type': 'PropertyValue', propertyID: 'domain', value: 'yeojoonsoo02.com' },
   ],
-  knowsLanguage: ['ko'],
+  knowsLanguage: ['ko', 'en', 'ja', 'zh', 'es', 'fr', 'de', 'pt', 'ru'],
   knowsAbout: ['프론트엔드 개발', 'AI 연구', '음악', '여행'],
   address: {
     '@type': 'PostalAddress',
@@ -90,7 +90,17 @@ const websiteSchema = {
   name: '여준수 | 자기소개 사이트',
   alternateName: 'Yeojunsu Personal Site',
   url: SITE_URL,
-  inLanguage: ['ko-KR', 'en', 'ja-JP', 'zh-CN'],
+  inLanguage: [
+    'ko-KR',
+    'en',
+    'ja-JP',
+    'zh-CN',
+    'es-ES',
+    'fr-FR',
+    'de-DE',
+    'pt-BR',
+    'ru-RU',
+  ],
   author: { '@id': `${SITE_URL}#person` },
   copyrightHolder: { '@id': `${SITE_URL}#person` },
   potentialAction: {
