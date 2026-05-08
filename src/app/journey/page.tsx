@@ -27,12 +27,10 @@ export default function JourneyPage() {
           className="text-[0.7rem] uppercase tracking-[0.3em] mb-4"
           style={{ color: 'var(--muted)' }}
         >
-          Journey · 1 → now
+          Journey
         </p>
         <h1 className="text-4xl sm:text-6xl font-bold leading-[1.05] tracking-tight">
-          사진으로
-          <br />
-          지나온 시간.
+          시기별 사진.
         </h1>
         <p
           className="mt-6 max-w-md text-sm sm:text-base leading-relaxed pl-4"
@@ -41,8 +39,7 @@ export default function JourneyPage() {
             borderLeft: '3px solid var(--accent)',
           }}
         >
-          어린 시절부터 지금까지를 한 줄로 잇는 작은 기록.
-          시기마다 사진 한두 장과 짧은 메모를 남긴다.
+          어린 시절부터 지금까지의 사진을 시기별로 모았습니다.
         </p>
       </header>
 
