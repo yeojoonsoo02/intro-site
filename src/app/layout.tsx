@@ -81,6 +81,9 @@ export const metadata: Metadata = {
     languages: buildHreflangLanguages(),
   },
   verification: {
+    // 파일 방식 인증(google9174e807949ac6f5.html)을 메타 태그로 이중 보강.
+    // 파일을 정리해도 GSC가 메타 태그로 fallback할 수 있도록.
+    google: "9174e807949ac6f5",
     other: {
       "naver-site-verification": "5adb43fad5cb5127cf287096d862f052ae1dd921",
     },
