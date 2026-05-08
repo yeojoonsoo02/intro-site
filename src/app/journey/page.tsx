@@ -19,17 +19,17 @@ export const metadata: Metadata = {
 export default function JourneyPage() {
   return (
     <main
-      className="max-w-5xl mx-auto px-4 sm:px-8 py-12 sm:py-20"
+      className="max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-16"
       style={{ color: 'var(--foreground)' }}
     >
-      <header className="mb-16 sm:mb-24">
+      <header className="mb-12 sm:mb-16">
         <p
           className="text-[0.7rem] uppercase tracking-[0.3em] mb-4"
           style={{ color: 'var(--muted)' }}
         >
           Journey
         </p>
-        <h1 className="text-4xl sm:text-6xl font-bold leading-[1.05] tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-bold leading-[1.1] tracking-tight">
           시기별 사진.
         </h1>
         <p
@@ -46,7 +46,7 @@ export default function JourneyPage() {
       <JourneyGallery />
 
       <footer
-        className="mt-24 pt-6 text-sm flex justify-between"
+        className="mt-16 pt-6 text-sm flex justify-between"
         style={{ borderTop: '1px solid var(--border)' }}
       >
         <Link href="/" className="underline-offset-4 hover:underline">
