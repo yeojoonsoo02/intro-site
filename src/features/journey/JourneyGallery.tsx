@@ -4,7 +4,7 @@ import { JOURNEY_ITEMS, type JourneyItem } from './journey.data';
 function Era({ children }: { children: React.ReactNode }) {
   return (
     <span
-      className="block text-[0.7rem] uppercase tracking-[0.25em] mb-3"
+      className="block text-xs uppercase tracking-[0.25em] mb-3"
       style={{ color: 'var(--muted)' }}
     >
       {children}
@@ -12,10 +12,22 @@ function Era({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Heading({ children }: { children: React.ReactNode }) {
+function Heading({
+  children,
+  size = 'md',
+}: {
+  children: React.ReactNode;
+  size?: 'md' | 'lg' | 'xl';
+}) {
+  const cls =
+    size === 'xl'
+      ? 'text-3xl sm:text-5xl'
+      : size === 'lg'
+      ? 'text-2xl sm:text-4xl'
+      : 'text-xl sm:text-2xl';
   return (
     <h2
-      className="font-bold leading-tight tracking-tight"
+      className={`font-bold leading-tight tracking-tight ${cls}`}
       style={{ color: 'var(--foreground)' }}
     >
       {children}
@@ -26,8 +38,8 @@ function Heading({ children }: { children: React.ReactNode }) {
 function Caption({ children }: { children: React.ReactNode }) {
   return (
     <p
-      className="mt-4 text-sm sm:text-base leading-relaxed pl-4"
-      style={{ color: 'var(--muted)', borderLeft: '2px solid var(--accent)' }}
+      className="mt-4 text-base leading-relaxed pl-4"
+      style={{ color: 'var(--foreground)', borderLeft: '2px solid var(--accent)' }}
     >
       {children}
     </p>
@@ -37,7 +49,7 @@ function Caption({ children }: { children: React.ReactNode }) {
 function DuoPortrait({ item }: { item: JourneyItem }) {
   return (
     <section className="grid grid-cols-12 gap-4 sm:gap-6">
-      <figure className="col-span-12 sm:col-span-7 relative aspect-[3/4] overflow-hidden rounded-md">
+      <figure className="col-span-12 sm:col-span-7 relative aspect-[3/4] overflow-hidden">
         <Image
           src={item.photos[0]}
           alt={item.alts[0]}
@@ -48,12 +60,10 @@ function DuoPortrait({ item }: { item: JourneyItem }) {
       </figure>
       <div className="col-span-12 sm:col-span-5 flex flex-col">
         <Era>{item.era}</Era>
-        <Heading>
-          <span className="text-2xl sm:text-3xl">{item.label}</span>
-        </Heading>
+        <Heading size="lg">{item.label}</Heading>
         <Caption>{item.caption}</Caption>
         {item.photos[1] && (
-          <figure className="mt-5 relative aspect-[3/4] overflow-hidden rounded-md max-w-[220px]">
+          <figure className="mt-5 relative aspect-[3/4] overflow-hidden max-w-[220px]">
             <Image
               src={item.photos[1]}
               alt={item.alts[1] ?? item.alts[0]}
@@ -72,10 +82,8 @@ function WideCinematic({ item }: { item: JourneyItem }) {
   return (
     <section>
       <Era>{item.era}</Era>
-      <Heading>
-        <span className="text-3xl sm:text-5xl">{item.label}</span>
-      </Heading>
-      <figure className="mt-6 relative aspect-[16/10] overflow-hidden rounded-md">
+      <Heading size="xl">{item.label}</Heading>
+      <figure className="mt-6 relative aspect-[16/10] overflow-hidden">
         <Image
           src={item.photos[0]}
           alt={item.alts[0]}
@@ -98,7 +106,7 @@ function SidePhoto({
 }) {
   const photo = (
     <figure
-      className={`col-span-12 sm:col-span-6 relative aspect-[4/5] overflow-hidden rounded-md ${
+      className={`col-span-12 sm:col-span-6 relative aspect-[4/5] overflow-hidden ${
         align === 'right' ? 'sm:col-start-7' : ''
       }`}
     >
@@ -118,9 +126,7 @@ function SidePhoto({
       }`}
     >
       <Era>{item.era}</Era>
-      <Heading>
-        <span className="text-2xl sm:text-4xl">{item.label}</span>
-      </Heading>
+      <Heading size="lg">{item.label}</Heading>
       <Caption>{item.caption}</Caption>
     </div>
   );
@@ -141,22 +147,37 @@ function SidePhoto({
   );
 }
 
-function BigNow({ item }: { item: JourneyItem }) {
+function AgeDisplay({ item }: { item: JourneyItem }) {
   return (
     <section className="grid grid-cols-12 gap-6 items-end">
-      <div className="col-span-12 sm:col-span-8">
+      <div className="col-span-12 sm:col-span-7">
         <Era>{item.era}</Era>
-        <Heading>
-          <span className="text-6xl sm:text-8xl">{item.label}</span>
-        </Heading>
+        <p
+          className="font-bold leading-[0.85] tracking-tight text-[7rem] sm:text-[12rem] tabular-nums"
+          style={{ color: 'var(--foreground)' }}
+        >
+          {item.ageDisplay}
+          <span
+            className="text-2xl sm:text-3xl font-medium ml-3 align-top"
+            style={{ color: 'var(--muted)' }}
+          >
+            세
+          </span>
+        </p>
+        <p
+          className="mt-3 text-lg sm:text-xl font-medium"
+          style={{ color: 'var(--foreground)' }}
+        >
+          {item.label}
+        </p>
         <Caption>{item.caption}</Caption>
       </div>
-      <figure className="col-span-12 sm:col-span-4 relative aspect-[4/5] overflow-hidden rounded-md">
+      <figure className="col-span-12 sm:col-span-5 relative aspect-[4/5] overflow-hidden">
         <Image
           src={item.photos[0]}
           alt={item.alts[0]}
           fill
-          sizes="(min-width: 640px) 30vw, 100vw"
+          sizes="(min-width: 640px) 40vw, 100vw"
           className="object-cover"
         />
       </figure>
@@ -174,20 +195,20 @@ function renderItem(item: JourneyItem) {
       return <SidePhoto item={item} align="left" />;
     case 'side-photo-right':
       return <SidePhoto item={item} align="right" />;
-    case 'big-now':
-      return <BigNow item={item} />;
+    case 'age-display':
+      return <AgeDisplay item={item} />;
   }
 }
 
 export default function JourneyGallery() {
   return (
-    <div className="space-y-20 sm:space-y-28">
+    <div className="space-y-16 sm:space-y-20">
       {JOURNEY_ITEMS.map((item, idx) => (
         <div key={item.id} className="relative">
           {idx > 0 && (
             <div
               aria-hidden="true"
-              className="absolute -top-10 sm:-top-14 left-0 right-0 flex items-center gap-3"
+              className="absolute -top-8 sm:-top-10 left-0 right-0 flex items-center gap-3"
             >
               <span
                 className="h-px flex-1"
@@ -197,7 +218,7 @@ export default function JourneyGallery() {
                 className="text-[0.65rem] tabular-nums"
                 style={{ color: 'var(--muted)' }}
               >
-                {String(idx + 1).padStart(2, '0')}
+                {String(idx + 1).padStart(2, '0')} / {String(JOURNEY_ITEMS.length).padStart(2, '0')}
               </span>
             </div>
           )}
