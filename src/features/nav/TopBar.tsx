@@ -110,11 +110,39 @@ export default function TopBar() {
               {/* ── 탐색 ── */}
               <div className="py-1">
                 <Link
+                  href="/about"
+                  onClick={closeMenu}
+                  className="w-full text-left px-4 py-2.5 transition-colors hover:opacity-70 block"
+                >
+                  {t('about')}
+                </Link>
+                <Link
+                  href="/journey"
+                  onClick={closeMenu}
+                  className="w-full text-left px-4 py-2.5 transition-colors hover:opacity-70 block"
+                >
+                  {t('journey')}
+                </Link>
+                <Link
                   href="/portfolio"
                   onClick={closeMenu}
                   className="w-full text-left px-4 py-2.5 transition-colors hover:opacity-70 block"
                 >
                   {t('portfolio')}
+                </Link>
+                <Link
+                  href="/blog"
+                  onClick={closeMenu}
+                  className="w-full text-left px-4 py-2.5 transition-colors hover:opacity-70 block"
+                >
+                  {t('blog')}
+                </Link>
+                <Link
+                  href="/faq"
+                  onClick={closeMenu}
+                  className="w-full text-left px-4 py-2.5 transition-colors hover:opacity-70 block"
+                >
+                  {t('faq')}
                 </Link>
                 <button
                   onClick={togglePrompt}

@@ -31,10 +31,10 @@
   "deleteItem": "항목 삭제",
   "addItem": "항목 추가",
   "introPlaceholder": "소개 (여러 줄 입력 가능)",
-  "regionPlaceholder": "거주 지역"
-  ,"feedbackMessage": "방문해 주셔서 감사합니다! 댓글로 간단한 의견과 피드백을 남겨 주세요."
-  ,"goToComments": "댓글 남기기"
-  ,"viewProfile": "프로필 보기",
+  "regionPlaceholder": "거주 지역",
+  "feedbackMessage": "방문해 주셔서 감사합니다! 댓글로 간단한 의견과 피드백을 남겨 주세요.",
+  "goToComments": "댓글 남기기",
+  "viewProfile": "프로필 보기",
   "chatInvite": "AI 준수와 대화하기",
   "hideConversation": "대화 숨기기",
   "showConversation": "대화 보기",
@@ -42,100 +42,103 @@
   "flipCard": "카드 뒤집기",
   "remaining": "남은 질문 횟수: {{count}}",
   "typing": "작성 중",
-  "noQuestionsLeft": "남은 질문 횟수가 없습니다. 내일 다시 시도하세요."
-  ,"aiDisclaimer": "AI가 부정확하거나 오해의 소지가 있는 정보를 제공할 수 있습니다."
-  ,"themeSystem": "시스템 테마"
-  ,"themeDark": "다크 모드"
-  ,"themeLight": "라이트 모드"
-  ,"theme": "테마"
-  ,"deleteComment": "댓글 삭제"
-,"errorOccurred": "오류가 발생했습니다. 잠시 후 다시 시도해주세요."
-,"welcomeUser": "{{name}}님, 환영합니다"
-,"goHome": "홈으로 돌아가기"
-,"user": "사용자"
-,"swipeHint": "← 밀어서 개발자 프로필 보기 →"
-,"suggestQ1": "지금 어디야?"
-,"suggestQ2": "취미가 뭐야?"
-,"suggestQ3": "좋아하는 음식은?"
-,"suggestQ4": "요즘 뭐 하고 지내?"
-,"portfolio": "포트폴리오"
-,"projects": "프로젝트"
-,"skills": "기술 스택"
-,"timeline": "경력"
-,"contact": "연락처"
-,"adminDashboard": "관리자 대시보드"
-,"addProject": "프로젝트 추가"
-,"projectTitle": "프로젝트명"
-,"projectDesc": "프로젝트 설명"
-,"thumbnailUrl": "썸네일 URL"
-,"liveUrl": "라이브 URL"
-,"repoUrl": "저장소 URL"
-,"tags": "태그 (쉼표 구분)"
-,"featured": "대표"
-,"addCategory": "카테고리 추가"
-,"addSkill": "기술 추가"
-,"skillName": "기술명"
-,"skillLevel": "숙련도"
-,"categoryName": "카테고리명"
-,"addTimeline": "경력 추가"
-,"year": "기간"
-,"timelineTitle": "제목"
-,"timelineDesc": "설명"
-,"timelineType": "유형"
-,"work": "직장"
-,"education": "학력"
-,"project": "프로젝트"
-,"etc": "기타"
-,"save": "저장"
-,"saved": "저장됨"
-,"headline": "제목"
-,"subline": "부제목"
-,"hero": "히어로"
-,"confirmDelete": "정말 삭제하시겠습니까?"
-,"noProjects": "등록된 프로젝트가 없습니다."
-,"noSkills": "등록된 기술이 없습니다."
-,"noTimeline": "등록된 경력이 없습니다."
-,"viewLive": "사이트 보기"
-,"viewRepo": "코드 보기"
-,"about": "소개"
-,"allProjects": "전체"
-,"skillPrimary": "주력"
-,"skillExperienced": "경험"
-,"skillLearning": "학습 중"
-,"loginForMore": "로그인하면 더 많이 질문할 수 있어요"
-,"loginToComment": "로그인하고 댓글 남기기"
-,"loginToView": "로그인하고 상세 보기"
-,"certifications": "자격증 · 수상"
-,"noCertifications": "등록된 자격증이 없습니다."
-,"addCertification": "자격증 추가"
-,"certName": "자격증/수상명"
-,"certIssuer": "발급기관"
-,"certDate": "취득일"
-,"certUrl": "증빙 URL"
-,"testimonials": "고객 후기"
-,"noTestimonials": "등록된 후기가 없습니다."
-,"addTestimonial": "후기 추가"
-,"testimonialName": "이름"
-,"testimonialRole": "역할/회사"
-,"testimonialContent": "후기 내용"
-,"educationSection": "학력"
-,"noEducation": "등록된 학력이 없습니다."
-,"addEducation": "학력 추가"
-,"eduSchool": "학교명"
-,"eduMajor": "전공"
-,"eduPeriod": "기간"
-,"eduGpa": "학점"
-,"eduDesc": "설명"
-,"githubActivity": "GitHub 활동"
-,"blogPosts": "최근 블로그 글"
-,"readMore": "더 보기"
-,"downloadResume": "이력서 다���로드"
-,"projectDetail": "프로젝트 상세"
-,"techStack": "기술 스택"
-,"viewAllProjects": "전체 프로젝트 보기"
-,"recentProjects": "최근 프로젝트"
-,"goalsVision": "목표 & 비전"
-,"valuesMindet": "가치관"
-,"dailyRoutine": "하루 루틴"
-,"hobbiesInterests": "취미 & 관심사"
+  "noQuestionsLeft": "남은 질문 횟수가 없습니다. 내일 다시 시도하세요.",
+  "aiDisclaimer": "AI가 부정확하거나 오해의 소지가 있는 정보를 제공할 수 있습니다.",
+  "themeSystem": "시스템 테마",
+  "themeDark": "다크 모드",
+  "themeLight": "라이트 모드",
+  "theme": "테마",
+  "deleteComment": "댓글 삭제",
+  "errorOccurred": "오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+  "welcomeUser": "{{name}}님, 환영합니다",
+  "goHome": "홈으로 돌아가기",
+  "user": "사용자",
+  "swipeHint": "← 밀어서 개발자 프로필 보기 →",
+  "suggestQ1": "지금 어디야?",
+  "suggestQ2": "취미가 뭐야?",
+  "suggestQ3": "좋아하는 음식은?",
+  "suggestQ4": "요즘 뭐 하고 지내?",
+  "portfolio": "포트폴리오",
+  "projects": "프로젝트",
+  "skills": "기술 스택",
+  "timeline": "경력",
+  "contact": "연락처",
+  "adminDashboard": "관리자 대시보드",
+  "addProject": "프로젝트 추가",
+  "projectTitle": "프로젝트명",
+  "projectDesc": "프로젝트 설명",
+  "thumbnailUrl": "썸네일 URL",
+  "liveUrl": "라이브 URL",
+  "repoUrl": "저장소 URL",
+  "tags": "태그 (쉼표 구분)",
+  "featured": "대표",
+  "addCategory": "카테고리 추가",
+  "addSkill": "기술 추가",
+  "skillName": "기술명",
+  "skillLevel": "숙련도",
+  "categoryName": "카테고리명",
+  "addTimeline": "경력 추가",
+  "year": "기간",
+  "timelineTitle": "제목",
+  "timelineDesc": "설명",
+  "timelineType": "유형",
+  "work": "직장",
+  "education": "학력",
+  "project": "프로젝트",
+  "etc": "기타",
+  "save": "저장",
+  "saved": "저장됨",
+  "headline": "제목",
+  "subline": "부제목",
+  "hero": "히어로",
+  "confirmDelete": "정말 삭제하시겠습니까?",
+  "noProjects": "등록된 프로젝트가 없습니다.",
+  "noSkills": "등록된 기술이 없습니다.",
+  "noTimeline": "등록된 경력이 없습니다.",
+  "viewLive": "사이트 보기",
+  "viewRepo": "코드 보기",
+  "about": "소개",
+  "allProjects": "전체",
+  "skillPrimary": "주력",
+  "skillExperienced": "경험",
+  "skillLearning": "학습 중",
+  "loginForMore": "로그인하면 더 많이 질문할 수 있어요",
+  "loginToComment": "로그인하고 댓글 남기기",
+  "loginToView": "로그인하고 상세 보기",
+  "certifications": "자격증 · 수상",
+  "noCertifications": "등록된 자격증이 없습니다.",
+  "addCertification": "자격증 추가",
+  "certName": "자격증/수상명",
+  "certIssuer": "발급기관",
+  "certDate": "취득일",
+  "certUrl": "증빙 URL",
+  "testimonials": "고객 후기",
+  "noTestimonials": "등록된 후기가 없습니다.",
+  "addTestimonial": "후기 추가",
+  "testimonialName": "이름",
+  "testimonialRole": "역할/회사",
+  "testimonialContent": "후기 내용",
+  "educationSection": "학력",
+  "noEducation": "등록된 학력이 없습니다.",
+  "addEducation": "학력 추가",
+  "eduSchool": "학교명",
+  "eduMajor": "전공",
+  "eduPeriod": "기간",
+  "eduGpa": "학점",
+  "eduDesc": "설명",
+  "githubActivity": "GitHub 활동",
+  "blogPosts": "최근 블로그 글",
+  "readMore": "더 보기",
+  "downloadResume": "이력서 다���로드",
+  "projectDetail": "프로젝트 상세",
+  "techStack": "기술 스택",
+  "viewAllProjects": "전체 프로젝트 보기",
+  "recentProjects": "최근 프로젝트",
+  "goalsVision": "목표 & 비전",
+  "valuesMindet": "가치관",
+  "dailyRoutine": "하루 루틴",
+  "hobbiesInterests": "취미 & 관심사",
+  "faq": "자주 묻는 질문",
+  "journey": "여정",
+  "blog": "블로그"
 }

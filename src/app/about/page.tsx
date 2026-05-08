@@ -116,6 +116,16 @@ export default function AboutPage() {
           <h2 className="text-xl font-semibold mb-3">더 보기</h2>
           <ul className="list-disc ml-6 space-y-1 text-sm">
             <li>
+              <Link className="underline" href="/journey">
+                여정 — 나이별 사진
+              </Link>
+            </li>
+            <li>
+              <Link className="underline" href="/portfolio">
+                포트폴리오
+              </Link>
+            </li>
+            <li>
               <Link className="underline" href="/blog">
                 블로그
               </Link>

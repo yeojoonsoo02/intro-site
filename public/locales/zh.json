@@ -42,100 +42,103 @@
   "flipCard": "翻转卡片",
   "remaining": "剩余问题数: {{count}}",
   "typing": "输入中",
-  "noQuestionsLeft": "已无剩余提问次数，请明天再试。"
-  ,"aiDisclaimer": "AI 可能偶尔会提供不准确或具有误导性的信息。"
-  ,"theme": "主题"
-  ,"themeLight": "浅色模式"
-  ,"themeDark": "深色模式"
-  ,"themeSystem": "系统主题"
-  ,"deleteComment": "删除评论"
-,"errorOccurred": "发生错误，请稍后再试。"
-,"welcomeUser": "{{name}}，欢迎您"
-,"goHome": "返回首页"
-,"user": "用户"
-,"swipeHint": "← 滑动查看开发者简介 →"
-,"suggestQ1": "你现在在哪？"
-,"suggestQ2": "你的爱好是什么？"
-,"suggestQ3": "你喜欢什么食物？"
-,"suggestQ4": "最近在忙什么？"
-,"portfolio": "作品集"
-,"projects": "项目"
-,"skills": "技能"
-,"timeline": "经历"
-,"contact": "联系方式"
-,"adminDashboard": "管理员面板"
-,"addProject": "添加项目"
-,"projectTitle": "项目名称"
-,"projectDesc": "描述"
-,"thumbnailUrl": "缩略图URL"
-,"liveUrl": "在线URL"
-,"repoUrl": "仓库URL"
-,"tags": "标签（逗号分隔）"
-,"featured": "精选"
-,"addCategory": "添加类别"
-,"addSkill": "添加技能"
-,"skillName": "技能名称"
-,"skillLevel": "等级"
-,"categoryName": "类别名称"
-,"addTimeline": "添加经历"
-,"year": "时间"
-,"timelineTitle": "标题"
-,"timelineDesc": "描述"
-,"timelineType": "类型"
-,"work": "工作"
-,"education": "教育"
-,"project": "项目"
-,"etc": "其他"
-,"save": "保存"
-,"saved": "已保存"
-,"headline": "标题"
-,"subline": "副标题"
-,"hero": "主横幅"
-,"confirmDelete": "确定要删除吗？"
-,"noProjects": "暂无项目。"
-,"noSkills": "暂无技能。"
-,"noTimeline": "暂无经历。"
-,"viewLive": "查看网站"
-,"viewRepo": "查看代码"
-,"about": "简介"
-,"allProjects": "全部"
-,"skillPrimary": "主力"
-,"skillExperienced": "有经验"
-,"skillLearning": "学习中"
-,"loginForMore": "登录后可提更多问题"
-,"loginToComment": "登录后评论"
-,"loginToView": "登录查看详情"
-,"certifications": "资格证书·获奖"
-,"noCertifications": "暂无资格证书。"
-,"addCertification": "添加证书"
-,"certName": "证书/奖项名称"
-,"certIssuer": "颁发机构"
-,"certDate": "获取日期"
-,"certUrl": "证明URL"
-,"testimonials": "客户评价"
-,"noTestimonials": "暂无评价。"
-,"addTestimonial": "添加评价"
-,"testimonialName": "姓名"
-,"testimonialRole": "职位/公司"
-,"testimonialContent": "评价内容"
-,"educationSection": "学历"
-,"noEducation": "暂无学历信息。"
-,"addEducation": "添加学历"
-,"eduSchool": "学校名称"
-,"eduMajor": "专业"
-,"eduPeriod": "时间"
-,"eduGpa": "GPA"
-,"eduDesc": "描述"
-,"githubActivity": "GitHub活动"
-,"blogPosts": "最近博客文章"
-,"readMore": "查看更多"
-,"downloadResume": "下载简历"
-,"projectDetail": "项目详情"
-,"techStack": "技术栈"
-,"viewAllProjects": "查看全部项目"
-,"recentProjects": "最近项目"
-,"goalsVision": "目标与愿景"
-,"valuesMindet": "价值观"
-,"dailyRoutine": "日常习惯"
-,"hobbiesInterests": "爱好与兴趣"
+  "noQuestionsLeft": "已无剩余提问次数，请明天再试。",
+  "aiDisclaimer": "AI 可能偶尔会提供不准确或具有误导性的信息。",
+  "theme": "主题",
+  "themeLight": "浅色模式",
+  "themeDark": "深色模式",
+  "themeSystem": "系统主题",
+  "deleteComment": "删除评论",
+  "errorOccurred": "发生错误，请稍后再试。",
+  "welcomeUser": "{{name}}，欢迎您",
+  "goHome": "返回首页",
+  "user": "用户",
+  "swipeHint": "← 滑动查看开发者简介 →",
+  "suggestQ1": "你现在在哪？",
+  "suggestQ2": "你的爱好是什么？",
+  "suggestQ3": "你喜欢什么食物？",
+  "suggestQ4": "最近在忙什么？",
+  "portfolio": "作品集",
+  "projects": "项目",
+  "skills": "技能",
+  "timeline": "经历",
+  "contact": "联系方式",
+  "adminDashboard": "管理员面板",
+  "addProject": "添加项目",
+  "projectTitle": "项目名称",
+  "projectDesc": "描述",
+  "thumbnailUrl": "缩略图URL",
+  "liveUrl": "在线URL",
+  "repoUrl": "仓库URL",
+  "tags": "标签（逗号分隔）",
+  "featured": "精选",
+  "addCategory": "添加类别",
+  "addSkill": "添加技能",
+  "skillName": "技能名称",
+  "skillLevel": "等级",
+  "categoryName": "类别名称",
+  "addTimeline": "添加经历",
+  "year": "时间",
+  "timelineTitle": "标题",
+  "timelineDesc": "描述",
+  "timelineType": "类型",
+  "work": "工作",
+  "education": "教育",
+  "project": "项目",
+  "etc": "其他",
+  "save": "保存",
+  "saved": "已保存",
+  "headline": "标题",
+  "subline": "副标题",
+  "hero": "主横幅",
+  "confirmDelete": "确定要删除吗？",
+  "noProjects": "暂无项目。",
+  "noSkills": "暂无技能。",
+  "noTimeline": "暂无经历。",
+  "viewLive": "查看网站",
+  "viewRepo": "查看代码",
+  "about": "简介",
+  "allProjects": "全部",
+  "skillPrimary": "主力",
+  "skillExperienced": "有经验",
+  "skillLearning": "学习中",
+  "loginForMore": "登录后可提更多问题",
+  "loginToComment": "登录后评论",
+  "loginToView": "登录查看详情",
+  "certifications": "资格证书·获奖",
+  "noCertifications": "暂无资格证书。",
+  "addCertification": "添加证书",
+  "certName": "证书/奖项名称",
+  "certIssuer": "颁发机构",
+  "certDate": "获取日期",
+  "certUrl": "证明URL",
+  "testimonials": "客户评价",
+  "noTestimonials": "暂无评价。",
+  "addTestimonial": "添加评价",
+  "testimonialName": "姓名",
+  "testimonialRole": "职位/公司",
+  "testimonialContent": "评价内容",
+  "educationSection": "学历",
+  "noEducation": "暂无学历信息。",
+  "addEducation": "添加学历",
+  "eduSchool": "学校名称",
+  "eduMajor": "专业",
+  "eduPeriod": "时间",
+  "eduGpa": "GPA",
+  "eduDesc": "描述",
+  "githubActivity": "GitHub活动",
+  "blogPosts": "最近博客文章",
+  "readMore": "查看更多",
+  "downloadResume": "下载简历",
+  "projectDetail": "项目详情",
+  "techStack": "技术栈",
+  "viewAllProjects": "查看全部项目",
+  "recentProjects": "最近项目",
+  "goalsVision": "目标与愿景",
+  "valuesMindet": "价值观",
+  "dailyRoutine": "日常习惯",
+  "hobbiesInterests": "爱好与兴趣",
+  "faq": "常见问题",
+  "journey": "历程",
+  "blog": "博客"
 }
