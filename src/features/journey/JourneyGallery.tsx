@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { JOURNEY_ITEMS, type JourneyItem } from './journey.data';
+import RevealOnScroll from './RevealOnScroll';
 
 function Era({ children }: { children: React.ReactNode }) {
   return (
@@ -46,32 +47,60 @@ function Caption({ children }: { children: React.ReactNode }) {
   );
 }
 
+/** 사진 한 장 — group hover로 미세 줌, sizes 정확히 부여 */
+function Photo({
+  src,
+  alt,
+  aspect,
+  sizes,
+}: {
+  src: string;
+  alt: string;
+  aspect: string;
+  sizes: string;
+}) {
+  return (
+    <figure
+      className={`relative ${aspect} overflow-hidden group`}
+      style={{ background: 'var(--border)' }}
+    >
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes={sizes}
+        className="object-cover transition-transform duration-[700ms] ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+      />
+    </figure>
+  );
+}
+
 function DuoPortrait({ item }: { item: JourneyItem }) {
   return (
-    <section className="grid grid-cols-12 gap-3 sm:gap-4">
-      <figure className="col-span-7 relative aspect-[4/5] overflow-hidden">
-        <Image
+    <section className="grid grid-cols-12 gap-3 sm:gap-5">
+      <RevealOnScroll variant="bloom" className="col-span-7">
+        <Photo
           src={item.photos[0]}
           alt={item.alts[0]}
-          fill
-          sizes="(min-width: 640px) 360px, 60vw"
-          className="object-cover"
+          aspect="aspect-[4/5]"
+          sizes="(min-width: 768px) 420px, 60vw"
         />
-      </figure>
+      </RevealOnScroll>
       <div className="col-span-5 flex flex-col">
-        <Era>{item.era}</Era>
-        <Heading>{item.label}</Heading>
-        <Caption>{item.caption}</Caption>
+        <RevealOnScroll delay={120}>
+          <Era>{item.era}</Era>
+          <Heading>{item.label}</Heading>
+          <Caption>{item.caption}</Caption>
+        </RevealOnScroll>
         {item.photos[1] && (
-          <figure className="mt-3 relative aspect-[4/5] overflow-hidden">
-            <Image
+          <RevealOnScroll variant="bloom" delay={220} className="mt-3">
+            <Photo
               src={item.photos[1]}
               alt={item.alts[1] ?? item.alts[0]}
-              fill
-              sizes="(min-width: 640px) 220px, 40vw"
-              className="object-cover"
+              aspect="aspect-[4/5]"
+              sizes="(min-width: 768px) 220px, 40vw"
             />
-          </figure>
+          </RevealOnScroll>
         )}
       </div>
     </section>
@@ -81,18 +110,21 @@ function DuoPortrait({ item }: { item: JourneyItem }) {
 function WideCinematic({ item }: { item: JourneyItem }) {
   return (
     <section>
-      <Era>{item.era}</Era>
-      <Heading size="lg">{item.label}</Heading>
-      <figure className="mt-3 relative aspect-[16/9] overflow-hidden">
-        <Image
+      <RevealOnScroll>
+        <Era>{item.era}</Era>
+        <Heading size="lg">{item.label}</Heading>
+      </RevealOnScroll>
+      <RevealOnScroll variant="bloom" delay={120} className="mt-3">
+        <Photo
           src={item.photos[0]}
           alt={item.alts[0]}
-          fill
-          sizes="(min-width: 640px) 600px, 100vw"
-          className="object-cover"
+          aspect="aspect-[16/9]"
+          sizes="(min-width: 768px) 720px, 100vw"
         />
-      </figure>
-      <Caption>{item.caption}</Caption>
+      </RevealOnScroll>
+      <RevealOnScroll delay={240}>
+        <Caption>{item.caption}</Caption>
+      </RevealOnScroll>
     </section>
   );
 }
@@ -105,22 +137,21 @@ function SidePhoto({
   align: 'left' | 'right';
 }) {
   const photo = (
-    <figure
-      className={`col-span-6 relative aspect-square overflow-hidden ${
-        align === 'right' ? 'sm:col-start-7' : ''
-      }`}
+    <RevealOnScroll
+      variant="bloom"
+      className={`col-span-6 ${align === 'right' ? 'sm:col-start-7' : ''}`}
     >
-      <Image
+      <Photo
         src={item.photos[0]}
         alt={item.alts[0]}
-        fill
-        sizes="(min-width: 640px) 300px, 50vw"
-        className="object-cover"
+        aspect="aspect-square"
+        sizes="(min-width: 768px) 360px, 50vw"
       />
-    </figure>
+    </RevealOnScroll>
   );
   const text = (
-    <div
+    <RevealOnScroll
+      delay={140}
       className={`col-span-6 flex flex-col justify-center ${
         align === 'right' ? 'sm:col-start-1 sm:row-start-1' : ''
       }`}
@@ -128,10 +159,10 @@ function SidePhoto({
       <Era>{item.era}</Era>
       <Heading>{item.label}</Heading>
       <Caption>{item.caption}</Caption>
-    </div>
+    </RevealOnScroll>
   );
   return (
-    <section className="grid grid-cols-12 gap-4 sm:gap-5 items-center">
+    <section className="grid grid-cols-12 gap-4 sm:gap-6 items-center">
       {align === 'left' ? (
         <>
           {photo}
@@ -150,7 +181,7 @@ function SidePhoto({
 function AgeDisplay({ item }: { item: JourneyItem }) {
   return (
     <section className="grid grid-cols-12 gap-4 items-end">
-      <div className="col-span-7">
+      <RevealOnScroll className="col-span-7">
         <Era>{item.era}</Era>
         <p
           className="font-bold leading-[0.85] tracking-tight text-7xl sm:text-8xl tabular-nums"
@@ -171,16 +202,15 @@ function AgeDisplay({ item }: { item: JourneyItem }) {
           {item.label}
         </p>
         <Caption>{item.caption}</Caption>
-      </div>
-      <figure className="col-span-5 relative aspect-square overflow-hidden">
-        <Image
+      </RevealOnScroll>
+      <RevealOnScroll variant="bloom" delay={140} className="col-span-5">
+        <Photo
           src={item.photos[0]}
           alt={item.alts[0]}
-          fill
-          sizes="(min-width: 640px) 240px, 40vw"
-          className="object-cover"
+          aspect="aspect-square"
+          sizes="(min-width: 768px) 280px, 40vw"
         />
-      </figure>
+      </RevealOnScroll>
     </section>
   );
 }
@@ -202,25 +232,27 @@ function renderItem(item: JourneyItem) {
 
 export default function JourneyGallery() {
   return (
-    <div className="space-y-12 sm:space-y-14">
+    <div className="space-y-12 sm:space-y-16">
       {JOURNEY_ITEMS.map((item, idx) => (
         <div key={item.id} className="relative">
           {idx > 0 && (
-            <div
-              aria-hidden="true"
-              className="absolute -top-6 sm:-top-7 left-0 right-0 flex items-center gap-3"
-            >
-              <span
-                className="h-px flex-1"
-                style={{ background: 'var(--border)' }}
-              />
-              <span
-                className="text-[0.6rem] tabular-nums"
-                style={{ color: 'var(--muted)' }}
+            <RevealOnScroll>
+              <div
+                aria-hidden="true"
+                className="absolute -top-6 sm:-top-8 left-0 right-0 flex items-center gap-3"
               >
-                {String(idx + 1).padStart(2, '0')} / {String(JOURNEY_ITEMS.length).padStart(2, '0')}
-              </span>
-            </div>
+                <span
+                  className="h-px flex-1"
+                  style={{ background: 'var(--border)' }}
+                />
+                <span
+                  className="text-[0.6rem] tabular-nums"
+                  style={{ color: 'var(--muted)' }}
+                >
+                  {String(idx + 1).padStart(2, '0')} / {String(JOURNEY_ITEMS.length).padStart(2, '0')}
+                </span>
+              </div>
+            </RevealOnScroll>
           )}
           {renderItem(item)}
         </div>
