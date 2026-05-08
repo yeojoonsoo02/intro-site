@@ -1,31 +1,19 @@
 // FlippableProfileCard.tsx
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Profile } from './profile.model';
-import {
-  fetchProfile,
-  saveProfile,
-  fetchDevProfile,
-  saveDevProfile,
-} from './profile.api';
+import { fetchProfile, fetchDevProfile } from './profile.api';
 import { DEFAULT_PROFILES } from './defaultProfiles';
 import { useTranslation } from 'react-i18next';
-import dynamic from 'next/dynamic';
 import ProfileCardContent from './ProfileCardContent';
 import useCardFlip from './useCardFlip';
-import { useAuth } from '@/lib/AuthProvider';
-
-const ProfileEditForm = dynamic(() => import('./ProfileEditForm'), {
-  ssr: false,
-});
 
 interface Props {
   onAngleChange?: (angle: number) => void;
 }
 
 export default function FlippableProfileCard({ onAngleChange }: Props) {
-  const { isAdmin } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [devProfile, setDevProfile] = useState<Profile | null>(null);
   const { i18n, t } = useTranslation();
@@ -81,18 +69,6 @@ export default function FlippableProfileCard({ onAngleChange }: Props) {
     };
   }, [profile, devProfile]);
 
-  const handleProfileChange = useCallback(async (next: Profile) => {
-    setProfile(next);
-    const currentLang = i18n.language || 'en';
-    await saveProfile(next, currentLang);
-  }, [i18n.language]);
-
-  const handleDevProfileChange = useCallback(async (next: Profile) => {
-    setDevProfile(next);
-    const currentLang = i18n.language || 'en';
-    await saveDevProfile(next, currentLang);
-  }, [i18n.language]);
-
   return (
     <section
       className="max-w-[600px] mx-auto mt-4 sm:mt-8 md:mt-10 mb-4 sm:mb-8 px-3 sm:px-4 relative select-none z-10"
@@ -113,18 +89,7 @@ export default function FlippableProfileCard({ onAngleChange }: Props) {
           style={{ backfaceVisibility: 'hidden', transform: 'rotateY(0deg)' }}
           ref={frontRef}
         >
-          {profile && (
-            <>
-              <ProfileCardContent profile={profile} isDev={false} />
-              {isAdmin && (
-                <ProfileEditForm
-                  profile={profile}
-                  onChange={handleProfileChange}
-                  label="hobbies"
-                />
-              )}
-            </>
-          )}
+          {profile && <ProfileCardContent profile={profile} isDev={false} />}
         </div>
 
         <div
@@ -132,18 +97,7 @@ export default function FlippableProfileCard({ onAngleChange }: Props) {
           style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
           ref={backRef}
         >
-          {devProfile && (
-            <>
-              <ProfileCardContent profile={devProfile} isDev />
-              {isAdmin && (
-                <ProfileEditForm
-                  profile={devProfile}
-                  onChange={handleDevProfileChange}
-                  label="mainSkills"
-                />
-              )}
-            </>
-          )}
+          {devProfile && <ProfileCardContent profile={devProfile} isDev />}
         </div>
       </div>
     </section>
