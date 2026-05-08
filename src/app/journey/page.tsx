@@ -19,33 +19,44 @@ export const metadata: Metadata = {
 export default function JourneyPage() {
   return (
     <main
-      className="max-w-4xl mx-auto px-4 sm:px-8 py-12 sm:py-16"
+      className="max-w-5xl mx-auto px-4 sm:px-8 py-12 sm:py-20"
       style={{ color: 'var(--foreground)' }}
     >
-      <header className="mb-10 sm:mb-12">
-        <h1 className="text-3xl sm:text-4xl font-bold leading-tight">
-          사진으로 지나온 시간
+      <header className="mb-16 sm:mb-24">
+        <p
+          className="text-[0.7rem] uppercase tracking-[0.3em] mb-4"
+          style={{ color: 'var(--muted)' }}
+        >
+          Journey · 1 → now
+        </p>
+        <h1 className="text-4xl sm:text-6xl font-bold leading-[1.05] tracking-tight">
+          사진으로
+          <br />
+          지나온 시간.
         </h1>
         <p
-          className="mt-4 max-w-xl text-sm sm:text-base leading-relaxed pl-4"
+          className="mt-6 max-w-md text-sm sm:text-base leading-relaxed pl-4"
           style={{
             color: 'var(--muted)',
             borderLeft: '3px solid var(--accent)',
           }}
         >
-          어린 시절부터 지금까지의 기록을 한 자리에 모으는 중입니다.
-          각 카드에는 시기별 사진과 짧은 설명이 채워집니다.
+          어린 시절부터 지금까지를 한 줄로 잇는 작은 기록.
+          시기마다 사진 한두 장과 짧은 메모를 남긴다.
         </p>
       </header>
 
       <JourneyGallery />
 
       <footer
-        className="mt-16 pt-6 text-sm"
+        className="mt-24 pt-6 text-sm flex justify-between"
         style={{ borderTop: '1px solid var(--border)' }}
       >
         <Link href="/" className="underline-offset-4 hover:underline">
           ← 홈으로
+        </Link>
+        <Link href="/about" className="underline-offset-4 hover:underline">
+          소개 →
         </Link>
       </footer>
     </main>
