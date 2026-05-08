@@ -36,8 +36,7 @@ const personEntity = {
   },
   email: 'mailto:yeojoonsoo02@gmail.com',
   jobTitle: '대학생 개발자',
-  description:
-    '대학생 개발자 여준수. 여가 시간에는 새로운 기술을 탐구하고 개인 프로젝트를 진행하는 것을 좋아합니다.',
+  description: '대학생 개발자 여준수.',
   // 동명이인 구분 — 공식 사이트·GitHub 계정으로 이 인물을 특정
   disambiguatingDescription:
     '공식 사이트 yeojoonsoo02.com 과 GitHub 계정 github.com/yeojoonsoo02 를 운영하는 대학생 개발자 여준수(Yeojunsu)입니다. 같은 이름의 다른 인물과는 무관합니다.',
@@ -46,8 +45,10 @@ const personEntity = {
     { '@type': 'PropertyValue', propertyID: 'github', value: 'yeojoonsoo02' },
     { '@type': 'PropertyValue', propertyID: 'domain', value: 'yeojoonsoo02.com' },
   ],
-  knowsLanguage: ['ko', 'en', 'ja', 'zh', 'es', 'fr', 'de', 'pt', 'ru'],
-  knowsAbout: ['프론트엔드 개발', 'AI 연구', '음악', '여행'],
+  // 본인이 실제 구사하는 언어. 사이트 자체의 다국어 라우팅(WebSite.inLanguage 9개)과 구분.
+  knowsLanguage: ['ko'],
+  // 홈 카드 Firestore에 직접 입력된 본인 관심사와 동기화.
+  knowsAbout: ['수영', '탁구', '독서', '체스'],
   address: {
     '@type': 'PostalAddress',
     addressRegion: 'Seoul',

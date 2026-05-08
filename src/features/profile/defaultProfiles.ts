@@ -1,17 +1,16 @@
 import type { Profile } from './profile.model';
 
-// Language-specific default profiles with translated content
+// Language-specific default profiles.
+// 관심사·인트로는 본인 직접 입력값(홈 카드의 Firestore 데이터)과 일치하도록 유지.
+// 다국어 번역은 짧은 사실 한 줄로 통일 — 검증되지 않은 일반 문구를 박지 않음.
 export const DEFAULT_PROFILES: Record<string, Profile> = {
   en: {
     name: 'Yeojunsu',
     tagline: 'Student Developer',
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
-    interests: ['Frontend development', 'AI research', 'Music', 'Travel'],
-    intro: [
-      "Hi, I'm Junsu, a college student and developer.",
-      'In my free time I enjoy exploring new technologies and working on personal projects.',
-    ],
+    interests: ['Swimming', 'Table tennis', 'Reading', 'Chess'],
+    intro: ['Student developer.'],
     region: 'Nowon-gu Wolgyedong, Seoul, South Korea',
   },
   ko: {
@@ -19,11 +18,8 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     tagline: '대학생 개발자',
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
-    interests: ['프론트엔드 개발', 'AI 연구', '음악', '여행'],
-    intro: [
-      '안녕하세요, 저는 대학생 개발자 준수입니다.',
-      '여가 시간에는 새로운 기술을 탐구하고 개인 프로젝트를 진행하는 것을 좋아합니다.',
-    ],
+    interests: ['수영', '탁구', '독서', '체스'],
+    intro: ['대학생 개발자입니다.'],
     region: '서울 노원구 월계동',
   },
   ja: {
@@ -31,11 +27,8 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     tagline: '大学生開発者',
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
-    interests: ['フロントエンド開発', 'AI研究', '音楽', '旅行'],
-    intro: [
-      'こんにちは、私は大学生開発者のジュンスです。',
-      '余暇には新しい技術を探求し、個人プロジェクトに取り組むことを楽しんでいます。',
-    ],
+    interests: ['水泳', '卓球', '読書', 'チェス'],
+    intro: ['大学生開発者です。'],
     region: 'ソウル蘆原区月渓洞, 韓国',
   },
   zh: {
@@ -43,11 +36,8 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     tagline: '大学生开发者',
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
-    interests: ['前端开发', '人工智能研究', '音乐', '旅行'],
-    intro: [
-      '你好，我是大学生开发者俊秀。',
-      '在空闲时间，我喜欢探索新技术并从事个人项目。',
-    ],
+    interests: ['游泳', '乒乓球', '阅读', '国际象棋'],
+    intro: ['大学生开发者。'],
     region: '首尔芦原区月桂洞，韩国',
   },
   es: {
@@ -55,11 +45,8 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     tagline: 'Estudiante desarrollador',
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
-    interests: ['Desarrollo Frontend', 'Investigación en IA', 'Música', 'Viajes'],
-    intro: [
-      'Hola, soy Junsu, un estudiante desarrollador.',
-      'En mi tiempo libre disfruto explorando nuevas tecnologías y trabajando en proyectos personales.',
-    ],
+    interests: ['Natación', 'Tenis de mesa', 'Lectura', 'Ajedrez'],
+    intro: ['Estudiante desarrollador.'],
     region: 'Seúl, Corea del Sur',
   },
   fr: {
@@ -67,11 +54,8 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     tagline: 'Étudiant développeur',
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
-    interests: ['Développement Frontend', 'Recherche en IA', 'Musique', 'Voyage'],
-    intro: [
-      "Bonjour, je suis Junsu, étudiant développeur.",
-      "Pendant mon temps libre, j'aime explorer de nouvelles technologies et travailler sur des projets personnels.",
-    ],
+    interests: ['Natation', 'Tennis de table', 'Lecture', 'Échecs'],
+    intro: ['Étudiant développeur.'],
     region: 'Séoul, Corée du Sud',
   },
   de: {
@@ -79,11 +63,8 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     tagline: 'Studentischer Entwickler',
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
-    interests: ['Frontend-Entwicklung', 'KI-Forschung', 'Musik', 'Reisen'],
-    intro: [
-      'Hallo, ich bin Junsu, ein studentischer Entwickler.',
-      'In meiner Freizeit erkunde ich gerne neue Technologien und arbeite an persönlichen Projekten.',
-    ],
+    interests: ['Schwimmen', 'Tischtennis', 'Lesen', 'Schach'],
+    intro: ['Studentischer Entwickler.'],
     region: 'Seoul, Südkorea',
   },
   pt: {
@@ -91,11 +72,8 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     tagline: 'Estudante desenvolvedor',
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
-    interests: ['Desenvolvimento Frontend', 'Pesquisa em IA', 'Música', 'Viagens'],
-    intro: [
-      'Olá, sou Junsu, um estudante desenvolvedor.',
-      'No meu tempo livre gosto de explorar novas tecnologias e trabalhar em projetos pessoais.',
-    ],
+    interests: ['Natação', 'Tênis de mesa', 'Leitura', 'Xadrez'],
+    intro: ['Estudante desenvolvedor.'],
     region: 'Seul, Coreia do Sul',
   },
   ru: {
@@ -103,11 +81,8 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     tagline: 'Студент-разработчик',
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
-    interests: ['Фронтенд-разработка', 'Исследование ИИ', 'Музыка', 'Путешествия'],
-    intro: [
-      'Здравствуйте, я Чунсу, студент-разработчик.',
-      'В свободное время я люблю изучать новые технологии и работать над личными проектами.',
-    ],
+    interests: ['Плавание', 'Настольный теннис', 'Чтение', 'Шахматы'],
+    intro: ['Студент-разработчик.'],
     region: 'Сеул, Южная Корея',
   },
 };

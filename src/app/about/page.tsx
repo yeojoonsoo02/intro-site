@@ -51,7 +51,7 @@ export default function AboutPage() {
           <a className="underline" href="https://yeojoonsoo02.com">
             yeojoonsoo02.com
           </a>{' '}
-          이며, 외식업·예술 분야의 동명이인과는 다른 인물입니다.
+          입니다. 같은 이름의 다른 인물과는 무관합니다.
         </p>
       </header>
 
