@@ -69,13 +69,13 @@ export const JOURNEY_ITEMS: JourneyItem[] = [
     layout: 'wide-cinematic',
   },
   {
-    id: 'twenty-one-id',
+    id: 'nineteen-id',
     label: '증명사진',
-    era: '21세',
-    ageDisplay: '21',
+    era: '19세',
+    ageDisplay: '19',
     caption: '검정 티셔츠, 정면.',
     photos: ['/journey/07-now.jpg'],
-    alts: ['검정 티셔츠를 입고 정면을 응시하는 21세의 여준수'],
+    alts: ['검정 티셔츠를 입고 정면을 응시하는 19세의 여준수'],
     layout: 'age-display',
   },
   {
