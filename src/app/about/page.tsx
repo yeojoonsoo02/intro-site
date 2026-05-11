@@ -34,6 +34,33 @@ const aboutPageSchema = {
   },
 };
 
+const HUB_LINKS = [
+  {
+    href: '/journey',
+    title: 'Journey',
+    label: '여정',
+    desc: '시기별 사진으로 보는 시간의 흐름',
+  },
+  {
+    href: '/portfolio',
+    title: 'Portfolio',
+    label: '포트폴리오',
+    desc: '프로젝트와 만든 것들',
+  },
+  {
+    href: '/blog',
+    title: 'Blog',
+    label: '블로그',
+    desc: '글과 회고',
+  },
+  {
+    href: '/faq',
+    title: 'FAQ',
+    label: '자주 묻는 질문',
+    desc: '자주 들어오는 질문 모음',
+  },
+] as const;
+
 export default function AboutPage() {
   const profile = DEFAULT_PROFILES.ko;
 
@@ -69,7 +96,7 @@ export default function AboutPage() {
         </p>
       </aside>
 
-      <section className="facts space-y-8">
+      <section className="facts space-y-10">
         <div>
           <h2 className="text-xl font-semibold mb-3">기본 정보</h2>
           <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
@@ -102,6 +129,44 @@ export default function AboutPage() {
           </dl>
         </div>
 
+        {/* 페이지 중반 — 깊은 페이지로의 허브 카드 그리드 */}
+        <div>
+          <h2 className="text-xl font-semibold mb-4">더 알고 싶다면</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {HUB_LINKS.map((it) => (
+              <Link
+                key={it.href}
+                href={it.href}
+                className="group relative block rounded-lg border p-4 transition-colors hover:border-gray-400 dark:hover:border-gray-500"
+                style={{
+                  borderColor: 'var(--border)',
+                  background: 'var(--card-bg)',
+                }}
+              >
+                <p
+                  className="text-[0.65rem] uppercase tracking-[0.2em] mb-1.5"
+                  style={{ color: 'var(--muted)' }}
+                >
+                  {it.title}
+                </p>
+                <p className="font-semibold text-sm mb-1 flex items-center gap-1.5">
+                  {it.label}
+                  <span
+                    aria-hidden="true"
+                    className="inline-block text-xs transition-transform duration-200 group-hover:translate-x-0.5"
+                    style={{ color: 'var(--muted)' }}
+                  >
+                    →
+                  </span>
+                </p>
+                <p className="text-xs leading-relaxed" style={{ color: 'var(--muted)' }}>
+                  {it.desc}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </div>
+
         <div>
           <h2 className="text-xl font-semibold mb-3">관심사</h2>
           <ul className="list-disc ml-6 space-y-1 text-sm">
@@ -109,37 +174,6 @@ export default function AboutPage() {
               const label = typeof it === 'string' ? it : it.label;
               return <li key={label}>{label}</li>;
             })}
-          </ul>
-        </div>
-
-        <div>
-          <h2 className="text-xl font-semibold mb-3">더 보기</h2>
-          <ul className="list-disc ml-6 space-y-1 text-sm">
-            <li>
-              <Link className="underline" href="/journey">
-                여정 — 나이별 사진
-              </Link>
-            </li>
-            <li>
-              <Link className="underline" href="/portfolio">
-                포트폴리오
-              </Link>
-            </li>
-            <li>
-              <Link className="underline" href="/blog">
-                블로그
-              </Link>
-            </li>
-            <li>
-              <Link className="underline" href="/faq">
-                자주 묻는 질문
-              </Link>
-            </li>
-            <li>
-              <Link className="underline" href="/">
-                홈 (프로필 카드)
-              </Link>
-            </li>
           </ul>
         </div>
       </section>
