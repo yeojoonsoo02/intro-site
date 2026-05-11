@@ -88,8 +88,7 @@ export default function SEOProfile({ lang = 'ko' }: SEOProfileProps) {
         width={800}
         height={800}
         loading="eager"
-        // @ts-expect-error fetchPriority는 React 타입에 아직 없지만 HTML 표준이라 동작함
-        fetchpriority="high"
+        fetchPriority="high"
       />
       {profile.intro?.map((line, i) => (
         <p key={i}>{line}</p>

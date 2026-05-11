@@ -115,8 +115,7 @@ export default async function RootLayout({
           rel="preload"
           as="image"
           href="/profile.jpg"
-          // @ts-expect-error fetchPriority는 next types에 아직 없지만 HTML 표준이라 동작함
-          fetchpriority="high"
+          fetchPriority="high"
         />
       </head>
       <body className="antialiased relative">
