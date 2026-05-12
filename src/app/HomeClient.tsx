@@ -15,7 +15,7 @@ export default function HomeClient() {
       </div>
 
       {/* Primary CTA — 더 알고 싶은 사람을 About 페이지로 자연스럽게 유도 */}
-      <div className="mt-7 flex flex-col items-center gap-3">
+      <div className="mt-8 flex justify-center">
         <Link
           href="/about"
           className="group inline-flex items-center gap-2 text-sm font-medium transition-opacity hover:opacity-70"
@@ -30,32 +30,9 @@ export default function HomeClient() {
           </span>
           <span className="sr-only">{t('about')}</span>
         </Link>
-
-        {/* Secondary nav — 부가 페이지는 작게 */}
-        <nav
-          aria-label={t('about')}
-          className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-[0.7rem]"
-          style={{ color: 'var(--muted)' }}
-        >
-          <Link href="/journey" className="underline-offset-4 hover:underline">
-            {t('journey')}
-          </Link>
-          <span aria-hidden="true">·</span>
-          <Link href="/portfolio" className="underline-offset-4 hover:underline">
-            {t('portfolio')}
-          </Link>
-          <span aria-hidden="true">·</span>
-          <Link href="/blog" className="underline-offset-4 hover:underline">
-            {t('blog')}
-          </Link>
-          <span aria-hidden="true">·</span>
-          <Link href="/faq" className="underline-offset-4 hover:underline">
-            {t('faq')}
-          </Link>
-        </nav>
       </div>
 
-      <div className="pb-4 sm:pb-8 mt-4">
+      <div className="pb-4 sm:pb-8 mt-10">
         <VisitorCount />
       </div>
     </main>
