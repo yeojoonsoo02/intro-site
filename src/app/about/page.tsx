@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { DEFAULT_PROFILES } from '@/features/profile/defaultProfiles';
+import { BLOG_POSTS } from '@/features/blog/posts';
 import { safeJsonLd } from '@/lib/seo-utils';
 
 const SITE_URL = 'https://yeojoonsoo02.com';
@@ -34,7 +35,14 @@ const aboutPageSchema = {
   },
 };
 
-const HUB_LINKS = [
+interface HubLink {
+  href: string;
+  title: string;
+  label: string;
+  desc: string;
+}
+
+const ALL_HUB_LINKS: HubLink[] = [
   {
     href: '/journey',
     title: 'Journey',
@@ -45,7 +53,7 @@ const HUB_LINKS = [
     href: '/portfolio',
     title: 'Portfolio',
     label: '포트폴리오',
-    desc: '실제로 쓰이는 걸 만들고 싶어서 시작한 프로젝트들',
+    desc: '프로젝트와 활동 기록을 한곳에 모아둔 곳',
   },
   {
     href: '/blog',
@@ -59,10 +67,13 @@ const HUB_LINKS = [
     label: '자주 묻는 질문',
     desc: '"이거 혹시…" 싶은 질문들, 미리 모아뒀습니다',
   },
-] as const;
+];
 
 export default function AboutPage() {
   const profile = DEFAULT_PROFILES.ko;
+  const hubLinks = ALL_HUB_LINKS.filter(
+    (it) => it.href !== '/blog' || BLOG_POSTS.length > 0,
+  );
 
   return (
     <main className="max-w-2xl mx-auto px-4 sm:px-6 py-10">
@@ -79,7 +90,7 @@ export default function AboutPage() {
           className="summary mt-3 text-[0.95rem] sm:text-base leading-[1.7]"
           style={{ color: 'var(--muted)' }}
         >
-          대학생 개발자. 만드는 걸 좋아하고, 가끔 글도 씁니다.
+          대학생 개발자입니다. 여정·프로젝트·자주 받는 질문을 모아뒀어요.
         </p>
       </header>
 
@@ -87,7 +98,7 @@ export default function AboutPage() {
       <section className="mb-10 sm:mb-12" aria-label="더 파고들기">
         <h2 className="text-lg sm:text-xl font-semibold mb-4">더 파고들기</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {HUB_LINKS.map((it) => (
+          {hubLinks.map((it) => (
             <Link
               key={it.href}
               href={it.href}
