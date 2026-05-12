@@ -48,7 +48,8 @@ export default function FlippableProfileCard({ onAngleChange }: Props) {
     }
   }, []);
 
-  // Adjust container height based on content of both faces
+  // Adjust container height based on the currently visible face only,
+  // so the shorter front face doesn't leave empty space below.
   useEffect(() => {
     const container = containerRef.current;
     const front = frontRef.current;
@@ -56,8 +57,8 @@ export default function FlippableProfileCard({ onAngleChange }: Props) {
     if (!container || !front || !back) return;
 
     const updateHeight = () => {
-      const h = Math.max(front.offsetHeight, back.offsetHeight);
-      container.style.height = `${h}px`;
+      const visible = isFlipped ? back : front;
+      container.style.height = `${visible.offsetHeight}px`;
     };
 
     updateHeight();
@@ -67,11 +68,11 @@ export default function FlippableProfileCard({ onAngleChange }: Props) {
     return () => {
       ro.disconnect();
     };
-  }, [profile, devProfile]);
+  }, [profile, devProfile, isFlipped]);
 
   return (
     <section
-      className="max-w-[600px] mx-auto mt-4 sm:mt-8 md:mt-10 mb-4 sm:mb-8 px-3 sm:px-4 relative select-none z-10"
+      className="max-w-[600px] mx-auto mt-4 sm:mt-8 md:mt-10 mb-4 sm:mb-8 px-3 sm:px-4 relative select-none z-10 transition-[height] duration-300 ease-out"
       style={{ perspective: 1200, overflow: 'visible', touchAction: 'pan-y' }}
       {...pointerHandlers}
       ref={containerRef}
