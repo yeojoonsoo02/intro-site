@@ -74,15 +74,9 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
 
       <div className="w-12 h-[2px] mx-auto my-4 sm:my-5" style={{ background: "var(--border)" }} />
 
-      {/* 관심사 또는 기술 */}
-      <div className="w-full text-left mb-5 sm:mb-6">
-        <div
-          className="text-[0.8rem] sm:text-[0.85rem] font-bold tracking-wide mb-3"
-          style={{ color: "var(--muted)" }}
-        >
-          {isDev ? t('mainSkills') : t('hobbies')}
-        </div>
-        <div className="flex flex-wrap gap-2">
+      {/* 관심사 또는 기술 — chip 가운데 정렬, 라벨 없이 자체 형태로 의미 전달 */}
+      <div className="w-full mb-5 sm:mb-6">
+        <div className="flex flex-wrap justify-center gap-2">
           {profile.interests
             .map(item => {
               if (typeof item === 'string') {
@@ -118,7 +112,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
                     className={baseClass}
                     style={{
                       background: "color-mix(in srgb, var(--foreground) 8%, transparent)",
-                      color: "var(--muted)",
+                      color: "color-mix(in srgb, var(--foreground) 75%, transparent)",
                       border: "1px solid var(--border)",
                     }}
                   >
@@ -146,25 +140,20 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
         </div>
       </div>
 
-      {/* 소개 */}
-      <div className="w-full text-left mb-4 sm:mb-5">
-        <div
-          className="text-[0.8rem] sm:text-[0.85rem] font-bold tracking-wide mb-3"
-          style={{ color: "var(--muted)" }}
-        >
-          {t('introduction')}
-        </div>
-        <div
-          className="space-y-3 sm:space-y-4 text-[0.95rem] sm:text-[1.02rem] leading-[1.85] font-normal pl-4"
-          style={{
-            color: "var(--muted)",
-            borderLeft: "3px solid var(--accent, var(--primary))",
-          }}
-        >
-          {profile.intro.map((p, i) => (
-            <p key={i} className="break-keep whitespace-pre-wrap overflow-wrap-anywhere">{p}</p>
-          ))}
-        </div>
+      {/* 소개 — 라벨 제거, 문단별 border-left로 "리듬" 부여 */}
+      <div
+        className="w-full text-left mb-4 sm:mb-5 space-y-3 sm:space-y-4 text-[0.95rem] sm:text-[1.02rem] leading-[1.8] font-normal"
+        style={{ color: "color-mix(in srgb, var(--foreground) 78%, transparent)" }}
+      >
+        {profile.intro.map((p, i) => (
+          <p
+            key={i}
+            className="break-keep whitespace-pre-wrap overflow-wrap-anywhere pl-4"
+            style={{ borderLeft: "3px solid var(--accent, var(--primary))" }}
+          >
+            {p}
+          </p>
+        ))}
       </div>
 
       {/* 지역 */}
