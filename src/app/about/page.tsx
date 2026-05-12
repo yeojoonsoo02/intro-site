@@ -8,7 +8,7 @@ const SITE_URL = 'https://yeojoonsoo02.com';
 export const metadata: Metadata = {
   title: '여준수 (Yeojunsu) — 공식 소개 · About',
   description:
-    '대학생 개발자 여준수(Yeojunsu)의 공식 소개 페이지. 기본 정보, 관심사, 연락처를 확인할 수 있습니다.',
+    '대학생 개발자 여준수(Yeojunsu)의 공식 소개 페이지. 기본 정보, 관심사, 연락처를 확인할 수 있습니다. 같은 이름의 다른 인물과는 무관합니다.',
   keywords: ['여준수', 'Yeojunsu', '여준수 소개', '여준수 프로필', '대학생 개발자'],
   alternates: { canonical: `${SITE_URL}/about` },
   openGraph: {
@@ -39,25 +39,25 @@ const HUB_LINKS = [
     href: '/journey',
     title: 'Journey',
     label: '여정',
-    desc: '시기별 사진으로 보는 시간의 흐름',
+    desc: '어릴 때부터 지금까지, 사진으로 훑는 타임라인',
   },
   {
     href: '/portfolio',
     title: 'Portfolio',
     label: '포트폴리오',
-    desc: '프로젝트와 만든 것들',
+    desc: '실제로 쓰이는 걸 만들고 싶어서 시작한 프로젝트들',
   },
   {
     href: '/blog',
     title: 'Blog',
     label: '블로그',
-    desc: '글과 회고',
+    desc: '배운 것, 겪은 것, 그냥 써두고 싶었던 것',
   },
   {
     href: '/faq',
     title: 'FAQ',
     label: '자주 묻는 질문',
-    desc: '자주 들어오는 질문 모음',
+    desc: '"이거 혹시…" 싶은 질문들, 미리 모아뒀습니다',
   },
 ] as const;
 
@@ -71,116 +71,124 @@ export default function AboutPage() {
         dangerouslySetInnerHTML={{ __html: safeJsonLd(aboutPageSchema) }}
       />
 
-      <header className="mb-10">
-        <h1 className="text-3xl font-bold">여준수 (Yeojunsu) 공식 소개</h1>
-        <p className="summary mt-3 text-gray-600 dark:text-gray-400 leading-relaxed">
-          대학생 개발자 여준수(Yeojunsu)입니다. 공식 사이트는{' '}
-          <a className="underline" href="https://yeojoonsoo02.com">
-            yeojoonsoo02.com
-          </a>{' '}
-          입니다. 같은 이름의 다른 인물과는 무관합니다.
+      <header className="mb-8 sm:mb-10">
+        <h1 className="text-3xl sm:text-4xl font-bold leading-tight">
+          여준수입니다
+        </h1>
+        <p
+          className="summary mt-3 text-[0.95rem] sm:text-base leading-[1.7]"
+          style={{ color: 'var(--muted)' }}
+        >
+          대학생 개발자. 만드는 걸 좋아하고, 가끔 글도 씁니다.
         </p>
       </header>
 
-      <aside
-        role="doc-tip"
-        aria-label="한 문장 요약"
-        className="mb-10 rounded-lg border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-950/30 p-4 text-sm leading-relaxed"
-      >
-        <p className="font-semibold mb-1">TL;DR</p>
-        <p>
-          여준수(Yeojunsu)는 <strong>대학생 개발자</strong>입니다.
-          공식 사이트 <a className="underline" href="https://yeojoonsoo02.com">yeojoonsoo02.com</a>,
-          GitHub <a className="underline" href="https://github.com/yeojoonsoo02">@yeojoonsoo02</a>,
-          이메일 <a className="underline" href="mailto:yeojoonsoo02@gmail.com">yeojoonsoo02@gmail.com</a>.
-        </p>
-      </aside>
+      {/* Hub cards — 이 페이지의 핵심 액션. fold 안에 두기 위해 헤더 직후로 끌어올림 */}
+      <section className="mb-10 sm:mb-12" aria-label="더 파고들기">
+        <h2 className="text-lg sm:text-xl font-semibold mb-4">더 파고들기</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {HUB_LINKS.map((it) => (
+            <Link
+              key={it.href}
+              href={it.href}
+              className="group relative block rounded-lg border p-4 transition-colors"
+              style={{
+                borderColor: 'var(--border)',
+                background: 'var(--card-bg)',
+              }}
+            >
+              <p
+                className="text-[0.7rem] uppercase tracking-[0.18em] mb-1.5"
+                style={{ color: 'var(--muted)' }}
+              >
+                {it.title}
+              </p>
+              <p className="font-semibold text-sm mb-1 flex items-center gap-1.5">
+                {it.label}
+                <span
+                  aria-hidden="true"
+                  className="inline-block text-xs transition-transform duration-200 group-hover:translate-x-0.5"
+                  style={{ color: 'var(--muted)' }}
+                >
+                  →
+                </span>
+              </p>
+              <p
+                className="text-xs leading-relaxed"
+                style={{ color: 'var(--muted)' }}
+              >
+                {it.desc}
+              </p>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       <section className="facts space-y-10">
         <div>
-          <h2 className="text-xl font-semibold mb-3">기본 정보</h2>
-          <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
-            <dt className="text-gray-500">이름</dt>
+          <h2 className="text-lg sm:text-xl font-semibold mb-3">한 줄 요약</h2>
+          <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm leading-[1.7]">
+            <dt style={{ color: 'var(--muted)' }}>이름</dt>
             <dd>여준수 (한글) / Yeojunsu (영문)</dd>
-            <dt className="text-gray-500">다른 표기</dt>
+            <dt style={{ color: 'var(--muted)' }}>다른 표기</dt>
             <dd>ヨ・ジュンス · 余俊秀</dd>
-            <dt className="text-gray-500">직업</dt>
+            <dt style={{ color: 'var(--muted)' }}>직업</dt>
             <dd>{profile.tagline}</dd>
-            <dt className="text-gray-500">국적</dt>
+            <dt style={{ color: 'var(--muted)' }}>국적</dt>
             <dd>대한민국</dd>
-            <dt className="text-gray-500">이메일</dt>
+            <dt style={{ color: 'var(--muted)' }}>이메일</dt>
             <dd>
-              <a className="underline" href={`mailto:${profile.email}`}>
+              <a className="underline underline-offset-4" href={`mailto:${profile.email}`}>
                 {profile.email}
               </a>
             </dd>
-            <dt className="text-gray-500">공식 사이트</dt>
+            <dt style={{ color: 'var(--muted)' }}>공식 사이트</dt>
             <dd>
-              <a className="underline" href="https://yeojoonsoo02.com">
+              <a className="underline underline-offset-4" href="https://yeojoonsoo02.com">
                 yeojoonsoo02.com
               </a>
             </dd>
-            <dt className="text-gray-500">GitHub</dt>
+            <dt style={{ color: 'var(--muted)' }}>GitHub</dt>
             <dd>
-              <a className="underline" href="https://github.com/yeojoonsoo02">
+              <a className="underline underline-offset-4" href="https://github.com/yeojoonsoo02">
                 github.com/yeojoonsoo02
               </a>
             </dd>
           </dl>
         </div>
 
-        {/* 페이지 중반 — 깊은 페이지로의 허브 카드 그리드 */}
         <div>
-          <h2 className="text-xl font-semibold mb-4">더 알고 싶다면</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {HUB_LINKS.map((it) => (
-              <Link
-                key={it.href}
-                href={it.href}
-                className="group relative block rounded-lg border p-4 transition-colors hover:border-gray-400 dark:hover:border-gray-500"
-                style={{
-                  borderColor: 'var(--border)',
-                  background: 'var(--card-bg)',
-                }}
-              >
-                <p
-                  className="text-[0.65rem] uppercase tracking-[0.2em] mb-1.5"
-                  style={{ color: 'var(--muted)' }}
-                >
-                  {it.title}
-                </p>
-                <p className="font-semibold text-sm mb-1 flex items-center gap-1.5">
-                  {it.label}
-                  <span
-                    aria-hidden="true"
-                    className="inline-block text-xs transition-transform duration-200 group-hover:translate-x-0.5"
-                    style={{ color: 'var(--muted)' }}
-                  >
-                    →
-                  </span>
-                </p>
-                <p className="text-xs leading-relaxed" style={{ color: 'var(--muted)' }}>
-                  {it.desc}
-                </p>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <h2 className="text-xl font-semibold mb-3">관심사</h2>
-          <ul className="list-disc ml-6 space-y-1 text-sm">
+          <h2 className="text-lg sm:text-xl font-semibold mb-3">
+            요즘 빠져 있는 것들
+          </h2>
+          <div className="flex flex-wrap gap-2">
             {profile.interests.map((it) => {
               const label = typeof it === 'string' ? it : it.label;
-              return <li key={label}>{label}</li>;
+              return (
+                <span
+                  key={label}
+                  className="rounded-full px-3 py-1 text-[0.82rem] font-medium tracking-tight border"
+                  style={{
+                    background: 'color-mix(in srgb, var(--foreground) 8%, transparent)',
+                    color: 'color-mix(in srgb, var(--foreground) 75%, transparent)',
+                    borderColor: 'var(--border)',
+                  }}
+                >
+                  {label}
+                </span>
+              );
             })}
-          </ul>
+          </div>
         </div>
       </section>
 
-      <nav className="mt-14 text-sm">
-        <Link href="/" className="underline-offset-4 hover:underline">
-          ← 여준수 홈으로
+      <nav className="mt-12 sm:mt-14 text-sm">
+        <Link
+          href="/"
+          className="underline-offset-4 hover:underline"
+          style={{ color: 'var(--muted)' }}
+        >
+          ← 처음으로 돌아가기
         </Link>
       </nav>
     </main>
