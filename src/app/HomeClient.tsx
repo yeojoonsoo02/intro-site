@@ -15,7 +15,7 @@ export default function HomeClient() {
       </div>
 
       {/* Primary CTA — 더 알고 싶은 사람을 About 페이지로 자연스럽게 유도 */}
-      <div className="mt-8 flex justify-center">
+      <div className="mt-6 flex justify-center">
         <Link
           href="/about"
           className="group inline-flex items-center gap-2 text-sm font-medium transition-opacity hover:opacity-70"
@@ -32,7 +32,7 @@ export default function HomeClient() {
         </Link>
       </div>
 
-      <div className="pb-4 sm:pb-8 mt-10">
+      <div className="pb-4 sm:pb-8 mt-8">
         <VisitorCount />
       </div>
     </main>
