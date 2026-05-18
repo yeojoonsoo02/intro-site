@@ -86,6 +86,13 @@ export const metadata: Metadata = {
     google: "9174e807949ac6f5",
     other: {
       "naver-site-verification": "5adb43fad5cb5127cf287096d862f052ae1dd921",
+      // Bing/Yandex는 env에 값이 있을 때만 메타 태그 출력. 빈 메타 노출 방지.
+      ...(process.env.NEXT_PUBLIC_BING_VERIFICATION
+        ? { "msvalidate.01": process.env.NEXT_PUBLIC_BING_VERIFICATION }
+        : {}),
+      ...(process.env.NEXT_PUBLIC_YANDEX_VERIFICATION
+        ? { "yandex-verification": process.env.NEXT_PUBLIC_YANDEX_VERIFICATION }
+        : {}),
     },
   },
   category: "personal",
