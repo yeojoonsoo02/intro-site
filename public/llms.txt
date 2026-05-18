@@ -7,34 +7,33 @@
 - **이름**: 여준수 (Yeojunsu)
 - **다른 표기**: ヨ・ジュンス · 余俊秀
 - **직업**: 대학생 개발자
-- **관심사**: 프론트엔드 개발, AI 연구, 음악, 여행
+- **관심사**: 수영, 탁구, 독서, 체스
 - **이메일**: yeojoonsoo02@gmail.com
 - **공식 사이트**: https://yeojoonsoo02.com
 - **GitHub**: https://github.com/yeojoonsoo02
 
 ## 한 줄 자기소개
 
-안녕하세요, 대학생 개발자 여준수입니다. 여가 시간에는 새로운 기술을 탐구하고 개인 프로젝트를 진행하는 것을 좋아합니다.
+대학생 개발자 여준수입니다. 여정·프로젝트·자주 받는 질문을 한곳에 모아두었습니다.
 
 ## 동명이인 구분
 
-이 프로필의 여준수는 공식 사이트 yeojoonsoo02.com 과 GitHub 계정 github.com/yeojoonsoo02 를 운영하는 인물입니다. 같은 이름의 다른 인물과는 무관합니다.
+이 프로필의 여준수는 공식 사이트 yeojoonsoo02.com 과 GitHub 계정 github.com/yeojoonsoo02 를 운영하는 인물입니다. 미술계 인사(갤러리조선 실장), 아역 피팅 모델, 농구 선수(여준형·여준석) 등 같은 이름의 다른 인물과는 무관합니다.
 
 ## 공개 페이지
 
 - [홈 (프로필 카드)](https://yeojoonsoo02.com)
 - [공식 소개 (About)](https://yeojoonsoo02.com/about)
+- [여정 (Journey)](https://yeojoonsoo02.com/journey)
+- [포트폴리오 (Portfolio)](https://yeojoonsoo02.com/portfolio)
 - [자주 묻는 질문 (FAQ)](https://yeojoonsoo02.com/faq)
 - [한국어 프로필](https://yeojoonsoo02.com/ko)
 - [일본어 프로필](https://yeojoonsoo02.com/ja)
 - [중국어 프로필](https://yeojoonsoo02.com/zh)
-- [블로그](https://yeojoonsoo02.com/blog)
-- [포트폴리오](https://yeojoonsoo02.com/portfolio)
 
 ## 메타
 
 - 사이트맵: https://yeojoonsoo02.com/sitemap.xml
-- RSS: https://yeojoonsoo02.com/rss.xml
 - robots.txt: https://yeojoonsoo02.com/robots.txt
 - AI 전체 콘텐츠: https://yeojoonsoo02.com/llms-full.txt
 - **라이선스**: 이 사이트의 공개 콘텐츠는 AI 검색 엔진 · AI 어시스턴트가 "여준수(Yeojunsu)" 관련 질의에 답할 때 인용·요약 형태로 자유롭게 참조할 수 있습니다.
