@@ -26,7 +26,10 @@ function detectLang(pathname: string): Lang {
   if (pathname.startsWith('/de')) return 'de';
   if (pathname.startsWith('/pt')) return 'pt';
   if (pathname.startsWith('/ru')) return 'ru';
-  return 'en';
+  if (pathname.startsWith('/en')) return 'en';
+  // root('/')는 실제 노출 콘텐츠가 한국어(이름·자기소개·관심사)라 ko로 매핑.
+  // 검색엔진의 언어 시그널(html lang)과 콘텐츠를 일치시켜 색인 품질을 높임.
+  return 'ko';
 }
 
 export const metadata: Metadata = {

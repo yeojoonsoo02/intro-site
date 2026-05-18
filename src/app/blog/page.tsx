@@ -5,6 +5,9 @@ import { safeJsonLd } from '@/lib/seo-utils';
 
 const SITE_URL = 'https://yeojoonsoo02.com';
 
+// 글이 0개일 때는 thin content로 평가될 수 있어 noindex 처리. 글 추가되면 자동으로 색인 허용.
+const IS_EMPTY = BLOG_POSTS.length === 0;
+
 export const metadata: Metadata = {
   title: '여준수 블로그 — 개발·자기소개·회고',
   description:
@@ -26,6 +29,9 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/blog`,
     type: 'website',
   },
+  robots: IS_EMPTY
+    ? { index: false, follow: true, googleBot: { index: false, follow: true } }
+    : undefined,
 };
 
 export default function BlogIndex() {

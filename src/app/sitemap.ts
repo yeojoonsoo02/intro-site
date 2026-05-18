@@ -73,13 +73,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.8,
     },
-    {
+  ];
+
+  // 블로그가 비어있으면 /blog 자체를 sitemap에서 제외 — thin content 색인 요청 방지.
+  // 첫 글이 추가되는 순간 다시 노출됨.
+  if (BLOG_POSTS.length > 0) {
+    staticPages.push({
       url: `${SITE_URL}/blog`,
       lastModified: LAST_MOD,
       changeFrequency: 'weekly',
       priority: 0.9,
-    },
-  ];
+    });
+  }
 
   const posts: MetadataRoute.Sitemap = BLOG_POSTS.map((p) => ({
     url: `${SITE_URL}/blog/${p.slug}`,
