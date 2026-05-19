@@ -11,7 +11,7 @@ export default function ValuesSection({ items }: { items: ValueQuote[] }) {
   const sorted = [...items].sort((a, b) => a.order - b.order);
 
   return (
-    <SectionWrapper id="values" title={t('valuesMindet')}>
+    <SectionWrapper id="values" title={t('valuesMindset')}>
       <div className="space-y-4">
         {sorted.map((v) => (
           <blockquote

@@ -50,7 +50,12 @@ export async function GET(): Promise<NextResponse> {
 
     const res = await fetch(rssUrl, { next: { revalidate: 3600 } });
     if (!res.ok) {
-      return NextResponse.json({ posts: [] });
+      // 네트워크/RSS 측 실패는 503으로 명시. 빈 배열만 반환하면
+      // 클라이언트가 "글 없음"과 구분 못해 무한 재시도/오인을 유발함.
+      return NextResponse.json(
+        { posts: [], error: 'rss_unavailable' },
+        { status: 503 },
+      );
     }
 
     const xml = await res.text();
@@ -80,7 +85,11 @@ export async function GET(): Promise<NextResponse> {
     }
 
     return NextResponse.json({ posts });
-  } catch {
-    return NextResponse.json({ posts: [] });
+  } catch (err) {
+    console.error('blog RSS fetch error', err);
+    return NextResponse.json(
+      { posts: [], error: 'rss_fetch_failed' },
+      { status: 503 },
+    );
   }
 }

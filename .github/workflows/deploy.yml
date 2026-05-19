@@ -22,6 +22,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies (for type-check/lint)
+        run: npm ci --no-audit --prefer-offline
+
+      - name: Type check
+        run: npm run type-check
+
+      - name: Lint
+        run: npm run lint
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest

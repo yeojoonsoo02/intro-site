@@ -53,7 +53,13 @@ export function usePortfolioData(lang: string, isAdmin: boolean): UsePortfolioDa
     try {
       if (!isAdmin) {
         const res = await fetch(`/api/portfolio?lang=${lang}`);
-        if (!res.ok) throw new Error('API fetch failed');
+        if (!res.ok) {
+          // 5xx는 서버측 일시 장애, 4xx는 요청/권한 문제 — 사용자에게 다른 안내가 필요.
+          const msg = res.status >= 500
+            ? '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+            : '데이터를 불러올 수 없습니다.';
+          throw new Error(msg);
+        }
         const d = await res.json();
         setData({
           hero: d.hero ?? { headline: '', subline: '' },

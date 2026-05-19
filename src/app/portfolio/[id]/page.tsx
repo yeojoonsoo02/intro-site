@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/AuthProvider';
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Project } from '@/features/portfolio/portfolio.model';
 
 export default function ProjectDetailPage() {
@@ -165,10 +166,14 @@ export default function ProjectDetailPage() {
         {/* Thumbnail */}
         {project.thumbnail && (
           <div className="mb-10 rounded-xl overflow-hidden" style={{ border: '1px solid var(--border)' }}>
-            <img
+            <Image
               src={project.thumbnail}
-              alt={`${project.title} screenshot`}
-              className="w-full"
+              alt={`${project.title} 프로젝트 메인 이미지`}
+              width={1600}
+              height={900}
+              sizes="(max-width: 768px) 100vw, 768px"
+              className="w-full h-auto"
+              priority
             />
           </div>
         )}
