@@ -34,18 +34,18 @@ export default function FlippableProfileCard({ onAngleChange }: Props) {
     fetchDevProfile(currentLang).then(p => setDevProfile(p ?? DEFAULT_PROFILES[currentLang] ?? DEFAULT_PROFILES['en']));
   }, [i18n.language]);
 
-  // 마운트 시 1회만 흔들림 애니메이션 실행
+  // 마운트 시 1회만 흔들림 애니메이션 실행 (reduced-motion 사용자는 스킵)
   useEffect(() => {
-    if (innerRef.current) {
-      innerRef.current.animate(
-        [
-          { transform: 'rotateY(0deg)' },
-          { transform: 'rotateY(15deg)' },
-          { transform: 'rotateY(0deg)' },
-        ],
-        { duration: 800, easing: 'ease-in-out', delay: 500 }
-      );
-    }
+    if (!innerRef.current) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    innerRef.current.animate(
+      [
+        { transform: 'rotateY(0deg)' },
+        { transform: 'rotateY(15deg)' },
+        { transform: 'rotateY(0deg)' },
+      ],
+      { duration: 800, easing: 'ease-in-out', delay: 500 }
+    );
   }, []);
 
   // Adjust container height based on the currently visible face only,

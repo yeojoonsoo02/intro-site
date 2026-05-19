@@ -78,6 +78,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: DEFAULT_TITLE,
     description: DEFAULT_DESC,
+    site: "@yeojoonsoo02",
+    creator: "@yeojoonsoo02",
+    images: ["/opengraph-image"],
   },
   alternates: {
     canonical: SITE_URL,

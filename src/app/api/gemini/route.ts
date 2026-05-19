@@ -206,17 +206,20 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Invalid response from external API' }, { status: 502 })
       }
       const data = (await res.json()) as Record<string, unknown>
-      let reply = ((data.reply ?? data.text ?? '') as string).trim()
+      const rawReply = data.reply ?? data.text
+      let reply = typeof rawReply === 'string' ? rawReply.trim() : ''
       if (!reply) {
         reply = '음.. 그건 좀 대답하기 어렵네. 다른 거 물어봐!'
       }
+      const pickNumber = (v: unknown): number | undefined =>
+        typeof v === 'number' && Number.isFinite(v) ? v : undefined
       fireSideEffects(message, reply, userInfo)
       return NextResponse.json({
         reply,
-        remaining: data.remaining ?? data.count,
-        limit: data.limit,
-        used: data.used,
-        reset: data.reset,
+        remaining: pickNumber(data.remaining) ?? pickNumber(data.count),
+        limit: pickNumber(data.limit),
+        used: pickNumber(data.used),
+        reset: pickNumber(data.reset),
       })
     } catch (err) {
       console.error('Proxy error', err)
