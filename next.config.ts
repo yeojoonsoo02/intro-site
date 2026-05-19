@@ -11,6 +11,14 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
     NEXT_PUBLIC_FIREBASE_APP_ID: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   },
+  async redirects() {
+    return [
+      // 영어는 루트(`/`)가 정답. /en 직접 접속 시 404 대신 루트로 308 영구 이동.
+      // sitemap/hreflang은 영어를 yeojoonsoo02.com 으로 이미 매핑하고 있어 색인 안정성 유지.
+      { source: '/en', destination: '/', permanent: true },
+      { source: '/en/:path*', destination: '/:path*', permanent: true },
+    ];
+  },
   async headers() {
     return [
       {
