@@ -24,10 +24,12 @@ export default function LoginBlur({ children, fallbackHeight = 'auto' }: LoginBl
       >
         {children}
       </div>
-      <div className="absolute inset-0 flex items-center justify-center z-10">
+      {/* viewport에 고정해 스크롤 위치와 무관하게 항상 보이도록 처리.
+          LoginBlur는 로그인 시 unmount되므로 fixed 잔존 우려 없음. */}
+      <div className="fixed inset-x-0 top-1/3 z-30 flex justify-center px-4 pointer-events-none">
         <button
           onClick={() => login()}
-          className="px-5 py-2.5 rounded-xl text-sm font-medium shadow-lg transition-all hover:scale-105 backdrop-blur-sm"
+          className="pointer-events-auto px-5 py-2.5 rounded-xl text-sm font-medium shadow-lg transition-all hover:scale-105 backdrop-blur-sm"
           style={{
             background: 'var(--primary)',
             color: 'var(--primary-contrast)',
