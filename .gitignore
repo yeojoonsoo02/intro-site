@@ -44,6 +44,7 @@ next-env.d.ts
 # local test/debug artifacts
 /.playwright-mcp/
 /*.png
+/intro-site-questionnaire.*
 
 # claude code 세션 산출물 (글로벌)
 /.claude/
