@@ -47,6 +47,20 @@ function Caption({ children }: { children: React.ReactNode }) {
   );
 }
 
+function Reflection({ children }: { children: React.ReactNode }) {
+  return (
+    <p
+      className="mt-3 text-sm leading-[1.7] pl-3"
+      style={{
+        color: 'var(--foreground)',
+        borderLeft: '3px solid var(--accent, var(--primary))',
+      }}
+    >
+      {children}
+    </p>
+  );
+}
+
 /** 사진 한 장 — group hover로 미세 줌, sizes 정확히 부여 */
 function Photo({
   src,
@@ -91,6 +105,7 @@ function DuoPortrait({ item }: { item: JourneyItem }) {
           <Era>{item.era}</Era>
           <Heading>{item.label}</Heading>
           <Caption>{item.caption}</Caption>
+          {item.reflection && <Reflection>{item.reflection}</Reflection>}
         </RevealOnScroll>
         {item.photos[1] && (
           <RevealOnScroll variant="bloom" delay={220} className="mt-3">
@@ -124,6 +139,7 @@ function WideCinematic({ item }: { item: JourneyItem }) {
       </RevealOnScroll>
       <RevealOnScroll delay={240}>
         <Caption>{item.caption}</Caption>
+        {item.reflection && <Reflection>{item.reflection}</Reflection>}
       </RevealOnScroll>
     </section>
   );
@@ -159,6 +175,7 @@ function SidePhoto({
       <Era>{item.era}</Era>
       <Heading>{item.label}</Heading>
       <Caption>{item.caption}</Caption>
+      {item.reflection && <Reflection>{item.reflection}</Reflection>}
     </RevealOnScroll>
   );
   return (
@@ -202,6 +219,7 @@ function AgeDisplay({ item }: { item: JourneyItem }) {
           {item.label}
         </p>
         <Caption>{item.caption}</Caption>
+        {item.reflection && <Reflection>{item.reflection}</Reflection>}
       </RevealOnScroll>
       <RevealOnScroll variant="bloom" delay={140} className="col-span-5">
         <Photo

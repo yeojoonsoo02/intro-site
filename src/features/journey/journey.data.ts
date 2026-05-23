@@ -19,6 +19,8 @@ export interface JourneyItem {
   ageDisplay?: string;
   /** 사실 묘사 한 줄 */
   caption: string;
+  /** 본인이 회고한 의미 — "그때 그 시기가 나에게 어떤 의미였는지" 한 줄 */
+  reflection?: string;
   /** public/journey/*.jpg 경로 */
   photos: string[];
   alts: string[];
