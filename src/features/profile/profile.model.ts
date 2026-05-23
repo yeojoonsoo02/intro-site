@@ -13,4 +13,7 @@ export type Profile = {
   interests: Interest[];
   intro: string[];
   region: string;
+  motivation?: string;
+  values?: string[];
+  goal?: string;
 };

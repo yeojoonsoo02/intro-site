@@ -48,7 +48,20 @@ const personEntity = {
   // 본인이 실제 구사하는 언어. 사이트 자체의 다국어 라우팅(WebSite.inLanguage 9개)과 구분.
   knowsLanguage: ['ko'],
   // 홈 카드 Firestore에 직접 입력된 본인 관심사와 동기화.
-  knowsAbout: ['수영', '탁구', '독서', '체스'],
+  knowsAbout: [
+    '소프트웨어 개발',
+    '웹 개발',
+    '수영',
+    '탁구',
+    '독서',
+    '체스',
+  ],
+  // 1~2년 단기 목표 — 본인 답변(2026-05-22) 기반.
+  seeks: {
+    '@type': 'Demand',
+    name: '사용자가 있는 토이 프로젝트 출시',
+    description: '1~2년 안 단기 목표',
+  },
   address: {
     '@type': 'PostalAddress',
     addressRegion: 'Seoul',
