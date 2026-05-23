@@ -14,7 +14,6 @@ import PersonalInfoCard from './PersonalInfoCard';
 import GoalsSection from './GoalsSection';
 import ValuesSection from './ValuesSection';
 import HobbiesSection from './HobbiesSection';
-import LoginBlur from './LoginBlur';
 import { usePortfolioData } from './usePortfolioData';
 import { usePortfolioSave } from './usePortfolioSave';
 import { SUPPORTED_LANGS } from '@/lib/i18n-config';
@@ -81,8 +80,8 @@ function PortfolioSections({ data, isAdmin, setData, t }: {
     </>
   );
 
-  if (isAdmin) return sections;
-  return <LoginBlur>{sections}</LoginBlur>;
+  // 목록·요약·태그까지는 공개 — 프로젝트 회고 상세(/portfolio/[id])에서만 로그인 게이트.
+  return sections;
 }
 
 export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolean }) {
