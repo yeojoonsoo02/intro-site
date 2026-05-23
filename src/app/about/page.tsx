@@ -136,6 +136,32 @@ export default function AboutPage() {
       </section>
 
       <section className="facts space-y-10">
+        {(profile.motivation || profile.values?.length || profile.goal) && (
+          <div>
+            <h2 className="text-lg sm:text-xl font-semibold mb-3">왜 / 무엇을 / 어디로</h2>
+            <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm leading-[1.7]">
+              {profile.motivation && (
+                <>
+                  <dt style={{ color: 'var(--muted)' }}>왜</dt>
+                  <dd>{profile.motivation}</dd>
+                </>
+              )}
+              {profile.values && profile.values.length > 0 && (
+                <>
+                  <dt style={{ color: 'var(--muted)' }}>가치</dt>
+                  <dd>{profile.values.join(' · ')}</dd>
+                </>
+              )}
+              {profile.goal && (
+                <>
+                  <dt style={{ color: 'var(--muted)' }}>1~2년</dt>
+                  <dd>{profile.goal}</dd>
+                </>
+              )}
+            </dl>
+          </div>
+        )}
+
         <div>
           <h2 className="text-lg sm:text-xl font-semibold mb-3">한 줄 요약</h2>
           <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm leading-[1.7]">
@@ -145,6 +171,8 @@ export default function AboutPage() {
             <dd>ヨ・ジュンス · 余俊秀</dd>
             <dt style={{ color: 'var(--muted)' }}>직업</dt>
             <dd>{profile.tagline}</dd>
+            <dt style={{ color: 'var(--muted)' }}>학력</dt>
+            <dd>컴퓨터공학 · 소프트웨어 전공 · 3학년 재학</dd>
             <dt style={{ color: 'var(--muted)' }}>국적</dt>
             <dd>대한민국</dd>
             <dt style={{ color: 'var(--muted)' }}>이메일</dt>
