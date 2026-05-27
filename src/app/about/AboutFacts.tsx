@@ -56,7 +56,7 @@ function SummaryFacts({ profile }: { profile: Profile }): JSX.Element {
         <dt style={mutedStyle}>직업</dt>
         <dd>{profile.tagline}</dd>
         <dt style={mutedStyle}>학력</dt>
-        <dd>컴퓨터공학 · 소프트웨어 전공 · 3학년 재학</dd>
+        <dd>광운대학교 소프트웨어학과 · 컴퓨터공학 전공 · 3학년 재학</dd>
         <dt style={mutedStyle}>국적</dt>
         <dd>대한민국</dd>
         <dt style={mutedStyle}>이메일</dt>

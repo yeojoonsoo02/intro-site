@@ -44,6 +44,12 @@ export const personEntity = {
   knowsLanguage: ['ko'],
   // 홈 카드 Firestore에 직접 입력된 본인 관심사와 동기화.
   knowsAbout: ['소프트웨어 개발', '웹 개발', '수영', '탁구', '독서', '체스'],
+  alumniOf: {
+    '@type': 'CollegeOrUniversity',
+    name: '광운대학교',
+    department: '소프트웨어학과',
+    url: 'https://www.kw.ac.kr/',
+  },
   // 1~2년 단기 목표 — 본인 답변(2026-05-22) 기반.
   seeks: {
     '@type': 'Demand',
