@@ -117,12 +117,6 @@ export default async function RootLayout({
     <html lang={lang} suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        <link
-          rel="alternate"
-          type="application/rss+xml"
-          title="여준수 블로그 RSS"
-          href="/rss.xml"
-        />
         {/* LCP 이미지(프로필 사진) preload — 초기 렌더 지연 감소 */}
         <link
           rel="preload"

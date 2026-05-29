@@ -26,7 +26,6 @@
 - [공식 소개 (About)](https://yeojoonsoo02.com/about)
 - [여정 (Journey)](https://yeojoonsoo02.com/journey)
 - [포트폴리오 (Portfolio)](https://yeojoonsoo02.com/portfolio)
-- [자주 묻는 질문 (FAQ)](https://yeojoonsoo02.com/faq)
 - [한국어 프로필](https://yeojoonsoo02.com/ko)
 - [일본어 프로필](https://yeojoonsoo02.com/ja)
 - [중국어 프로필](https://yeojoonsoo02.com/zh)

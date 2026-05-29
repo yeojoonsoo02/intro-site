@@ -87,7 +87,6 @@
   "testimonials": "クライアントレビュー",
   "educationSection": "学歴",
   "githubActivity": "GitHub活動",
-  "blogPosts": "最近のブログ記事",
   "projectDetail": "プロジェクト詳細",
   "techStack": "技術スタック",
   "viewAllProjects": "全プロジェクトを見る",
@@ -96,8 +95,6 @@
   "valuesMindset": "価値観",
   "dailyRoutine": "一日のルーティン",
   "hobbiesInterests": "趣味 & 興味",
-  "faq": "よくある質問",
   "journey": "軌跡",
-  "blog": "ブログ",
   "readMore": "もっと見る"
 }

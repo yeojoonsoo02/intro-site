@@ -50,7 +50,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/api/'],
     },
-    // AI 크롤러는 공개 콘텐츠(/, /blog, /ko 등) 전체 참조를 허용.
+    // AI 크롤러는 공개 콘텐츠(/, /about, /ko 등) 전체 참조를 허용.
     // 공개 프로필 사이트 특성상 AI 답변에 인용될수록 "여준수" 엔티티 인지도가 강화되므로 전면 허용.
     ...AI_BOTS.map((ua) => ({
       userAgent: ua,

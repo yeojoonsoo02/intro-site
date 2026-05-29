@@ -87,7 +87,6 @@
   "testimonials": "Témoignages",
   "educationSection": "Formation",
   "githubActivity": "Activité GitHub",
-  "blogPosts": "Articles récents",
   "projectDetail": "Détail du projet",
   "techStack": "Stack technique",
   "viewAllProjects": "Voir tous les projets",
@@ -96,8 +95,6 @@
   "valuesMindset": "Valeurs",
   "dailyRoutine": "Routine quotidienne",
   "hobbiesInterests": "Loisirs & centres d'intérêt",
-  "faq": "FAQ",
   "journey": "Parcours",
-  "blog": "Blog",
   "readMore": "En savoir plus"
 }

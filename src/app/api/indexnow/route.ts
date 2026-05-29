@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { BLOG_POSTS } from '@/features/blog/posts';
 
 const SITE_URL = 'https://yeojoonsoo02.com';
 const SITE_HOST = 'yeojoonsoo02.com';
@@ -48,11 +47,9 @@ const DEFAULT_URLS: string[] = [
   `${SITE_URL}/pt`,
   `${SITE_URL}/ru`,
   `${SITE_URL}/about`,
-  `${SITE_URL}/faq`,
-  `${SITE_URL}/blog`,
-  ...BLOG_POSTS.map((p) => `${SITE_URL}/blog/${p.slug}`),
+  `${SITE_URL}/journey`,
+  `${SITE_URL}/portfolio`,
   `${SITE_URL}/sitemap.xml`,
-  `${SITE_URL}/rss.xml`,
   `${SITE_URL}/llms.txt`,
   `${SITE_URL}/llms-full.txt`,
 ];

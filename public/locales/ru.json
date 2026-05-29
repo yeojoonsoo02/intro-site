@@ -87,7 +87,6 @@
   "testimonials": "Отзывы",
   "educationSection": "Образование",
   "githubActivity": "Активность GitHub",
-  "blogPosts": "Последние посты блога",
   "projectDetail": "Детали проекта",
   "techStack": "Стек технологий",
   "viewAllProjects": "Все проекты",
@@ -96,8 +95,6 @@
   "valuesMindset": "Ценности",
   "dailyRoutine": "Распорядок дня",
   "hobbiesInterests": "Хобби и интересы",
-  "faq": "Частые вопросы",
   "journey": "Путь",
-  "blog": "Блог",
   "readMore": "Узнать больше"
 }

@@ -87,7 +87,6 @@
   "testimonials": "고객 후기",
   "educationSection": "학력",
   "githubActivity": "GitHub 활동",
-  "blogPosts": "최근 블로그 글",
   "projectDetail": "프로젝트 상세",
   "techStack": "기술 스택",
   "viewAllProjects": "전체 프로젝트 보기",
@@ -96,8 +95,6 @@
   "valuesMindset": "가치관",
   "dailyRoutine": "하루 루틴",
   "hobbiesInterests": "취미 & 관심사",
-  "faq": "자주 묻는 질문",
   "journey": "여정",
-  "blog": "블로그",
   "readMore": "더 알고 싶다면"
 }

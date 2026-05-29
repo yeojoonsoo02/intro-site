@@ -20,7 +20,7 @@ export const profilePageSchema = {
   },
   hasPart: [
     { '@type': 'WebPage', '@id': `${SITE_URL}/about`, name: '공식 소개', url: `${SITE_URL}/about` },
-    { '@type': 'FAQPage', '@id': `${SITE_URL}/faq`, name: '자주 묻는 질문', url: `${SITE_URL}/faq` },
-    { '@type': 'Blog', '@id': `${SITE_URL}/blog`, name: '블로그', url: `${SITE_URL}/blog` },
+    { '@type': 'WebPage', '@id': `${SITE_URL}/journey`, name: '여정', url: `${SITE_URL}/journey` },
+    { '@type': 'WebPage', '@id': `${SITE_URL}/portfolio`, name: '포트폴리오', url: `${SITE_URL}/portfolio` },
   ],
 };

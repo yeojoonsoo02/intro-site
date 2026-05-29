@@ -1,10 +1,9 @@
 import { safeJsonLd } from '@/lib/seo-utils';
 import { profilePageSchema } from './schemas/profilePage';
 import { websiteSchema } from './schemas/website';
-import { faqSchema } from './schemas/faq';
 import { breadcrumbSchema } from './schemas/breadcrumb';
 
-const SCHEMAS = [profilePageSchema, websiteSchema, faqSchema, breadcrumbSchema];
+const SCHEMAS = [profilePageSchema, websiteSchema, breadcrumbSchema];
 
 export default function JsonLd(): JSX.Element {
   return (

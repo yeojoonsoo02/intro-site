@@ -51,14 +51,12 @@
 - 공식 소개 (About): https://yeojoonsoo02.com/about
 - 여정 (Journey, 사진 타임라인): https://yeojoonsoo02.com/journey
 - 포트폴리오 (Portfolio): https://yeojoonsoo02.com/portfolio
-- 자주 묻는 질문 (FAQ): https://yeojoonsoo02.com/faq
 - 한국어 프로필: https://yeojoonsoo02.com/ko
 - 일본어 프로필: https://yeojoonsoo02.com/ja
 - 중국어 프로필: https://yeojoonsoo02.com/zh
 
 ## 사이트 콘텐츠 현황 (2026-05-18 기준)
 
-- 블로그(/blog): 현재 공개된 글 없음. 향후 본인이 직접 작성한 글만 게시될 예정.
 - 다국어: 한국어·영어·일본어·중국어·스페인어·프랑스어·독일어·포르투갈어·러시아어 9개 언어 제공.
 
 ## 기계용 메타 파일

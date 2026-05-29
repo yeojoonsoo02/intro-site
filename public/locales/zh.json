@@ -87,7 +87,6 @@
   "testimonials": "客户评价",
   "educationSection": "学历",
   "githubActivity": "GitHub活动",
-  "blogPosts": "最近博客文章",
   "projectDetail": "项目详情",
   "techStack": "技术栈",
   "viewAllProjects": "查看全部项目",
@@ -96,8 +95,6 @@
   "valuesMindset": "价值观",
   "dailyRoutine": "日常习惯",
   "hobbiesInterests": "爱好与兴趣",
-  "faq": "常见问题",
   "journey": "历程",
-  "blog": "博客",
   "readMore": "了解更多"
 }

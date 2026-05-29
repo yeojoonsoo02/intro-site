@@ -1,5 +1,4 @@
 import type { MetadataRoute } from 'next';
-import { BLOG_POSTS } from '@/features/blog/posts';
 
 const SITE_URL = 'https://yeojoonsoo02.com';
 const PROFILE_IMAGE = `${SITE_URL}/profile.jpg`;
@@ -55,12 +54,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       images: [PROFILE_IMAGE],
     },
     {
-      url: `${SITE_URL}/faq`,
-      lastModified: LAST_MOD,
-      changeFrequency: 'monthly',
-      priority: 0.9,
-    },
-    {
       url: `${SITE_URL}/journey`,
       lastModified: LAST_MOD,
       changeFrequency: 'monthly',
@@ -75,23 +68,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  // 블로그가 비어있으면 /blog 자체를 sitemap에서 제외 — thin content 색인 요청 방지.
-  // 첫 글이 추가되는 순간 다시 노출됨.
-  if (BLOG_POSTS.length > 0) {
-    staticPages.push({
-      url: `${SITE_URL}/blog`,
-      lastModified: LAST_MOD,
-      changeFrequency: 'weekly',
-      priority: 0.9,
-    });
-  }
-
-  const posts: MetadataRoute.Sitemap = BLOG_POSTS.map((p) => ({
-    url: `${SITE_URL}/blog/${p.slug}`,
-    lastModified: new Date(p.updatedAt ?? p.publishedAt),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }));
-
-  return [...locales, ...staticPages, ...posts];
+  return [...locales, ...staticPages];
 }

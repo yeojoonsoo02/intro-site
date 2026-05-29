@@ -19,8 +19,6 @@ export default function MenuNavLinks({
     { href: '/about', label: t('about') },
     { href: '/journey', label: t('journey') },
     { href: '/portfolio', label: t('portfolio') },
-    { href: '/blog', label: t('blog') },
-    { href: '/faq', label: t('faq') },
   ]
 
   return (

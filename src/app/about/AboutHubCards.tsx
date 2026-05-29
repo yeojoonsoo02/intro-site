@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { BLOG_POSTS } from '@/features/blog/posts';
 
 interface HubLink {
   href: string;
@@ -8,7 +7,7 @@ interface HubLink {
   desc: string;
 }
 
-const ALL_HUB_LINKS: HubLink[] = [
+const HUB_LINKS: HubLink[] = [
   {
     href: '/journey',
     title: 'Journey',
@@ -21,30 +20,14 @@ const ALL_HUB_LINKS: HubLink[] = [
     label: '포트폴리오',
     desc: '프로젝트와 활동 기록을 한곳에 모아둔 곳',
   },
-  {
-    href: '/blog',
-    title: 'Blog',
-    label: '블로그',
-    desc: '배운 것, 겪은 것, 그냥 써두고 싶었던 것',
-  },
-  {
-    href: '/faq',
-    title: 'FAQ',
-    label: '자주 묻는 질문',
-    desc: '"이거 혹시…" 싶은 질문들, 미리 모아뒀습니다',
-  },
 ];
 
 export default function AboutHubCards(): JSX.Element {
-  const hubLinks = ALL_HUB_LINKS.filter(
-    (it) => it.href !== '/blog' || BLOG_POSTS.length > 0,
-  );
-
   return (
     <section className="mb-10 sm:mb-12" aria-label="더 파고들기">
       <h2 className="text-lg sm:text-xl font-semibold mb-4">더 파고들기</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {hubLinks.map((it) => (
+        {HUB_LINKS.map((it) => (
           <HubCard key={it.href} item={it} />
         ))}
       </div>
