@@ -58,6 +58,7 @@ export const personEntity = {
   },
   address: {
     '@type': 'PostalAddress',
+    addressLocality: 'Nowon-gu',
     addressRegion: 'Seoul',
     addressCountry: 'KR',
   },

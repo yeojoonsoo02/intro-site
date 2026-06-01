@@ -82,7 +82,7 @@ export async function searchChunks(
 export async function searchCustom(
   query: string,
   texts: string[],
-  threshold = 0.5,
+  threshold = 0.4,
 ): Promise<string[]> {
   if (texts.length === 0) return []
 
