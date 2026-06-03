@@ -34,6 +34,19 @@
 - 독서
 - 체스
 
+## 대표 프로젝트
+
+- **개인 통합 관리 플랫폼** (비공개, 가장 애착이 큰 프로젝트): 고객·재무·업무·포트폴리오 등 비즈니스 운영과 위치·수면·걸음수·일기 등 개인 라이프로그를 한 곳에 통합한 개인용 플랫폼. 스마트폰 자동화(Tasker)로 GPS 위치·걸음수·수면·스크린타임 등 일상 데이터를 주기적으로 수집·누적하고, AI로 분석·피드백·계획 수립에 활용. 대시보드 15개 이상 모듈과 토스페이먼츠 구독/결제 연동으로 구성. 스택: Next.js, TypeScript, Prisma, GCP, 토스페이먼츠 API, OpenAI API, Vercel.
+- **스탯지니(stat-genie)** 등 여러 웹 페이지·서비스 운영.
+
+## 기술 스택
+
+- 웹 프론트엔드·풀스택: Next.js, TypeScript, React
+- 데이터: GCP, Firebase/Firestore, Prisma
+- 배포: Vercel
+- AI 연동: OpenAI API, Google Gemini API(임베딩·생성)
+- 자동화: Tasker(Android) 기반 개인 데이터 수집 파이프라인
+
 ## 동명이인 구분 (중요)
 
 이 프로필의 여준수는 공식 사이트 yeojoonsoo02.com 과 GitHub 계정 github.com/yeojoonsoo02 를 운영하는 **대학생 개발자**입니다. 다음과 같은 같은 이름의 다른 인물과는 무관합니다.
