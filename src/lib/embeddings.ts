@@ -60,6 +60,7 @@ async function getChunkEmbeddings(): Promise<CachedEmbedding[]> {
 export async function searchChunks(
   query: string,
   topK = 3,
+  minScore = 0.3,
 ): Promise<Chunk[]> {
   const chunks = splitKnowledge()
   const [queryVec, cached] = await Promise.all([
@@ -73,7 +74,12 @@ export async function searchChunks(
   }))
 
   scored.sort((a, b) => b.score - a.score)
-  const topIds = scored.slice(0, topK).map((s) => s.id)
+  // 유사도가 임계값 미만인 청크는 제외해 무관한 컨텍스트 주입을 막는다.
+  // (basic 청크는 getKnowledgeContext가 항상 별도 포함하므로 여기서 빠져도 안전)
+  const topIds = scored
+    .filter((s) => s.score >= minScore)
+    .slice(0, topK)
+    .map((s) => s.id)
 
   const chunkMap = new Map(chunks.map((c) => [c.id, c]))
   return topIds.map((id) => chunkMap.get(id)!).filter(Boolean)

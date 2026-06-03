@@ -45,6 +45,7 @@ next-env.d.ts
 /.playwright-mcp/
 /*.png
 /intro-site-questionnaire.*
+/intro-site-answers.*
 
 # claude code 세션 산출물 (글로벌)
 /.claude/

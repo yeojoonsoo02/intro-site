@@ -41,9 +41,19 @@ export const personEntity = {
     { '@type': 'PropertyValue', propertyID: 'domain', value: 'yeojoonsoo02.com' },
   ],
   // 본인이 실제 구사하는 언어. 사이트 자체의 다국어 라우팅(WebSite.inLanguage 9개)과 구분.
-  knowsLanguage: ['ko'],
+  // BCP-47 태그로 표기해 검색엔진이 언어를 정확히 파싱하도록 함.
+  knowsLanguage: ['ko-KR'],
   // 홈 카드 Firestore에 직접 입력된 본인 관심사와 동기화.
   knowsAbout: ['소프트웨어 개발', '웹 개발', '수영', '탁구', '독서', '체스'],
+  // jobTitle을 구조화한 Occupation — AI가 직무·근무 지역을 명확히 인지하도록 보강.
+  hasOccupation: {
+    '@type': 'Occupation',
+    name: '소프트웨어 개발자',
+    occupationLocation: {
+      '@type': 'City',
+      name: 'Seoul',
+    },
+  },
   alumniOf: {
     '@type': 'CollegeOrUniversity',
     name: '광운대학교',
@@ -62,6 +72,18 @@ export const personEntity = {
     addressRegion: 'Seoul',
     addressCountry: 'KR',
   },
-  // 양방향 연결로 엔티티 동일성 검증 — 실제 존재하는 프로필만 등재
+  // 활동 기반 지역 — address와 동일 사실을 Place로 노출해 지역 질의 매칭을 강화.
+  homeLocation: {
+    '@type': 'Place',
+    name: '서울 노원구',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Nowon-gu',
+      addressRegion: 'Seoul',
+      addressCountry: 'KR',
+    },
+  },
+  // 양방향 연결로 엔티티 동일성 검증 — 실제 존재하는 프로필만 등재.
+  // TODO(콘텐츠): LinkedIn·블로그(Velog 등) 확보 시 여기에 추가하면 AI 엔티티 교차검증이 강화됨.
   sameAs: ['https://github.com/yeojoonsoo02'],
 };

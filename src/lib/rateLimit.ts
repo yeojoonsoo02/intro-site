@@ -71,11 +71,14 @@ export async function checkRateLimit(ip: string, isLoggedIn: boolean): Promise<R
     localCache.set(ip, { count: newCount, resetAt: data.resetAt });
     return { allowed: true, remaining: max - newCount };
   } catch (err) {
-    console.error('[RateLimit] Firestore error, falling back to local:', err);
-    // Fallback to in-memory
+    console.error('[RateLimit] Firestore error, enforcing via local cache:', err);
+    // Fail-closed: Firestore 장애 시에도 로컬 캐시 상한을 강제해 폭주를 막는다.
     if (!cached || now > cached.resetAt) {
       localCache.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
       return { allowed: true, remaining: max - 1 };
+    }
+    if (cached.count >= max) {
+      return { allowed: false, remaining: 0 };
     }
     cached.count++;
     return { allowed: true, remaining: max - cached.count };

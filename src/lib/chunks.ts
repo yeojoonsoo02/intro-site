@@ -11,6 +11,14 @@ const ID_MAP: Record<string, string> = {
   '가치관과 마인드셋': 'values',
   '꿈과 목표': 'goals',
   '소개': 'intro',
+  // 콘텐츠 보강 시 사용할 섹션 — knowledge.ts에 해당 제목을 추가하면 안정적 ID로 매핑됨.
+  // 매핑이 있어야 RAG 검색·임베딩 캐시가 슬러그 변동 없이 일관되게 동작.
+  '기술 스택': 'skills',
+  '프로젝트': 'projects',
+  '경력': 'experience',
+  '수상 및 성과': 'awards',
+  '자격증': 'certifications',
+  '연락 및 협업': 'contact',
 }
 
 let cached: Chunk[] | null = null
