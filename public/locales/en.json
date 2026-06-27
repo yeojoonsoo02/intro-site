@@ -90,6 +90,8 @@
   "projectDetail": "Project Detail",
   "techStack": "Tech Stack",
   "viewAllProjects": "View All Projects",
+  "loadError": "Couldn't load this right now",
+  "retry": "Retry",
   "recentProjects": "Recent Projects",
   "goalsVision": "Goals & Vision",
   "valuesMindset": "Values",

@@ -2,6 +2,9 @@ import { adminDb, FieldValue } from './firebaseAdmin';
 
 const RATE_LIMIT_MAX_GUEST = 5;
 const RATE_LIMIT_MAX_USER = 20;
+// 공개 읽기 API(포트폴리오)는 챗봇용 제한과 달리 정상 방문자의 다중 페이지 조회를 막지 않도록
+// 넉넉한 임계값을 둔다. CDN s-maxage 캐시와 함께 Firestore 폭주만 차단하는 용도.
+export const RATE_LIMIT_MAX_PORTFOLIO = 120;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 const DAILY_MAX_REQUESTS = 500;
 
@@ -24,8 +27,12 @@ function cleanLocalCache(): void {
   lastLocalCleanup = now;
 }
 
-export async function checkRateLimit(ip: string, isLoggedIn: boolean): Promise<RateLimitResult> {
-  const max = isLoggedIn ? RATE_LIMIT_MAX_USER : RATE_LIMIT_MAX_GUEST;
+export async function checkRateLimit(
+  ip: string,
+  isLoggedIn: boolean,
+  maxOverride?: number,
+): Promise<RateLimitResult> {
+  const max = maxOverride ?? (isLoggedIn ? RATE_LIMIT_MAX_USER : RATE_LIMIT_MAX_GUEST);
   const now = Date.now();
 
   cleanLocalCache();
@@ -85,6 +92,8 @@ export async function checkRateLimit(ip: string, isLoggedIn: boolean): Promise<R
   }
 }
 
+// 전역 일일 예산이 남았는지만 확인(차감하지 않음). 봇·검증 실패·per-IP 초과 요청이
+// 예산을 소진시키지 못하도록, 실제 차감은 모든 검증 통과 후 consumeDailyBudget으로 분리한다.
 export async function checkDailyBudget(): Promise<boolean> {
   if (!adminDb) return true;
 
@@ -94,13 +103,23 @@ export async function checkDailyBudget(): Promise<boolean> {
   try {
     const snap = await docRef.get();
     const count = snap.exists ? (snap.data()?.count ?? 0) : 0;
-
-    if (count >= DAILY_MAX_REQUESTS) return false;
-
-    await docRef.set({ count: FieldValue.increment(1), date: today }, { merge: true });
-    return true;
+    return count < DAILY_MAX_REQUESTS;
   } catch (err) {
     console.error('[DailyBudget] Firestore error:', err);
     return true; // fail open
+  }
+}
+
+// 전역 일일 예산을 1 차감. 실제 외부 호출 직전(모든 검증 통과 후)에만 호출한다.
+export async function consumeDailyBudget(): Promise<void> {
+  if (!adminDb) return;
+
+  const today = new Date().toISOString().slice(0, 10);
+  const docRef = adminDb.collection('rate_limits').doc(`daily_${today}`);
+
+  try {
+    await docRef.set({ count: FieldValue.increment(1), date: today }, { merge: true });
+  } catch (err) {
+    console.error('[DailyBudget] increment error:', err);
   }
 }

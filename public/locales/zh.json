@@ -90,6 +90,8 @@
   "projectDetail": "项目详情",
   "techStack": "技术栈",
   "viewAllProjects": "查看全部项目",
+  "loadError": "暂时无法加载",
+  "retry": "重试",
   "recentProjects": "最近项目",
   "goalsVision": "目标与愿景",
   "valuesMindset": "价值观",

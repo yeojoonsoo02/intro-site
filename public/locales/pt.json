@@ -90,6 +90,8 @@
   "projectDetail": "Detalhes do projeto",
   "techStack": "Stack de tecnologia",
   "viewAllProjects": "Ver todos os projetos",
+  "loadError": "Não foi possível carregar agora",
+  "retry": "Tentar novamente",
   "recentProjects": "Projetos recentes",
   "goalsVision": "Objetivos & visão",
   "valuesMindset": "Valores",

@@ -90,6 +90,8 @@
   "projectDetail": "プロジェクト詳細",
   "techStack": "技術スタック",
   "viewAllProjects": "全プロジェクトを見る",
+  "loadError": "現在読み込めませんでした",
+  "retry": "再試行",
   "recentProjects": "最近のプロジェクト",
   "goalsVision": "目標 & ビジョン",
   "valuesMindset": "価値観",

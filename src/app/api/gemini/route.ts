@@ -4,7 +4,7 @@ import {
   HarmCategory,
   HarmBlockThreshold,
 } from '@google/generative-ai'
-import { checkRateLimit, checkDailyBudget } from '@/lib/rateLimit'
+import { checkRateLimit, checkDailyBudget, consumeDailyBudget } from '@/lib/rateLimit'
 import { buildSystemPrompt } from './systemPrompt'
 import { isBot, sanitizeUserInfo, resolveFallbackUrl } from './security'
 import { fireSideEffects } from './sideEffects'
@@ -28,6 +28,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
+  // 읽기 전용 예산 확인(차감 X) — 실제 차감은 모든 검증 통과 후 consumeDailyBudget으로.
   if (!(await checkDailyBudget())) {
     return NextResponse.json(
       { error: 'Daily limit reached. Please try again tomorrow.' },
@@ -35,7 +36,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     )
   }
 
-  const body = await req.json()
+  const body = await req.json().catch(() => null)
+  if (!body || typeof body !== 'object') {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
   const message = body.message || body.prompt
   const userInfo = sanitizeUserInfo(body.userInfo)
   const email = userInfo?.email
@@ -59,6 +63,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       { status: 400 },
     )
   }
+
+  // 모든 검증·per-IP 제한 통과 후 실제 외부 호출 직전에만 전역 예산 차감(빈/봇/초과 요청 방어)
+  await consumeDailyBudget()
 
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {

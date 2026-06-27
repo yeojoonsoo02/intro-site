@@ -11,7 +11,7 @@ export default function ProjectDetailPage(): JSX.Element {
   const { id } = useParams<{ id: string }>()
   const { t, i18n } = useTranslation()
   const { user, login, loading: authLoading } = useAuth()
-  const { project, relatedProjects, loading } = useProject(id, i18n.language)
+  const { project, relatedProjects, loading, error } = useProject(id, i18n.language)
 
   if (loading || authLoading) {
     return (
@@ -32,6 +32,24 @@ export default function ProjectDetailPage(): JSX.Element {
         >
           {t('loginWithGoogle')}
         </button>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+        <p style={{ color: 'var(--muted)' }}>{t('loadError')}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-5 py-2.5 rounded-xl text-sm font-medium"
+          style={{ background: 'var(--primary)', color: 'var(--primary-contrast)' }}
+        >
+          {t('retry')}
+        </button>
+        <Link href="/portfolio" className="text-sm" style={{ color: 'var(--muted)' }}>
+          {t('viewAllProjects')} &rarr;
+        </Link>
       </div>
     )
   }

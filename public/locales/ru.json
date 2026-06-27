@@ -90,6 +90,8 @@
   "projectDetail": "Детали проекта",
   "techStack": "Стек технологий",
   "viewAllProjects": "Все проекты",
+  "loadError": "Не удалось загрузить",
+  "retry": "Повторить",
   "recentProjects": "Последние проекты",
   "goalsVision": "Цели и видение",
   "valuesMindset": "Ценности",

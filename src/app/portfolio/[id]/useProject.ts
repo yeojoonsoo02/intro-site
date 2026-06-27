@@ -7,6 +7,7 @@ interface UseProjectReturn {
   project: Project | null
   relatedProjects: Project[]
   loading: boolean
+  error: boolean
 }
 
 const RELATED_COUNT = 3
@@ -15,6 +16,7 @@ export function useProject(id: string | undefined, lang: string): UseProjectRetu
   const [project, setProject] = useState<Project | null>(null)
   const [allProjects, setAllProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     if (!id) {
@@ -23,9 +25,15 @@ export function useProject(id: string | undefined, lang: string): UseProjectRetu
     }
     let cancelled = false
     const queryLang = lang || 'ko'
+    setLoading(true)
+    setError(false)
 
     fetch(`/api/portfolio?lang=${queryLang}`)
-      .then((r) => r.json())
+      .then((r) => {
+        // 429/5xx를 '프로젝트 없음'으로 오표시하지 않도록 일시 장애와 미존재를 구분한다.
+        if (!r.ok) throw new Error(`portfolio fetch failed: ${r.status}`)
+        return r.json()
+      })
       .then((data) => {
         if (cancelled) return
         const items: Project[] = data.projects ?? []
@@ -35,6 +43,7 @@ export function useProject(id: string | undefined, lang: string): UseProjectRetu
       })
       .catch(() => {
         if (cancelled) return
+        setError(true)
         setLoading(false)
       })
 
@@ -49,5 +58,5 @@ export function useProject(id: string | undefined, lang: string): UseProjectRetu
         .slice(0, RELATED_COUNT)
     : []
 
-  return { project, relatedProjects, loading }
+  return { project, relatedProjects, loading, error }
 }
