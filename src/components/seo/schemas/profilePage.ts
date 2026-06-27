@@ -1,5 +1,6 @@
 import { SITE_CREATED, SITE_MODIFIED, SITE_URL } from './constants';
 import { personEntity } from './person';
+import { canonicalForLang } from '@/lib/seo-utils';
 
 export type ProfileLang =
   | 'ko'
@@ -79,11 +80,14 @@ const LOCALIZED_TEXT: Record<ProfileLang, { name: string; description: string }>
  */
 export function buildProfilePageSchema(lang: ProfileLang) {
   const text = LOCALIZED_TEXT[lang];
+  // 페이지 URL·@id를 해당 언어의 canonical로 분기 → inLanguage와 url 신호 일치.
+  // (mainEntity #person 은 전역 단일 엔티티이므로 SITE_URL 기준 유지)
+  const pageUrl = canonicalForLang(lang);
   return {
     '@context': 'https://schema.org',
     '@type': 'ProfilePage',
-    '@id': `${SITE_URL}#profilepage`,
-    url: SITE_URL,
+    '@id': `${pageUrl}#profilepage`,
+    url: pageUrl,
     name: text.name,
     description: text.description,
     dateCreated: SITE_CREATED,

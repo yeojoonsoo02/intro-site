@@ -1,13 +1,16 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// 검색엔진·AI 크롤러는 루트(영어) 그대로 두어 색인 안정성 유지
+// 검색엔진·AI 크롤러는 루트(한국어 대표본) 그대로 두어 색인 안정성 유지
 const BOTS =
   /bot|crawler|spider|slurp|yeti|googlebot|bingbot|duckduckbot|applebot|claudebot|gptbot|oai-searchbot|perplexitybot|google-extended|amazonbot|bytespider|ccbot|meta-externalagent|anthropic-ai|cohere-ai|diffbot|youbot/i;
 
-// 브라우저 언어 태그(prefix)와 실제 라우트 매핑
+// 브라우저 언어 태그(prefix)와 실제 라우트 매핑.
+// 1차 언어 한국어는 루트(/)이므로 여기에 없음 — ko 선호 사용자는 루트에 머문다.
 const ROUTE_BY_LANG: Record<string, string> = {
-  ko: '/ko',
+  en: '/en',
+  'en-us': '/en',
+  'en-gb': '/en',
   ja: '/ja',
   zh: '/zh',
   // 중화권 subtag는 zh로 집계
@@ -50,11 +53,11 @@ export function middleware(req: NextRequest) {
   // 사용자가 직접 선택한 언어 쿠키가 있으면 최우선 존중
   const cookieLang = req.cookies.get('NEXT_LOCALE')?.value?.toLowerCase();
   if (cookieLang) {
+    // 한국어 선호는 루트(한국어 대표본)에 그대로 머문다
+    if (cookieLang.startsWith('ko')) return withPathname(req);
     const target =
       ROUTE_BY_LANG[cookieLang] ?? ROUTE_BY_LANG[cookieLang.split('-')[0]];
     if (target) return NextResponse.redirect(new URL(target, req.url));
-    // en으로 쿠키 설정된 경우에는 루트 유지
-    if (cookieLang.startsWith('en')) return withPathname(req);
   }
 
   const accept = req.headers.get('accept-language') || '';
@@ -67,14 +70,14 @@ export function middleware(req: NextRequest) {
     .filter(Boolean);
 
   for (const lang of langs) {
-    if (lang.startsWith('en')) return withPathname(req); // 영어가 우선이면 루트 유지
+    if (lang.startsWith('ko')) return withPathname(req); // 한국어가 우선이면 루트(ko) 유지
     const full = ROUTE_BY_LANG[lang];
     const prefix = ROUTE_BY_LANG[lang.split('-')[0]];
     const target = full ?? prefix;
     if (target) return NextResponse.redirect(new URL(target, req.url));
   }
 
-  // 지원하지 않는 언어 → 영어(루트) 유지
+  // 지원하지 않는 언어 → 한국어(루트) 유지
   return withPathname(req);
 }
 

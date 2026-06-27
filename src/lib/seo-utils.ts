@@ -2,10 +2,11 @@ const SITE_URL = 'https://yeojoonsoo02.com';
 
 export type SupportedLang = 'ko' | 'en' | 'ja' | 'zh' | 'es' | 'fr' | 'de' | 'pt' | 'ru';
 
-// 각 언어의 canonical URL (영어는 루트)
+// 각 언어의 canonical URL. 이 사이트의 1차 언어는 한국어이므로 루트(/)가 한국어를 대표한다.
+// 영어는 별도 경로(/en)로 분리. (이전엔 영어=루트였으나 루트 렌더가 한국어라 모순이었음)
 const LANG_URL: Record<SupportedLang, string> = {
-  ko: `${SITE_URL}/ko`,
-  en: SITE_URL,
+  ko: SITE_URL,
+  en: `${SITE_URL}/en`,
   ja: `${SITE_URL}/ja`,
   zh: `${SITE_URL}/zh`,
   es: `${SITE_URL}/es`,

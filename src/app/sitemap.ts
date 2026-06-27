@@ -1,14 +1,17 @@
 import type { MetadataRoute } from 'next';
+import { SITE_MODIFIED } from '@/components/seo/schemas/constants';
 
 const SITE_URL = 'https://yeojoonsoo02.com';
 const PROFILE_IMAGE = `${SITE_URL}/profile.jpg`;
 
-// 빌드 시점을 lastModified로 사용해 sitemap 신선도를 자동 유지
-const LAST_MOD = new Date();
+// 실제 콘텐츠 변경 시각(SITE_MODIFIED 단일 소스)을 lastModified로 사용.
+// 빌드시각(new Date())을 쓰면 콘텐츠 무변경 배포에도 갱신돼 거짓 신선도 신호가 된다.
+const LAST_MOD = new Date(SITE_MODIFIED);
 
+// 1차 언어 한국어 → 루트(/)가 ko를 대표. 영어는 /en으로 분리.
 const HREFLANG_LANGUAGES = {
-  ko: `${SITE_URL}/ko`,
-  en: SITE_URL,
+  ko: SITE_URL,
+  en: `${SITE_URL}/en`,
   ja: `${SITE_URL}/ja`,
   zh: `${SITE_URL}/zh`,
   es: `${SITE_URL}/es`,
@@ -24,8 +27,9 @@ const LOCALE_ENTRIES: ReadonlyArray<{
   changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'];
   withImage?: boolean;
 }> = [
+  // 루트(/) = 한국어 대표본. 별도 /ko 엔트리는 루트로 통합(중복 색인 방지) 후 제거.
   { url: SITE_URL, priority: 1.0, changeFrequency: 'weekly', withImage: true },
-  { url: `${SITE_URL}/ko`, priority: 0.9, changeFrequency: 'weekly', withImage: true },
+  { url: `${SITE_URL}/en`, priority: 0.7, changeFrequency: 'monthly' },
   { url: `${SITE_URL}/ja`, priority: 0.6, changeFrequency: 'monthly' },
   { url: `${SITE_URL}/zh`, priority: 0.6, changeFrequency: 'monthly' },
   { url: `${SITE_URL}/es`, priority: 0.6, changeFrequency: 'monthly' },

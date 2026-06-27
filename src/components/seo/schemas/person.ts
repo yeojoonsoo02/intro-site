@@ -31,7 +31,8 @@ export const personEntity = {
   },
   email: 'mailto:yeojoonsoo02@gmail.com',
   jobTitle: '대학생 개발자',
-  description: '대학생 개발자 여준수.',
+  description:
+    'Next.js·TypeScript·React 기반 웹 풀스택 개발과 AI 애플리케이션(OpenAI·Google Gemini API) 연동에 관심이 많은 대학생 개발자 여준수. 자신이 쓸 도구·서비스를 직접 만들며 개인 통합 관리 플랫폼, 스탯지니(stat-genie) 등 개인 프로젝트를 진행.',
   // 동명이인 구분 — 공식 사이트·GitHub 계정으로 이 인물을 특정
   disambiguatingDescription:
     '공식 사이트 yeojoonsoo02.com 과 GitHub 계정 github.com/yeojoonsoo02 를 운영하는 대학생 개발자 여준수(Yeojunsu)입니다. 같은 이름의 다른 인물과는 무관합니다.',
@@ -43,12 +44,26 @@ export const personEntity = {
   // 본인이 실제 구사하는 언어. 사이트 자체의 다국어 라우팅(WebSite.inLanguage 9개)과 구분.
   // BCP-47 태그로 표기해 검색엔진이 언어를 정확히 파싱하도록 함.
   knowsLanguage: ['ko-KR'],
-  // 홈 카드 Firestore에 직접 입력된 본인 관심사와 동기화.
-  knowsAbout: ['소프트웨어 개발', '웹 개발', '수영', '탁구', '독서', '체스'],
-  // jobTitle을 구조화한 Occupation — AI가 직무·근무 지역을 명확히 인지하도록 보강.
+  // 본인이 직접 확인한 기술 역량(knowledge.ts) + 관심사. AI가 "무엇을 하는 개발자인지"
+  // 인용 가능하도록 핵심 스택을 취미와 함께 노출.
+  knowsAbout: [
+    '소프트웨어 개발',
+    '웹 풀스택 개발',
+    'Next.js',
+    'TypeScript',
+    'React',
+    'AI 애플리케이션 개발',
+    '수영',
+    '탁구',
+    '독서',
+    '체스',
+  ],
+  // jobTitle을 구조화한 Occupation — AI가 직무·근무 지역·보유 기술을 명확히 인지하도록 보강.
   hasOccupation: {
     '@type': 'Occupation',
     name: '소프트웨어 개발자',
+    skills:
+      'Next.js, TypeScript, React, Firebase, GCP, Prisma, Vercel, OpenAI API, Google Gemini API, Tasker 자동화',
     occupationLocation: {
       '@type': 'City',
       name: 'Seoul',

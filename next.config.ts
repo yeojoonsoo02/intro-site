@@ -13,10 +13,9 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      // 영어는 루트(`/`)가 정답. /en 직접 접속 시 404 대신 루트로 308 영구 이동.
-      // sitemap/hreflang은 영어를 yeojoonsoo02.com 으로 이미 매핑하고 있어 색인 안정성 유지.
-      { source: '/en', destination: '/', permanent: true },
-      { source: '/en/:path*', destination: '/:path*', permanent: true },
+      // 1차 언어가 한국어이므로 루트(`/`)가 한국어 대표본. /ko 직접 접속·기존 색인은
+      // 루트로 308 통합해 중복 색인을 방지(hreflang/canonical은 ko→/ 로 매핑).
+      { source: '/ko', destination: '/', permanent: true },
     ];
   },
   async headers() {
