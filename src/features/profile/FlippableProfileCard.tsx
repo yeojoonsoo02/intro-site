@@ -22,7 +22,8 @@ export default function FlippableProfileCard({ onAngleChange }: Props) {
   const frontRef = useRef<HTMLDivElement>(null);
   const backRef = useRef<HTMLDivElement>(null);
 
-  const { isFlipped, ...pointerHandlers } = useCardFlip({
+  // flip은 별도 버튼으로 분리하기 위해 pointer 핸들러와 떼어낸다
+  const { isFlipped, flip, ...pointerHandlers } = useCardFlip({
     innerRef,
     onAngleChange,
   });
@@ -30,8 +31,17 @@ export default function FlippableProfileCard({ onAngleChange }: Props) {
   useEffect(() => {
     // Fetch language-specific profiles
     const currentLang = i18n.language || 'en';
-    fetchProfile(currentLang).then(p => setProfile(p ?? DEFAULT_PROFILES[currentLang] ?? DEFAULT_PROFILES['en']));
-    fetchDevProfile(currentLang).then(p => setDevProfile(p ?? DEFAULT_PROFILES[currentLang] ?? DEFAULT_PROFILES['en']));
+    // 언어 변경 시 이전 요청의 stale 응답이 최신 상태를 덮어쓰지 않도록 cancelled 플래그 사용
+    let cancelled = false;
+    fetchProfile(currentLang).then(p => {
+      if (!cancelled) setProfile(p ?? DEFAULT_PROFILES[currentLang] ?? DEFAULT_PROFILES['en']);
+    });
+    fetchDevProfile(currentLang).then(p => {
+      if (!cancelled) setDevProfile(p ?? DEFAULT_PROFILES[currentLang] ?? DEFAULT_PROFILES['en']);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [i18n.language]);
 
   // 마운트 시 1회만 흔들림 애니메이션 실행 (reduced-motion 사용자는 스킵)
@@ -76,10 +86,23 @@ export default function FlippableProfileCard({ onAngleChange }: Props) {
       style={{ perspective: 1200, overflow: 'visible', touchAction: 'pan-y' }}
       {...pointerHandlers}
       ref={containerRef}
-      tabIndex={0}
-      role="button"
-      aria-label={t('flipCard', { defaultValue: isFlipped ? '일반 프로필 보기' : '개발자 프로필 보기' })}
     >
+      {/* role=button 컨테이너 안에 mailto/소셜/chip 링크를 중첩하면 ARIA 위반이므로
+          뒤집기 인터랙션을 명시적 버튼으로 분리. 네이티브 button이 Enter/Space 키보드 처리 */}
+      <button
+        type="button"
+        onClick={flip}
+        aria-pressed={isFlipped}
+        aria-label={t('flipCard', { defaultValue: isFlipped ? '일반 프로필 보기' : '개발자 프로필 보기' })}
+        className="absolute top-1 right-4 sm:right-6 z-20 rounded-full px-3 py-1.5 text-xs font-medium transition-opacity hover:opacity-80"
+        style={{
+          background: 'color-mix(in srgb, var(--primary) 12%, transparent)',
+          color: 'var(--primary)',
+          border: '1px solid color-mix(in srgb, var(--primary) 25%, transparent)',
+        }}
+      >
+        ⇄
+      </button>
       <div
         className="relative w-full"
         style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}

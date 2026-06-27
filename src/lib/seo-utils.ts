@@ -40,5 +40,9 @@ export function canonicalForLang(lang: SupportedLang): string {
 export function safeJsonLd(obj: unknown): string {
   return JSON.stringify(obj)
     .replace(/<\/script/gi, '<\\/script')
-    .replace(/<!--/g, '<\\!--');
+    .replace(/<!--/g, '<\\!--')
+    // U+2028(LINE SEPARATOR)/U+2029(PARAGRAPH SEPARATOR)는 JSON에선 유효하지만
+    // 스크립트 파싱 시 줄바꿈으로 해석돼 파싱이 깨질 수 있어 escape 처리.
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
 }

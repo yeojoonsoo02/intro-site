@@ -8,6 +8,7 @@ import TopBar from "@/features/nav/TopBar";
 import SEOProfile from "@/components/seo/SEOProfile";
 import JsonLd from "@/components/seo/JsonLd";
 import { buildHreflangLanguages } from "@/lib/seo-utils";
+import { LANG_CODES } from "@/lib/i18n-config";
 
 const SITE_URL = "https://yeojoonsoo02.com";
 const SITE_NAME = "여준수 (Yeojunsu)";
@@ -18,15 +19,12 @@ const DEFAULT_DESC =
 type Lang = 'ko' | 'en' | 'ja' | 'zh' | 'es' | 'fr' | 'de' | 'pt' | 'ru';
 
 function detectLang(pathname: string): Lang {
-  if (pathname.startsWith('/ko')) return 'ko';
-  if (pathname.startsWith('/ja')) return 'ja';
-  if (pathname.startsWith('/zh')) return 'zh';
-  if (pathname.startsWith('/es')) return 'es';
-  if (pathname.startsWith('/fr')) return 'fr';
-  if (pathname.startsWith('/de')) return 'de';
-  if (pathname.startsWith('/pt')) return 'pt';
-  if (pathname.startsWith('/ru')) return 'ru';
-  if (pathname.startsWith('/en')) return 'en';
+  // 첫 경로 세그먼트만 추출해 정확히 언어 코드와 일치할 때만 판정.
+  // startsWith 접두 매칭은 /japan-trip 같은 경로를 /ja로 오분류하므로 사용하지 않음.
+  const firstSegment = pathname.split('/').filter(Boolean)[0];
+  if (firstSegment && (LANG_CODES as readonly string[]).includes(firstSegment)) {
+    return firstSegment as Lang;
+  }
   // root('/')는 실제 노출 콘텐츠가 한국어(이름·자기소개·관심사)라 ko로 매핑.
   // 검색엔진의 언어 시그널(html lang)과 콘텐츠를 일치시켜 색인 품질을 높임.
   return 'ko';
@@ -80,7 +78,9 @@ export const metadata: Metadata = {
     description: DEFAULT_DESC,
     site: "@yeojoonsoo02",
     creator: "@yeojoonsoo02",
-    images: ["/opengraph-image"],
+    // twitter 이미지는 파일 규약(twitter-image.tsx)에 일임.
+    // 수동 지정은 규약 라우트를 shadowing하므로 제거. openGraph도 동일하게
+    // opengraph-image.tsx 규약을 그대로 사용(수동 지정 없음).
   },
   alternates: {
     canonical: SITE_URL,
@@ -116,6 +116,12 @@ export default async function RootLayout({
   return (
     <html lang={lang} suppressHydrationWarning>
       <head>
+        {/* FOUC 방지: 첫 페인트 전에 저장된 테마를 html에 적용. 손상값은 화이트리스트로 폴백 */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');var valid=['light','dark','system'];if(valid.indexOf(t)===-1){t='system';}var isDark=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);var r=document.documentElement;r.classList.remove('dark','light');r.classList.add(isDark?'dark':'light');r.style.colorScheme=isDark?'dark':'light';}catch(e){}})();`,
+          }}
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         {/* LCP 이미지(프로필 사진) preload — 초기 렌더 지연 감소 */}
         <link
@@ -126,7 +132,7 @@ export default async function RootLayout({
         />
       </head>
       <body className="antialiased relative">
-        <JsonLd />
+        <JsonLd lang={lang} />
         <SEOProfile lang={lang} />
         <ThemeProvider>
           <AuthProvider>

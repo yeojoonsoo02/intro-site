@@ -22,7 +22,8 @@ export default function CommentItem({ text, author, date, onDelete, isAdmin }: P
       {isAdmin && (
         <button
           onClick={onDelete}
-          className="text-red-500 ml-3 text-xs px-2 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900 transition"
+          // 터치 타깃 44x44 확보(WCAG): 아이콘 시각 크기는 유지하고 버튼 영역만 확대
+          className="text-red-500 ml-3 text-xs rounded hover:bg-red-50 dark:hover:bg-red-900 transition inline-flex items-center justify-center min-w-[44px] min-h-[44px]"
           aria-label={t('deleteComment')}
         >
           ❌

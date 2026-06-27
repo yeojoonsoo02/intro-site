@@ -80,5 +80,5 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   // _next 내부, api 내부, 정적 파일 확장자는 제외한 모든 경로에 matcher
-  matcher: ['/((?!_next/static|_next/image|favicon\\.ico|.*\\.(?:png|jpg|jpeg|gif|svg|webp|avif|ico|txt|xml|json|map|js|css|woff|woff2)$).*)'],
+  matcher: ['/((?!api|_next/static|_next/image|favicon\\.ico|.*\\.(?:png|jpg|jpeg|gif|svg|webp|avif|ico|txt|xml|json|map|js|css|woff|woff2)$).*)'],
 };

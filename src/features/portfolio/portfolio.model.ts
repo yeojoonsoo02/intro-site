@@ -12,6 +12,8 @@ export interface Project {
 }
 
 export interface SkillItem {
+  // 렌더 key용 고유 id (레거시 데이터엔 없을 수 있어 optional)
+  id?: string;
   name: string;
   level: number;
 }

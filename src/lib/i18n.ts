@@ -15,6 +15,8 @@ i18n
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage'],
+      // 앱 전역에서 쓰는 'lang' 키로 통일(기본값 'i18nextLng' 분산 제거).
+      lookupLocalStorage: 'lang',
     },
     backend: {
       loadPath: '/locales/{{lng}}.json',

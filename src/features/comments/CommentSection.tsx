@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import {
   collection,
   addDoc,
-  getDocs,
+  onSnapshot,
   deleteDoc,
   doc,
   Timestamp,
@@ -20,27 +20,15 @@ import { useAuth } from '@/lib/AuthProvider';
 
 export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
   const [input, setInput] = useState('');
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [loading, setLoading] = useState(false);
+  // 서버 구독 댓글(onSnapshot 소스)과 낙관적 임시 댓글을 분리 관리해 중복 표시 방지
+  const [serverComments, setServerComments] = useState<Comment[]>([]);
+  const [pendingComments, setPendingComments] = useState<Comment[]>([]);
+  const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
   const { user, login } = useAuth();
 
-  const loadComments = async () => {
-    setLoading(true);
-    try {
-      const q = query(collection(db, 'comments'), orderBy('createdAt', 'desc'));
-      const snapshot = await getDocs(q);
-      const data = snapshot.docs.map((d) => ({
-        id: d.id,
-        ...d.data(),
-      })) as Comment[];
-      setComments(data);
-    } catch (err) {
-      console.error('Failed to load comments:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // 화면 표시용: 아직 서버에 미반영된 임시 댓글 + 서버 댓글(최신순). 동일 임시 제거.
+  const comments: Comment[] = [...pendingComments, ...serverComments];
 
   const addComment = async () => {
     if (!input.trim() || !user) return;
@@ -55,42 +43,53 @@ export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
       author,
       createdAt: now,
     };
-    setComments((prev) => [tempComment, ...prev]);
+    // 즉시 반영(낙관적). onSnapshot이 서버 문서를 받으면 이 임시 댓글은 제거.
+    setPendingComments((prev) => [tempComment, ...prev]);
     setInput('');
 
     try {
-      const docRef = await addDoc(collection(db, 'comments'), {
+      await addDoc(collection(db, 'comments'), {
         text,
         author,
         createdAt: now,
       });
-      // Replace temp ID with real ID
-      setComments((prev) =>
-        prev.map((c) => (c.id === tempId ? { ...c, id: docRef.id } : c))
-      );
+      // 실제 문서는 onSnapshot으로 들어오므로 임시 댓글 제거(중복 방지)
+      setPendingComments((prev) => prev.filter((c) => c.id !== tempId));
     } catch (err) {
       console.error('Failed to add comment:', err);
       // Rollback
-      setComments((prev) => prev.filter((c) => c.id !== tempId));
+      setPendingComments((prev) => prev.filter((c) => c.id !== tempId));
     }
   };
 
   const deleteComment = async (id: string) => {
-    // Optimistic update
-    const prev = comments;
-    setComments((c) => c.filter((item) => item.id !== id));
-
     try {
+      // 서버 삭제는 onSnapshot이 목록에 반영. 실패 시 별도 롤백 불필요(구독이 진실 소스).
       await deleteDoc(doc(db, 'comments', id));
     } catch (err) {
       console.error('Failed to delete comment:', err);
-      // Rollback
-      setComments(prev);
     }
   };
 
+  // 실시간 구독: 타 클라이언트의 추가/삭제도 즉시 반영. cleanup에서 unsubscribe.
   useEffect(() => {
-    loadComments();
+    const q = query(collection(db, 'comments'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const data = snapshot.docs.map((d) => ({
+          id: d.id,
+          ...d.data(),
+        })) as Comment[];
+        setServerComments(data);
+        setLoading(false);
+      },
+      (err) => {
+        console.error('Failed to subscribe comments:', err);
+        setLoading(false);
+      }
+    );
+    return () => unsubscribe();
   }, []);
 
   return (

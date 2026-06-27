@@ -12,15 +12,25 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
+// 실제 사용하는 테마 값 화이트리스트 — localStorage 손상값 방어
+const VALID_THEMES: readonly Theme[] = ['light', 'dark', 'system']
+
+function isValidTheme(value: string | null): value is Theme {
+  return value !== null && (VALID_THEMES as readonly string[]).includes(value)
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>('system')
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light')
 
-  // 시스템 다크모드 감지
+  // 저장된 테마 복원 — 화이트리스트 검증 후 적용, 손상값이면 기본값(system) 폴백
   useEffect(() => {
-    const stored = localStorage.getItem('theme') as Theme | null
-    if (stored) {
+    const stored = localStorage.getItem('theme')
+    if (isValidTheme(stored)) {
       setTheme(stored)
+    } else if (stored !== null) {
+      // 손상된 값 정리
+      localStorage.removeItem('theme')
     }
   }, [])
 

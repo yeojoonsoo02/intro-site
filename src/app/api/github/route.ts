@@ -10,6 +10,11 @@ interface GithubRepo {
   fork: boolean;
 }
 
+// 필요한 필드만 정의한 최소 사용자 응답 타입 (any 신뢰 금지)
+interface GithubUser {
+  public_repos: number;
+}
+
 // 허용 사용자만 조회 가능 (공격자가 다른 계정을 찌르며 GitHub 60/h 쿼터 소진 방지)
 const ALLOWED_USERS = new Set(['yeojoonsoo02']);
 
@@ -25,7 +30,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         headers: { Accept: 'application/vnd.github.v3+json' },
         next: { revalidate: 3600 },
       }),
-      fetch(`https://api.github.com/users/${user}/repos?sort=updated&per_page=30`, {
+      // type=owner + per_page=100 으로 충분히 받아 fork 다량 시 원본 누락 방지
+      fetch(`https://api.github.com/users/${user}/repos?sort=updated&type=owner&per_page=100`, {
         headers: { Accept: 'application/vnd.github.v3+json' },
         next: { revalidate: 3600 },
       }),
@@ -35,10 +41,13 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'GitHub API failed' }, { status: 502 });
     }
 
-    const userData = await userRes.json();
-    const reposData: GithubRepo[] = await reposRes.json();
+    const userData: GithubUser = await userRes.json();
+    const reposData: unknown = await reposRes.json();
 
-    const repos = reposData
+    // GitHub 응답이 배열이 아닐 수 있으므로 가드 (비배열 시 TypeError 방지)
+    const reposList: GithubRepo[] = Array.isArray(reposData) ? (reposData as GithubRepo[]) : [];
+
+    const repos = reposList
       .filter((r) => !r.fork)
       .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
       .slice(0, 6)

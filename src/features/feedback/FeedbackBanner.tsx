@@ -29,6 +29,16 @@ export default function FeedbackBanner({
     }
   }
 
+  // Esc 키로 배너 닫기 — 배너가 보일 때만 리스너 등록, cleanup으로 해제
+  useEffect(() => {
+    if (!visible) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') hide()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [visible])
+
   if (!visible) return null
 
   return (
@@ -40,7 +50,17 @@ export default function FeedbackBanner({
       className="fixed top-4 right-4 w-80 max-w-[calc(100%-2rem)] backdrop-blur-md border rounded-xl p-3 shadow z-50"
       style={{ background: "color-mix(in srgb, var(--card-bg) 85%, transparent)", borderColor: "var(--border)" }}
     >
-      <p className="mb-2 text-sm leading-relaxed break-keep whitespace-pre-wrap overflow-wrap-anywhere">{t('feedbackMessage')}</p>
+      {/* 명시적 닫기(X) 버튼 — 44px 터치 타깃, 아이콘 시각 크기는 유지 */}
+      <button
+        type="button"
+        onClick={hide}
+        aria-label={t('closeFeedback')}
+        className="absolute top-1 right-1 inline-flex items-center justify-center min-w-[44px] min-h-[44px] rounded-md text-lg leading-none hover:opacity-70 transition"
+        style={{ color: "var(--foreground)" }}
+      >
+        ✕
+      </button>
+      <p className="mb-2 pr-9 text-sm leading-relaxed break-keep whitespace-pre-wrap overflow-wrap-anywhere">{t('feedbackMessage')}</p>
       <div className="text-right">
         <button
           type="button"

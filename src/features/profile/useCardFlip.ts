@@ -75,16 +75,14 @@ export default function useCardFlip({ innerRef, onAngleChange }: UseCardFlipProp
     (e.target as Element).releasePointerCapture(e.pointerId);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      if (!innerRef.current) return;
-      currentAngle.current += 180;
-      setIsFlipped(currentAngle.current % 360 !== 0);
-      innerRef.current.style.transition = 'transform 0.4s ease';
-      innerRef.current.style.transform = `rotateY(${currentAngle.current}deg)`;
-      onAngleChange?.(currentAngle.current);
-    }
+  // 명시적 flip 버튼(클릭/키보드)에서 공통으로 사용하는 카드 뒤집기 동작
+  const flip = () => {
+    if (!innerRef.current) return;
+    currentAngle.current += 180;
+    setIsFlipped(currentAngle.current % 360 !== 0);
+    innerRef.current.style.transition = 'transform 0.4s ease';
+    innerRef.current.style.transform = `rotateY(${currentAngle.current}deg)`;
+    onAngleChange?.(currentAngle.current);
   };
 
   return {
@@ -92,7 +90,7 @@ export default function useCardFlip({ innerRef, onAngleChange }: UseCardFlipProp
     onPointerMove: handlePointerMove,
     onPointerUp: handlePointerEnd,
     onPointerCancel: handlePointerEnd,
-    onKeyDown: handleKeyDown,
+    flip,
     isFlipped,
   };
 }

@@ -27,7 +27,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const chatId = String(message.chat.id)
     const allowedChatId = process.env.TELEGRAM_CHAT_ID
-    if (allowedChatId && chatId !== allowedChatId) {
+    // 허용 chat_id 미설정 시 거부(fail-closed) — 오설정으로 누구나 통과하는 것 방지
+    if (!allowedChatId || chatId !== allowedChatId) {
       return NextResponse.json({ ok: true })
     }
 

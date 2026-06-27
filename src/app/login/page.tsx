@@ -15,7 +15,14 @@ export default function LoginPage() {
     if (user) router.replace("/dashboard");
   }, [user, router]);
 
-  if (loading) return null;
+  // 로딩 중에는 빈 화면 대신 인디케이터 노출 (다른 페이지의 t('loading') 패턴 참고)
+  if (loading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center" style={{ background: "var(--background)" }}>
+        <p style={{ color: "var(--muted)" }}>{t('loading')}</p>
+      </main>
+    );
+  }
   if (user) return null;
 
   return (

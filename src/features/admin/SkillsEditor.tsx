@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { SkillCategory } from '@/features/portfolio/portfolio.model';
 
@@ -17,6 +18,19 @@ type Props = {
 export default function SkillsEditor({ categories, onChange }: Props) {
   const { t } = useTranslation();
 
+  // 레거시 데이터의 skill 항목에 id가 없으면 1회 부여 (key 안정화용)
+  useEffect(() => {
+    const needsId = categories.some((c) => c.items.some((s) => !s.id));
+    if (!needsId) return;
+    onChange(
+      categories.map((c) => ({
+        ...c,
+        items: c.items.map((s) => (s.id ? s : { ...s, id: crypto.randomUUID() })),
+      })),
+    );
+    // categories 변경 시 재실행되나, id 부여 후엔 needsId가 false라 무한 루프 없음
+  }, [categories, onChange]);
+
   const addCategory = () => {
     onChange([...categories, { id: Date.now().toString(), name: '', items: [] }]);
   };
@@ -33,7 +47,9 @@ export default function SkillsEditor({ categories, onChange }: Props) {
   const addSkill = (catIdx: number) => {
     onChange(
       categories.map((c, i) =>
-        i === catIdx ? { ...c, items: [...c.items, { name: '', level: 3 }] } : c,
+        i === catIdx
+          ? { ...c, items: [...c.items, { id: crypto.randomUUID(), name: '', level: 3 }] }
+          : c,
       ),
     );
   };
@@ -83,7 +99,8 @@ export default function SkillsEditor({ categories, onChange }: Props) {
           </div>
 
           {cat.items.map((skill, skillIdx) => (
-            <div key={skillIdx} className="flex items-center gap-2 pl-2">
+            // id 부여 전(레거시 1프레임) 한정 fallback, 이후엔 항상 고유 id 사용
+            <div key={skill.id ?? `${cat.id}-${skillIdx}`} className="flex items-center gap-2 pl-2">
               <input
                 className="flex-1 rounded px-3 py-1.5 text-sm"
                 style={inputStyle}
