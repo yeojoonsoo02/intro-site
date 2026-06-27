@@ -5,8 +5,9 @@ import {
   HarmBlockThreshold,
 } from '@google/generative-ai'
 import { checkRateLimit, checkDailyBudget, consumeDailyBudget } from '@/lib/rateLimit'
+import { adminAuth } from '@/lib/firebaseAdmin'
 import { buildSystemPrompt } from './systemPrompt'
-import { isBot, sanitizeUserInfo, resolveFallbackUrl } from './security'
+import { isBot, resolveFallbackUrl } from './security'
 import { fireSideEffects } from './sideEffects'
 
 const MAX_MESSAGE_LENGTH = 2000
@@ -41,12 +42,28 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
   const message = body.message || body.prompt
-  const userInfo = sanitizeUserInfo(body.userInfo)
-  const email = userInfo?.email
-  const isLoggedIn = typeof email === 'string' && email.length > 0
+
+  // 로그인 등급·식별을 서버에서 Firebase ID 토큰으로 검증한다. 클라이언트가 보낸 email
+  // 문자열은 더 이상 신뢰하지 않음(한도 위조·강등 방지). 토큰 없거나 위조/만료면 게스트로 처리.
+  let verifiedUser: { uid: string; email: string } | null = null
+  const idToken = typeof body.idToken === 'string' ? body.idToken : null
+  if (idToken && adminAuth) {
+    try {
+      const decoded = await adminAuth.verifyIdToken(idToken)
+      verifiedUser = { uid: decoded.uid, email: decoded.email ?? '' }
+    } catch {
+      verifiedUser = null
+    }
+  }
+  const isLoggedIn = !!verifiedUser
+  const userInfo = verifiedUser
+    ? { uid: verifiedUser.uid, email: verifiedUser.email }
+    : null
 
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
-  const rateLimit = await checkRateLimit(ip, isLoggedIn)
+  // 로그인 사용자는 uid 기준으로 제한(IP 공유 환경에서도 정확). 게스트는 IP 기준.
+  const rateLimitKey = verifiedUser ? `uid_${verifiedUser.uid}` : ip
+  const rateLimit = await checkRateLimit(rateLimitKey, isLoggedIn)
   if (!rateLimit.allowed) {
     return NextResponse.json(
       { error: 'Too many requests. Please try again later.', remaining: 0, isLoggedIn },

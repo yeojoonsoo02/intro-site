@@ -48,12 +48,14 @@ export function useChat(): UseChatReturn {
       append('user', prompt)
       setLoading(true)
       try {
+        // 로그인 등급·식별은 서버에서 ID 토큰으로 검증한다. 위조 가능한 email 문자열은 보내지 않음.
+        const idToken = user ? await user.getIdToken().catch(() => null) : null
         const res = await fetch('/api/gemini', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             message: prompt,
-            userInfo: user?.email ?? null,
+            idToken,
           }),
         })
         if (!res.ok) {
@@ -81,7 +83,7 @@ export function useChat(): UseChatReturn {
         setLoading(false)
       }
     },
-    [append, loading, t, user?.email],
+    [append, loading, t, user],
   )
 
   return { messages, loading, remaining, limitExhausted, send }

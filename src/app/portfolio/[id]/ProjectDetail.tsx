@@ -147,6 +147,9 @@ function ProjectThumbnail({ project }: { project: Project }): JSX.Element | null
         sizes="(max-width: 768px) 100vw, 768px"
         className="w-full h-auto"
         priority
+        // 썸네일은 어드민이 임의 호스트 URL을 넣을 수 있어 옵티마이저(remotePatterns 제한)를
+        // 거치면 로드 실패한다. 갤러리(CSS 배경)와 동일하게 직접 로드해 어떤 호스트든 표시.
+        unoptimized
       />
     </div>
   )

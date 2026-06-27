@@ -90,7 +90,7 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
   const lang = isAdmin ? adminLang : (i18n.language || 'ko');
 
   const { data, setData, loaded, loadError } = usePortfolioData(lang, isAdmin);
-  const { saving, saved, handleSave } = usePortfolioSave();
+  const { saving, saved, saveError, handleSave } = usePortfolioSave();
 
   if (!loaded) {
     return (
@@ -146,11 +146,11 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
             disabled={saving}
             className="px-5 py-1.5 rounded-lg text-sm font-medium transition-all hover:opacity-90 disabled:opacity-50"
             style={{
-              background: saved ? '#22c55e' : 'var(--primary)',
-              color: saved ? '#fff' : 'var(--primary-contrast)',
+              background: saveError ? '#ef4444' : saved ? '#22c55e' : 'var(--primary)',
+              color: saveError || saved ? '#fff' : 'var(--primary-contrast)',
             }}
           >
-            {saving ? '...' : saved ? `✓ ${t('saved')}` : t('save')}
+            {saving ? '...' : saveError ? `⚠ ${t('saveFailed')}` : saved ? `✓ ${t('saved')}` : t('save')}
           </button>
         </div>
       )}
@@ -163,12 +163,12 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
           disabled={saving}
           className="w-full py-3.5 rounded-xl font-medium text-sm transition-all hover:opacity-90 disabled:opacity-50 mt-8"
           style={{
-            background: saved ? '#22c55e' : 'var(--primary)',
-            color: saved ? '#fff' : 'var(--primary-contrast)',
+            background: saveError ? '#ef4444' : saved ? '#22c55e' : 'var(--primary)',
+            color: saveError || saved ? '#fff' : 'var(--primary-contrast)',
             boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
           }}
         >
-          {saving ? t('loading') : saved ? `✓ ${t('saved')}` : t('save')}
+          {saving ? t('loading') : saveError ? `⚠ ${t('saveFailed')}` : saved ? `✓ ${t('saved')}` : t('save')}
         </button>
       )}
     </div>

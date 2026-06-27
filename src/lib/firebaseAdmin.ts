@@ -4,8 +4,10 @@ import {
   Firestore,
   FieldValue,
 } from 'firebase-admin/firestore'
+import { getAuth, Auth } from 'firebase-admin/auth'
 
 let adminDb: Firestore | null = null
+let adminAuth: Auth | null = null
 
 try {
   const key = process.env.FIREBASE_SERVICE_ACCOUNT_KEY
@@ -15,6 +17,7 @@ try {
         ? getApps()[0]
         : initializeApp({ credential: cert(JSON.parse(key)) })
     adminDb = getFirestore(app)
+    adminAuth = getAuth(app)
     console.log('[firebaseAdmin] Admin SDK initialized successfully')
   } else {
     console.warn(
@@ -28,7 +31,8 @@ try {
     '[firebaseAdmin] All Firestore operations will use Client SDK (Firestore Rules apply)',
   )
   adminDb = null
+  adminAuth = null
 }
 
-export { adminDb, FieldValue }
+export { adminDb, adminAuth, FieldValue }
 export const isAdminReady = !!adminDb

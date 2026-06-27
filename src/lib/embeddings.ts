@@ -8,6 +8,11 @@ type CachedEmbedding = { id: string; vector: number[] }
 let chunkEmbeddings: CachedEmbedding[] | null = null
 let embedPromise: Promise<CachedEmbedding[]> | null = null
 
+// 커스텀 지식 임베딩 캐시(텍스트 내용 → 벡터). 동일 텍스트는 항상 동일 임베딩이므로
+// 채팅 요청마다 재계산하던 N+1 임베딩 API 호출을 제거한다. 텍스트가 바뀌면 자동 미스.
+const customEmbedCache = new Map<string, number[]>()
+const CUSTOM_CACHE_MAX = 500
+
 function getModel() {
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) throw new Error('GEMINI_API_KEY not set')
@@ -96,7 +101,16 @@ export async function searchCustom(
   const results: { text: string; score: number }[] = []
 
   for (const text of texts) {
-    const vec = await embed(text)
+    let vec = customEmbedCache.get(text)
+    if (!vec) {
+      vec = await embed(text)
+      // 단순 용량 상한: 초과 시 가장 오래된 항목부터 제거(무한 증가 방지)
+      if (customEmbedCache.size >= CUSTOM_CACHE_MAX) {
+        const oldest = customEmbedCache.keys().next().value
+        if (oldest !== undefined) customEmbedCache.delete(oldest)
+      }
+      customEmbedCache.set(text, vec)
+    }
     const score = cosineSim(queryVec, vec)
     if (score >= threshold) {
       results.push({ text, score })
@@ -110,4 +124,5 @@ export async function searchCustom(
 export function invalidateEmbeddingCache() {
   chunkEmbeddings = null
   embedPromise = null
+  customEmbedCache.clear()
 }
