@@ -98,7 +98,11 @@ export const personEntity = {
       addressCountry: 'KR',
     },
   },
-  // 양방향 연결로 엔티티 동일성 검증 — 실제 존재하는 프로필만 등재.
-  // TODO(콘텐츠): LinkedIn·블로그(Velog 등) 확보 시 여기에 추가하면 AI 엔티티 교차검증이 강화됨.
-  sameAs: ['https://github.com/yeojoonsoo02'],
+  // 양방향 연결로 엔티티 동일성 검증 — 실제 존재하는 본인 소유 공개 프로필만 등재.
+  // 동명이인이 많은 이름이라 교차검증 출처를 늘릴수록 검색·AI 엔티티 식별이 강화됨.
+  // TODO(콘텐츠): LinkedIn 등 추가 공개 프로필 확보 시 여기에 더하면 좋음.
+  sameAs: [
+    'https://github.com/yeojoonsoo02',
+    'https://blog.naver.com/yeojoonsoo02',
+  ],
 };
