@@ -7,7 +7,7 @@
 // - 챗봇 컨텍스트 전용(휘발성). 사이트에 렌더/색인하지 않는다.
 
 const RSS_URL = 'https://rss.blog.naver.com/yeojoonsoo02.xml'
-const TTL = 60 * 60 * 1000 // 1시간
+const TTL = 24 * 60 * 60 * 1000 // 24시간 — 블로그 글 빈도상 하루 1회 갱신으로 충분
 const ALLOWED_CATEGORIES = new Set(['책', '일상'])
 const BOOK_CATEGORY = '책'
 const MAX_ITEMS = 8
