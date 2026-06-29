@@ -9,6 +9,8 @@
   "visitorCount": "👀 Visiteurs au total :",
   "loading": "Chargement...",
   "adminAuthTitle": "Authentification administrateur",
+  "adminLoginPrompt": "Connectez-vous avec votre compte Google.",
+  "adminNoPermission": "Ce compte n'a pas les droits d'administrateur.",
   "cancel": "Annuler",
   "loginWithGoogle": "Se connecter avec Google",
   "typeYourPrompt": "Posez une question à l'IA",

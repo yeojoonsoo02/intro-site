@@ -32,7 +32,7 @@ export const personEntity = {
   email: 'mailto:yeojoonsoo02@gmail.com',
   jobTitle: '대학생 개발자',
   description:
-    'Next.js·TypeScript·React 기반 웹 풀스택 개발과 AI 애플리케이션(OpenAI·Google Gemini API) 연동에 관심이 많은 대학생 개발자 여준수. 자신이 쓸 도구·서비스를 직접 만들며 개인 통합 관리 플랫폼, 스탯지니(stat-genie) 등 개인 프로젝트를 진행.',
+    '광운대학교 소프트웨어학과 3학년에 재학 중인 대학생 개발자 여준수. Next.js·TypeScript·React 기반 웹 풀스택 개발과 AI 애플리케이션(OpenAI·Google Gemini API) 연동에 관심이 많고, 자신이 쓸 도구·서비스를 직접 만들며 개인 통합 관리 플랫폼, 스탯지니(stat-genie) 등 개인 프로젝트를 진행.',
   // 동명이인 구분 — 공식 사이트·GitHub 계정으로 이 인물을 특정
   disambiguatingDescription:
     '공식 사이트 yeojoonsoo02.com 과 GitHub 계정 github.com/yeojoonsoo02 를 운영하는 대학생 개발자 여준수(Yeojunsu)입니다. 같은 이름의 다른 인물과는 무관합니다.',

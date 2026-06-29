@@ -31,10 +31,22 @@ export default function GithubActivity({ username = 'yeojoonsoo02' }: { username
   const [stats, setStats] = useState<GithubStats | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     fetch(`/api/github?user=${username}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then(setStats)
-      .catch(() => null);
+      .then((r) => {
+        if (!r.ok) throw new Error(`github fetch failed: ${r.status}`);
+        return r.json();
+      })
+      .then((data) => {
+        if (!cancelled) setStats(data);
+      })
+      .catch((err) => {
+        // rate-limit·네트워크 오류 등은 섹션을 숨기되 원인은 로깅(무음 디버깅 곤란 방지)
+        console.error('GithubActivity load failed:', err);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [username]);
 
   if (!stats) return null;

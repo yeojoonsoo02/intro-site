@@ -38,7 +38,7 @@ function sanitizeUrls(input: unknown): string[] {
 
 const DEFAULT_URLS: string[] = [
   `${SITE_URL}/`,
-  `${SITE_URL}/ko`,
+  `${SITE_URL}/en`,
   `${SITE_URL}/ja`,
   `${SITE_URL}/zh`,
   `${SITE_URL}/es`,

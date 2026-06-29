@@ -9,6 +9,8 @@
   "visitorCount": "👀 Total de visitantes:",
   "loading": "Cargando...",
   "adminAuthTitle": "Autenticación de administrador",
+  "adminLoginPrompt": "Inicia sesión con tu cuenta de Google.",
+  "adminNoPermission": "Esta cuenta no tiene permisos de administrador.",
   "cancel": "Cancelar",
   "loginWithGoogle": "Iniciar sesión con Google",
   "typeYourPrompt": "Pregunta a la IA",

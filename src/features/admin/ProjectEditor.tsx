@@ -21,7 +21,7 @@ export default function ProjectEditor({ items, onChange }: Props) {
     onChange([
       ...items,
       {
-        id: Date.now().toString(),
+        id: crypto.randomUUID(),
         title: '',
         description: '',
         thumbnail: '',

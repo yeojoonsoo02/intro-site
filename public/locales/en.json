@@ -9,6 +9,8 @@
   "visitorCount": "👀 Total visitors:",
   "loading": "Loading...",
   "adminAuthTitle": "Admin Authentication",
+  "adminLoginPrompt": "Please sign in with your Google account.",
+  "adminNoPermission": "This account does not have admin access.",
   "cancel": "Cancel",
   "loginWithGoogle": "Login with Google",
   "typeYourPrompt": "Ask the AI",

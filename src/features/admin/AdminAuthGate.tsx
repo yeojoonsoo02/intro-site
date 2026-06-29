@@ -19,7 +19,7 @@ export default function AdminAuthGate({ children }: { children: React.ReactNode 
         <div className="text-lg font-semibold mb-1">{t('adminAuthTitle')}</div>
         {!user ? (
           <>
-            <div className="text-sm text-muted mb-2">Google 계정으로 로그인해주세요.</div>
+            <div className="text-sm text-muted mb-2">{t('adminLoginPrompt')}</div>
             <div className="modal-actions mt-2">
               <Link
                 href="/"
@@ -46,7 +46,7 @@ export default function AdminAuthGate({ children }: { children: React.ReactNode 
                 {user.email}
               </span>
             </div>
-            <div className="text-sm text-muted mb-2">관리자 권한이 없는 계정입니다.</div>
+            <div className="text-sm text-muted mb-2">{t('adminNoPermission')}</div>
             <div className="modal-actions mt-2">
               <Link
                 href="/"

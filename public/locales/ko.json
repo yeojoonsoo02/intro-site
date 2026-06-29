@@ -9,6 +9,8 @@
   "visitorCount": "👀 총 방문자 수:",
   "loading": "로딩 중...",
   "adminAuthTitle": "관리자 인증",
+  "adminLoginPrompt": "Google 계정으로 로그인해주세요.",
+  "adminNoPermission": "관리자 권한이 없는 계정입니다.",
   "cancel": "취소",
   "loginWithGoogle": "Google로 로그인",
   "typeYourPrompt": "AI에게 질문하세요",

@@ -21,7 +21,7 @@ export default function TimelineEditor({ items, onChange }: Props) {
     onChange([
       ...items,
       {
-        id: Date.now().toString(),
+        id: crypto.randomUUID(),
         year: '',
         title: '',
         description: '',

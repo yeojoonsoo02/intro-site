@@ -9,6 +9,8 @@
   "visitorCount": "👀 訪問者数:",
   "loading": "読み込み中...",
   "adminAuthTitle": "管理者認証",
+  "adminLoginPrompt": "Googleアカウントでログインしてください。",
+  "adminNoPermission": "管理者権限のないアカウントです。",
   "cancel": "キャンセル",
   "loginWithGoogle": "Googleでログイン",
   "typeYourPrompt": "AI に質問してください",

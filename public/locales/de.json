@@ -9,6 +9,8 @@
   "visitorCount": "👀 Besucher gesamt:",
   "loading": "Lädt...",
   "adminAuthTitle": "Admin-Authentifizierung",
+  "adminLoginPrompt": "Bitte mit Google-Konto anmelden.",
+  "adminNoPermission": "Dieses Konto hat keine Administratorrechte.",
   "cancel": "Abbrechen",
   "loginWithGoogle": "Mit Google anmelden",
   "typeYourPrompt": "Frag die KI",

@@ -9,6 +9,8 @@
   "visitorCount": "👀 访客总数:",
   "loading": "加载中...",
   "adminAuthTitle": "管理员验证",
+  "adminLoginPrompt": "请使用 Google 账户登录。",
+  "adminNoPermission": "该账户没有管理员权限。",
   "cancel": "取消",
   "loginWithGoogle": "使用 Google 登录",
   "typeYourPrompt": "向 AI 提问",

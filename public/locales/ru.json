@@ -9,6 +9,8 @@
   "visitorCount": "👀 Всего посетителей:",
   "loading": "Загрузка...",
   "adminAuthTitle": "Аутентификация администратора",
+  "adminLoginPrompt": "Войдите через аккаунт Google.",
+  "adminNoPermission": "У этого аккаунта нет прав администратора.",
   "cancel": "Отмена",
   "loginWithGoogle": "Войти через Google",
   "typeYourPrompt": "Спросите ИИ",
