@@ -12,18 +12,20 @@ Vercel 배포 (GitHub Actions `deploy.yml` — main push 시 type-check → lint
 
 **Firebase는 Auth와 Firestore만 쓴다.** `firebase.json`에 `firestore.rules`만 있고 Hosting 설정은 없다 — 호스팅은 Vercel이다. Firebase Hosting으로 배포하려 들지 말 것.
 
+⚠️ **Firestore 규칙은 Vercel 파이프라인이 배포하지 않는다.** `firestore.rules`를 고쳤으면 별도로 `firebase deploy --only firestore:rules`를 쳐야 반영된다. 대상 프로젝트는 `.firebaserc`의 **`intro-site-e88aa`** — 이 파일이 없으면 CLI가 전역 활성 프로젝트(다른 프로젝트일 수 있음)로 배포해버리므로 지우지 말 것. 배포 전 `--dry-run`으로 컴파일 확인.
+
 ## 2. 다국어 — 루트가 한국어다
 
 ```
 /          한국어 (대표본, 별도 /ko 없음)
-/en /ja /zh /es /fr /de /pt
+/en /ja /zh /es /fr /de /pt /ru
 ```
 
 `src/middleware.ts`가 브라우저 `Accept-Language`를 보고 해당 로케일로 보낸다. **한국어 선호 사용자는 루트에 머문다.**
 
 ⚠️ **검색엔진·AI 크롤러는 리디렉트하지 않고 루트에 그대로 둔다** — `middleware.ts` 상단 `BOTS` 정규식이 그 장치다(googlebot·yeti·claudebot·gptbot·perplexitybot 등). 색인 안정성을 위한 의도된 동작이니 "봇 예외 처리가 왜 있지" 하고 지우지 말 것. 새 크롤러 UA를 추가할 일은 있어도 제거할 일은 없다.
 
-로케일을 추가하면 **라우트 디렉토리 · `ROUTE_BY_LANG` 매핑 · `lib/i18n-config.ts` · sitemap/hreflang** 을 함께 손봐야 한다. 하나만 고치면 조용히 어긋난다.
+로케일을 추가하면 **라우트 디렉토리 · `ROUTE_BY_LANG` 매핑 · `lib/i18n-config.ts` · sitemap/hreflang · `lib/seo-utils.ts` · `api/portfolio`의 `ALLOWED_LANGS` · `api/indexnow`의 `DEFAULT_URLS` · `public/locales/*.json`** 을 함께 손봐야 한다. 하나만 고치면 조용히 어긋난다.
 
 ## 3. Next 16인데 `middleware.ts`를 쓰고 있다
 

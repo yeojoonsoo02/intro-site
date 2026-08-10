@@ -1,15 +1,20 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 
-// Firebase configuration
+// 설정값은 env에서 읽는다(하드코딩 금지 — migrateProfiles.ts와 동일한 방식).
+// 실행: node --env-file=.env.local scripts/migrate-accurate.mjs
 const firebaseConfig = {
-  apiKey: "AIzaSyD0SEgiLTh9jpUg5Ca-yLnBQ6aK85b4oDw",
-  authDomain: "intro-site-e88aa.firebaseapp.com",
-  projectId: "intro-site-e88aa",
-  storageBucket: "intro-site-e88aa.firebasestorage.app",
-  messagingSenderId: "899682203152",
-  appId: "1:899682203152:web:958e9a308ccb1f3655bc95"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
+
+if (!firebaseConfig.projectId) {
+  throw new Error('Firebase env가 없습니다. node --env-file=.env.local 로 실행하세요.');
+}
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
