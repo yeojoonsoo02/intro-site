@@ -1,5 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
+import crypto from 'crypto'
 import { splitKnowledge, type Chunk } from '@/lib/chunks'
+import { PRECOMPUTED_EMBEDDINGS } from '@/data/chunkEmbeddings.generated'
 
 // --- Embedding cache ---
 
@@ -13,17 +15,48 @@ let embedPromise: Promise<CachedEmbedding[]> | null = null
 const customEmbedCache = new Map<string, number[]>()
 const CUSTOM_CACHE_MAX = 500
 
+// 질문 임베딩 캐시. 실제 로그를 보면 "지금 어디야?" 같은 같은 질문이 반복적으로 들어온다.
+// 표기 흔들림(대소문자·공백·물음표)을 정규화해 맞춰야 캐시가 실제로 맞는다.
+const queryEmbedCache = new Map<string, number[]>()
+const QUERY_CACHE_MAX = 300
+
+function normalizeQuery(text: string): string {
+  return text
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .replace(/[?？!！.。~〜\s]+$/u, '')
+}
+
+// Map은 삽입 순서를 보존하므로 가장 오래된 항목부터 제거해 상한을 유지한다.
+function setBounded(cache: Map<string, number[]>, key: string, value: number[], max: number): void {
+  if (cache.size >= max) {
+    const oldest = cache.keys().next().value
+    if (oldest !== undefined) cache.delete(oldest)
+  }
+  cache.set(key, value)
+}
+
 function getModel() {
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) throw new Error('GEMINI_API_KEY not set')
   const genAI = new GoogleGenerativeAI(apiKey)
-  return genAI.getGenerativeModel({ model: 'gemini-embedding-001' })
+  return genAI.getGenerativeModel({ model: PRECOMPUTED_EMBEDDINGS.model })
 }
 
 async function embed(text: string): Promise<number[]> {
   const model = getModel()
   const result = await model.embedContent(text)
   return result.embedding.values
+}
+
+async function embedQuery(query: string): Promise<number[]> {
+  const key = normalizeQuery(query)
+  const hit = queryEmbedCache.get(key)
+  if (hit) return hit
+  const vector = await embed(query)
+  setBounded(queryEmbedCache, key, vector, QUERY_CACHE_MAX)
+  return vector
 }
 
 function cosineSim(a: number[], b: number[]): number {
@@ -39,6 +72,12 @@ function cosineSim(a: number[], b: number[]): number {
   return denom === 0 ? 0 : dot / denom
 }
 
+const chunkHash = (text: string): string =>
+  crypto.createHash('sha256').update(text).digest('hex').slice(0, 16)
+
+// 빌드 타임에 계산해 둔 벡터를 쓴다. 콜드스타트마다 청크를 순차 임베딩하던
+// API 호출(청크 수만큼)이 사라진다. knowledge.ts만 고치고 재생성을 잊은 청크는
+// 해시가 어긋나므로 그 청크만 실시간 임베딩으로 폴백한다(조용히 틀리는 것보다 낫다).
 async function getChunkEmbeddings(): Promise<CachedEmbedding[]> {
   if (chunkEmbeddings) return chunkEmbeddings
   if (embedPromise) return embedPromise
@@ -46,12 +85,28 @@ async function getChunkEmbeddings(): Promise<CachedEmbedding[]> {
   embedPromise = (async () => {
     try {
       const chunks = splitKnowledge()
+      const precomputed = new Map(
+        PRECOMPUTED_EMBEDDINGS.chunks.map((c) => [c.id, c]),
+      )
+
       const results: CachedEmbedding[] = []
-      // Embed sequentially to avoid rate limits
+      const stale: string[] = []
       for (const chunk of chunks) {
-        const vector = await embed(chunk.text)
-        results.push({ id: chunk.id, vector })
+        const hit = precomputed.get(chunk.id)
+        if (hit && hit.hash === chunkHash(chunk.text)) {
+          results.push({ id: chunk.id, vector: hit.vector })
+          continue
+        }
+        stale.push(chunk.id)
+        results.push({ id: chunk.id, vector: await embed(chunk.text) })
       }
+
+      if (stale.length > 0) {
+        console.warn(
+          `[embeddings] 사전계산본이 오래됐습니다(${stale.join(', ')}). \`npm run embeddings:build\`를 실행하세요.`,
+        )
+      }
+
       chunkEmbeddings = results
       return results
     } finally {
@@ -69,7 +124,7 @@ export async function searchChunks(
 ): Promise<Chunk[]> {
   const chunks = splitKnowledge()
   const [queryVec, cached] = await Promise.all([
-    embed(query),
+    embedQuery(query),
     getChunkEmbeddings(),
   ])
 
@@ -97,19 +152,14 @@ export async function searchCustom(
 ): Promise<string[]> {
   if (texts.length === 0) return []
 
-  const queryVec = await embed(query)
+  const queryVec = await embedQuery(query)
   const results: { text: string; score: number }[] = []
 
   for (const text of texts) {
     let vec = customEmbedCache.get(text)
     if (!vec) {
       vec = await embed(text)
-      // 단순 용량 상한: 초과 시 가장 오래된 항목부터 제거(무한 증가 방지)
-      if (customEmbedCache.size >= CUSTOM_CACHE_MAX) {
-        const oldest = customEmbedCache.keys().next().value
-        if (oldest !== undefined) customEmbedCache.delete(oldest)
-      }
-      customEmbedCache.set(text, vec)
+      setBounded(customEmbedCache, text, vec, CUSTOM_CACHE_MAX)
     }
     const score = cosineSim(queryVec, vec)
     if (score >= threshold) {
@@ -125,4 +175,5 @@ export function invalidateEmbeddingCache() {
   chunkEmbeddings = null
   embedPromise = null
   customEmbedCache.clear()
+  queryEmbedCache.clear()
 }

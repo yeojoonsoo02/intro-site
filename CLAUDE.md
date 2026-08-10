@@ -64,7 +64,10 @@ npm run type-check      # tsc --noEmit — CI가 이걸 먼저 돌린다
 npm run lint            # eslint src tests
 npm run test:e2e        # playwright (최초 1회 test:e2e:install)
 npm run indexnow        # 색인 즉시 제출
+npm run embeddings:build # 지식 청크 임베딩 사전계산 (GEMINI_API_KEY 필요)
 ```
+
+⚠️ **`src/data/knowledge.ts`를 고쳤으면 `npm run embeddings:build`를 함께 돌린다.** 청크 임베딩은 빌드 타임에 계산해 `src/data/chunkEmbeddings.generated.ts`에 넣어둔다(콜드스타트마다 임베딩 API를 부르지 않기 위함). 재생성을 잊으면 해시가 어긋난 청크만 런타임에 실시간 임베딩으로 폴백하고 서버 로그에 경고가 남는다 — 동작은 하지만 아끼려던 비용이 다시 나간다.
 
 **push 전 최소 `type-check` + `lint`** — 실패하면 GitHub Actions가 배포 전에 막는다.
 

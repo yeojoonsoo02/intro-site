@@ -10,7 +10,8 @@
     "type-check": "tsc --noEmit",
     "test:e2e": "playwright test",
     "test:e2e:install": "playwright install --with-deps chromium",
-    "indexnow": "node scripts/indexnow.mjs"
+    "indexnow": "node scripts/indexnow.mjs",
+    "embeddings:build": "node --env-file=.env.local scripts/build-embeddings.mjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
