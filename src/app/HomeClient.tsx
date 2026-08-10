@@ -14,7 +14,29 @@ export default function HomeClient() {
         <FlippableProfileCard />
       </div>
 
-      {/* Primary CTA — 더 알고 싶은 사람을 About 페이지로 자연스럽게 유도 */}
+      {/* 이 사이트의 대표 기능은 AI 대화인데 진입점이 10초 뒤 뜨는 배너와 메뉴 안뿐이라
+          발견되지 않았다. 첫 화면에 상시 노출되는 진입점을 둔다. */}
+      <div className="mt-5 flex justify-center">
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new Event('open-prompt'))}
+          className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium shadow-sm transition-transform hover:scale-[1.03] active:scale-95"
+          style={{ background: 'var(--primary)', color: 'var(--primary-contrast)' }}
+        >
+          {/* 이모지 대신 인라인 SVG — 사이트의 절제된 아이콘 톤에 맞춘다 */}
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path
+              d="M14 9.5a2 2 0 0 1-2 2H6l-3.5 2.5v-2.5a2 2 0 0 1-1-1.7V4.5a2 2 0 0 1 2-2h8.5a2 2 0 0 1 2 2z"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinejoin="round"
+            />
+          </svg>
+          {t('chatInvite')}
+        </button>
+      </div>
+
+      {/* Secondary CTA — 더 알고 싶은 사람을 About 페이지로 자연스럽게 유도 */}
       <div className="mt-3 flex justify-center">
         <Link
           href="/about"
