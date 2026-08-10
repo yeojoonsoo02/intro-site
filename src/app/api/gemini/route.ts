@@ -9,6 +9,7 @@ import { adminAuth } from '@/lib/firebaseAdmin'
 import { buildSystemPrompt } from './systemPrompt'
 import { isBot, resolveFallbackUrl } from './security'
 import { fireSideEffects } from './sideEffects'
+import { sanitizeHistory, formatHistoryForPrompt, type HistoryTurn } from './history'
 
 const MAX_MESSAGE_LENGTH = 2000
 const FALLBACK_REPLY = '음.. 그건 좀 대답하기 어렵네. 다른 거 물어봐!'
@@ -84,18 +85,22 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   // 모든 검증·per-IP 제한 통과 후 실제 외부 호출 직전에만 전역 예산 차감(빈/봇/초과 요청 방어)
   await consumeDailyBudget()
 
+  // 최근 대화(최대 3턴). 클라이언트 입력이므로 역할 순서·길이·개수를 서버에서 강제한다.
+  const history = sanitizeHistory(body.history)
+
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
-    return await proxyToFallback(message, userInfo, rateLimit.remaining)
+    return await proxyToFallback(message, userInfo, rateLimit.remaining, history)
   }
 
-  return await callGemini(apiKey, message, userInfo, rateLimit.remaining)
+  return await callGemini(apiKey, message, userInfo, rateLimit.remaining, history)
 }
 
 async function proxyToFallback(
   message: string,
   userInfo: Record<string, unknown> | null,
   remaining: number,
+  history: HistoryTurn[],
 ): Promise<NextResponse> {
   const url = resolveFallbackUrl()
   if (!url) {
@@ -107,7 +112,11 @@ async function proxyToFallback(
 
   try {
     const systemPrompt = await buildSystemPrompt(message)
-    const augmentedMessage = `${systemPrompt}\n\n### 사용자 질문:\n${message}`
+    // 외부 서비스는 단일 문자열만 받으므로 대화 맥락을 텍스트로 풀어 붙인다.
+    const recent = formatHistoryForPrompt(history)
+    const augmentedMessage = recent
+      ? `${systemPrompt}\n\n### 최근 대화:\n${recent}\n\n### 사용자 질문:\n${message}`
+      : `${systemPrompt}\n\n### 사용자 질문:\n${message}`
 
     const res = await fetch(url, {
       method: 'POST',
@@ -146,11 +155,14 @@ async function proxyToFallback(
   }
 }
 
+// 응답을 통째로 기다렸다가 한 번에 내려주면 RAG·컨텍스트 준비 시간까지 더해져
+// 체감 대기가 길다. 토큰 과금은 동일하므로 스트리밍이 순수 이득이다.
 async function callGemini(
   apiKey: string,
   message: string,
   userInfo: Record<string, unknown> | null,
   remaining: number,
+  history: HistoryTurn[],
 ): Promise<NextResponse> {
   try {
     const systemPrompt = await buildSystemPrompt(message)
@@ -160,23 +172,15 @@ async function callGemini(
       systemInstruction: systemPrompt,
       safetySettings: SAFETY_SETTINGS,
     })
+    const chat = model.startChat({ history })
 
-    // Safety 차단(SAFETY/RECITATION/BLOCKLIST 등)일 때는 재시도하지 않음 — 재시도 리프레이밍으로 정책 우회 가능성 방지.
-    // 네트워크·일시 오류만 1회 재시도.
-    let reply = ''
+    // 네트워크·일시 오류만 1회 재시도. Safety 차단은 재시도하지 않는다 —
+    // 리프레이밍으로 정책을 우회하게 되는 걸 막기 위함.
+    let stream: Awaited<ReturnType<typeof chat.sendMessageStream>> | null = null
     for (let attempt = 0; attempt < 2; attempt++) {
       try {
-        const result = await model.generateContent(message)
-        const candidate = result.response.candidates?.[0]
-        const finishReason = candidate?.finishReason
-        if (finishReason && finishReason !== 'STOP' && finishReason !== 'MAX_TOKENS') {
-          console.warn(
-            `Gemini blocked by safety: ${finishReason} for message length ${message.length}`,
-          )
-          break
-        }
-        reply = (result.response.text() ?? '').trim()
-        if (reply) break
+        stream = await chat.sendMessageStream(message)
+        break
       } catch (retryErr) {
         console.warn(
           `Gemini attempt ${attempt} failed:`,
@@ -185,15 +189,68 @@ async function callGemini(
       }
     }
 
-    if (!reply) reply = FALLBACK_REPLY
-    fireSideEffects(message, reply, userInfo)
-    // null을 주면 클라이언트가 남은 횟수 UI를 그리지 못한다. 실제 잔여 횟수를 내려준다.
-    return NextResponse.json(
-      { reply, remaining },
-      { headers: { 'X-RateLimit-Remaining': String(remaining) } },
-    )
+    if (!stream) {
+      fireSideEffects(message, FALLBACK_REPLY, userInfo)
+      return textResponse(FALLBACK_REPLY, remaining)
+    }
+
+    const encoder = new TextEncoder()
+    const activeStream = stream
+    const body = new ReadableStream<Uint8Array>({
+      async start(controller) {
+        let full = ''
+        try {
+          for await (const chunk of activeStream.stream) {
+            // safety 차단 시 text()가 던진다 — 그 시점까지 받은 내용은 그대로 둔다.
+            let piece = ''
+            try {
+              piece = chunk.text() ?? ''
+            } catch (chunkErr) {
+              console.warn(
+                'Gemini chunk blocked:',
+                chunkErr instanceof Error ? chunkErr.message : chunkErr,
+              )
+              break
+            }
+            if (!piece) continue
+            full += piece
+            controller.enqueue(encoder.encode(piece))
+          }
+        } catch (streamErr) {
+          console.error('Gemini stream error', streamErr)
+        }
+
+        // 빈 응답은 절대 내보내지 않는다(시스템 프롬프트의 절대 규칙과 동일한 취지).
+        if (!full.trim()) {
+          full = FALLBACK_REPLY
+          controller.enqueue(encoder.encode(full))
+        }
+        controller.close()
+        fireSideEffects(message, full.trim(), userInfo)
+      },
+    })
+
+    return new NextResponse(body, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'X-RateLimit-Remaining': String(remaining),
+        'Cache-Control': 'no-store',
+        // 프록시가 스트림을 모아뒀다 한 번에 흘리는 것을 막는다.
+        'X-Accel-Buffering': 'no',
+      },
+    })
   } catch (err) {
     console.error('Gemini API error', err)
     return NextResponse.json({ error: 'Failed to fetch response' }, { status: 500 })
   }
+}
+
+function textResponse(text: string, remaining: number): NextResponse {
+  return new NextResponse(text, {
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'X-RateLimit-Remaining': String(remaining),
+      'Cache-Control': 'no-store',
+    },
+  })
 }

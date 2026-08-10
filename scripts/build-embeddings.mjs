@@ -34,6 +34,7 @@ const ID_MAP = {
   '기본 정보': 'basic',
   '학력': 'education',
   '관심사': 'interests',
+  '좋아하는 것': 'likes',
   '가치관과 마인드셋': 'values',
   '꿈과 목표': 'goals',
   '소개': 'intro',

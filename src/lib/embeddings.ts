@@ -44,10 +44,23 @@ function getModel() {
   return genAI.getGenerativeModel({ model: PRECOMPUTED_EMBEDDINGS.model })
 }
 
-async function embed(text: string): Promise<number[]> {
+// 네트워크가 한 번 튀면 RAG 전체가 실패해 지식 전문을 통째로 넣는 폴백으로 떨어진다.
+// 그쪽이 토큰을 더 쓰므로, 실패한 호출은 과금되지 않는다는 점을 이용해 짧게 재시도한다.
+async function embed(text: string, attempts = 3): Promise<number[]> {
   const model = getModel()
-  const result = await model.embedContent(text)
-  return result.embedding.values
+  let lastErr: unknown
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const result = await model.embedContent(text)
+      return result.embedding.values
+    } catch (err) {
+      lastErr = err
+      if (i < attempts - 1) {
+        await new Promise((resolve) => setTimeout(resolve, 300 * 2 ** i))
+      }
+    }
+  }
+  throw lastErr
 }
 
 async function embedQuery(query: string): Promise<number[]> {

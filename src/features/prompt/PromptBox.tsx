@@ -18,7 +18,7 @@ interface PromptBoxProps {
 export default function PromptBox({ open, onClose }: PromptBoxProps): JSX.Element {
   const { t } = useTranslation()
   const { user, login } = useAuth()
-  const { messages, loading, remaining, limitExhausted, send } = useChat()
+  const { messages, loading, streaming, remaining, limitExhausted, send } = useChat()
   const [collapsed, setCollapsed] = useState(false)
   const [dots, setDots] = useState(1)
   const listRef = useRef<HTMLDivElement | null>(null)
@@ -70,7 +70,8 @@ export default function PromptBox({ open, onClose }: PromptBoxProps): JSX.Elemen
           <MessageList
             ref={listRef}
             messages={messages}
-            loading={loading}
+            // 첫 글자가 도착하면 답변 말풍선이 자라기 시작하므로 "입력 중" 표시는 거둔다.
+            loading={loading && !streaming}
             dots={dots}
             onSuggestionClick={send}
           />
