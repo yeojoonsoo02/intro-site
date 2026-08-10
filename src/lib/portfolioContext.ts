@@ -10,7 +10,7 @@ import { adminDb } from '@/lib/firebaseAdmin'
 
 const TTL = 10 * 60 * 1000
 const ERROR_TTL = 60 * 1000
-const MAX_ITEMS_PER_SECTION = 6
+const DEFAULT_MAX_ITEMS = 12
 const MAX_VALUE_LENGTH = 300
 
 interface SectionSpec {
@@ -20,13 +20,14 @@ interface SectionSpec {
   // 이 섹션을 끌어올 질문 키워드. 한국어 위주지만 영어 질문도 자주 들어와 함께 둔다.
   keywords: RegExp
   format: (data: Record<string, unknown>) => string[]
+  maxItems?: number
 }
 
 const line = (v: unknown): string => String(v ?? '').slice(0, MAX_VALUE_LENGTH).trim()
 
 function listOf(data: Record<string, unknown>, key: 'items' | 'categories'): Record<string, unknown>[] {
   const raw = data[key]
-  return Array.isArray(raw) ? (raw as Record<string, unknown>[]).slice(0, MAX_ITEMS_PER_SECTION) : []
+  return Array.isArray(raw) ? (raw as Record<string, unknown>[]) : []
 }
 
 // 배열 항목이 문자열일 수도, {name} 객체일 수도 있다(skills는 객체, hobbies는 문자열).
@@ -170,9 +171,21 @@ async function loadAll(): Promise<CacheEntry | null> {
       const snap = snaps[i + 1]
       if (!snap.exists) return
       const lines = spec.format(snap.data() as Record<string, unknown>).filter(Boolean)
-      if (lines.length > 0) {
-        sections.set(spec.doc, `## ${spec.heading}\n${lines.map((l) => `- ${l}`).join('\n')}`)
-      }
+      if (lines.length === 0) return
+
+      const limit = spec.maxItems ?? DEFAULT_MAX_ITEMS
+      const shown = lines.slice(0, limit)
+      // 잘렸다는 사실을 숨기면 모델이 잘린 개수를 전체 개수로 말한다.
+      // (실제로 프로젝트 9개를 6개로 자르자 "6개 정도 돼"라고 답했다.)
+      const note =
+        lines.length > shown.length
+          ? `\n(위는 전체 ${lines.length}개 중 ${shown.length}개다. 개수를 물으면 ${lines.length}개라고 답할 것.)`
+          : ''
+
+      sections.set(
+        spec.doc,
+        `## ${spec.heading}\n${shown.map((l) => `- ${l}`).join('\n')}${note}`,
+      )
     })
 
     const entry: CacheEntry = { sections, summary }
