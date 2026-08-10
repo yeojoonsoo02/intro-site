@@ -56,27 +56,36 @@ export async function checkRateLimit(
     return { allowed: true, remaining: max - cached.count };
   }
 
-  // Firestore-based: persistent across serverless instances
+  // Firestore-based: persistent across serverless instances.
+  // 읽기→판정→쓰기를 트랜잭션으로 묶는다. 분리하면 동시 요청이 같은 count를 읽어
+  // 상한을 넘겨 통과할 수 있다(챗봇 비용이 나가는 경로라 실제 손해로 이어짐).
   const docRef = adminDb.collection('rate_limits').doc(ip.replace(/[/.]/g, '_'));
   try {
-    const snap = await docRef.get();
-    const data = snap.exists ? snap.data() : null;
+    const outcome = await adminDb.runTransaction(async (tx) => {
+      const snap = await tx.get(docRef);
+      const data = snap.exists ? snap.data() : null;
 
-    if (!data || now > (data.resetAt ?? 0)) {
-      await docRef.set({ count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS, isLoggedIn });
-      localCache.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-      return { allowed: true, remaining: max - 1 };
-    }
+      if (!data || now > (data.resetAt ?? 0)) {
+        const resetAt = now + RATE_LIMIT_WINDOW_MS;
+        tx.set(docRef, { count: 1, resetAt, isLoggedIn });
+        return { allowed: true, count: 1, resetAt };
+      }
 
-    if (data.count >= max) {
-      localCache.set(ip, { count: data.count, resetAt: data.resetAt });
-      return { allowed: false, remaining: 0 };
-    }
+      const count: number = data.count ?? 0;
+      const resetAt: number = data.resetAt;
+      if (count >= max) {
+        return { allowed: false, count, resetAt };
+      }
 
-    await docRef.update({ count: FieldValue.increment(1) });
-    const newCount = data.count + 1;
-    localCache.set(ip, { count: newCount, resetAt: data.resetAt });
-    return { allowed: true, remaining: max - newCount };
+      tx.update(docRef, { count: count + 1 });
+      return { allowed: true, count: count + 1, resetAt };
+    });
+
+    localCache.set(ip, { count: outcome.count, resetAt: outcome.resetAt });
+    return {
+      allowed: outcome.allowed,
+      remaining: outcome.allowed ? max - outcome.count : 0,
+    };
   } catch (err) {
     console.error('[RateLimit] Firestore error, enforcing via local cache:', err);
     // Fail-closed: Firestore 장애 시에도 로컬 캐시 상한을 강제해 폭주를 막는다.
