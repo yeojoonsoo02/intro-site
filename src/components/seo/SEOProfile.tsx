@@ -33,7 +33,7 @@ const META: Record<Lang, {
   zh: {
     siteName: '여준수 | 个人介绍网站',
     headingPrefix: '여준수',
-    headingSuffix: '余俊秀',
+    headingSuffix: '呂晙壽',
     sectionsLabel: { interests: '兴趣', contact: '联系' },
   },
   es: {

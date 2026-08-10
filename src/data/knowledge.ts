@@ -13,7 +13,8 @@ export const KNOWLEDGE = `
 이름: 여준수
 영문: Yeojunsu
 일본어: ヨ・ジュンス
-중국어: 余俊秀
+한자: 呂晙壽 (중국어권 표기도 동일)
+본관: 함양(咸陽) 여씨
 이메일: yeojoonsoo02@gmail.com
 지역: 서울 노원구 월계동
 직업: 대학생 개발자

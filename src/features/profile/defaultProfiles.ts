@@ -56,7 +56,7 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     goal: '実ユーザーがいる個人プロジェクトのリリース。',
   },
   zh: {
-    name: '余俊秀',
+    name: '呂晙壽',
     tagline: '大学生开发者',
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',

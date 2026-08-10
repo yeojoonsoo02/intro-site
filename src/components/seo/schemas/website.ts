@@ -19,7 +19,7 @@ const SITE_NAME_BY_LANG: Record<ProfileLang, string> = {
   ko: '여준수 | 자기소개 사이트',
   en: 'Yeojunsu | Personal Site',
   ja: 'ヨ・ジュンス | 自己紹介サイト',
-  zh: '余俊秀 | 个人简介网站',
+  zh: '呂晙壽 | 个人简介网站',
   es: 'Yeojunsu | Sitio personal',
   fr: 'Yeojunsu | Site personnel',
   de: 'Yeojunsu | Persönliche Website',

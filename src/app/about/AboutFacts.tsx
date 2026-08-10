@@ -52,7 +52,9 @@ function SummaryFacts({ profile }: { profile: Profile }): JSX.Element {
         <dt style={mutedStyle}>이름</dt>
         <dd>여준수 (한글) / Yeojunsu (영문)</dd>
         <dt style={mutedStyle}>다른 표기</dt>
-        <dd>ヨ・ジュンス · 余俊秀</dd>
+        <dd>ヨ・ジュンス · 呂晙壽</dd>
+        <dt style={mutedStyle}>본관</dt>
+        <dd>함양(咸陽) 여씨</dd>
         <dt style={mutedStyle}>직업</dt>
         <dd>{profile.tagline}</dd>
         <dt style={mutedStyle}>학력</dt>

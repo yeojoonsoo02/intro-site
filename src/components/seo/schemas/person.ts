@@ -8,7 +8,7 @@ export const personEntity = {
     'Yeojunsu',
     '여준수',
     'ヨ・ジュンス',
-    '余俊秀',
+    '呂晙壽',
     'yeojoonsoo',
     'yeojoonsoo02',
   ],

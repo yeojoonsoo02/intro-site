@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     "여준수 프로필",
     "여준수 자기소개",
     "대학생 개발자",
-    "余俊秀",
+    "呂晙壽",
     "ヨ・ジュンス",
   ],
   robots: {

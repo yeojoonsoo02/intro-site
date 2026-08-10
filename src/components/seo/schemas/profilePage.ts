@@ -44,8 +44,8 @@ const LOCALIZED_TEXT: Record<ProfileLang, { name: string; description: string }>
       '大学生開発者ヨ・ジュンス(Yeojunsu)の公式プロフィールページ。自己紹介と連絡先を確認できます。',
   },
   zh: {
-    name: '余俊秀 (Yeojunsu) — 官方简介',
-    description: '大学生开发者余俊秀(Yeojunsu)的官方简介页面。可查看自我介绍和联系方式。',
+    name: '呂晙壽 (Yeojunsu) — 官方简介',
+    description: '大学生开发者呂晙壽(Yeojunsu)的官方简介页面。可查看自我介绍和联系方式。',
   },
   es: {
     name: 'Yeojunsu — Perfil oficial',
