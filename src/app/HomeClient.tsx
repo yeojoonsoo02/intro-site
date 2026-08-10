@@ -32,7 +32,9 @@ export default function HomeClient() {
               strokeLinejoin="round"
             />
           </svg>
-          {t('chatInvite')}
+          {/* 번역은 클라이언트에서 로드되므로 defaultValue가 없으면 첫 페인트에
+              'chatInvite' 키가 그대로 보인다(readMore와 같은 패턴). */}
+          {t('chatInvite', { defaultValue: 'AI 준수와 대화하기' })}
         </button>
       </div>
 
