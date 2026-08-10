@@ -28,10 +28,17 @@ service cloud.firestore {
     // (이전엔 delete: false 였으나 클라이언트 UI에서 관리자 삭제가 작동하지 않아 일치시킴)
     match /comments/{doc} {
       allow read: if true;
+      // author는 토큰의 표시 이름과 일치해야 한다(타인 사칭 방지).
+      // 표시 이름이 없는 계정은 빈 문자열만 허용 — 클라이언트가 이메일을 대신
+      // 저장하던 경로를 막아 공개 컬렉션에 이메일이 남지 않게 한다.
       allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['text', 'author', 'createdAt'])
         && request.resource.data.text is string
         && request.resource.data.text.size() > 0
-        && request.resource.data.text.size() < 1000;
+        && request.resource.data.text.size() < 1000
+        && request.resource.data.author is string
+        && (request.resource.data.author == request.auth.token.name
+            || request.resource.data.author == '');
       allow delete: if request.auth != null
         && request.auth.token.email == "yeojoonsoo02@gmail.com";
       allow update: if false;

@@ -1,7 +1,9 @@
 import type { MetadataRoute } from 'next';
 
 // 주요 검색·AI 크롤러에 개별 규칙을 명시해 인덱싱과 AI 답변 참조를 모두 허용
-const COMMON_DISALLOW = ['/api/', '/dashboard', '/login'];
+// 비공개·인증 게이트 경로. 이름을 명시한 봇 규칙에도 그대로 적용해야
+// (이전엔 '*'에만 적용돼) Googlebot·Yeti·AI 크롤러에는 열려 있던 문제가 사라진다.
+const COMMON_DISALLOW = ['/api/', '/admin', '/dashboard', '/login'];
 
 const AI_BOTS = [
   'GPTBot', // OpenAI 크롤러
@@ -33,29 +35,29 @@ export default function robots(): MetadataRoute.Robots {
     {
       userAgent: 'Yeti', // 네이버
       allow: '/',
-      disallow: ['/api/'],
+      disallow: COMMON_DISALLOW,
     },
     {
       userAgent: 'Googlebot',
       allow: '/',
-      disallow: ['/api/'],
+      disallow: COMMON_DISALLOW,
     },
     {
       userAgent: 'Bingbot',
       allow: '/',
-      disallow: ['/api/'],
+      disallow: COMMON_DISALLOW,
     },
     {
       userAgent: 'DuckDuckBot',
       allow: '/',
-      disallow: ['/api/'],
+      disallow: COMMON_DISALLOW,
     },
-    // AI 크롤러는 공개 콘텐츠(/, /about, /ko 등) 전체 참조를 허용.
+    // AI 크롤러는 공개 콘텐츠(/, /about, 각 로케일) 전체 참조를 허용.
     // 공개 프로필 사이트 특성상 AI 답변에 인용될수록 "여준수" 엔티티 인지도가 강화되므로 전면 허용.
     ...AI_BOTS.map((ua) => ({
       userAgent: ua,
       allow: '/',
-      disallow: ['/api/'],
+      disallow: COMMON_DISALLOW,
     })),
   ];
 

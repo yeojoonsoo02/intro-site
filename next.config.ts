@@ -57,6 +57,15 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        // 인증 게이트 페이지: 색인 제외. 세 페이지 모두 'use client'라 metadata를
+        // export할 수 없어 헤더로 처리한다(robots.txt disallow와 함께 이중 방어).
+        source: '/(admin|dashboard|login)',
+        headers: [
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+          { key: 'Cache-Control', value: 'no-store, max-age=0' },
+        ],
+      },
+      {
         // 프로필 이미지 긴 캐시 (LCP 성능)
         source: '/profile.jpg',
         headers: [

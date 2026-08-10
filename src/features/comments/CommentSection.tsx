@@ -33,7 +33,9 @@ export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
   const addComment = async () => {
     if (!input.trim() || !user) return;
     const text = input;
-    const author = user.displayName || user.email || '';
+    // 표시 이름이 없을 때 이메일을 넣으면 공개 읽기 컬렉션에 이메일이 그대로 남는다.
+    // 이름이 없으면 작성자 표시를 생략한다(CommentItem이 빈 값이면 렌더하지 않음).
+    const author = user.displayName || '';
     const tempId = `temp-${Date.now()}`;
     const now = Timestamp.now();
 
