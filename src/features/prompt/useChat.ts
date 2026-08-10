@@ -3,7 +3,6 @@
 import { useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/lib/AuthProvider'
-import { savePrompt } from './prompt.api'
 
 export interface ChatMessage {
   id: string
@@ -64,12 +63,9 @@ export function useChat(): UseChatReturn {
         }
         const data = await res.json()
         const reply = data.reply || data.text
-        if (reply) {
-          append('assistant', reply)
-          savePrompt(prompt, reply).catch((err) => {
-            console.error('savePrompt failed:', err)
-          })
-        }
+        // 질문·답변 저장은 서버(/api/gemini → chat_logs)가 전담한다.
+        // 클라이언트에서 별도 컬렉션에 쓰던 경로는 Firestore 규칙에 막혀 항상 실패했으므로 제거.
+        if (reply) append('assistant', reply)
         if (typeof data.remaining === 'number') {
           setRemaining(data.remaining)
           if (data.remaining === 0) setLimitExhausted(true)

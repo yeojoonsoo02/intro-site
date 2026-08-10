@@ -86,15 +86,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
-    return await proxyToFallback(message, userInfo)
+    return await proxyToFallback(message, userInfo, rateLimit.remaining)
   }
 
-  return await callGemini(apiKey, message, userInfo)
+  return await callGemini(apiKey, message, userInfo, rateLimit.remaining)
 }
 
 async function proxyToFallback(
   message: string,
   userInfo: Record<string, unknown> | null,
+  remaining: number,
 ): Promise<NextResponse> {
   const url = resolveFallbackUrl()
   if (!url) {
@@ -133,7 +134,8 @@ async function proxyToFallback(
     fireSideEffects(message, reply, userInfo)
     return NextResponse.json({
       reply,
-      remaining: pickNumber(data.remaining) ?? pickNumber(data.count),
+      // 외부 서비스가 자체 카운터를 주면 그것을, 아니면 우리 rate limit 잔여 횟수를 쓴다.
+      remaining: pickNumber(data.remaining) ?? pickNumber(data.count) ?? remaining,
       limit: pickNumber(data.limit),
       used: pickNumber(data.used),
       reset: pickNumber(data.reset),
@@ -148,6 +150,7 @@ async function callGemini(
   apiKey: string,
   message: string,
   userInfo: Record<string, unknown> | null,
+  remaining: number,
 ): Promise<NextResponse> {
   try {
     const systemPrompt = await buildSystemPrompt(message)
@@ -184,7 +187,11 @@ async function callGemini(
 
     if (!reply) reply = FALLBACK_REPLY
     fireSideEffects(message, reply, userInfo)
-    return NextResponse.json({ reply, remaining: null })
+    // null을 주면 클라이언트가 남은 횟수 UI를 그리지 못한다. 실제 잔여 횟수를 내려준다.
+    return NextResponse.json(
+      { reply, remaining },
+      { headers: { 'X-RateLimit-Remaining': String(remaining) } },
+    )
   } catch (err) {
     console.error('Gemini API error', err)
     return NextResponse.json({ error: 'Failed to fetch response' }, { status: 500 })

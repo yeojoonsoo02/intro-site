@@ -20,18 +20,6 @@ export function isBot(req: NextRequest): boolean {
   return false
 }
 
-export function sanitizeUserInfo(data: unknown): Record<string, unknown> | null {
-  if (!data || typeof data !== 'object' || Array.isArray(data)) return null
-  const raw = data as Record<string, unknown>
-  const safe: Record<string, unknown> = {}
-  for (const [key, val] of Object.entries(raw)) {
-    if (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean') {
-      safe[key] = val
-    }
-  }
-  return Object.keys(safe).length > 0 ? safe : null
-}
-
 export function resolveFallbackUrl(): string | null {
   const url = process.env.GEMINI_API_FALLBACK_URL
   if (!url) return null
