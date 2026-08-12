@@ -9,7 +9,12 @@ import { adminAuth } from '@/lib/firebaseAdmin'
 import { buildSystemPrompt } from './systemPrompt'
 import { isBot, resolveFallbackUrl } from './security'
 import { fireSideEffects } from './sideEffects'
-import { sanitizeHistory, formatHistoryForPrompt, type HistoryTurn } from './history'
+import {
+  sanitizeHistory,
+  formatHistoryForPrompt,
+  wasHistoryTruncated,
+  type HistoryTurn,
+} from './history'
 
 const MAX_MESSAGE_LENGTH = 2000
 const FALLBACK_REPLY = '음.. 그건 좀 대답하기 어렵네. 다른 거 물어봐!'
@@ -42,7 +47,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   if (!body || typeof body !== 'object') {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
-  const message = body.message || body.prompt
+  // 공백만 들어온 요청도 통과해 Gemini 호출과 일일 예산을 소모하고 있었다.
+  // ("   "는 truthy라 아래 !message 검사를 지나간다.)
+  const rawMessage = body.message || body.prompt
+  const message = typeof rawMessage === 'string' ? rawMessage.trim() : rawMessage
 
   // 로그인 등급·식별을 서버에서 Firebase ID 토큰으로 검증한다. 클라이언트가 보낸 email
   // 문자열은 더 이상 신뢰하지 않음(한도 위조·강등 방지). 토큰 없거나 위조/만료면 게스트로 처리.
@@ -87,13 +95,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   // 최근 대화(최대 3턴). 클라이언트 입력이므로 역할 순서·길이·개수를 서버에서 강제한다.
   const history = sanitizeHistory(body.history)
+  const historyTruncated = wasHistoryTruncated(body.history)
 
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
-    return await proxyToFallback(message, userInfo, rateLimit.remaining, history)
+    return await proxyToFallback(message, userInfo, rateLimit.remaining, history, historyTruncated)
   }
 
-  return await callGemini(apiKey, message, userInfo, rateLimit.remaining, history)
+  return await callGemini(apiKey, message, userInfo, rateLimit.remaining, history, historyTruncated)
 }
 
 async function proxyToFallback(
@@ -101,6 +110,7 @@ async function proxyToFallback(
   userInfo: Record<string, unknown> | null,
   remaining: number,
   history: HistoryTurn[],
+  historyTruncated: boolean,
 ): Promise<NextResponse> {
   const url = resolveFallbackUrl()
   if (!url) {
@@ -111,7 +121,7 @@ async function proxyToFallback(
   }
 
   try {
-    const systemPrompt = await buildSystemPrompt(message)
+    const systemPrompt = await buildSystemPrompt(message, { historyTruncated })
     // 외부 서비스는 단일 문자열만 받으므로 대화 맥락을 텍스트로 풀어 붙인다.
     const recent = formatHistoryForPrompt(history)
     const augmentedMessage = recent
@@ -163,9 +173,10 @@ async function callGemini(
   userInfo: Record<string, unknown> | null,
   remaining: number,
   history: HistoryTurn[],
+  historyTruncated: boolean,
 ): Promise<NextResponse> {
   try {
-    const systemPrompt = await buildSystemPrompt(message)
+    const systemPrompt = await buildSystemPrompt(message, { historyTruncated })
     const genAI = new GoogleGenerativeAI(apiKey)
     const model = genAI.getGenerativeModel({
       model: 'gemini-2.5-flash',

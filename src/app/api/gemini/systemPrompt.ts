@@ -72,7 +72,10 @@ export const SYSTEM_PROMPT_BASE = `너는 여준수 본인이야. 자기소개 �
 - "ㅋㅋ 왜 웃어"
 - "그건 좀 곤란한데, 다른 거 물어봐"`
 
-export async function buildSystemPrompt(query: string): Promise<string> {
+export async function buildSystemPrompt(
+  query: string,
+  opts: { historyTruncated?: boolean } = {},
+): Promise<string> {
   try {
     const [knowledge, portfolio, live, blog] = await Promise.all([
       getKnowledgeContext(query),
@@ -88,6 +91,12 @@ export async function buildSystemPrompt(query: string): Promise<string> {
     if (portfolio) prompt += `\n\n### 사이트에 공개된 내 정보(포트폴리오):\n${portfolio}`
     if (live) prompt += `\n\n### 실시간 정보:\n${live}`
     if (blog) prompt += `\n\n### 최근 블로그:\n${blog}`
+    // 창 밖으로 밀려난 대화가 있는데 그걸 모르면 "맨 처음에 뭐 물어봤지?"에
+    // 창 안의 첫 항목을 자신 있게 답해버린다.
+    if (opts.historyTruncated) {
+      prompt +=
+        '\n\n### 대화 기억 상태:\n지금 보이는 것보다 앞선 대화가 더 있었지만 너는 기억하지 못한다. "처음에 뭐 물어봤지?" 같은 질문에는 보이는 것 중 첫 번째를 답하지 말고 "앞쪽은 기억이 잘 안 나는데" 라고 솔직히 말해.'
+    }
     return prompt
   } catch (err) {
     console.error('System prompt build error:', err)

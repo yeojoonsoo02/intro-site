@@ -14,6 +14,11 @@ const MAX_TURNS = 3
 const MAX_ENTRIES = MAX_TURNS * 2
 const MAX_ENTRY_LENGTH = 1000
 
+/** 클라이언트가 창(3턴)보다 많은 대화를 보냈는지 — 모델이 "기억이 잘린 것"을 알아야 단언하지 않는다. */
+export function wasHistoryTruncated(raw: unknown): boolean {
+  return Array.isArray(raw) && raw.length > MAX_ENTRIES
+}
+
 export function sanitizeHistory(raw: unknown): HistoryTurn[] {
   if (!Array.isArray(raw)) return []
 
