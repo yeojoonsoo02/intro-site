@@ -2,6 +2,7 @@ import { getKnowledgeContext } from '@/lib/rag'
 import { getLiveContext } from '@/lib/liveContext'
 import { getBlogContext } from '@/lib/blogContext'
 import { getPortfolioContext } from '@/lib/portfolioContext'
+import { getDateContext } from '@/lib/dateContext'
 
 export const SYSTEM_PROMPT_BASE = `너는 여준수 본인이야. 자기소개 사이트에 온 사람이랑 대화하는 거야.
 
@@ -23,6 +24,7 @@ export const SYSTEM_PROMPT_BASE = `너는 여준수 본인이야. 자기소개 �
 - 앞선 대화에서 내가 한 말과 모순되게 답하지 마. 방금 안다고 한 걸 뒤에서 모른다고 하거나 그 반대로 하면 안 돼.
 - 주식, 비트코인, 뉴스 등 나와 전혀 관련 없는 전문 분야 질문은 거절해.
 - 가벼운 가정 질문("100억 생기면?", "좀비 오면?", "짜장면 vs 짬뽕?", "손오공 vs 베지터?")에는 내 성격과 가치관에 맞게 답해도 돼. 단 그건 **취향·의견**까지야("나는 손오공 쪽. 낙천적인 게 좋더라"). 거기에 없는 경험을 덧붙이지 마.
+- 개수·날짜·나이는 직접 세거나 계산하지 마. 정보에 "총 N개", "오늘 날짜", "만 나이"가 주어져 있으면 그 값을 그대로 써. 없으면 정확한 수를 말하지 말고 "여러 개 있어" 정도로 넘겨.
 - 모르는 걸 모른다고 하는 게 지어내는 것보다 훨씬 나아. 모를 때는 담담하게 넘기고, 궁금해하면 "그건 나중에 준수한테 직접 물어봐 줘" 정도로 말해도 좋아.
 - "ㅋㅋㅋ", "ㅎㅇ", "ㅎㅎ" 같은 짧은 리액션에도 자연스럽게 반응해. 예: "ㅎㅇ" → "ㅎㅇ 반가워, 뭐가 궁금해?", "ㅋㅋㅋ" → "ㅋㅋ 왜 웃어"
 - 감정적인 질문("외롭지 않아?", "힘든 거 없어?", "후회되는 거?")에도 내 성격답게 솔직하고 담백하게 답해. 빈 응답 절대 하지 마.
@@ -78,7 +80,9 @@ export async function buildSystemPrompt(query: string): Promise<string> {
       getLiveContext(),
       getBlogContext(),
     ])
-    let prompt = `${SYSTEM_PROMPT_BASE}\n\n### 나(여준수)에 대한 정보:\n${knowledge}`
+    // 모델에는 "오늘"이 없다. 날짜·나이를 주지 않으면 학습 시점 기준으로 추측해 틀린다.
+    let prompt = `${SYSTEM_PROMPT_BASE}\n\n### 오늘 기준:\n${getDateContext()}`
+    prompt += `\n\n### 나(여준수)에 대한 정보:\n${knowledge}`
     // 사이트 화면에 실제로 표시되는 데이터. 방문자가 방금 본 걸 물었을 때 모른다고
     // 답하지 않도록 넣는다(질문 키워드에 맞는 섹션만 선택되어 들어온다).
     if (portfolio) prompt += `\n\n### 사이트에 공개된 내 정보(포트폴리오):\n${portfolio}`

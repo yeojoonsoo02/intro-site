@@ -175,16 +175,16 @@ async function loadAll(): Promise<CacheEntry | null> {
 
       const limit = spec.maxItems ?? DEFAULT_MAX_ITEMS
       const shown = lines.slice(0, limit)
-      // 잘렸다는 사실을 숨기면 모델이 잘린 개수를 전체 개수로 말한다.
-      // (실제로 프로젝트 9개를 6개로 자르자 "6개 정도 돼"라고 답했다.)
+      // 모델은 목록을 세지 못한다 — 12개짜리 타임라인을 "14개"라고 답했다.
+      // 개수는 항상 제목에 박아두고, 잘렸을 때는 그 사실도 함께 알린다.
       const note =
         lines.length > shown.length
-          ? `\n(위는 전체 ${lines.length}개 중 ${shown.length}개다. 개수를 물으면 ${lines.length}개라고 답할 것.)`
+          ? `\n(위는 전체 ${lines.length}개 중 ${shown.length}개만 실었다.)`
           : ''
 
       sections.set(
         spec.doc,
-        `## ${spec.heading}\n${shown.map((l) => `- ${l}`).join('\n')}${note}`,
+        `## ${spec.heading} (총 ${lines.length}개)\n${shown.map((l) => `- ${l}`).join('\n')}${note}`,
       )
     })
 
