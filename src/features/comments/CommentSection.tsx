@@ -1,98 +1,94 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import {
-  collection,
-  addDoc,
-  onSnapshot,
-  deleteDoc,
-  doc,
-  Timestamp,
-  query,
-  orderBy,
-} from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { useState, useEffect, useCallback } from 'react';
 import CommentItem from './CommentItem';
 import { Comment } from './comment.model';
 import styles from './comment.module.css';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/AuthProvider';
 
+// 목록·작성·삭제 모두 서버 API를 거친다. 브라우저가 Firestore에 직접 붙던 구조는
+// googleapis가 차단된 망에서 목록조차 뜨지 않았다. 작성자 검증도 서버에서 하므로
+// 클라이언트가 보낸 이름으로 남을 사칭할 수 없다.
+
 export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
   const [input, setInput] = useState('');
-  // 서버 구독 댓글(onSnapshot 소스)과 낙관적 임시 댓글을 분리 관리해 중복 표시 방지
+  // 서버 목록과 낙관적 임시 댓글을 분리 관리해 중복 표시 방지
   const [serverComments, setServerComments] = useState<Comment[]>([]);
   const [pendingComments, setPendingComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
   const { user, login } = useAuth();
 
-  // 화면 표시용: 아직 서버에 미반영된 임시 댓글 + 서버 댓글(최신순). 동일 임시 제거.
   const comments: Comment[] = [...pendingComments, ...serverComments];
 
-  const addComment = async () => {
-    if (!input.trim() || !user) return;
-    const text = input;
-    // 표시 이름이 없을 때 이메일을 넣으면 공개 읽기 컬렉션에 이메일이 그대로 남는다.
-    // 이름이 없으면 작성자 표시를 생략한다(CommentItem이 빈 값이면 렌더하지 않음).
-    const author = user.displayName || '';
-    const tempId = `temp-${Date.now()}`;
-    const now = Timestamp.now();
+  const load = useCallback(async (): Promise<void> => {
+    try {
+      const res = await fetch('/api/comments');
+      if (!res.ok) throw new Error(`Comments API ${res.status}`);
+      const data = (await res.json()) as { comments?: Comment[] };
+      setServerComments(data.comments ?? []);
+    } catch (err) {
+      console.error('Failed to load comments:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
+  // 실시간 구독(onSnapshot)은 Firestore 직접 연결이 필요해 포기했다.
+  // 댓글 빈도상 진입 시 1회 + 작성 후 갱신으로 충분하다.
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const addComment = async (): Promise<void> => {
+    const text = input.trim();
+    if (!text || !user) return;
+
+    const tempId = `temp-${Date.now()}`;
     const tempComment: Comment = {
       id: tempId,
       text,
-      author,
-      createdAt: now,
+      author: user.displayName ?? '',
+      createdAt: Date.now(),
     };
-    // 즉시 반영(낙관적). onSnapshot이 서버 문서를 받으면 이 임시 댓글은 제거.
     setPendingComments((prev) => [tempComment, ...prev]);
     setInput('');
 
     try {
-      await addDoc(collection(db, 'comments'), {
-        text,
-        author,
-        createdAt: now,
+      const idToken = await user.getIdToken();
+      const res = await fetch('/api/comments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ text }),
       });
-      // 실제 문서는 onSnapshot으로 들어오므로 임시 댓글 제거(중복 방지)
-      setPendingComments((prev) => prev.filter((c) => c.id !== tempId));
+      if (!res.ok) throw new Error(`Comments API ${res.status}`);
+      await load();
     } catch (err) {
       console.error('Failed to add comment:', err);
-      // Rollback
+    } finally {
+      // 성공이든 실패든 임시 댓글은 걷는다(성공 시엔 서버 목록이 대신 보여준다).
       setPendingComments((prev) => prev.filter((c) => c.id !== tempId));
     }
   };
 
-  const deleteComment = async (id: string) => {
+  const deleteComment = async (id: string): Promise<void> => {
+    if (!user) return;
     try {
-      // 서버 삭제는 onSnapshot이 목록에 반영. 실패 시 별도 롤백 불필요(구독이 진실 소스).
-      await deleteDoc(doc(db, 'comments', id));
+      const idToken = await user.getIdToken();
+      const res = await fetch(`/api/comments?id=${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${idToken}` },
+      });
+      if (!res.ok) throw new Error(`Comments API ${res.status}`);
+      await load();
     } catch (err) {
       console.error('Failed to delete comment:', err);
     }
   };
-
-  // 실시간 구독: 타 클라이언트의 추가/삭제도 즉시 반영. cleanup에서 unsubscribe.
-  useEffect(() => {
-    const q = query(collection(db, 'comments'), orderBy('createdAt', 'desc'));
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const data = snapshot.docs.map((d) => ({
-          id: d.id,
-          ...d.data(),
-        })) as Comment[];
-        setServerComments(data);
-        setLoading(false);
-      },
-      (err) => {
-        console.error('Failed to subscribe comments:', err);
-        setLoading(false);
-      }
-    );
-    return () => unsubscribe();
-  }, []);
 
   return (
     <div className="w-full">
@@ -142,7 +138,7 @@ export default function CommentSection({ isAdmin }: { isAdmin: boolean }) {
               key={c.id}
               text={c.text}
               author={c.author}
-              date={c.createdAt?.toDate ? c.createdAt.toDate().toLocaleString() : ''}
+              date={c.createdAt ? new Date(c.createdAt).toLocaleString() : ''}
               onDelete={() => deleteComment(c.id)}
               isAdmin={isAdmin}
             />

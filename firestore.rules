@@ -24,37 +24,21 @@ service cloud.firestore {
         && request.auth.token.email == "yeojoonsoo02@gmail.com";
     }
 
-    // Comments: public read, authenticated create with validation, admin delete
-    // (이전엔 delete: false 였으나 클라이언트 UI에서 관리자 삭제가 작동하지 않아 일치시킴)
+    // Comments: 공개 읽기, 쓰기는 서버(/api/comments)만.
+    // 클라이언트 쓰기를 열어두면 공격자가 Firebase SDK로 직접 써서 서버의
+    // 검증(토큰 확인·작성자 파생·rate limit)을 통째로 우회할 수 있다.
+    // 서버는 Admin SDK로 이 규칙을 우회하므로 정상 동작에는 영향이 없다.
     match /comments/{doc} {
       allow read: if true;
-      // author는 토큰의 표시 이름과 일치해야 한다(타인 사칭 방지).
-      // 표시 이름이 없는 계정은 빈 문자열만 허용 — 클라이언트가 이메일을 대신
-      // 저장하던 경로를 막아 공개 컬렉션에 이메일이 남지 않게 한다.
-      allow create: if request.auth != null
-        && request.resource.data.keys().hasOnly(['text', 'author', 'createdAt'])
-        && request.resource.data.text is string
-        && request.resource.data.text.size() > 0
-        && request.resource.data.text.size() < 1000
-        && request.resource.data.author is string
-        && (request.resource.data.author == request.auth.token.name
-            || request.resource.data.author == '');
-      allow delete: if request.auth != null
-        && request.auth.token.email == "yeojoonsoo02@gmail.com";
-      allow update: if false;
+      allow write: if false;
     }
 
-    // Visitor counter: 누구나 읽기 가능하나 쓰기는 "정확히 1씩 증가"만 허용.
-    // 악성 봇의 무한 증가·초기화·임의 값 삽입 차단(비용 상승 방지).
+    // Visitor counter: 공개 읽기, 쓰기는 서버(/api/visits)만.
+    // 이전엔 "정확히 1씩 증가"를 허용해 봇이 무한히 +1을 반복할 수 있었다.
+    // 이제 서버가 봇 검사·rate limit·쿠키 중복 집계를 거쳐서만 증가시킨다.
     match /counters/{doc} {
       allow read: if true;
-      allow create: if request.resource.data.keys().hasOnly(['count', 'updatedAt'])
-        && request.resource.data.count == 1
-        && request.resource.data.count is int;
-      allow update: if request.resource.data.keys().hasOnly(['count', 'updatedAt'])
-        && request.resource.data.count is int
-        && request.resource.data.count == resource.data.count + 1;
-      allow delete: if false;
+      allow write: if false;
     }
 
     // Portfolio: public read, admin write

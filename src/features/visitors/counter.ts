@@ -1,24 +1,12 @@
-import { doc, getDoc, setDoc, serverTimestamp, increment } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-
+// 방문자 수는 서버 API(/api/visits)를 통해 센다.
+// 브라우저가 Firestore에 직접 쓰던 구조는 googleapis가 차단된 망에서 동작하지 않았고,
+// 서버 쪽 쿠키로 중복 집계를 걸러 새로고침에 부풀지 않는다.
 export async function incrementVisitCount(callback?: (count: number) => void): Promise<void> {
-  const ref = doc(db, 'counters', 'visits');
-
   try {
-    // setDoc(merge) + increment 으로 존재 여부 사전 조회 없이 1회 쓰기.
-    // - 문서가 없으면 increment(1) 은 count=1 로 생성 → 규칙 create(count==1) 충족
-    // - 문서가 있으면 count+1 → 규칙 update(count==resource.count+1) 충족
-    // 페이로드 키는 ['count','updatedAt'] 로 한정해 hasOnly 규칙 위반 방지.
-    await setDoc(
-      ref,
-      { count: increment(1), updatedAt: serverTimestamp() },
-      { merge: true }
-    );
-
-    // 갱신된 값 1회 읽기(기존 2회 → 1회로 감소)
-    const updated = await getDoc(ref);
-    const count = (updated.data()?.count as number | undefined) ?? 0;
-    if (callback) callback(count);
+    const res = await fetch('/api/visits', { method: 'POST' });
+    if (!res.ok) throw new Error(`Visits API ${res.status}`);
+    const data = (await res.json()) as { count?: number };
+    if (callback) callback(typeof data.count === 'number' ? data.count : 0);
   } catch (err) {
     console.error('👀 방문자 수 업데이트 실패:', err);
     if (callback) callback(0);
