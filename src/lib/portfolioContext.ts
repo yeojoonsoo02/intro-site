@@ -21,6 +21,10 @@ interface SectionSpec {
   keywords: RegExp
   format: (data: Record<string, unknown>) => string[]
   maxItems?: number
+  // 키워드와 무관하게 항상 넣는 섹션. 질문의 표현이 조금만 달라도 매칭이 빗나가는데,
+  // 연표·학력은 거의 모든 개인 질문의 근거가 되어 빠지면 "기록에 없다"는 오답이 난다.
+  // (실제로 "호주 워홀 어디였어?"에 연표가 안 붙어 브리즈번을 못 답했다.)
+  always?: boolean
 }
 
 const line = (v: unknown): string => String(v ?? '').slice(0, MAX_VALUE_LENGTH).trim()
@@ -54,6 +58,7 @@ const SECTIONS: SectionSpec[] = [
     doc: 'timeline',
     key: 'items',
     heading: '연표·경력',
+    always: true,
     keywords: /경력|이력|언제|타임라인|연표|history|career|timeline|when|경험|해왔|살아온|어디서 자|고향|経歴|学歴|いつ|经历|履历|什么时候/i,
     format: (d) =>
       listOf(d, 'items').map((t) =>
@@ -74,6 +79,7 @@ const SECTIONS: SectionSpec[] = [
     doc: 'education',
     key: 'items',
     heading: '학력',
+    always: true,
     keywords: /학력|학교|대학|전공|학과|학부|졸업|재학|수업|education|school|university|major|大学|学校|専攻|学歴|学部|学科|专业|学历/i,
     format: (d) =>
       listOf(d, 'items').map((e) =>
@@ -218,7 +224,7 @@ export async function getPortfolioContext(query: string): Promise<string> {
   if (!entry) return ''
 
   const matched = SECTIONS.filter(
-    (s) => s.keywords.test(query) && entry.sections.has(s.doc),
+    (s) => (s.always || s.keywords.test(query)) && entry.sections.has(s.doc),
   ).map((s) => entry.sections.get(s.doc)!)
 
   const parts = [entry.summary && `## 소개\n${entry.summary}`, ...matched].filter(Boolean)
