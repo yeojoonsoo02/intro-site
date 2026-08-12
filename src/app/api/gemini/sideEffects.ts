@@ -1,5 +1,6 @@
 import { sendQuestionAnswer } from '@/lib/webhook'
 import { saveChatLog } from '@/lib/chatLog'
+import { isUnanswered } from '@/lib/unanswered'
 import {
   sendTelegramMessage,
   formatChatNotification,
@@ -16,7 +17,10 @@ export function fireSideEffects(
   reply: string,
   userInfo: Record<string, unknown> | null,
 ): void {
-  saveChatLog(message, reply, userInfo ?? undefined).catch((err) =>
+  // 지어내지 않고 "모른다"고 답한 질문 = 채워 넣어야 할 지식. 표시해서 수집으로 넘긴다.
+  const unanswered = isUnanswered(reply)
+
+  saveChatLog(message, reply, userInfo ?? undefined, unanswered).catch((err) =>
     logSideEffect('ChatLog', err),
   )
   sendQuestionAnswer(
@@ -25,7 +29,7 @@ export function fireSideEffects(
     userInfo ? JSON.stringify(userInfo) : undefined,
   ).catch((err) => logSideEffect('Webhook', err))
   if (isTelegramConfigured()) {
-    sendTelegramMessage(formatChatNotification(message, reply)).catch((err) =>
+    sendTelegramMessage(formatChatNotification(message, reply, unanswered)).catch((err) =>
       logSideEffect('Telegram', err),
     )
   }

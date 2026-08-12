@@ -100,6 +100,7 @@ export async function handlePending(): Promise<NextResponse> {
 interface RecentQuestion {
   question: string
   answer: string
+  unanswered: boolean
 }
 
 async function getRecentQuestions(count: number): Promise<RecentQuestion[]> {
@@ -110,7 +111,11 @@ async function getRecentQuestions(count: number): Promise<RecentQuestion[]> {
   })
   return snap.docs.map((d) => {
     const data = d.data()
-    return { question: data.question as string, answer: data.answer as string }
+    return {
+      question: data.question as string,
+      answer: data.answer as string,
+      unanswered: data.unanswered === true,
+    }
   })
 }
 
@@ -122,15 +127,19 @@ export async function handleQuestions(): Promise<NextResponse> {
       return OK_RESPONSE()
     }
 
-    let msg = `📋 최근 질문 (${questions.length}개)\n\n`
+    const unansweredCount = questions.filter((q) => q.unanswered).length
+    let msg = `📋 최근 질문 (${questions.length}개`
+    msg += unansweredCount > 0 ? `, ❓ 못 답한 것 ${unansweredCount}개)\n\n` : ')\n\n'
     questions.forEach((item, i) => {
       const qPreview =
         item.question.length > 50 ? item.question.slice(0, 50) + '...' : item.question
       const aPreview =
         item.answer.length > 50 ? item.answer.slice(0, 50) + '...' : item.answer
-      msg += `<b>${i + 1}.</b> ${escapeHtml(qPreview)}\n   → ${escapeHtml(aPreview)}\n\n`
+      // ❓ 표시가 곧 "지식을 채워야 할 항목" 목록이다.
+      const mark = item.unanswered ? '❓' : ''
+      msg += `<b>${i + 1}.</b>${mark} ${escapeHtml(qPreview)}\n   → ${escapeHtml(aPreview)}\n\n`
     })
-    msg += '<i>/answer N 답변내용 으로 정확한 답변을 추가하세요.</i>'
+    msg += '<i>/answer N 답변내용 으로 정확한 답변을 추가하세요. ❓부터 채우면 좋아요.</i>'
 
     await sendTelegramMessage(msg)
     return OK_RESPONSE()

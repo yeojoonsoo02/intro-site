@@ -66,8 +66,16 @@ export async function sendTelegramMessage(
 export function formatChatNotification(
   question: string,
   answer: string,
+  unanswered = false,
 ): string {
   const q = escapeHtml(question)
   const a = escapeHtml(answer.length > 500 ? answer.slice(0, 500) + '...' : answer)
-  return `<b>💬 새 질문</b>\n\n<b>Q:</b> ${q}\n\n<b>A:</b> ${a}\n\n<i>이 메시지에 답장하면 지식으로 저장됩니다.</i>`
+  // 못 답한 질문은 눈에 띄게 구분한다 — 이게 곧 채워 넣어야 할 지식 목록이다.
+  const head = unanswered
+    ? '<b>❓ 못 답한 질문</b>'
+    : '<b>💬 새 질문</b>'
+  const tail = unanswered
+    ? '<i>답장하면 바로 지식이 됩니다. 나중에 /sync 로 반영하세요.</i>'
+    : '<i>이 메시지에 답장하면 지식으로 저장됩니다.</i>'
+  return `${head}\n\n<b>Q:</b> ${q}\n\n<b>A:</b> ${a}\n\n${tail}`
 }

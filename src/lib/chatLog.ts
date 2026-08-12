@@ -24,6 +24,8 @@ export async function saveChatLog(
   question: string,
   answer: string,
   userInfo?: Record<string, unknown>,
+  // 정보가 없어 답하지 못한 질문 표시 — 텔레그램 /questions에서 골라내는 기준
+  unanswered = false,
 ) {
   try {
     const safeUserInfo = userInfo ? sanitizeUserInfo(userInfo) : null
@@ -31,6 +33,7 @@ export async function saveChatLog(
       question,
       answer,
       userInfo: safeUserInfo,
+      unanswered,
       createdAt: serverTimestamp(),
     })
   } catch (err) {

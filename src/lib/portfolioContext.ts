@@ -44,7 +44,7 @@ const SECTIONS: SectionSpec[] = [
     doc: 'projects',
     key: 'items',
     heading: '프로젝트',
-    keywords: /프로젝트|포트폴리오|만든|만들|개발한|작업|서비스|앱|사이트|project|portfolio|built|made/i,
+    keywords: /프로젝트|포트폴리오|만든|만들|개발한|작업|서비스|앱|사이트|project|portfolio|built|made|プロジェクト|作った|開発|サービス|项目|做过|开发|作品/i,
     format: (d) =>
       listOf(d, 'items').map((p) =>
         [line(p.title), line(p.description), names(p.tags)].filter(Boolean).join(' — '),
@@ -54,7 +54,7 @@ const SECTIONS: SectionSpec[] = [
     doc: 'timeline',
     key: 'items',
     heading: '연표·경력',
-    keywords: /경력|이력|언제|타임라인|연표|history|career|timeline|when|경험|해왔|살아온|어디서 자|고향/i,
+    keywords: /경력|이력|언제|타임라인|연표|history|career|timeline|when|경험|해왔|살아온|어디서 자|고향|経歴|学歴|いつ|经历|履历|什么时候/i,
     format: (d) =>
       listOf(d, 'items').map((t) =>
         [line(t.year), line(t.title), line(t.description)].filter(Boolean).join(' — '),
@@ -64,7 +64,7 @@ const SECTIONS: SectionSpec[] = [
     doc: 'certifications',
     key: 'items',
     heading: '자격증',
-    keywords: /자격증|자격|취득|certificat|license|시험/i,
+    keywords: /자격증|자격|취득|certificat|license|시험|資格|資格証|资格证|证书/i,
     format: (d) =>
       listOf(d, 'items').map((c) =>
         [line(c.name), line(c.issuer), line(c.date)].filter(Boolean).join(' — '),
@@ -74,7 +74,7 @@ const SECTIONS: SectionSpec[] = [
     doc: 'education',
     key: 'items',
     heading: '학력',
-    keywords: /학력|학교|대학|전공|학과|학부|졸업|재학|수업|education|school|university|major/i,
+    keywords: /학력|학교|대학|전공|학과|학부|졸업|재학|수업|education|school|university|major|大学|学校|専攻|学歴|学部|学科|专业|学历/i,
     format: (d) =>
       listOf(d, 'items').map((e) =>
         [line(e.school), line(e.major), line(e.period), line(e.description)]
@@ -86,7 +86,7 @@ const SECTIONS: SectionSpec[] = [
     doc: 'skills',
     key: 'categories',
     heading: '기술 스택',
-    keywords: /기술|스택|언어|프레임워크|다룰|할 줄|쓸 줄|skill|stack|tech|language/i,
+    keywords: /기술|스택|언어|프레임워크|다룰|할 줄|쓸 줄|skill|stack|tech|language|技術|スタック|言語|技能|技术|语言/i,
     format: (d) =>
       listOf(d, 'categories').map((c) => `${line(c.name)}: ${names(c.items)}`),
   },
@@ -94,21 +94,21 @@ const SECTIONS: SectionSpec[] = [
     doc: 'personalInfo',
     key: 'items',
     heading: '신상 정보',
-    keywords: /mbti|생일|생년|나이|몇 살|혈액형|키가|별자리|지역|사는|사세|birthday|age|height|blood/i,
+    keywords: /mbti|생일|생년|나이|몇 살|혈액형|키가|별자리|지역|사는|사세|birthday|age|height|blood|誕生日|年齢|身長|血液型|星座|住んで|生日|年龄|身高|血型|住在/i,
     format: (d) => listOf(d, 'items').map((i) => `${line(i.label)}: ${line(i.value)}`),
   },
   {
     doc: 'hobbies',
     key: 'categories',
     heading: '취미·좋아하는 것',
-    keywords: /취미|좋아하|즐기|쉴 때|주말|hobby|like|enjoy|음식|먹|food|운동|게임/i,
+    keywords: /취미|좋아하|즐기|쉴 때|주말|hobby|like|enjoy|음식|먹|food|운동|게임|趣味|好きな|食べ物|爱好|喜欢|食物/i,
     format: (d) => listOf(d, 'categories').map((c) => `${line(c.name)}: ${names(c.items)}`),
   },
   {
     doc: 'routine',
     key: 'items',
     heading: '하루 루틴',
-    keywords: /루틴|하루|일과|아침|저녁|습관|몇 시|routine|daily|schedule/i,
+    keywords: /루틴|하루|일과|아침|저녁|습관|몇 시|routine|daily|schedule|ルーティン|一日|習慣|日常|作息/i,
     format: (d) =>
       listOf(d, 'items').map((r) => [line(r.time), line(r.content)].filter(Boolean).join(' ')),
   },
@@ -116,14 +116,14 @@ const SECTIONS: SectionSpec[] = [
     doc: 'goals',
     key: 'items',
     heading: '목표',
-    keywords: /목표|꿈|계획|앞으로|장래|goal|dream|plan|future/i,
+    keywords: /목표|꿈|계획|앞으로|장래|goal|dream|plan|future|目標|夢|将来|目标|梦想/i,
     format: (d) => listOf(d, 'items').map((g) => line(g.content)),
   },
   {
     doc: 'testimonials',
     key: 'items',
     heading: '주변 평가·외주 후기',
-    keywords: /평가|평판|주변|동료|어떤 사람|추천|후기|고객|외주|testimonial|reputation|client/i,
+    keywords: /평가|평판|주변|동료|어떤 사람|추천|후기|고객|외주|testimonial|reputation|client|評価|評判|评价|口碑/i,
     format: (d) =>
       listOf(d, 'items').map((t) =>
         [line(t.name), line(t.role)].filter(Boolean).join('/') + `: ${line(t.content)}`,
@@ -133,7 +133,7 @@ const SECTIONS: SectionSpec[] = [
     doc: 'values',
     key: 'items',
     heading: '가치관',
-    keywords: /가치관|신념|중요하게|철학|원칙|value|belief|principle/i,
+    keywords: /가치관|신념|중요하게|철학|원칙|value|belief|principle|価値観|信念|价值观/i,
     format: (d) => listOf(d, 'items').map((v) => line(v.content)),
   },
 ]
