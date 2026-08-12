@@ -33,12 +33,27 @@ export default function FlippableProfileCard({ onAngleChange }: Props) {
     const currentLang = i18n.language || 'en';
     // 언어 변경 시 이전 요청의 stale 응답이 최신 상태를 덮어쓰지 않도록 cancelled 플래그 사용
     let cancelled = false;
-    fetchProfile(currentLang).then(p => {
-      if (!cancelled) setProfile(p ?? DEFAULT_PROFILES[currentLang] ?? DEFAULT_PROFILES['en']);
-    });
-    fetchDevProfile(currentLang).then(p => {
-      if (!cancelled) setDevProfile(p ?? DEFAULT_PROFILES[currentLang] ?? DEFAULT_PROFILES['en']);
-    });
+    const fallback = DEFAULT_PROFILES[currentLang] ?? DEFAULT_PROFILES['en'];
+
+    // 실패 시에도 반드시 폴백을 세운다. catch가 없으면 Firestore에 닿지 못할 때
+    // (중국처럼 googleapis가 차단된 망, 광고 차단기, 장애) profile이 null로 남아
+    // 랜딩의 프로필 카드가 통째로 빈 화면이 된다.
+    fetchProfile(currentLang)
+      .then(p => {
+        if (!cancelled) setProfile(p ?? fallback);
+      })
+      .catch(err => {
+        console.error('Failed to load profile, using default:', err);
+        if (!cancelled) setProfile(fallback);
+      });
+    fetchDevProfile(currentLang)
+      .then(p => {
+        if (!cancelled) setDevProfile(p ?? fallback);
+      })
+      .catch(err => {
+        console.error('Failed to load dev profile, using default:', err);
+        if (!cancelled) setDevProfile(fallback);
+      });
     return () => {
       cancelled = true;
     };
