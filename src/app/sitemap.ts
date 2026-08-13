@@ -49,14 +49,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
     alternates: { languages: HREFLANG_LANGUAGES },
   }));
 
-  const staticPages: MetadataRoute.Sitemap = [
-    {
-      url: `${SITE_URL}/about`,
+  // /about은 9개 언어 전부 존재한다. hreflang으로 서로 연결해 중복 색인을 막는다.
+  const aboutLanguages = Object.fromEntries(
+    Object.keys(HREFLANG_LANGUAGES).map((lang) => [
+      lang,
+      lang === 'ko' ? `${SITE_URL}/about` : `${SITE_URL}/${lang}/about`,
+    ]),
+  );
+  const aboutPages: MetadataRoute.Sitemap = Object.entries(aboutLanguages).map(
+    ([lang, url]) => ({
+      url,
       lastModified: LAST_MOD,
-      changeFrequency: 'monthly',
-      priority: 0.95,
-      images: [PROFILE_IMAGE],
-    },
+      changeFrequency: 'monthly' as const,
+      priority: lang === 'ko' ? 0.95 : 0.6,
+      ...(lang === 'ko' ? { images: [PROFILE_IMAGE] } : {}),
+      alternates: { languages: aboutLanguages },
+    }),
+  );
+
+  const staticPages: MetadataRoute.Sitemap = [
     {
       url: `${SITE_URL}/journey`,
       lastModified: LAST_MOD,
@@ -72,5 +83,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  return [...locales, ...staticPages];
+  return [...locales, ...aboutPages, ...staticPages];
 }

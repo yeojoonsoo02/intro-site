@@ -1,13 +1,16 @@
 import type { Interest } from '@/features/profile/profile.model';
+import { getLabels } from './labels';
 
 interface AboutInterestsProps {
   interests: Interest[];
+  lang: string;
 }
 
-export default function AboutInterests({ interests }: AboutInterestsProps): JSX.Element {
+export default function AboutInterests({ interests, lang }: AboutInterestsProps): JSX.Element {
+  const t = getLabels(lang);
   return (
     <div>
-      <h2 className="text-lg sm:text-xl font-semibold mb-3">요즘 빠져 있는 것들</h2>
+      <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('hobbiesInterests')}</h2>
       <div className="flex flex-wrap gap-2">
         {interests.map((it) => {
           const label = typeof it === 'string' ? it : it.label;

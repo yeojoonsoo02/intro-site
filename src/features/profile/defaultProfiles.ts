@@ -10,7 +10,7 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
     interests: [
-      'Swimming (beginner)',
+      'Swimming (beginner, 3 months)',
       'Table tennis (shakehand)',
       'Reading (self-help · 1–2/mo)',
       'Chess (~1200)',
@@ -27,7 +27,7 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
     interests: [
-      '수영 (초보)',
+      '수영 (초보, 3개월)',
       '탁구 (셰이크핸드)',
       '독서 (자기계발 · 월1~2권)',
       '체스 (~1200)',
@@ -44,7 +44,7 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
     interests: [
-      '水泳 (初級)',
+      '水泳 (初心者・3ヶ月)',
       '卓球 (シェークハンド)',
       '読書 (自己啓発 · 月1〜2冊)',
       'チェス (~1200)',
@@ -61,7 +61,7 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
     interests: [
-      '游泳 (初学)',
+      '游泳 (初级·3个月)',
       '乒乓球 (横拍)',
       '阅读 (自我提升 · 月1~2本)',
       '国际象棋 (~1200)',
@@ -78,7 +78,7 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
     interests: [
-      'Natación (principiante)',
+      'Natación (principiante, 3 meses)',
       'Tenis de mesa (shakehand)',
       'Lectura (autoayuda · 1–2/mes)',
       'Ajedrez (~1200)',
@@ -95,7 +95,7 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
     interests: [
-      'Natation (débutant)',
+      'Natation (débutant, 3 mois)',
       'Tennis de table (shakehand)',
       'Lecture (dév. perso · 1–2/mois)',
       'Échecs (~1200)',
@@ -112,7 +112,7 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
     interests: [
-      'Schwimmen (Anfänger)',
+      'Schwimmen (Anfänger, 3 Monate)',
       'Tischtennis (Shakehand)',
       'Lesen (Selbsthilfe · 1–2/Monat)',
       'Schach (~1200)',
@@ -129,7 +129,7 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
     interests: [
-      'Natação (iniciante)',
+      'Natação (iniciante, 3 meses)',
       'Tênis de mesa (shakehand)',
       'Leitura (autoajuda · 1–2/mês)',
       'Xadrez (~1200)',
@@ -146,7 +146,7 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
     interests: [
-      'Плавание (начинающий)',
+      'Плавание (начинающий, 3 мес.)',
       'Настольный теннис (шейкхэнд)',
       'Чтение (саморазвитие · 1–2/мес)',
       'Шахматы (~1200)',

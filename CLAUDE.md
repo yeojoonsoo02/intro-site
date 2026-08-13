@@ -25,7 +25,9 @@ Vercel 배포 (GitHub Actions `deploy.yml` — main push 시 type-check → lint
 
 ⚠️ **검색엔진·AI 크롤러는 리디렉트하지 않고 루트에 그대로 둔다** — `middleware.ts` 상단 `BOTS` 정규식이 그 장치다(googlebot·yeti·claudebot·gptbot·perplexitybot 등). 색인 안정성을 위한 의도된 동작이니 "봇 예외 처리가 왜 있지" 하고 지우지 말 것. 새 크롤러 UA를 추가할 일은 있어도 제거할 일은 없다.
 
-로케일을 추가하면 **라우트 디렉토리 · `ROUTE_BY_LANG` 매핑 · `lib/i18n-config.ts` · sitemap/hreflang · `lib/seo-utils.ts` · `api/portfolio`의 `ALLOWED_LANGS` · `api/indexnow`의 `DEFAULT_URLS` · `public/locales/*.json`** 을 함께 손봐야 한다. 하나만 고치면 조용히 어긋난다.
+로케일을 추가하면 **라우트 디렉토리(`/{lang}/page.tsx` + `/{lang}/about/page.tsx`) · `ROUTE_BY_LANG` 매핑 · `lib/i18n-config.ts` · sitemap/hreflang · `lib/seo-utils.ts` · `api/portfolio`의 `ALLOWED_LANGS` · `api/indexnow`의 `DEFAULT_URLS` · `public/locales/*.json` · `features/profile/defaultProfiles.ts` · `app/about/factLabels.ts`** 를 함께 손봐야 한다. 하나만 고치면 조용히 어긋난다.
+
+**`/about`은 9개 언어 전부 있다.** 본문은 `app/about/AboutContent.tsx` 하나를 공유하고 로케일별 `page.tsx`는 메타데이터만 갖는다. 데이터는 서버에서 Firestore를 직접 읽는다(`aboutData.ts`, 10분 캐시) — 클라이언트에서 읽으면 googleapis가 차단된 망에서 비어버린다. **포트폴리오 데이터는 ko·en·ja·zh에만 있어** 나머지 5개 언어는 기술 스택·자격증만 영어 데이터로 채우고 산문형 섹션(후기·목표·가치관)은 아예 표시하지 않는다 — 없는 내용을 번역해 지어내지 않기 위함이다.
 
 ## 3. Next 16인데 `middleware.ts`를 쓰고 있다
 

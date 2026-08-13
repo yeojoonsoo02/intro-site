@@ -28,6 +28,20 @@ export function buildHreflangLanguages() {
 }
 
 /**
+ * /about 계열의 hreflang. 루트가 한국어 대표본이므로 ko는 /about, 나머지는 /{lang}/about.
+ */
+export function buildAboutHreflang() {
+  const entries = Object.keys(LANG_URL).map((lang) => [
+    lang,
+    lang === 'ko' ? `${SITE_URL}/about` : `${SITE_URL}/${lang}/about`,
+  ]);
+  return {
+    ...Object.fromEntries(entries),
+    'x-default': `${SITE_URL}/about`,
+  } as Record<string, string>;
+}
+
+/**
  * 특정 언어의 canonical URL 반환. (overrides 하고 싶으면 그대로 string으로)
  */
 export function canonicalForLang(lang: SupportedLang): string {
