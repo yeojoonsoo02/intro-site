@@ -41,11 +41,20 @@ function withPathname(req: NextRequest): NextResponse {
   return NextResponse.next({ request: { headers } });
 }
 
+// 언어 전환 대상 경로. 루트만 처리하면 /about의 로케일판(9개 언어)이 있어도
+// 자동으로 뜨지 않아, 직접 URL을 치거나 검색으로 들어오는 사람만 볼 수 있다.
+// 값은 "그 언어에서 갈 경로"를 만드는 함수다.
+const LOCALIZABLE: Record<string, (route: string) => string> = {
+  '/': (route) => route,
+  '/about': (route) => `${route}/about`,
+};
+
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // 루트가 아닌 경로는 x-pathname만 주입하고 통과
-  if (pathname !== '/') return withPathname(req);
+  const buildTarget = LOCALIZABLE[pathname];
+  // 전환 대상이 아닌 경로는 x-pathname만 주입하고 통과
+  if (!buildTarget) return withPathname(req);
 
   const ua = (req.headers.get('user-agent') || '').toLowerCase();
   if (BOTS.test(ua)) return withPathname(req);
@@ -55,9 +64,9 @@ export function middleware(req: NextRequest) {
   if (cookieLang) {
     // 한국어 선호는 루트(한국어 대표본)에 그대로 머문다
     if (cookieLang.startsWith('ko')) return withPathname(req);
-    const target =
+    const route =
       ROUTE_BY_LANG[cookieLang] ?? ROUTE_BY_LANG[cookieLang.split('-')[0]];
-    if (target) return NextResponse.redirect(new URL(target, req.url));
+    if (route) return NextResponse.redirect(new URL(buildTarget(route), req.url));
   }
 
   const accept = req.headers.get('accept-language') || '';
@@ -73,8 +82,8 @@ export function middleware(req: NextRequest) {
     if (lang.startsWith('ko')) return withPathname(req); // 한국어가 우선이면 루트(ko) 유지
     const full = ROUTE_BY_LANG[lang];
     const prefix = ROUTE_BY_LANG[lang.split('-')[0]];
-    const target = full ?? prefix;
-    if (target) return NextResponse.redirect(new URL(target, req.url));
+    const route = full ?? prefix;
+    if (route) return NextResponse.redirect(new URL(buildTarget(route), req.url));
   }
 
   // 지원하지 않는 언어 → 한국어(루트) 유지

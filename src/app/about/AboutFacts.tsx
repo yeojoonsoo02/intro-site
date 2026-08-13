@@ -27,7 +27,7 @@ export default function AboutFacts({
       {showWhy && (
         <div>
           <h2 className="text-lg sm:text-xl font-semibold mb-3">{L.whyHeading}</h2>
-          <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm leading-[1.7]">
+          <dl className="grid grid-cols-[auto_1fr] gap-x-4 sm:gap-x-6 gap-y-2 text-sm leading-[1.7] overflow-wrap-anywhere">
             {profile.motivation && (
               <div className="contents">
                 <dt style={mutedStyle}>{L.why}</dt>
@@ -52,7 +52,7 @@ export default function AboutFacts({
 
       <div>
         <h2 className="text-lg sm:text-xl font-semibold mb-3">{L.summaryHeading}</h2>
-        <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm leading-[1.7]">
+        <dl className="grid grid-cols-[auto_1fr] gap-x-4 sm:gap-x-6 gap-y-2 text-sm leading-[1.7] overflow-wrap-anywhere">
           <div className="contents">
             <dt style={mutedStyle}>{L.name}</dt>
             <dd>여준수 · Yeojunsu</dd>

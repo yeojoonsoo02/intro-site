@@ -8,6 +8,7 @@ import AboutInterests from './AboutInterests';
 import AboutChatCta from './AboutChatCta';
 import { getAboutData } from './aboutData';
 import { getLabels } from './labels';
+import { getFactLabels } from './factLabels';
 
 const mutedStyle = { color: 'var(--muted)' } as const;
 
@@ -24,6 +25,7 @@ export default async function AboutContent({
 }: AboutContentProps): Promise<JSX.Element> {
   const data = await getAboutData(lang);
   const t = getLabels(lang);
+  const L = getFactLabels(lang);
   const { profile } = data;
 
   return (
@@ -64,7 +66,7 @@ export default async function AboutContent({
         {data.skills.length > 0 && (
           <div>
             <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('techStack')}</h2>
-            <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm leading-[1.7]">
+            <dl className="grid grid-cols-[auto_1fr] gap-x-4 sm:gap-x-6 gap-y-2 text-sm leading-[1.7] overflow-wrap-anywhere">
               {data.skills.map((cat) => (
                 <div key={cat.name} className="contents">
                   <dt style={mutedStyle}>{cat.name}</dt>
@@ -160,10 +162,11 @@ export default async function AboutContent({
         >
           ← {t('goHome')}
         </Link>
-        {/* "지금도 활동하나?"를 판단할 근거. 콘텐츠 변경 시각 단일 소스를 그대로 쓴다. */}
-        <time dateTime={SITE_MODIFIED} className="text-xs" style={mutedStyle}>
-          {SITE_MODIFIED}
-        </time>
+        {/* "지금도 활동하나?"를 판단할 근거. 날짜만 두면 무슨 날짜인지 알 수 없어 라벨을 붙인다. */}
+        <p className="text-xs" style={mutedStyle}>
+          {L.updated}{' '}
+          <time dateTime={SITE_MODIFIED}>{SITE_MODIFIED}</time>
+        </p>
       </footer>
     </main>
   );

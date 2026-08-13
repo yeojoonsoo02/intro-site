@@ -6,7 +6,10 @@ import VisitorCount from '@/features/visitors/VisitorCount';
 import FlippableProfileCard from '@/features/profile/FlippableProfileCard';
 
 export default function HomeClient() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  // 로케일 랜딩에서 눌러도 한국어 소개로 가던 문제 — 언어에 맞는 경로로 보낸다.
+  const lang = (i18n.language || 'ko').split('-')[0];
+  const aboutHref = lang === 'ko' ? '/about' : `/${lang}/about`;
 
   return (
     <main className="max-w-xl mx-auto p-4 sm:p-6 text-center sm:min-h-[calc(100dvh-3.5rem)] sm:flex sm:flex-col">
@@ -41,7 +44,7 @@ export default function HomeClient() {
       {/* Secondary CTA — 더 알고 싶은 사람을 About 페이지로 자연스럽게 유도 */}
       <div className="mt-3 flex justify-center">
         <Link
-          href="/about"
+          href={aboutHref}
           className="group inline-flex items-center gap-2 text-sm font-medium transition-opacity hover:opacity-70"
           style={{ color: 'var(--foreground)' }}
         >
