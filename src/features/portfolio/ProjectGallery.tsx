@@ -40,13 +40,7 @@ export default function ProjectGallery({ items }: { items: Project[] }) {
   };
 
   return (
-    <SectionWrapper id="projects" className="mb-16 sm:mb-20">
-      <h2
-        className="text-base sm:text-lg font-bold tracking-tight mb-5"
-        style={{ color: 'var(--foreground)' }}
-      >
-        {t('projects')}
-      </h2>
+    <SectionWrapper id="projects" title={t('projects')}>
 
       {/* 카테고리 필터 */}
       {categories.length > 2 && (
@@ -86,7 +80,7 @@ export default function ProjectGallery({ items }: { items: Project[] }) {
             style={{
               background: 'var(--card-bg)',
               border: '1px solid var(--border)',
-              boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+              boxShadow: 'var(--card-shadow)',
             }}
           >
             {/* 썸네일 또는 플레이스홀더 */}

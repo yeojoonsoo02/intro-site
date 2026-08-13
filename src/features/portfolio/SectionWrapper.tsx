@@ -26,8 +26,8 @@ export default function SectionWrapper({ id, title, children, className = 'mb-14
     >
       {title && (
         <h2
-          className="text-sm font-bold tracking-wide mb-6"
-          style={{ color: 'var(--muted)' }}
+          className="text-base sm:text-lg font-bold tracking-tight mb-5"
+          style={{ color: 'var(--foreground)' }}
         >
           {title}
         </h2>

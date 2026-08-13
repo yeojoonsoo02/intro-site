@@ -31,7 +31,7 @@ export default function Error({
         </button>
         <Link
           href="/"
-          className="px-5 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700"
+          className="px-5 py-2.5 rounded-lg border border-[color:var(--border)]"
         >
           홈으로 돌아가기
         </Link>

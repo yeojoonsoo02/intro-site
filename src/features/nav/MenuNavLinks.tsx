@@ -8,7 +8,9 @@ interface MenuNavLinksProps {
   onPromptClick: () => void
 }
 
-const ITEM_CLASS = 'w-full text-left px-4 py-2.5 transition-colors hover:opacity-70 block'
+// Link는 globals.css의 button 최소 높이 규칙을 받지 않아 직접 44px을 보장한다.
+const ITEM_CLASS =
+  'w-full text-left px-4 py-2.5 min-h-[44px] flex items-center transition-colors hover:opacity-70'
 
 export default function MenuNavLinks({
   onNavigate,
@@ -30,7 +32,7 @@ export default function MenuNavLinks({
       ))}
       <button
         onClick={onPromptClick}
-        className="w-full text-left px-4 py-2.5 transition-colors hover:opacity-70"
+        className={ITEM_CLASS}
       >
         {t('prompt')}
       </button>

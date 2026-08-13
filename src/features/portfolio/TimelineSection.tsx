@@ -7,7 +7,7 @@ import SectionWrapper from './SectionWrapper';
 const TYPE_COLORS: Record<string, string> = {
   work: 'var(--primary)',
   education: 'var(--accent)',
-  project: '#22c55e',
+  project: 'var(--success)',
   etc: 'var(--muted)',
 };
 
@@ -18,7 +18,7 @@ export default function TimelineSection({ items }: { items: TimelineItem[] }) {
   const sorted = [...items].sort((a, b) => a.order - b.order);
 
   return (
-    <SectionWrapper id="timeline" title={t('timeline')} className="mb-20 sm:mb-24">
+    <SectionWrapper id="timeline" title={t('timeline')} >
       <div className="relative pl-6">
         {/* 세로선 */}
         <div
@@ -53,7 +53,7 @@ export default function TimelineSection({ items }: { items: TimelineItem[] }) {
                     color: TYPE_COLORS[item.type] ?? 'var(--muted)',
                   }}
                 >
-                  {t(item.type)}
+                  {t(`timelineType_${item.type}`)}
                 </span>
               </div>
               <h3
@@ -63,7 +63,7 @@ export default function TimelineSection({ items }: { items: TimelineItem[] }) {
                 {item.title}
               </h3>
               {item.description && (
-                <p className="text-sm break-keep" style={{ color: 'var(--muted)' }}>
+                <p className="text-sm leading-relaxed break-keep" style={{ color: 'var(--muted)' }}>
                   {item.description}
                 </p>
               )}

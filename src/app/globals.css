@@ -7,6 +7,10 @@
   --primary-contrast: #fff;
   --card-bg: #fff;
   --border: #e5e7eb;
+  /* 의미색: 상태 표시에 하드코딩된 hex를 쓰면 다크에서 눈이 아프다 */
+  --danger: #b91c1c;
+  --success: #15803d;
+  --warn: #a16207;
   --input-bg: #fff;
   --input-border: #cbd5e1;
   --button-bg: #2563eb;
@@ -32,6 +36,9 @@ html.dark {
   --primary-contrast: #18181b;
   --card-bg: #232329;
   --border: #3f3f46;
+  --danger: #f87171;
+  --success: #4ade80;
+  --warn: #fbbf24;
   --input-bg: #232329;
   --input-border: #374151;
   --button-bg: #60a5fa;
@@ -50,6 +57,12 @@ html.dark {
     --primary-contrast: #18181b;
     --card-bg: #232329;
     --border: #3f3f46;
+    --danger: #f87171;
+    --success: #4ade80;
+    --warn: #fbbf24;
+  --danger: #f87171;
+  --success: #4ade80;
+  --warn: #fbbf24;
     --input-bg: #232329;
     --input-border: #374151;
     --button-bg: #60a5fa;

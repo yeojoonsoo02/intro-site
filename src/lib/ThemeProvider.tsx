@@ -22,6 +22,9 @@ function isValidTheme(value: string | null): value is Theme {
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>('system')
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light')
+  // 복원이 끝나기 전에는 적용하지 않는다 — 초기값 'system'으로 한 번 칠해버리면
+  // head 인라인 스크립트가 이미 올바르게 칠해둔 결과를 덮어 깜빡임이 생긴다.
+  const [restored, setRestored] = useState(false)
 
   // 저장된 테마 복원 — 화이트리스트 검증 후 적용, 손상값이면 기본값(system) 폴백
   useEffect(() => {
@@ -32,10 +35,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       // 손상된 값 정리
       localStorage.removeItem('theme')
     }
+    setRestored(true)
   }, [])
 
   // 테마 적용 및 resolved theme 계산
   useEffect(() => {
+    if (!restored) return
     const root = document.documentElement
 
     const applyTheme = () => {
@@ -70,7 +75,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       mediaQuery.addEventListener('change', handler)
       return () => mediaQuery.removeEventListener('change', handler)
     }
-  }, [theme])
+  }, [theme, restored])
 
   const handleSetTheme = (newTheme: Theme) => {
     setTheme(newTheme)

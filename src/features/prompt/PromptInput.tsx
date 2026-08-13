@@ -48,7 +48,7 @@ const PromptInput = forwardRef<HTMLInputElement, PromptInputProps>(function Prom
         {text.length > 0 && (
           <span
             className="absolute right-3 top-1/2 -translate-y-1/2 text-[0.65rem] tabular-nums"
-            style={{ color: text.length >= maxChars ? '#ef4444' : 'var(--muted)' }}
+            style={{ color: text.length >= maxChars ? 'var(--danger)' : 'var(--muted)' }}
           >
             {text.length}/{maxChars}
           </span>

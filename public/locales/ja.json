@@ -102,5 +102,10 @@
   "dailyRoutine": "一日のルーティン",
   "hobbiesInterests": "趣味 & 興味",
   "journey": "軌跡",
-  "readMore": "もっと見る"
+  "readMore": "もっと見る",
+  "settings": "設定",
+  "timelineType_work": "仕事",
+  "timelineType_education": "学歴",
+  "timelineType_project": "プロジェクト",
+  "timelineType_etc": "その他"
 }

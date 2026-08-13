@@ -45,7 +45,7 @@ export default function EducationSection({ items }: { items: Education[] }) {
               )}
             </p>
             {edu.description && (
-              <p className="text-xs mt-2 break-keep" style={{ color: 'var(--muted)' }}>
+              <p className="text-sm mt-2 leading-relaxed break-keep" style={{ color: 'var(--muted)' }}>
                 {edu.description}
               </p>
             )}

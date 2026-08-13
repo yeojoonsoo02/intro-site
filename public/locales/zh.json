@@ -102,5 +102,10 @@
   "dailyRoutine": "日常习惯",
   "hobbiesInterests": "爱好与兴趣",
   "journey": "历程",
-  "readMore": "了解更多"
+  "readMore": "了解更多",
+  "settings": "设置",
+  "timelineType_work": "工作",
+  "timelineType_education": "学历",
+  "timelineType_project": "项目",
+  "timelineType_etc": "其他"
 }

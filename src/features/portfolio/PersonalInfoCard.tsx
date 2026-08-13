@@ -27,7 +27,7 @@ export default function PersonalInfoCard({ items }: { items: PersonalInfoItem[] 
             className="px-4 py-3.5"
             style={{ background: 'var(--card-bg)' }}
           >
-            <div className="text-[0.65rem] font-medium tracking-wide uppercase mb-1" style={{ color: 'var(--muted)' }}>
+            <div className="text-xs font-medium mb-1" style={{ color: 'var(--muted)' }}>
               {item.label}
             </div>
             <div className="text-sm font-bold" style={{ color: 'var(--foreground)' }}>

@@ -102,5 +102,10 @@
   "dailyRoutine": "하루 루틴",
   "hobbiesInterests": "취미 & 관심사",
   "journey": "여정",
-  "readMore": "더 알고 싶다면"
+  "readMore": "더 알고 싶다면",
+  "settings": "설정",
+  "timelineType_work": "업무",
+  "timelineType_education": "학력",
+  "timelineType_project": "프로젝트",
+  "timelineType_etc": "기타"
 }

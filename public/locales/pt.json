@@ -102,5 +102,10 @@
   "dailyRoutine": "Rotina diária",
   "hobbiesInterests": "Hobbies & interesses",
   "journey": "Trajetória",
-  "readMore": "Saber mais"
+  "readMore": "Saber mais",
+  "settings": "Configurações",
+  "timelineType_work": "Trabalho",
+  "timelineType_education": "Formação",
+  "timelineType_project": "Projeto",
+  "timelineType_etc": "Outros"
 }

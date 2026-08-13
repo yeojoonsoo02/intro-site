@@ -108,9 +108,9 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
         <div
           className="mb-6 p-4 rounded-xl text-sm"
           style={{
-            background: 'color-mix(in srgb, #ef4444 10%, transparent)',
-            color: '#ef4444',
-            border: '1px solid color-mix(in srgb, #ef4444 25%, transparent)',
+            background: 'color-mix(in srgb, var(--danger) 10%, transparent)',
+            color: 'var(--danger)',
+            border: '1px solid color-mix(in srgb, var(--danger) 25%, transparent)',
           }}
         >
           {loadError}
@@ -125,12 +125,12 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
             borderBottom: '1px solid var(--border)',
           }}
         >
-          <div className="flex gap-1.5">
+          <div className="flex gap-1.5 overflow-x-auto scrollbar-hide min-w-0 mr-2">
             {SUPPORTED_LANGS.map((l) => (
               <button
                 key={l.code}
                 onClick={() => setAdminLang(l.code)}
-                className="px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all"
+                className="px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all shrink-0 whitespace-nowrap"
                 style={
                   adminLang === l.code
                     ? { background: 'var(--primary)', color: 'var(--primary-contrast)' }
@@ -144,9 +144,9 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
           <button
             onClick={onSave}
             disabled={saving}
-            className="px-5 py-1.5 rounded-lg text-sm font-medium transition-all hover:opacity-90 disabled:opacity-50"
+            className="px-5 py-1.5 rounded-lg text-sm font-medium transition-all hover:opacity-90 disabled:opacity-50 shrink-0"
             style={{
-              background: saveError ? '#ef4444' : saved ? '#22c55e' : 'var(--primary)',
+              background: saveError ? 'var(--danger)' : saved ? '#22c55e' : 'var(--primary)',
               color: saveError || saved ? '#fff' : 'var(--primary-contrast)',
             }}
           >
@@ -163,7 +163,7 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
           disabled={saving}
           className="w-full py-3.5 rounded-xl font-medium text-sm transition-all hover:opacity-90 disabled:opacity-50 mt-8"
           style={{
-            background: saveError ? '#ef4444' : saved ? '#22c55e' : 'var(--primary)',
+            background: saveError ? 'var(--danger)' : saved ? '#22c55e' : 'var(--primary)',
             color: saveError || saved ? '#fff' : 'var(--primary-contrast)',
             boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
           }}

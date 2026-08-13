@@ -12,6 +12,18 @@ import { getFactLabels } from './factLabels';
 
 const mutedStyle = { color: 'var(--muted)' } as const;
 
+// 날짜를 ISO 그대로 두면 언어별 읽는 방식과 어긋난다. <time>의 dateTime엔 ISO를 유지하고
+// 눈에 보이는 값만 로케일 형식으로 바꾼다.
+function formatDate(iso: string, lang: string): string {
+  try {
+    return new Intl.DateTimeFormat(lang === 'ko' ? 'ko-KR' : lang, {
+      dateStyle: 'long',
+    }).format(new Date(iso));
+  } catch {
+    return iso;
+  }
+}
+
 interface AboutContentProps {
   lang: string;
   heading: string;
@@ -30,7 +42,7 @@ export default async function AboutContent({
 
   return (
     <main className="max-w-2xl mx-auto px-4 sm:px-6 py-10">
-      <header className="mb-8 sm:mb-10 flex items-start gap-4 sm:gap-5">
+      <header className="mb-8 sm:mb-10 flex flex-col items-start gap-3 sm:flex-row sm:gap-5">
         {/* 자기소개 페이지인데 얼굴이 없었다. 랜딩·OG에만 쓰이던 사진을 여기에도 둔다. */}
         <Image
           src={profile.photo || '/profile.jpg'}
@@ -61,10 +73,10 @@ export default async function AboutContent({
         {data.skills.length > 0 && (
           <div>
             <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('techStack')}</h2>
-            <dl className="grid grid-cols-[auto_1fr] gap-x-4 sm:gap-x-6 gap-y-2 text-sm leading-[1.7] overflow-wrap-anywhere">
+            <dl className="grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-x-4 sm:gap-x-6 gap-y-1 sm:gap-y-2 text-sm leading-[1.7]">
               {data.skills.map((cat) => (
                 <div key={cat.name} className="contents">
-                  <dt style={mutedStyle}>{cat.name}</dt>
+                  <dt className="text-xs sm:text-sm" style={mutedStyle}>{cat.name}</dt>
                   <dd>{cat.items.join(' · ')}</dd>
                 </div>
               ))}
@@ -166,7 +178,7 @@ export default async function AboutContent({
         {/* "지금도 활동하나?"를 판단할 근거. 날짜만 두면 무슨 날짜인지 알 수 없어 라벨을 붙인다. */}
         <p className="text-xs" style={mutedStyle}>
           {L.updated}{' '}
-          <time dateTime={SITE_MODIFIED}>{SITE_MODIFIED}</time>
+          <time dateTime={SITE_MODIFIED}>{formatDate(SITE_MODIFIED, lang)}</time>
         </p>
       </footer>
     </main>

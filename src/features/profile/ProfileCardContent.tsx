@@ -20,7 +20,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
       style={{
         background: "var(--card-bg)",
         borderColor: "var(--border)",
-        boxShadow: "0 8px 36px 0 rgba(0,0,0,0.08), 0 2px 10px 0 rgba(0,0,0,0.04)",
+        boxShadow: 'var(--card-shadow)',
         minHeight: undefined,
         color: "var(--foreground)",
       }}

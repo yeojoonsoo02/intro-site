@@ -7,7 +7,7 @@ import { getFactLabels } from './factLabels';
 const mutedStyle = { color: 'var(--muted)' } as const;
 
 const DL_CLASS =
-  'grid grid-cols-[auto_1fr] gap-x-4 sm:gap-x-6 gap-y-2 text-sm leading-[1.7] overflow-wrap-anywhere';
+  'grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-x-4 sm:gap-x-6 gap-y-1 sm:gap-y-2 text-sm leading-[1.7]';
 
 interface WhyProps {
   profile: Profile;
@@ -28,19 +28,19 @@ export function AboutWhy({ profile, lang, proseShownElsewhere }: WhyProps): JSX.
       <dl className={DL_CLASS}>
         {profile.motivation && (
           <div className="contents">
-            <dt style={mutedStyle}>{L.why}</dt>
+            <dt className="text-xs sm:text-sm" style={mutedStyle}>{L.why}</dt>
             <dd>{profile.motivation}</dd>
           </div>
         )}
         {showValues && (
           <div className="contents">
-            <dt style={mutedStyle}>{L.values}</dt>
+            <dt className="text-xs sm:text-sm" style={mutedStyle}>{L.values}</dt>
             <dd>{profile.values!.join(' · ')}</dd>
           </div>
         )}
         {showGoal && (
           <div className="contents">
-            <dt style={mutedStyle}>{L.goal}</dt>
+            <dt className="text-xs sm:text-sm" style={mutedStyle}>{L.goal}</dt>
             <dd>{profile.goal}</dd>
           </div>
         )}
@@ -62,52 +62,52 @@ export function AboutSummary({ profile, lang, education }: SummaryProps): JSX.El
       <h2 className="text-lg sm:text-xl font-semibold mb-3">{L.summaryHeading}</h2>
       <dl className={DL_CLASS}>
         <div className="contents">
-          <dt style={mutedStyle}>{L.name}</dt>
+          <dt className="text-xs sm:text-sm" style={mutedStyle}>{L.name}</dt>
           <dd>여준수 · Yeojunsu</dd>
         </div>
         <div className="contents">
-          <dt style={mutedStyle}>{L.alsoWritten}</dt>
+          <dt className="text-xs sm:text-sm" style={mutedStyle}>{L.alsoWritten}</dt>
           <dd>ヨ・ジュンス · 呂晙壽</dd>
         </div>
         {L.clan && (
           <div className="contents">
-            <dt style={mutedStyle}>{L.clan}</dt>
+            <dt className="text-xs sm:text-sm" style={mutedStyle}>{L.clan}</dt>
             <dd>함양(咸陽) 여씨</dd>
           </div>
         )}
         <div className="contents">
-          <dt style={mutedStyle}>{L.occupation}</dt>
+          <dt className="text-xs sm:text-sm" style={mutedStyle}>{L.occupation}</dt>
           <dd>{profile.tagline}</dd>
         </div>
         {education && (
           <div className="contents">
-            <dt style={mutedStyle}>{L.education}</dt>
+            <dt className="text-xs sm:text-sm" style={mutedStyle}>{L.education}</dt>
             <dd>{education}</dd>
           </div>
         )}
         <div className="contents">
-          <dt style={mutedStyle}>{L.nationality}</dt>
+          <dt className="text-xs sm:text-sm" style={mutedStyle}>{L.nationality}</dt>
           <dd>{L.nationalityValue}</dd>
         </div>
         <div className="contents">
-          <dt style={mutedStyle}>{L.email}</dt>
-          <dd>
+          <dt className="text-xs sm:text-sm" style={mutedStyle}>{L.email}</dt>
+          <dd className="overflow-wrap-anywhere">
             <a className="underline underline-offset-4" href={`mailto:${profile.email}`}>
               {profile.email}
             </a>
           </dd>
         </div>
         <div className="contents">
-          <dt style={mutedStyle}>{L.website}</dt>
-          <dd>
+          <dt className="text-xs sm:text-sm" style={mutedStyle}>{L.website}</dt>
+          <dd className="overflow-wrap-anywhere">
             <a className="underline underline-offset-4" href="https://yeojoonsoo02.com">
               yeojoonsoo02.com
             </a>
           </dd>
         </div>
         <div className="contents">
-          <dt style={mutedStyle}>GitHub</dt>
-          <dd>
+          <dt className="text-xs sm:text-sm" style={mutedStyle}>GitHub</dt>
+          <dd className="overflow-wrap-anywhere">
             <a className="underline underline-offset-4" href="https://github.com/yeojoonsoo02">
               github.com/yeojoonsoo02
             </a>

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import "./globals.css";
 import AuthProvider from "@/lib/AuthProvider";
@@ -104,6 +104,17 @@ export const metadata: Metadata = {
   category: "personal",
 };
 
+// 모바일 주소창까지 테마를 따라가게 한다. Next 16은 viewport를 별도 export로 받는다.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f9fafb" },
+    { media: "(prefers-color-scheme: dark)", color: "#18181b" },
+  ],
+};
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -122,7 +133,6 @@ export default async function RootLayout({
             __html: `(function(){try{var t=localStorage.getItem('theme');var valid=['light','dark','system'];if(valid.indexOf(t)===-1){t='system';}var isDark=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);var r=document.documentElement;r.classList.remove('dark','light');r.classList.add(isDark?'dark':'light');r.style.colorScheme=isDark?'dark':'light';}catch(e){}})();`,
           }}
         />
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         {/* LCP 이미지(프로필 사진) preload — 초기 렌더 지연 감소 */}
         <link
           rel="preload"

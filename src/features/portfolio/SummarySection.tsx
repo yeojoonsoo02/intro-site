@@ -23,8 +23,8 @@ export default function SummarySection({ data }: { data: PortfolioSummary | null
       }}
     >
       <h2
-        className="text-xs font-bold tracking-widest uppercase mb-5"
-        style={{ color: 'var(--muted)' }}
+        className="text-base sm:text-lg font-bold tracking-tight mb-5"
+        style={{ color: 'var(--foreground)' }}
       >
         {t('about')}
       </h2>

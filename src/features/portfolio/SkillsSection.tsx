@@ -10,7 +10,7 @@ export default function SkillsSection({ categories }: { categories: SkillCategor
   if (categories.length === 0) return null;
 
   return (
-    <SectionWrapper id="skills" title={t('skills')} className="mb-10 sm:mb-14">
+    <SectionWrapper id="skills" title={t('skills')} >
       <div className="space-y-6">
         {categories.map((cat) => (
           <div key={cat.id}>

@@ -6,10 +6,10 @@ import SectionWrapper from './SectionWrapper';
 
 const CAT_COLORS: Record<string, string> = {
   sports: 'var(--primary)',
-  creative: '#22c55e',
-  travel: '#f59e0b',
+  creative: 'var(--success)',
+  travel: 'var(--warn)',
   mindful: 'var(--accent)',
-  food: '#ef4444',
+  food: 'var(--danger)',
 };
 
 export default function HobbiesSection({ categories }: { categories: HobbyCategory[] }) {
@@ -24,7 +24,7 @@ export default function HobbiesSection({ categories }: { categories: HobbyCatego
           return (
             <div key={cat.id}>
               <h3
-                className="text-xs font-bold mb-2.5 pl-3"
+                className="text-base font-bold mb-2.5 pl-3"
                 style={{ color, borderLeft: `3px solid ${color}` }}
               >
                 {cat.name}

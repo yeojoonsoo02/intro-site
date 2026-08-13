@@ -6,7 +6,7 @@ export default function Loading() {
       role="status"
     >
       <div
-        className="h-6 w-6 rounded-full border-2 border-gray-200 dark:border-gray-700 animate-spin"
+        className="h-6 w-6 rounded-full border-2 border-[color:var(--border)] animate-spin"
         style={{ borderTopColor: 'var(--primary)' }}
         aria-hidden
       />

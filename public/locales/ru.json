@@ -102,5 +102,10 @@
   "dailyRoutine": "Распорядок дня",
   "hobbiesInterests": "Хобби и интересы",
   "journey": "Путь",
-  "readMore": "Узнать больше"
+  "readMore": "Узнать больше",
+  "settings": "Настройки",
+  "timelineType_work": "Работа",
+  "timelineType_education": "Образование",
+  "timelineType_project": "Проект",
+  "timelineType_etc": "Прочее"
 }
