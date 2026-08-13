@@ -3,7 +3,7 @@ import Link from 'next/link';
 import SocialLinks from '@/features/social/SocialLinks';
 import { SITE_MODIFIED } from '@/components/seo/schemas/constants';
 import AboutHubCards from './AboutHubCards';
-import AboutFacts from './AboutFacts';
+import { AboutWhy, AboutSummary } from './AboutFacts';
 import AboutInterests from './AboutInterests';
 import AboutChatCta from './AboutChatCta';
 import { getAboutData } from './aboutData';
@@ -56,12 +56,7 @@ export default async function AboutContent({
       <AboutHubCards lang={lang} />
 
       <section className="facts space-y-10">
-        <AboutFacts
-          profile={profile}
-          lang={lang}
-          education={data.education}
-          proseShownElsewhere={data.values.length > 0 || data.goals.length > 0}
-        />
+        <AboutSummary profile={profile} lang={lang} education={data.education} />
 
         {data.skills.length > 0 && (
           <div>
@@ -77,19 +72,32 @@ export default async function AboutContent({
           </div>
         )}
 
-        {data.certifications.length > 0 && (
+        {/* 실제 고객의 말이 대학생 개발자 소개에서 가장 강한 근거인데 묻혀 있었다. */}
+        {data.testimonials.length > 0 && (
           <div>
-            <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('certifications')}</h2>
-            <ul className="space-y-1.5 text-sm leading-[1.7]">
-              {data.certifications.map((c) => (
-                <li key={c.name}>
-                  {c.name}
-                  {c.issuer && <span style={mutedStyle}> · {c.issuer}</span>}
+            <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('testimonials')}</h2>
+            <ul className="space-y-3">
+              {data.testimonials.map((item) => (
+                <li
+                  key={item.content}
+                  className="rounded-lg border p-3.5 text-sm leading-[1.7]"
+                  style={{ borderColor: 'var(--border)', background: 'var(--card-bg)' }}
+                >
+                  <p>{item.content}</p>
+                  <p className="mt-2 text-xs" style={mutedStyle}>
+                    {[item.name, item.role].filter(Boolean).join(' · ')}
+                  </p>
                 </li>
               ))}
             </ul>
           </div>
         )}
+
+        <AboutWhy
+          profile={profile}
+          lang={lang}
+          proseShownElsewhere={data.values.length > 0 || data.goals.length > 0}
+        />
 
         {data.values.length > 0 && (
           <div>
@@ -125,21 +133,14 @@ export default async function AboutContent({
           </div>
         )}
 
-        {/* 실제 고객의 말이 대학생 개발자 소개에서 가장 강한 근거인데 묻혀 있었다. */}
-        {data.testimonials.length > 0 && (
+        {data.certifications.length > 0 && (
           <div>
-            <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('testimonials')}</h2>
-            <ul className="space-y-3">
-              {data.testimonials.map((item) => (
-                <li
-                  key={item.content}
-                  className="rounded-lg border p-3.5 text-sm leading-[1.7]"
-                  style={{ borderColor: 'var(--border)', background: 'var(--card-bg)' }}
-                >
-                  <p>{item.content}</p>
-                  <p className="mt-2 text-xs" style={mutedStyle}>
-                    {[item.name, item.role].filter(Boolean).join(' · ')}
-                  </p>
+            <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('certifications')}</h2>
+            <ul className="space-y-1.5 text-sm leading-[1.7]">
+              {data.certifications.map((c) => (
+                <li key={c.name}>
+                  {c.name}
+                  {c.issuer && <span style={mutedStyle}> · {c.issuer}</span>}
                 </li>
               ))}
             </ul>
