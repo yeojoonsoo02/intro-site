@@ -84,6 +84,8 @@ export default function FlippableProfileCard({ onAngleChange }: Props) {
     const updateHeight = () => {
       const visible = isFlipped ? back : front;
       container.style.height = `${visible.offsetHeight}px`;
+      // 실측 높이가 잡히면 예약해둔 최소 높이는 놓아준다.
+      container.style.minHeight = '0px';
     };
 
     updateHeight();
@@ -98,7 +100,15 @@ export default function FlippableProfileCard({ onAngleChange }: Props) {
   return (
     <section
       className="max-w-[600px] mx-auto mt-4 sm:mt-8 md:mt-10 mb-4 sm:mb-8 px-3 sm:px-4 relative select-none z-10 transition-[height] duration-300 ease-out"
-      style={{ perspective: 1200, overflow: 'visible', touchAction: 'pan-y' }}
+      style={{
+        perspective: 1200,
+        overflow: 'visible',
+        touchAction: 'pan-y',
+        // 프로필이 도착하기 전엔 카드가 비어 있어 첫 페인트 뒤 콘텐츠가 아래로 밀린다.
+        // 뷰포트 기준으로 자리를 잡아두고, 실제 높이를 재는 순간 해제한다.
+        // (고정 px로 예약하면 실제 카드가 더 짧을 때 빈 공간이 남는다.)
+        ...(profile ? null : { minHeight: '55vh' }),
+      }}
       {...pointerHandlers}
       ref={containerRef}
     >

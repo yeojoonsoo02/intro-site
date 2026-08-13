@@ -20,7 +20,7 @@ const MessageList = forwardRef<HTMLDivElement, MessageListProps>(function Messag
   return (
     <div
       ref={ref}
-      className="max-h-60 sm:max-h-72 overflow-y-auto space-y-2 scroll-smooth overscroll-contain"
+      className="max-h-[min(15rem,32dvh)] sm:max-h-72 overflow-y-auto space-y-2 scroll-smooth overscroll-contain"
       role="log"
       aria-live="polite"
     >

@@ -4,16 +4,16 @@ import { Caption, Era, Heading, Photo, Reflection } from '../primitives';
 
 export default function DuoPortrait({ item }: { item: JourneyItem }): JSX.Element {
   return (
-    <section className="grid grid-cols-12 gap-3 sm:gap-5">
-      <RevealOnScroll variant="bloom" className="col-span-7">
+    <section className="grid grid-cols-1 sm:grid-cols-12 gap-3 sm:gap-5">
+      <RevealOnScroll variant="bloom" className="col-span-1 sm:col-span-7">
         <Photo
           src={item.photos[0]}
           alt={item.alts[0]}
           aspect="aspect-[4/5]"
-          sizes="(min-width: 768px) 420px, 60vw"
+          sizes="(min-width: 768px) 420px, (min-width: 640px) 60vw, 100vw"
         />
       </RevealOnScroll>
-      <div className="col-span-5 flex flex-col">
+      <div className="col-span-1 sm:col-span-5 flex flex-col">
         <RevealOnScroll delay={120}>
           <Era>{item.era}</Era>
           <Heading>{item.label}</Heading>
@@ -26,7 +26,7 @@ export default function DuoPortrait({ item }: { item: JourneyItem }): JSX.Elemen
               src={item.photos[1]}
               alt={item.alts[1] ?? item.alts[0]}
               aspect="aspect-[4/5]"
-              sizes="(min-width: 768px) 220px, 40vw"
+              sizes="(min-width: 768px) 220px, (min-width: 640px) 40vw, 100vw"
             />
           </RevealOnScroll>
         )}

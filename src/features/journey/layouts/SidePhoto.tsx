@@ -11,20 +11,20 @@ export default function SidePhoto({ item, align }: SidePhotoProps): JSX.Element 
   const photo = (
     <RevealOnScroll
       variant="bloom"
-      className={`col-span-6 ${align === 'right' ? 'sm:col-start-7' : ''}`}
+      className={`col-span-1 sm:col-span-6 ${align === 'right' ? 'sm:col-start-7' : ''}`}
     >
       <Photo
         src={item.photos[0]}
         alt={item.alts[0]}
         aspect="aspect-square"
-        sizes="(min-width: 768px) 360px, 50vw"
+        sizes="(min-width: 768px) 360px, (min-width: 640px) 50vw, 100vw"
       />
     </RevealOnScroll>
   );
   const text = (
     <RevealOnScroll
       delay={140}
-      className={`col-span-6 flex flex-col justify-center ${
+      className={`col-span-1 sm:col-span-6 flex flex-col justify-center ${
         align === 'right' ? 'sm:col-start-1 sm:row-start-1' : ''
       }`}
     >
@@ -35,7 +35,7 @@ export default function SidePhoto({ item, align }: SidePhotoProps): JSX.Element 
     </RevealOnScroll>
   );
   return (
-    <section className="grid grid-cols-12 gap-4 sm:gap-6 items-center">
+    <section className="grid grid-cols-1 sm:grid-cols-12 gap-4 sm:gap-6 items-center">
       {align === 'left' ? (
         <>
           {photo}

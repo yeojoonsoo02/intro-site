@@ -81,7 +81,7 @@ function ThemePicker({
       >
         {t('theme', { defaultValue: 'Theme' })}
       </p>
-      <div className="px-4 pb-1.5 flex gap-1">
+      <div className="px-4 pb-1.5 grid grid-cols-4 gap-1">
         {THEME_OPTIONS.map((opt) => {
           const active = theme === opt.key
           return (
@@ -116,19 +116,19 @@ function LanguagePicker({ onSelect }: { onSelect: (code: string) => void }): JSX
   return (
     <>
       <p
-        className="px-4 pt-1.5 pb-1 text-[0.65rem] font-semibold uppercase tracking-widest"
+        className="px-4 pt-1.5 pb-1 text-xs font-semibold"
         style={{ color: 'var(--muted)' }}
       >
         {t('language')}
       </p>
-      <div className="px-4 pb-1.5 flex gap-1">
+      <div className="px-4 pb-1.5 grid grid-cols-4 gap-1">
         {SUPPORTED_LANGS.map((l) => {
           const active = i18n.language === l.code
           return (
             <button
               key={l.code}
               onClick={() => onSelect(l.code)}
-              className="flex-1 py-1.5 rounded-md text-xs font-medium transition-colors"
+              className="w-full min-w-0 py-1.5 rounded-md text-xs font-medium transition-colors"
               style={
                 active
                   ? {

@@ -31,7 +31,7 @@ html.dark {
   --primary: #60a5fa;
   --primary-contrast: #18181b;
   --card-bg: #232329;
-  --border: #2d2d35;
+  --border: #3f3f46;
   --input-bg: #232329;
   --input-border: #374151;
   --button-bg: #60a5fa;
@@ -49,7 +49,7 @@ html.dark {
     --primary: #60a5fa;
     --primary-contrast: #18181b;
     --card-bg: #232329;
-    --border: #2d2d35;
+    --border: #3f3f46;
     --input-bg: #232329;
     --input-border: #374151;
     --button-bg: #60a5fa;
@@ -240,7 +240,8 @@ body::before {
   color: var(--foreground);
 }
 
-::placeholder { color: var(--muted); opacity: 0.7; }
+/* --muted 위에 opacity를 또 곱하면 실효 대비가 기준 아래로 떨어진다 */
+::placeholder { color: var(--muted); }
 
 /* /journey 헤더 stagger 입장 애니메이션 */
 @keyframes journeyFadeUp {

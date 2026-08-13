@@ -1,12 +1,9 @@
 'use client';
 
-import { useTheme } from '@/lib/ThemeProvider';
 
 export default function SocialLinks({ colored = false, isDev = false }: { colored?: boolean; isDev?: boolean }) {
-  const { resolvedTheme } = useTheme();
-  const isDarkMode = resolvedTheme === 'dark';
-
-  const githubColor = isDarkMode ? '#e4e4e7' : '#3f3f46';
+  // 테마 훅으로 색을 분기하던 것을 토큰으로 — 하이드레이션 전 잘못된 색이 잠깐 보이는 문제도 함께 사라진다.
+  const githubColor = 'var(--foreground)';
   const isNormal = !isDev;
 
   const SNS = [
@@ -53,13 +50,13 @@ export default function SocialLinks({ colored = false, isDev = false }: { colore
       label: '프로젝트(GitHub)',
       color: githubColor,
       icon: (
-        <span className="relative flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 rounded-full" style={{ backgroundColor: githubColor + '22' }}>
+        <span className="relative flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 rounded-full" style={{ backgroundColor: `color-mix(in srgb, ${githubColor} 13%, transparent)` }}>
           <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path
               fillRule="evenodd"
               clipRule="evenodd"
               d="M12 2C6.48 2 2 6.58 2 12.26c0 4.48 2.87 8.28 6.84 9.63.5.09.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.78.62-4.02-1.36-4.02-1.36-.45-1.18-1.1-1.5-1.1-1.5-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05A9.38 9.38 0 0 1 12 6.84c.85.004 1.7.12 2.5.35 1.9-1.33 2.74-1.05 2.74-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.8 0 .27.18.58.69.48C19.13 20.54 22 16.74 22 12.26 22 6.58 17.52 2 12 2z"
-              fill={githubColor}
+              fill="currentColor"
             />
           </svg>
         </span>
@@ -76,8 +73,8 @@ export default function SocialLinks({ colored = false, isDev = false }: { colore
           target="_blank"
           rel="noopener noreferrer"
           aria-label={label}
-          className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full transition-opacity hover:opacity-70"
-          style={colored ? { color, background: color + '18' } : { color: "var(--muted)" }}
+          className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 min-w-11 min-h-11 rounded-full transition-opacity hover:opacity-70"
+          style={colored ? { color, background: `color-mix(in srgb, ${color} 9%, transparent)` } : { color: "var(--muted)" }}
         >
           <span className="flex items-center justify-center">{icon}</span>
         </a>

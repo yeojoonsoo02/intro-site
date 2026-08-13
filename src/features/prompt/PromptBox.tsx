@@ -50,7 +50,9 @@ export default function PromptBox({ open, onClose }: PromptBoxProps): JSX.Elemen
 
   return (
     <div
-      className={`fixed bottom-0 left-0 w-full backdrop-blur-md border-t p-3 transition-transform duration-300 z-40 ${
+      // 키보드가 뜨면 가용 높이가 ~300px로 줄어 헤더(닫기 버튼)가 화면 밖으로 밀렸다.
+      // 뷰포트 기준 상한 + 스크롤로 항상 닫을 수 있게 한다.
+      className={`fixed bottom-0 left-0 w-full max-h-[85dvh] overflow-y-auto overscroll-contain backdrop-blur-md border-t p-3 transition-transform duration-300 z-40 ${
         open ? 'translate-y-0' : 'translate-y-full pointer-events-none'
       }`}
       style={{
@@ -149,8 +151,9 @@ interface FooterProps {
 function Footer({ showLogin, onLogin, remaining, limitExhausted }: FooterProps): JSX.Element {
   const { t } = useTranslation()
   return (
-    <div className="flex justify-between items-center gap-2">
-      <p className="text-[0.65rem]" style={{ color: 'var(--muted)', opacity: 0.7 }}>
+    <div className="flex flex-col-reverse gap-1.5 sm:flex-row sm:justify-between sm:items-center">
+      {/* 10.4px에 opacity까지 겹쳐 실효 대비가 3:1 아래였다 */}
+      <p className="text-xs" style={{ color: 'var(--muted)' }}>
         {t('aiDisclaimer')}
       </p>
       <div className="flex items-center gap-2 shrink-0">

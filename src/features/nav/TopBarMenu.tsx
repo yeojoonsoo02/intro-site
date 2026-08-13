@@ -1,12 +1,14 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/AuthProvider'
 import { useTheme } from '@/lib/ThemeProvider'
 import i18n from '@/lib/i18n'
 import MenuNavLinks from './MenuNavLinks'
 import MenuSettings from './MenuSettings'
 import MenuAccount from './MenuAccount'
+import { persistLocale, localizePath } from '@/lib/locale'
 
 interface TopBarMenuProps {
   onOpenPrompt: () => void
@@ -15,6 +17,8 @@ interface TopBarMenuProps {
 export default function TopBarMenu({ onOpenPrompt }: TopBarMenuProps): JSX.Element {
   const { user, login, logout } = useAuth()
   const { theme, setTheme } = useTheme()
+  const router = useRouter()
+  const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -39,15 +43,29 @@ export default function TopBarMenu({ onOpenPrompt }: TopBarMenuProps): JSX.Eleme
 
   const closeMenu = useCallback((): void => setMenuOpen(false), [])
 
-  const changeLanguage = useCallback((l: string): void => {
-    if (!i18n) return
-    i18n.changeLanguage(l)
-    document.documentElement.lang = l
-    localStorage.setItem('lang', l)
-  }, [])
+  const changeLanguage = useCallback(
+    (l: string): void => {
+      if (!i18n) return
+      i18n.changeLanguage(l)
+      // 쿠키까지 함께 갱신하지 않으면 미들웨어가 이전 언어로 되돌린다 —
+      // 메뉴에서 고른 언어가 링크 한 번에 무효가 되던 문제.
+      persistLocale(l)
+      // 홈으로 튕기지 않고 보던 페이지의 같은 언어판으로 이동.
+      router.push(localizePath(pathname, l))
+    },
+    [pathname, router],
+  )
 
   return (
-    <div className="fixed top-3 right-3 sm:right-4 z-50">
+    <div
+      className="fixed z-50"
+      style={{
+        // viewport-fit=cover라 노치 영역까지 뷰포트가 확장돼 있다. 사이트의 유일한
+        // 전역 내비게이션이 센서 하우징에 가리지 않도록 안전영역을 존중한다.
+        top: 'max(0.75rem, env(safe-area-inset-top))',
+        right: 'max(0.75rem, env(safe-area-inset-right))',
+      }}
+    >
       <div className="relative" ref={menuRef}>
         <MenuTrigger open={menuOpen} onToggle={() => setMenuOpen((v) => !v)} />
 
