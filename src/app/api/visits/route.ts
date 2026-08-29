@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getClientIp } from '@/lib/clientIp';
 import { adminDb, FieldValue } from '@/lib/firebaseAdmin';
 import { checkRateLimit } from '@/lib/rateLimit';
 
@@ -58,7 +59,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ count: await readCount().catch(() => 0), counted: false });
   }
 
-  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  const ip = getClientIp(req);
   const rateLimit = await checkRateLimit(`visit_${ip}`, false, RATE_LIMIT_MAX_VISITS);
   if (!rateLimit.allowed) {
     return NextResponse.json({ count: await readCount().catch(() => 0), counted: false });

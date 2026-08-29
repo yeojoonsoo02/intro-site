@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getClientIp } from '@/lib/clientIp';
 import { adminDb } from '@/lib/firebaseAdmin';
 import { checkRateLimit, RATE_LIMIT_MAX_PORTFOLIO } from '@/lib/rateLimit';
 
@@ -7,7 +8,7 @@ const ALLOWED_LANGS = ['ko', 'en', 'ja', 'zh', 'es', 'fr', 'de', 'pt', 'ru'];
 export async function GET(req: NextRequest): Promise<NextResponse> {
   // 봇·공격자의 반복 호출로 인한 Firestore 읽기 비용만 차단. 정상 방문자의 다중 페이지
   // 조회(메인+프로젝트 상세 여러 개)는 막지 않도록 챗봇용(5회)이 아닌 전용 임계값을 쓴다.
-  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  const ip = getClientIp(req);
   const rateLimit = await checkRateLimit(`pf_${ip}`, false, RATE_LIMIT_MAX_PORTFOLIO);
   if (!rateLimit.allowed) {
     return NextResponse.json(

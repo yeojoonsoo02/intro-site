@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getClientIp } from '@/lib/clientIp';
 import { adminDb } from '@/lib/firebaseAdmin';
 import { checkRateLimit, RATE_LIMIT_MAX_PORTFOLIO } from '@/lib/rateLimit';
 import { LANG_CODES } from '@/lib/i18n-config';
@@ -8,7 +9,7 @@ import { LANG_CODES } from '@/lib/i18n-config';
 // 읽기 전용이며 profiles는 원래 공개 읽기(rules: allow read: if true)라 노출 범위 변화는 없다.
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
-  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  const ip = getClientIp(req);
   const rateLimit = await checkRateLimit(`pf_${ip}`, false, RATE_LIMIT_MAX_PORTFOLIO);
   if (!rateLimit.allowed) {
     return NextResponse.json(

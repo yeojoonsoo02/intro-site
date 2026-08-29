@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getClientIp } from '@/lib/clientIp'
 import {
   GoogleGenerativeAI,
   HarmCategory,
@@ -69,7 +70,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     ? { uid: verifiedUser.uid, email: verifiedUser.email }
     : null
 
-  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  const ip = getClientIp(req)
   // 로그인 사용자는 uid 기준으로 제한(IP 공유 환경에서도 정확). 게스트는 IP 기준.
   const rateLimitKey = verifiedUser ? `uid_${verifiedUser.uid}` : ip
   const rateLimit = await checkRateLimit(rateLimitKey, isLoggedIn)

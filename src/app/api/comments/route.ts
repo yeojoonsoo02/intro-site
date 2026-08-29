@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getClientIp } from '@/lib/clientIp';
 import { adminDb, adminAuth, FieldValue } from '@/lib/firebaseAdmin';
 import { checkRateLimit } from '@/lib/rateLimit';
 
@@ -44,7 +45,7 @@ async function verify(req: NextRequest): Promise<DecodedUser | null> {
 }
 
 function clientIp(req: NextRequest): string {
-  return req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  return getClientIp(req);
 }
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
