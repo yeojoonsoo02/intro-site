@@ -11,7 +11,8 @@
     "test:e2e": "playwright test",
     "test:e2e:install": "playwright install --with-deps chromium",
     "indexnow": "node scripts/indexnow.mjs",
-    "embeddings:build": "node --env-file=.env.local scripts/build-embeddings.mjs"
+    "embeddings:build": "node --env-file=.env.local scripts/build-embeddings.mjs",
+    "profile:sync": "node --env-file=.env.local scripts/export-profile.mjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
