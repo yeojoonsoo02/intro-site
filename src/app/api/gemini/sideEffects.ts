@@ -1,11 +1,7 @@
 import { sendQuestionAnswer } from '@/lib/webhook'
 import { saveChatLog } from '@/lib/chatLog'
 import { isUnanswered } from '@/lib/unanswered'
-import {
-  sendTelegramMessage,
-  formatChatNotification,
-  isTelegramConfigured,
-} from '@/lib/telegram'
+import { notifyChat } from '@/lib/kakao-notify'
 
 function logSideEffect(context: string, err: unknown): void {
   const msg = err instanceof Error ? err.message : String(err)
@@ -28,9 +24,5 @@ export function fireSideEffects(
     reply,
     userInfo ? JSON.stringify(userInfo) : undefined,
   ).catch((err) => logSideEffect('Webhook', err))
-  if (isTelegramConfigured()) {
-    sendTelegramMessage(formatChatNotification(message, reply, unanswered)).catch((err) =>
-      logSideEffect('Telegram', err),
-    )
-  }
+  notifyChat(message, reply, unanswered).catch((err) => logSideEffect('Kakao', err))
 }
