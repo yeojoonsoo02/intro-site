@@ -72,8 +72,9 @@ async function readPortfolio() {
 }
 
 async function main() {
-  const apiKey = process.env.CONTEXT_API_KEY
-  if (!apiKey) throw new Error('CONTEXT_API_KEY 미설정')
+  // 쓰기는 전용 키 우선 (Vercel에 PROFILE_WRITE_API_KEY 설정 시 읽기/쓰기 분리 완성)
+  const apiKey = process.env.PROFILE_WRITE_API_KEY || process.env.CONTEXT_API_KEY
+  if (!apiKey) throw new Error('PROFILE_WRITE_API_KEY(또는 CONTEXT_API_KEY) 미설정')
 
   const generated = new Date().toISOString()
   const markdown = [
