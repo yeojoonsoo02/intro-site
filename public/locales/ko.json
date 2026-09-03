@@ -107,5 +107,9 @@
   "timelineType_work": "업무",
   "timelineType_education": "학력",
   "timelineType_project": "프로젝트",
-  "timelineType_etc": "기타"
+  "timelineType_etc": "기타",
+  "recentPosts": "요즘",
+  "recentPostsMore": "블로그에서 더 보기",
+  "blogCategoryBook": "책",
+  "blogCategoryDaily": "일상"
 }

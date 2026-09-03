@@ -107,5 +107,9 @@
   "timelineType_work": "仕事",
   "timelineType_education": "学歴",
   "timelineType_project": "プロジェクト",
-  "timelineType_etc": "その他"
+  "timelineType_etc": "その他",
+  "recentPosts": "最近",
+  "recentPostsMore": "ブログでもっと見る",
+  "blogCategoryBook": "本",
+  "blogCategoryDaily": "日常"
 }

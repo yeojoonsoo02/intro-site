@@ -107,5 +107,9 @@
   "timelineType_work": "工作",
   "timelineType_education": "学历",
   "timelineType_project": "项目",
-  "timelineType_etc": "其他"
+  "timelineType_etc": "其他",
+  "recentPosts": "近况",
+  "recentPostsMore": "在博客上查看更多",
+  "blogCategoryBook": "书",
+  "blogCategoryDaily": "日常"
 }

@@ -107,5 +107,9 @@
   "timelineType_work": "Work",
   "timelineType_education": "Education",
   "timelineType_project": "Project",
-  "timelineType_etc": "Other"
+  "timelineType_etc": "Other",
+  "recentPosts": "Lately",
+  "recentPostsMore": "More on the blog",
+  "blogCategoryBook": "Book",
+  "blogCategoryDaily": "Daily"
 }

@@ -107,5 +107,9 @@
   "timelineType_work": "Работа",
   "timelineType_education": "Образование",
   "timelineType_project": "Проект",
-  "timelineType_etc": "Прочее"
+  "timelineType_etc": "Прочее",
+  "recentPosts": "Недавно",
+  "recentPostsMore": "Больше в блоге",
+  "blogCategoryBook": "Книга",
+  "blogCategoryDaily": "Будни"
 }

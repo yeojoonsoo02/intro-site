@@ -6,6 +6,7 @@ import AboutHubCards from './AboutHubCards';
 import { AboutWhy, AboutSummary } from './AboutFacts';
 import AboutInterests from './AboutInterests';
 import AboutChatCta from './AboutChatCta';
+import AboutRecentPosts from './AboutRecentPosts';
 import { getAboutData } from './aboutData';
 import { getLabels } from './labels';
 import { getFactLabels } from './factLabels';
@@ -69,6 +70,10 @@ export default async function AboutContent({
 
       <section className="facts space-y-10">
         <AboutSummary profile={profile} lang={lang} education={data.education} />
+
+        {/* 요약 바로 다음에 둔다 — "지금도 활동 중"이라는 신호는 이력 나열보다 먼저 와야
+            효과가 있다. 외부 RSS라 실패하면 컴포넌트가 스스로 null을 반환해 사라진다. */}
+        <AboutRecentPosts lang={lang} />
 
         {data.skills.length > 0 && (
           <div>
