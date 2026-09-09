@@ -40,7 +40,7 @@ async function readPortfolio() {
       .join('\n'))
   }
   if (data.skills?.categories?.length) {
-    out.push('# 기술 숙련도 (1~5)\n' + data.skills.categories
+    out.push('# 기술 스택\n' + data.skills.categories
       .map((c) => `- ${c.name}: ${c.items.map((s) => s.name).join(', ')}`).join('\n'))
   }
   if (data.certifications?.items?.length) {
