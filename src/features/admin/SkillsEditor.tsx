@@ -48,13 +48,13 @@ export default function SkillsEditor({ categories, onChange }: Props) {
     onChange(
       categories.map((c, i) =>
         i === catIdx
-          ? { ...c, items: [...c.items, { id: crypto.randomUUID(), name: '', level: 3 }] }
+          ? { ...c, items: [...c.items, { id: crypto.randomUUID(), name: '' }] }
           : c,
       ),
     );
   };
 
-  const updateSkill = (catIdx: number, skillIdx: number, patch: { name?: string; level?: number }) => {
+  const updateSkill = (catIdx: number, skillIdx: number, patch: { name?: string }) => {
     onChange(
       categories.map((c, ci) =>
         ci === catIdx
@@ -108,18 +108,6 @@ export default function SkillsEditor({ categories, onChange }: Props) {
                 onChange={(e) => updateSkill(catIdx, skillIdx, { name: e.target.value })}
                 placeholder={t('skillName')}
               />
-              <select
-                className="rounded px-2 py-1.5 text-sm"
-                style={inputStyle}
-                value={skill.level}
-                onChange={(e) => updateSkill(catIdx, skillIdx, { level: Number(e.target.value) })}
-              >
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <option key={n} value={n}>
-                    {'●'.repeat(n)}{'○'.repeat(5 - n)}
-                  </option>
-                ))}
-              </select>
               <button
                 type="button"
                 onClick={() => removeSkill(catIdx, skillIdx)}

@@ -15,7 +15,8 @@ export interface SkillItem {
   // 렌더 key용 고유 id (레거시 데이터엔 없을 수 있어 optional)
   id?: string;
   name: string;
-  level: number;
+  // 숙련도 점수는 근거 없는 자기 평가라 2026-09 데이터에서 제거. 레거시 문서 호환용 optional
+  level?: number;
 }
 
 export interface SkillCategory {
