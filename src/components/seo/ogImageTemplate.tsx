@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 // OG/Twitter 카드 공통 규격·문구. opengraph-image / twitter-image 가 함께 사용한다.
-export const OG_ALT = '여준수 (Yeojunsu) — 대학생 개발자 자기소개';
+export const OG_ALT = '여준수 (Junsu Yeo) — 대학생 개발자 자기소개';
 export const OG_SIZE = { width: 1200, height: 630 };
 export const OG_CONTENT_TYPE = 'image/png';
 
@@ -54,7 +54,7 @@ export function renderOgImage(): ImageResponse {
               marginLeft: 28,
             }}
           >
-            Yeojunsu
+            Junsu Yeo
           </span>
         </div>
         <div

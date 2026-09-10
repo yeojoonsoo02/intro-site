@@ -5,6 +5,7 @@ export const personEntity = {
   '@id': `${SITE_URL}#person`,
   name: '여준수',
   alternateName: [
+    'Junsu Yeo',
     'Yeojunsu',
     '여준수',
     'ヨ・ジュンス',
@@ -21,11 +22,11 @@ export const personEntity = {
     '@id': `${SITE_URL}/profile.jpg`,
     url: `${SITE_URL}/profile.jpg`,
     contentUrl: `${SITE_URL}/profile.jpg`,
-    caption: '여준수 (Yeojunsu) — 대학생 개발자 프로필 사진',
-    description: '여준수(Yeojunsu) 공식 프로필 사진',
+    caption: '여준수 (Junsu Yeo) — 대학생 개발자 프로필 사진',
+    description: '여준수(Junsu Yeo) 공식 프로필 사진',
     creator: { '@type': 'Person', name: '여준수' },
-    creditText: '여준수 (Yeojunsu)',
-    copyrightNotice: '© 여준수 (Yeojunsu)',
+    creditText: '여준수 (Junsu Yeo)',
+    copyrightNotice: '© 여준수 (Junsu Yeo)',
     license: SITE_URL,
     acquireLicensePage: SITE_URL,
   },
@@ -35,7 +36,7 @@ export const personEntity = {
     '광운대학교 소프트웨어학과 3학년에 재학 중인 대학생 개발자 여준수. Next.js·TypeScript·React 기반 웹 풀스택 개발과 AI 애플리케이션(OpenAI·Google Gemini API) 연동에 관심이 많고, 자신이 쓸 도구·서비스를 직접 만들며 개인 통합 관리 플랫폼, 스탯지니(stat-genie) 등 개인 프로젝트를 진행.',
   // 동명이인 구분 — 공식 사이트·GitHub 계정으로 이 인물을 특정
   disambiguatingDescription:
-    '공식 사이트 yeojoonsoo02.com 과 GitHub 계정 github.com/yeojoonsoo02 를 운영하는 대학생 개발자 여준수(Yeojunsu)입니다. 같은 이름의 다른 인물과는 무관합니다.',
+    '공식 사이트 yeojoonsoo02.com 과 GitHub 계정 github.com/yeojoonsoo02 를 운영하는 대학생 개발자 여준수(Junsu Yeo)입니다. 같은 이름의 다른 인물과는 무관합니다.',
   identifier: [
     { '@type': 'PropertyValue', propertyID: 'email', value: 'yeojoonsoo02@gmail.com' },
     { '@type': 'PropertyValue', propertyID: 'github', value: 'yeojoonsoo02' },
@@ -63,7 +64,7 @@ export const personEntity = {
     '@type': 'Occupation',
     name: '소프트웨어 개발자',
     skills:
-      'Next.js, TypeScript, React, Firebase, GCP, Prisma, Vercel, OpenAI API, Google Gemini API, Tasker 자동화',
+      'Next.js, TypeScript, React, Tailwind CSS, Node.js, REST API, Firebase, Prisma, GCP, Vercel, OpenAI API, Google Gemini API, RAG, Tasker 자동화, Git, Figma',
     occupationLocation: {
       '@type': 'City',
       name: 'Seoul',

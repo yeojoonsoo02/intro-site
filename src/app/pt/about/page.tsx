@@ -6,13 +6,13 @@ const LANG = 'pt';
 const URL = 'https://yeojoonsoo02.com/pt/about';
 
 export const metadata: Metadata = {
-  title: "Yeojunsu (여준수) — Sobre",
-  description: "Sobre Yeojunsu, estudante desenvolvedor. Stack de tecnologia, certificações e contato.",
+  title: "Junsu Yeo (여준수) — Sobre",
+  description: "Sobre Junsu Yeo, estudante desenvolvedor. Stack de tecnologia, certificações e contato.",
   alternates: { canonical: URL, languages: buildAboutHreflang() },
   openGraph: {
     type: 'profile',
-    title: "Yeojunsu (여준수) — Sobre",
-    description: "Sobre Yeojunsu, estudante desenvolvedor. Stack de tecnologia, certificações e contato.",
+    title: "Junsu Yeo (여준수) — Sobre",
+    description: "Sobre Junsu Yeo, estudante desenvolvedor. Stack de tecnologia, certificações e contato.",
     url: URL,
     locale: 'pt_BR',
   },
@@ -23,8 +23,8 @@ const aboutPageSchema = {
   '@type': 'AboutPage',
   '@id': `${URL}#aboutpage`,
   url: URL,
-  name: "Yeojunsu (여준수) — Sobre",
-  description: "Sobre Yeojunsu, estudante desenvolvedor. Stack de tecnologia, certificações e contato.",
+  name: "Junsu Yeo (여준수) — Sobre",
+  description: "Sobre Junsu Yeo, estudante desenvolvedor. Stack de tecnologia, certificações e contato.",
   inLanguage: 'pt-BR',
   mainEntity: { '@id': 'https://yeojoonsoo02.com#person' },
   speakable: {
@@ -40,7 +40,7 @@ export default function AboutPagePt(): JSX.Element {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(aboutPageSchema) }}
       />
-      <AboutContent lang={LANG} heading={"Sou o Yeojunsu"} intro={"Estudante desenvolvedor. Minha trajetória e projetos estão aqui; o resto, pergunte à IA."} />
+      <AboutContent lang={LANG} heading={"Sou o Junsu Yeo"} intro={"Estudante desenvolvedor. Minha trajetória e projetos estão aqui; o resto, pergunte à IA."} />
     </>
   );
 }

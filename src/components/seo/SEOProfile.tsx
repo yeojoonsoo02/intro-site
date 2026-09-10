@@ -15,12 +15,12 @@ const META: Record<Lang, {
   ko: {
     siteName: '여준수 | 자기소개 사이트',
     headingPrefix: '여준수',
-    headingSuffix: 'Yeojunsu',
+    headingSuffix: 'Junsu Yeo',
     sectionsLabel: { interests: '관심사', contact: '연락' },
   },
   en: {
-    siteName: 'Yeojunsu | Personal Site',
-    headingPrefix: 'Yeojunsu',
+    siteName: 'Junsu Yeo | Personal Site',
+    headingPrefix: 'Junsu Yeo',
     headingSuffix: '여준수',
     sectionsLabel: { interests: 'Interests', contact: 'Contact' },
   },
@@ -37,32 +37,32 @@ const META: Record<Lang, {
     sectionsLabel: { interests: '兴趣', contact: '联系' },
   },
   es: {
-    siteName: 'Yeojunsu | Sitio personal',
-    headingPrefix: 'Yeojunsu',
+    siteName: 'Junsu Yeo | Sitio personal',
+    headingPrefix: 'Junsu Yeo',
     headingSuffix: '여준수',
     sectionsLabel: { interests: 'Intereses', contact: 'Contacto' },
   },
   fr: {
-    siteName: 'Yeojunsu | Site personnel',
-    headingPrefix: 'Yeojunsu',
+    siteName: 'Junsu Yeo | Site personnel',
+    headingPrefix: 'Junsu Yeo',
     headingSuffix: '여준수',
     sectionsLabel: { interests: 'Intérêts', contact: 'Contact' },
   },
   de: {
-    siteName: 'Yeojunsu | Persönliche Seite',
-    headingPrefix: 'Yeojunsu',
+    siteName: 'Junsu Yeo | Persönliche Seite',
+    headingPrefix: 'Junsu Yeo',
     headingSuffix: '여준수',
     sectionsLabel: { interests: 'Interessen', contact: 'Kontakt' },
   },
   pt: {
-    siteName: 'Yeojunsu | Site pessoal',
-    headingPrefix: 'Yeojunsu',
+    siteName: 'Junsu Yeo | Site pessoal',
+    headingPrefix: 'Junsu Yeo',
     headingSuffix: '여준수',
     sectionsLabel: { interests: 'Interesses', contact: 'Contato' },
   },
   ru: {
-    siteName: 'Yeojunsu | Личный сайт',
-    headingPrefix: 'Yeojunsu',
+    siteName: 'Junsu Yeo | Личный сайт',
+    headingPrefix: 'Junsu Yeo',
     headingSuffix: '여준수',
     sectionsLabel: { interests: 'Интересы', contact: 'Контакты' },
   },
@@ -84,7 +84,7 @@ export default function SEOProfile({ lang = 'ko' }: SEOProfileProps) {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/profile.jpg"
-        alt="여준수 (Yeojunsu) 대학생 개발자 프로필 사진"
+        alt="여준수 (Junsu Yeo) 대학생 개발자 프로필 사진"
         width={800}
         height={800}
         loading="eager"

@@ -6,13 +6,13 @@ const LANG = 'ko';
 const URL = 'https://yeojoonsoo02.com/about';
 
 export const metadata: Metadata = {
-  title: "여준수 (Yeojunsu) — 공식 소개 · About",
-  description: "대학생 개발자 여준수(Yeojunsu)의 공식 소개. 기술 스택, 자격증, 가치관, 연락처를 확인할 수 있습니다.",
+  title: "여준수 (Junsu Yeo) — 공식 소개 · About",
+  description: "대학생 개발자 여준수(Junsu Yeo)의 공식 소개. 기술 스택, 자격증, 가치관, 연락처를 확인할 수 있습니다.",
   alternates: { canonical: URL, languages: buildAboutHreflang() },
   openGraph: {
     type: 'profile',
-    title: "여준수 (Yeojunsu) — 공식 소개 · About",
-    description: "대학생 개발자 여준수(Yeojunsu)의 공식 소개. 기술 스택, 자격증, 가치관, 연락처를 확인할 수 있습니다.",
+    title: "여준수 (Junsu Yeo) — 공식 소개 · About",
+    description: "대학생 개발자 여준수(Junsu Yeo)의 공식 소개. 기술 스택, 자격증, 가치관, 연락처를 확인할 수 있습니다.",
     url: URL,
     locale: 'ko_KR',
   },
@@ -23,8 +23,8 @@ const aboutPageSchema = {
   '@type': 'AboutPage',
   '@id': `${URL}#aboutpage`,
   url: URL,
-  name: "여준수 (Yeojunsu) — 공식 소개 · About",
-  description: "대학생 개발자 여준수(Yeojunsu)의 공식 소개. 기술 스택, 자격증, 가치관, 연락처를 확인할 수 있습니다.",
+  name: "여준수 (Junsu Yeo) — 공식 소개 · About",
+  description: "대학생 개발자 여준수(Junsu Yeo)의 공식 소개. 기술 스택, 자격증, 가치관, 연락처를 확인할 수 있습니다.",
   inLanguage: 'ko-KR',
   mainEntity: { '@id': 'https://yeojoonsoo02.com#person' },
   speakable: {

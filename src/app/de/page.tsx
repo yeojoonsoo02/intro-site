@@ -4,12 +4,12 @@ import LangInit from "@/lib/LangInit";
 import { buildHreflangLanguages } from "@/lib/seo-utils";
 
 export const metadata: Metadata = {
-  title: "Yeojunsu (여준수) — Profil und Vorstellung",
+  title: "Junsu Yeo (여준수) — Profil und Vorstellung",
   description:
-    "Persönliche Seite von Yeojunsu (여준수), studentischer Entwickler. Profil und Kontaktdaten.",
-  keywords: ["Yeojunsu", "여준수", "Studentischer Entwickler", "Frontend-Entwickler"],
+    "Persönliche Seite von Junsu Yeo (여준수), studentischer Entwickler. Profil und Kontaktdaten.",
+  keywords: ["Junsu Yeo", "여준수", "Studentischer Entwickler", "Frontend-Entwickler"],
   openGraph: {
-    title: "Yeojunsu (여준수) — Profil",
+    title: "Junsu Yeo (여준수) — Profil",
     description: "Studentischer Entwickler · Profil und Kontakt",
     locale: "de_DE",
     url: "https://yeojoonsoo02.com/de",

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   keywords: [
     "여준수",
     "呂晙壽",
-    "Yeojunsu",
+    "Junsu Yeo",
     "大学生开发者",
   ],
   openGraph: {

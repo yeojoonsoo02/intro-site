@@ -11,7 +11,7 @@
 export const KNOWLEDGE = `
 # 기본 정보
 이름: 여준수
-영문: Yeojunsu
+영문: Junsu Yeo (이전 표기: Yeojunsu)
 일본어: ヨ・ジュンス
 한자: 呂晙壽 (중국어권 표기도 동일)
 본관: 함양(咸陽) 여씨
@@ -88,7 +88,7 @@ export const KNOWLEDGE = `
 스탯지니(stat-genie) 등 여러 웹 페이지·서비스도 함께 운영.
 
 # 기술 스택
-웹 프론트엔드·풀스택: Next.js, TypeScript, React. 데이터: GCP, Firebase/Firestore, Prisma. 배포: Vercel. AI 연동: OpenAI API, Google Gemini API(임베딩·생성). 자동화: Tasker(Android) 기반 개인 데이터 수집 파이프라인 구축 경험.
+웹 프론트엔드·풀스택: Next.js, TypeScript, React, Tailwind CSS. 백엔드·데이터: Node.js, REST API, Firebase/Firestore, Prisma, GCP. 배포: Vercel. AI 연동: OpenAI API, Google Gemini API(임베딩·생성), RAG, 프롬프트 엔지니어링. 자동화: Tasker(Android) 기반 개인 데이터 수집 파이프라인 구축 경험. 도구: Git/GitHub, Figma.
 
 # 요즘 집중하는 것
 AI 내실 다지기 — 개인 서버·DB, AI 비서·자동화를 튼튼하게 구축 (개인 통합 관리 플랫폼의 연장선, NAS 등으로 현실 생활 자동화까지 확장 중). 배우고 반복하기. 사업과 영어 공부에 집중.

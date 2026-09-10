@@ -63,7 +63,7 @@ export function AboutSummary({ profile, lang, education }: SummaryProps): JSX.El
       <dl className={DL_CLASS}>
         <div className="contents">
           <dt className="text-xs sm:text-sm" style={mutedStyle}>{L.name}</dt>
-          <dd>여준수 · Yeojunsu</dd>
+          <dd>여준수 · Junsu Yeo</dd>
         </div>
         <div className="contents">
           <dt className="text-xs sm:text-sm" style={mutedStyle}>{L.alsoWritten}</dt>

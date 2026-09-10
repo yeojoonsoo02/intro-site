@@ -5,7 +5,7 @@ import type { Profile } from './profile.model';
 // 다국어 번역은 짧은 사실 한 줄로 통일 — 검증되지 않은 일반 문구를 박지 않음.
 export const DEFAULT_PROFILES: Record<string, Profile> = {
   en: {
-    name: 'Yeojunsu',
+    name: 'Junsu Yeo',
     tagline: 'Student Developer',
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
@@ -73,7 +73,7 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     goal: '发布有真实用户的个人项目。',
   },
   es: {
-    name: 'Yeojunsu (여준수)',
+    name: 'Junsu Yeo (여준수)',
     tagline: 'Estudiante desarrollador',
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
@@ -90,7 +90,7 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     goal: 'Lanzar un proyecto personal con usuarios reales.',
   },
   fr: {
-    name: 'Yeojunsu (여준수)',
+    name: 'Junsu Yeo (여준수)',
     tagline: 'Étudiant développeur',
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
@@ -107,7 +107,7 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     goal: 'Lancer un projet personnel avec de vrais utilisateurs.',
   },
   de: {
-    name: 'Yeojunsu (여준수)',
+    name: 'Junsu Yeo (여준수)',
     tagline: 'Studentischer Entwickler',
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
@@ -124,7 +124,7 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     goal: 'Ein eigenes Projekt mit echten Nutzern veröffentlichen.',
   },
   pt: {
-    name: 'Yeojunsu (여준수)',
+    name: 'Junsu Yeo (여준수)',
     tagline: 'Estudante desenvolvedor',
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
@@ -141,7 +141,7 @@ export const DEFAULT_PROFILES: Record<string, Profile> = {
     goal: 'Lançar um projeto pessoal com usuários reais.',
   },
   ru: {
-    name: 'Yeojunsu (여준수)',
+    name: 'Junsu Yeo (여준수)',
     tagline: 'Студент-разработчик',
     email: 'yeojoonsoo02@gmail.com',
     photo: '/profile.jpg',
