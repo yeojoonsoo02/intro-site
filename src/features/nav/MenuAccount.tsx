@@ -39,7 +39,7 @@ export default function MenuAccount({
               width={24}
               height={24}
               className="rounded-full shrink-0"
-              style={{ border: '1px solid var(--border)' }}
+              style={{ border: '1px solid var(--rule)' }}
               referrerPolicy="no-referrer"
             />
           )}
@@ -49,7 +49,7 @@ export default function MenuAccount({
         </div>
         <button
           onClick={onLogout}
-          className="text-xs shrink-0 ml-2 transition-colors hover:opacity-70"
+          className="text-[0.8125rem] shrink-0 ml-2 transition-colors hover:opacity-70"
           style={{ color: 'var(--muted)' }}
         >
           {t('logout')}

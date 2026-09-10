@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/lib/AuthProvider'
 import { useTheme } from '@/lib/ThemeProvider'
 import MenuNavLinks from './MenuNavLinks'
@@ -16,6 +17,7 @@ interface TopBarMenuProps {
 
 export default function TopBarMenu({ onOpenPrompt }: TopBarMenuProps): JSX.Element {
   const { user, login, logout } = useAuth()
+  const { i18n } = useTranslation()
   const { theme, setTheme } = useTheme()
   const router = useRouter()
   const pathname = usePathname()
@@ -48,11 +50,11 @@ export default function TopBarMenu({ onOpenPrompt }: TopBarMenuProps): JSX.Eleme
       if (!isLang(l)) return
       // i18next·쿠키·localStorage·html lang을 한 번에. 쿠키를 빼먹으면 미들웨어가
       // 이전 언어로 되돌린다 — 메뉴에서 고른 언어가 링크 한 번에 무효가 되던 문제.
-      setLocale(l)
+      setLocale(i18n, l)
       // 홈으로 튕기지 않고 보던 페이지의 같은 언어판으로 이동.
       router.push(localizePath(pathname, l))
     },
-    [pathname, router],
+    [i18n, pathname, router],
   )
 
   return (
@@ -70,11 +72,13 @@ export default function TopBarMenu({ onOpenPrompt }: TopBarMenuProps): JSX.Eleme
 
         {menuOpen && (
           <div
-            className="absolute right-0 mt-2 w-56 rounded-xl overflow-hidden backdrop-blur shadow-lg flex flex-col text-sm"
+            className="absolute right-0 mt-2 w-60 overflow-hidden backdrop-blur flex flex-col text-[0.9375rem]"
             style={{
-              background: 'var(--card-bg)',
-              border: '1px solid var(--border)',
-              color: 'var(--foreground)',
+              background: 'var(--surface)',
+              border: '1px solid var(--rule)',
+              color: 'var(--ink)',
+              borderRadius: 'var(--r-lg)',
+              boxShadow: 'var(--shadow)',
             }}
           >
             <MenuNavLinks
@@ -137,11 +141,12 @@ function MenuTrigger({
       aria-expanded={open}
       aria-haspopup="true"
       onClick={onToggle}
-      className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full backdrop-blur shadow-sm transition-colors"
+      className="w-11 h-11 flex items-center justify-center rounded-full backdrop-blur transition-colors"
       style={{
-        background: 'color-mix(in srgb, var(--card-bg) 80%, transparent)',
-        border: '1px solid var(--border)',
-        color: 'var(--foreground)',
+        background: 'color-mix(in srgb, var(--surface) 85%, transparent)',
+        border: '1px solid var(--rule)',
+        color: 'var(--ink)',
+        boxShadow: 'var(--shadow-1)',
       }}
     >
       <svg

@@ -56,8 +56,8 @@ export default function PromptBox({ open, onClose }: PromptBoxProps): JSX.Elemen
         open ? 'translate-y-0' : 'translate-y-full pointer-events-none'
       }`}
       style={{
-        background: 'color-mix(in srgb, var(--card-bg) 85%, transparent)',
-        borderColor: 'var(--border)',
+        background: 'color-mix(in srgb, var(--surface) 92%, transparent)',
+        borderColor: 'var(--rule)',
         paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))',
       }}
     >
@@ -118,10 +118,11 @@ function Header({ collapsed, onToggleCollapsed, onClose }: HeaderProps): JSX.Ele
         type="button"
         aria-label={collapsed ? t('showConversation') : t('hideConversation')}
         onClick={onToggleCollapsed}
-        className="text-xs px-3 py-2 rounded-md transition-colors"
+        className="text-[0.8125rem] px-3 py-2 transition-colors"
         style={{
-          border: '1px solid var(--border)',
-          color: 'var(--muted)',
+          border: '1px solid var(--rule)',
+          color: 'var(--ink-2)',
+          borderRadius: 'var(--r-md)',
         }}
       >
         {collapsed ? t('showConversation') : t('hideConversation')}
@@ -153,7 +154,7 @@ function Footer({ showLogin, onLogin, remaining, limitExhausted }: FooterProps):
   return (
     <div className="flex flex-col-reverse gap-1.5 sm:flex-row sm:justify-between sm:items-center">
       {/* 10.4px에 opacity까지 겹쳐 실효 대비가 3:1 아래였다 */}
-      <p className="text-xs" style={{ color: 'var(--muted)' }}>
+      <p className="text-[0.8125rem]" style={{ color: 'var(--muted)' }}>
         {t('aiDisclaimer')}
       </p>
       <div className="flex items-center gap-2 shrink-0">
@@ -161,17 +162,18 @@ function Footer({ showLogin, onLogin, remaining, limitExhausted }: FooterProps):
           <button
             type="button"
             onClick={onLogin}
-            className="text-[0.65rem] px-2 py-0.5 rounded transition-colors hover:opacity-80"
+            className="text-[0.8125rem] px-2.5 py-1 transition-colors hover:opacity-80"
             style={{
-              color: 'var(--primary)',
-              border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
+              color: 'var(--accent)',
+              border: '1px solid color-mix(in srgb, var(--accent) 35%, transparent)',
+              borderRadius: 'var(--r-md)',
             }}
           >
             {t('loginForMore')}
           </button>
         )}
         {remaining !== null && !limitExhausted && (
-          <p className="text-[0.65rem] tabular-nums" style={{ color: 'var(--muted)' }}>
+          <p className="meta">
             {t('remaining', { count: remaining })}
           </p>
         )}

@@ -1,5 +1,6 @@
 import { getRecentPosts } from '@/lib/blogContext';
 import { getLabels } from './labels';
+import { AboutSectionTitle } from './SectionTitle';
 
 // 네이버 블로그 "타발추"의 최근 글을 /about에 노출한다.
 //
@@ -42,30 +43,30 @@ export default async function AboutRecentPosts({
 
   return (
     <div>
-      <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('recentPosts')}</h2>
+      <AboutSectionTitle>{t('recentPosts')}</AboutSectionTitle>
 
       {/* 글은 한국어로 쓰여 있다. 로케일과 무관하게 lang을 명시해 스크린리더·줄바꿈이
           한국어 규칙을 따르게 한다. */}
-      <ul className="space-y-3.5 text-sm leading-[1.7]" lang="ko">
+      <ul className="space-y-4 text-base leading-[1.7] max-w-[62ch]" lang="ko">
         {posts.map((post) => (
           <li
             key={post.link}
-            className="pl-3"
-            style={{ borderLeft: '2px solid var(--border)' }}
+            className="pl-3.5"
+            style={{ borderLeft: '2px solid var(--rule)' }}
           >
             <a
               href={post.link}
               target="_blank"
               // noreferrer는 넣지 않는다 — 블로그 유입 통계에서 이 사이트가 출처로 잡혀야 한다.
               rel="noopener"
-              className="underline-offset-4 hover:underline"
+              className="link-u"
               style={{ wordBreak: 'keep-all', overflowWrap: 'break-word' }}
             >
               {post.title}
             </a>
-            <p className="mt-0.5 flex flex-wrap items-baseline gap-x-2 text-xs" style={mutedStyle}>
+            <p className="mt-1 flex flex-wrap items-baseline gap-x-2 meta">
               {post.date && (
-                <time dateTime={post.date} className="tabular-nums">
+                <time dateTime={post.date}>
                   {formatShortDate(post.date, lang)}
                 </time>
               )}
@@ -74,7 +75,7 @@ export default async function AboutRecentPosts({
               </span>
             </p>
             {post.snippet && (
-              <p className="mt-1 text-xs leading-[1.6]" style={mutedStyle}>
+              <p className="mt-1 text-[0.9375rem] leading-[1.6]" style={mutedStyle}>
                 {post.snippet}…
               </p>
             )}
@@ -86,7 +87,7 @@ export default async function AboutRecentPosts({
         href={BLOG_URL}
         target="_blank"
         rel="noopener"
-        className="mt-3.5 inline-block text-sm underline-offset-4 hover:underline"
+        className="mt-4 inline-block text-[0.9375rem] link-u"
         style={mutedStyle}
         lang={lang}
       >

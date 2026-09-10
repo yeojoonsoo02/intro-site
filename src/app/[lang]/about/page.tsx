@@ -13,8 +13,8 @@ type Params = { params: Promise<{ lang: string }> };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { lang } = await params;
-  // 상태 코드는 레이아웃의 assertKnownPath가 확정한다. 여기서 notFound()를 던져도 메타데이터는
-  // 스트리밍이라 404가 되지 않으므로 빈 메타만 돌려준다.
+  // 메타데이터는 스트리밍이라 여기서 notFound()를 던져도 상태 코드가 바뀌지 않는다.
+  // 404는 아래 페이지 컴포넌트의 notFound()가 확정한다(루트에 loading.tsx가 없어 셸이 먼저 흘러가지 않는다).
   if (!isLang(lang) || lang === 'ko') return {};
   return buildAboutMetadata(lang);
 }

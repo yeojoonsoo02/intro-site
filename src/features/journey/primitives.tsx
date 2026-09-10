@@ -3,8 +3,7 @@ import Image from 'next/image';
 export function Era({ children }: { children: React.ReactNode }): JSX.Element {
   return (
     <span
-      className="block text-[0.65rem] uppercase tracking-[0.2em] mb-2"
-      style={{ color: 'var(--muted)' }}
+      className="meta block mb-2"
     >
       {children}
     </span>
@@ -25,8 +24,8 @@ export function Heading({ children, size = 'md' }: HeadingProps): JSX.Element {
       : 'text-lg sm:text-xl';
   return (
     <h2
-      className={`font-bold leading-tight tracking-tight ${cls}`}
-      style={{ color: 'var(--foreground)' }}
+      className={`font-serif leading-tight ${cls}`}
+      style={{ color: 'var(--ink)' }}
     >
       {children}
     </h2>
@@ -35,7 +34,7 @@ export function Heading({ children, size = 'md' }: HeadingProps): JSX.Element {
 
 export function Caption({ children }: { children: React.ReactNode }): JSX.Element {
   return (
-    <p className="mt-2 text-sm leading-relaxed" style={{ color: 'var(--muted)' }}>
+    <p className="mt-2 text-[0.9375rem] leading-relaxed" style={{ color: 'var(--ink-2)' }}>
       {children}
     </p>
   );
@@ -44,11 +43,8 @@ export function Caption({ children }: { children: React.ReactNode }): JSX.Elemen
 export function Reflection({ children }: { children: React.ReactNode }): JSX.Element {
   return (
     <p
-      className="mt-3 text-sm leading-[1.7] pl-3"
-      style={{
-        color: 'var(--foreground)',
-        borderLeft: '3px solid var(--accent, var(--primary))',
-      }}
+      className="mt-3 text-base leading-[1.7] intro-p"
+      style={{ color: 'var(--ink)' }}
     >
       {children}
     </p>
@@ -67,7 +63,7 @@ export function Photo({ src, alt, aspect, sizes }: PhotoProps): JSX.Element {
   return (
     <figure
       className={`relative ${aspect} overflow-hidden group`}
-      style={{ background: 'var(--border)' }}
+      style={{ background: 'var(--surface-2)', borderRadius: 'var(--r-md)' }}
     >
       <Image
         src={src}

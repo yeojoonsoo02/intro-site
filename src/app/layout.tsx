@@ -1,14 +1,21 @@
 import type { Metadata, Viewport } from "next";
+import { Noto_Serif_KR } from "next/font/google";
 import { headers } from "next/headers";
 import "./globals.css";
 import AuthProvider from "@/lib/AuthProvider";
 import I18nProvider from "@/lib/I18nProvider";
 import { ThemeProvider } from "@/lib/ThemeProvider";
 import TopBar from "@/features/nav/TopBar";
-import SEOProfile from "@/components/seo/SEOProfile";
 import JsonLd from "@/components/seo/JsonLd";
-import { notFound } from "next/navigation";
 import { hreflangFor, isLang, SITE_URL, type Lang } from "@/lib/site";
+
+// 명조 헤드라인. 본문 Pretendard는 <head>의 dynamic-subset CSS로 온다(페이지에 나온 글자 조각만 로드).
+const serif = Noto_Serif_KR({
+  weight: ["600", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-serif",
+});
 
 const SITE_NAME = "여준수 (Junsu Yeo)";
 const DEFAULT_TITLE = "여준수 (Junsu Yeo) — 대학생 개발자 자기소개";
@@ -104,20 +111,10 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f9fafb" },
-    { media: "(prefers-color-scheme: dark)", color: "#18181b" },
+    { media: "(prefers-color-scheme: light)", color: "#f8f9fb" },
+    { media: "(prefers-color-scheme: dark)", color: "#15171c" },
   ],
 };
-
-// [lang] 동적 라우트가 1단계 경로를 전부 받으므로 /xx 같은 미지의 경로도 페이지까지 내려온다.
-// 페이지 안에서 notFound()를 불러도 loading.tsx(Suspense) 때문에 200 셸이 먼저 흘러가
-// 프로덕션에서는 소프트 404가 된다. 스트리밍 전에 실행되는 루트 레이아웃에서 확정한다.
-const TOP_LEVEL_ROUTES = new Set(['about', 'journey', 'portfolio']);
-
-function assertKnownPath(pathname: string): void {
-  const first = pathname.split('/').filter(Boolean)[0];
-  if (first && !isLang(first) && !TOP_LEVEL_ROUTES.has(first)) notFound();
-}
 
 export default async function RootLayout({
   children,
@@ -126,12 +123,15 @@ export default async function RootLayout({
 }>) {
   const h = await headers();
   const pathname = h.get('x-pathname') || '/';
-  assertKnownPath(pathname);
   const lang = detectLang(pathname);
 
   return (
-    <html lang={lang} suppressHydrationWarning>
+    <html lang={lang} suppressHydrationWarning className={serif.variable}>
       <head>
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+        />
         {/* FOUC 방지: 첫 페인트 전에 저장된 테마를 html에 적용. 손상값은 화이트리스트로 폴백 */}
         <script
           dangerouslySetInnerHTML={{
@@ -148,10 +148,9 @@ export default async function RootLayout({
       </head>
       <body className="antialiased relative">
         <JsonLd lang={lang} />
-        <SEOProfile lang={lang} />
         <ThemeProvider>
           <AuthProvider>
-            <I18nProvider>
+            <I18nProvider lang={lang}>
               <TopBar />
               {children}
             </I18nProvider>

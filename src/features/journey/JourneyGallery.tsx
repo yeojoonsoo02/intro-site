@@ -33,10 +33,9 @@ export default function JourneyGallery(): JSX.Element {
                 aria-hidden="true"
                 className="absolute -top-6 sm:-top-8 left-0 right-0 flex items-center gap-3"
               >
-                <span className="h-px flex-1" style={{ background: 'var(--border)' }} />
+                <span className="h-px flex-1" style={{ background: 'var(--rule)' }} />
                 <span
-                  className="text-[0.7rem] sm:text-xs tabular-nums"
-                  style={{ color: 'var(--muted)' }}
+                  className="meta"
                 >
                   {String(idx + 1).padStart(2, '0')} / {String(JOURNEY_ITEMS.length).padStart(2, '0')}
                 </span>

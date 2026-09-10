@@ -16,22 +16,21 @@ export default function Error({
 
   return (
     <main className="min-h-[60vh] flex flex-col items-center justify-center gap-5 px-6 text-center">
-      <h1 className="text-2xl sm:text-3xl font-semibold">문제가 발생했어요</h1>
-      <p className="text-sm" style={{ color: 'var(--muted)' }}>
+      <h1 className="font-serif text-2xl sm:text-3xl">문제가 발생했어요</h1>
+      <p className="text-base" style={{ color: 'var(--ink-2)' }}>
         잠시 후 다시 시도해주세요.
       </p>
       <div className="flex flex-wrap gap-3 justify-center">
         <button
           type="button"
           onClick={reset}
-          className="px-5 py-2.5 rounded-lg text-white"
-          style={{ backgroundColor: 'var(--primary)' }}
+          className="btn btn-primary"
         >
           다시 시도
         </button>
         <Link
           href="/"
-          className="px-5 py-2.5 rounded-lg border border-[color:var(--border)]"
+          className="btn btn-ghost"
         >
           홈으로 돌아가기
         </Link>

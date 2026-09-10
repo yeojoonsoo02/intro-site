@@ -32,11 +32,8 @@ const MessageList = forwardRef<HTMLDivElement, MessageListProps>(function Messag
       ))}
       {loading && (
         <div
-          className="text-sm max-w-[85%] sm:max-w-[75%] mr-auto px-3 py-2 rounded-xl rounded-bl-sm"
-          style={{
-            background: 'color-mix(in srgb, var(--foreground) 8%, transparent)',
-            color: 'var(--muted)',
-          }}
+          className="text-[0.9375rem] max-w-[85%] sm:max-w-[75%] mr-auto px-3.5 py-2 rounded-xl rounded-bl-sm"
+          style={{ background: 'var(--surface-2)', color: 'var(--muted)' }}
         >
           {t('typing')}
           {'.'.repeat(dots)}
@@ -51,14 +48,11 @@ export default MessageList
 function MessageBubble({ role, text }: { role: ChatMessage['role']; text: string }): JSX.Element {
   const isUser = role === 'user'
   const baseCls =
-    'text-sm leading-relaxed break-keep whitespace-pre-wrap overflow-wrap-anywhere max-w-[85%] sm:max-w-[75%] px-3 py-2 rounded-xl'
+    'text-[0.9375rem] leading-relaxed break-keep whitespace-pre-wrap overflow-wrap-anywhere max-w-[85%] sm:max-w-[75%] px-3.5 py-2 rounded-xl'
   const sideCls = isUser ? 'ml-auto rounded-br-sm' : 'mr-auto rounded-bl-sm'
   const style = isUser
-    ? { background: 'var(--primary)', color: 'var(--primary-contrast)' }
-    : {
-        background: 'color-mix(in srgb, var(--foreground) 8%, transparent)',
-        color: 'var(--foreground)',
-      }
+    ? { background: 'var(--accent)', color: 'var(--accent-contrast)' }
+    : { background: 'var(--surface-2)', color: 'var(--ink)' }
   return (
     <div className={`${baseCls} ${sideCls}`} style={style}>
       {text}
@@ -76,7 +70,7 @@ function SuggestionsPanel({ onPick }: { onPick: (text: string) => void }): JSX.E
   ]
   return (
     <div className="py-3 space-y-2">
-      <p className="text-center text-xs mb-3" style={{ color: 'var(--muted)' }}>
+      <p className="text-center text-[0.875rem] mb-3" style={{ color: 'var(--muted)' }}>
         {t('typeYourPrompt')}
       </p>
       <div className="flex flex-wrap gap-1.5 justify-center">
@@ -85,11 +79,11 @@ function SuggestionsPanel({ onPick }: { onPick: (text: string) => void }): JSX.E
             key={q}
             type="button"
             onClick={() => onPick(q)}
-            className="text-xs px-3 py-1.5 rounded-full transition-colors hover:opacity-70"
+            className="text-[0.875rem] px-3.5 py-1.5 rounded-full transition-colors hover:opacity-70"
             style={{
-              border: '1px solid var(--border)',
-              color: 'var(--muted)',
-              background: 'color-mix(in srgb, var(--foreground) 3%, transparent)',
+              border: '1px solid var(--rule)',
+              color: 'var(--ink-2)',
+              background: 'var(--surface)',
             }}
           >
             {q}

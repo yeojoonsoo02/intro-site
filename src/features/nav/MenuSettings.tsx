@@ -1,7 +1,6 @@
 'use client'
 
 import { useTranslation } from 'react-i18next'
-import i18n from '@/lib/i18n'
 import { LANGS, LANG_LABELS } from '@/lib/site'
 
 const THEME_OPTIONS = [
@@ -33,7 +32,7 @@ export default function MenuSettings({
       <button
         type="button"
         onClick={onToggle}
-        className="w-full flex items-center justify-between px-4 py-2 text-[0.7rem] font-semibold uppercase tracking-widest transition-colors hover:opacity-70"
+        className="w-full flex items-center justify-between px-4 py-2 text-[0.8125rem] font-semibold transition-colors hover:opacity-70"
         style={{ color: 'var(--muted)' }}
       >
         <span>{t('settings', { defaultValue: '설정' })}</span>
@@ -76,7 +75,7 @@ function ThemePicker({
   return (
     <>
       <p
-        className="px-4 pt-1 pb-1 text-[0.65rem] font-semibold uppercase tracking-widest"
+        className="px-4 pt-1 pb-1 text-[0.8125rem] font-semibold"
         style={{ color: 'var(--muted)' }}
       >
         {t('theme', { defaultValue: 'Theme' })}
@@ -112,11 +111,11 @@ function ThemePicker({
 }
 
 function LanguagePicker({ onSelect }: { onSelect: (code: string) => void }): JSX.Element {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   return (
     <>
       <p
-        className="px-4 pt-1.5 pb-1 text-xs font-semibold"
+        className="px-4 pt-1.5 pb-1 text-[0.8125rem] font-semibold"
         style={{ color: 'var(--muted)' }}
       >
         {t('language')}
@@ -129,7 +128,7 @@ function LanguagePicker({ onSelect }: { onSelect: (code: string) => void }): JSX
               key={code}
               title={LANG_LABELS[code]}
               onClick={() => onSelect(code)}
-              className="w-full min-w-0 py-1.5 rounded-md text-xs font-medium transition-colors"
+              className="w-full min-w-0 py-1.5 rounded-md text-[0.8125rem] font-medium transition-colors"
               style={
                 active
                   ? {

@@ -13,7 +13,7 @@ interface ChatInviteBannerProps {
 const INVITE_DELAY_MS = 10000
 const FOOTER_ZONE_PX = 160
 
-// 본문에 상시 CTA가 이미 있는 페이지 — 랜딩(HomeClient)과 소개(AboutChatCta).
+// 본문에 상시 CTA가 이미 있는 페이지 — 홈(homePage)과 소개(AboutContent)의 ChatCtaButton.
 // 여기서 배너까지 띄우면 같은 문구의 버튼이 위아래로 겹쳐 본문을 가린다.
 function hasInlineChatCta(pathname: string): boolean {
   const segments = pathname.split('/').filter(Boolean)
@@ -76,10 +76,11 @@ export default function ChatInviteBanner({
       <button
         type="button"
         onClick={handleOpen}
-        className="px-5 py-2.5 rounded-full text-sm font-medium shadow-md transition-transform hover:scale-105 flex items-center gap-2 break-keep"
+        className="px-5 py-2.5 rounded-full text-[0.9375rem] font-semibold transition-transform hover:scale-105 flex items-center gap-2 break-keep"
         style={{
-          background: 'var(--primary)',
-          color: 'var(--primary-contrast)',
+          background: 'var(--accent)',
+          color: 'var(--accent-contrast)',
+          boxShadow: 'var(--shadow)',
         }}
       >
         <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -100,8 +101,8 @@ export default function ChatInviteBanner({
         style={{ color: 'var(--muted)' }}
       >
         <span
-          className="w-8 h-8 flex items-center justify-center rounded-full shadow-md"
-          style={{ background: 'var(--card-bg)', border: '1px solid var(--border)' }}
+          className="w-8 h-8 flex items-center justify-center rounded-full"
+          style={{ background: 'var(--surface)', border: '1px solid var(--rule)', boxShadow: 'var(--shadow-1)' }}
         >
           <svg width="14" height="14" viewBox="0 0 12 12" fill="none" aria-hidden="true">
             <path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />

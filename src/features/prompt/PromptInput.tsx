@@ -37,17 +37,19 @@ const PromptInput = forwardRef<HTMLInputElement, PromptInputProps>(function Prom
             if (e.key === 'Enter') handleSend()
           }}
           placeholder={limitExhausted ? t('noQuestionsLeft') : t('typeYourPrompt')}
-          className="w-full rounded-lg px-3 py-2.5 pr-12 transition-colors disabled:opacity-50"
+          aria-label={t('typeYourPrompt')}
+          className="w-full px-3.5 py-2.5 pr-14 transition-colors disabled:opacity-50"
           style={{
-            background: 'color-mix(in srgb, var(--foreground) 5%, transparent)',
-            border: '1px solid var(--border)',
-            color: 'var(--foreground)',
+            background: 'var(--surface)',
+            border: '1px solid var(--rule)',
+            color: 'var(--ink)',
             fontSize: '16px',
+            borderRadius: 'var(--r-md)',
           }}
         />
         {text.length > 0 && (
           <span
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[0.65rem] tabular-nums"
+            className="absolute right-3 top-1/2 -translate-y-1/2 meta"
             style={{ color: text.length >= maxChars ? 'var(--danger)' : 'var(--muted)' }}
           >
             {text.length}/{maxChars}
@@ -58,11 +60,7 @@ const PromptInput = forwardRef<HTMLInputElement, PromptInputProps>(function Prom
         type="button"
         onClick={handleSend}
         disabled={!canSend}
-        className="text-sm px-4 py-2.5 rounded-lg font-medium transition-opacity disabled:opacity-30"
-        style={{
-          background: 'var(--primary)',
-          color: 'var(--primary-contrast)',
-        }}
+        className="btn btn-primary disabled:opacity-30"
       >
         {t('send')}
       </button>

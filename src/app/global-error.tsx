@@ -16,7 +16,7 @@ export default function GlobalError({
 
   return (
     <html lang="ko">
-      <body style={{ margin: 0, fontFamily: 'system-ui, sans-serif' }}>
+      <body style={{ margin: 0, fontFamily: 'Pretendard, system-ui, sans-serif', background: '#f8f9fb', color: '#1c1f26' }}>
         <main
           style={{
             minHeight: '100vh',
@@ -30,7 +30,7 @@ export default function GlobalError({
           }}
         >
           <h1 style={{ fontSize: 24, fontWeight: 600 }}>치명적인 오류가 발생했습니다</h1>
-          <p style={{ fontSize: 14, color: '#64748b' }}>잠시 후 다시 시도해주세요.</p>
+          <p style={{ fontSize: 14, color: '#4b5260' }}>잠시 후 다시 시도해주세요.</p>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
             <button
               type="button"
@@ -38,7 +38,7 @@ export default function GlobalError({
               style={{
                 padding: '10px 20px',
                 borderRadius: 8,
-                background: '#b45309',
+                background: '#b5402c',
                 color: '#fff',
                 border: 'none',
                 cursor: 'pointer',
@@ -55,8 +55,8 @@ export default function GlobalError({
                 padding: '10px 20px',
                 borderRadius: 8,
                 background: 'transparent',
-                color: '#b45309',
-                border: '1px solid #b45309',
+                color: '#b5402c',
+                border: '1px solid #b5402c',
                 textDecoration: 'none',
                 cursor: 'pointer',
               }}

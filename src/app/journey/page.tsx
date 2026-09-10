@@ -18,26 +18,22 @@ export const metadata: Metadata = {
 export default function JourneyPage() {
   return (
     <main
-      className="max-w-2xl md:max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-20"
-      style={{ color: 'var(--foreground)' }}
+      className="max-w-2xl md:max-w-3xl mx-auto px-5 sm:px-6 pt-20 sm:pt-28 pb-16"
+      style={{ color: 'var(--ink)' }}
     >
       <header className="mb-12 sm:mb-20">
         {/* 입장 시 stagger: eyebrow → 제목 → 본문 순서로 fade-up */}
         <p
-          className="journey-fade-1 text-[0.7rem] uppercase tracking-[0.3em] mb-4"
-          style={{ color: 'var(--muted)' }}
+          className="journey-fade-1 meta mb-4"
         >
-          Journey
+          여정
         </p>
-        <h1 className="journey-fade-2 text-3xl sm:text-5xl font-bold leading-[1.05] tracking-tight">
+        <h1 className="journey-fade-2 font-serif text-[2.25rem] sm:text-[3rem] leading-[1.1]">
           시기별 사진.
         </h1>
         <p
-          className="journey-fade-3 mt-6 max-w-md text-sm sm:text-base leading-relaxed pl-4"
-          style={{
-            color: 'var(--muted)',
-            borderLeft: '3px solid var(--accent)',
-          }}
+          className="journey-fade-3 mt-6 max-w-md text-base leading-relaxed intro-p"
+          style={{ color: 'var(--ink-2)' }}
         >
           어린 시절부터 지금까지의 사진을 시기별로 모았습니다.
         </p>
@@ -46,13 +42,13 @@ export default function JourneyPage() {
       <JourneyGallery />
 
       <footer
-        className="mt-20 pt-6 text-sm flex justify-between"
-        style={{ borderTop: '1px solid var(--border)' }}
+        className="mt-20 pt-6 text-[0.9375rem] flex justify-between"
+        style={{ borderTop: '1px solid var(--rule)' }}
       >
-        <Link href="/" className="underline-offset-4 hover:underline">
+        <Link href="/" className="link-u">
           ← 홈으로
         </Link>
-        <Link href="/about" className="underline-offset-4 hover:underline">
+        <Link href="/about" className="link-u">
           소개 →
         </Link>
       </footer>
