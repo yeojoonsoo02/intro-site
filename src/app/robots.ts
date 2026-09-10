@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next';
+import { SITE_URL } from '@/lib/site';
 
 // 주요 검색·AI 크롤러에 개별 규칙을 명시해 인덱싱과 AI 답변 참조를 모두 허용
 // API는 색인 대상이 아니다. 이름을 명시한 봇 규칙에도 그대로 적용한다.
@@ -62,7 +63,7 @@ export default function robots(): MetadataRoute.Robots {
 
   return {
     rules,
-    sitemap: 'https://yeojoonsoo02.com/sitemap.xml',
-    host: 'https://yeojoonsoo02.com',
+    sitemap: `${SITE_URL}/sitemap.xml`,
+    host: SITE_URL,
   };
 }

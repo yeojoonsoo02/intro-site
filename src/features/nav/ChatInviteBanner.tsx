@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
-import { LANG_CODES } from '@/lib/i18n-config'
+import { isLang } from '@/lib/site'
 
 interface ChatInviteBannerProps {
   hidden: boolean
@@ -17,7 +17,7 @@ const FOOTER_ZONE_PX = 160
 // 여기서 배너까지 띄우면 같은 문구의 버튼이 위아래로 겹쳐 본문을 가린다.
 function hasInlineChatCta(pathname: string): boolean {
   const segments = pathname.split('/').filter(Boolean)
-  const rest = LANG_CODES.includes(segments[0] as (typeof LANG_CODES)[number])
+  const rest = isLang(segments[0])
     ? segments.slice(1)
     : segments
   return rest.length === 0 || rest[0] === 'about'

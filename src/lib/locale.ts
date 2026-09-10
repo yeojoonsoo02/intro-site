@@ -1,4 +1,4 @@
-import { LANG_CODES } from '@/lib/i18n-config';
+import { isLang } from '@/lib/site';
 
 // 언어 상태를 저장하는 곳이 세 군데다 — i18next(localStorage 'lang'),
 // 미들웨어가 보는 NEXT_LOCALE 쿠키, 그리고 URL 경로.
@@ -21,7 +21,7 @@ export function persistLocale(lang: string): void {
  */
 export function localizePath(pathname: string, lang: string): string {
   const segments = pathname.split('/').filter(Boolean);
-  if (segments.length > 0 && (LANG_CODES as readonly string[]).includes(segments[0])) {
+  if (segments.length > 0 && isLang(segments[0])) {
     segments.shift();
   }
   const rest = segments.join('/');

@@ -7,24 +7,18 @@ import { ThemeProvider } from "@/lib/ThemeProvider";
 import TopBar from "@/features/nav/TopBar";
 import SEOProfile from "@/components/seo/SEOProfile";
 import JsonLd from "@/components/seo/JsonLd";
-import { buildHreflangLanguages } from "@/lib/seo-utils";
-import { LANG_CODES } from "@/lib/i18n-config";
+import { hreflangFor, isLang, SITE_URL, type Lang } from "@/lib/site";
 
-const SITE_URL = "https://yeojoonsoo02.com";
 const SITE_NAME = "여준수 (Junsu Yeo)";
 const DEFAULT_TITLE = "여준수 (Junsu Yeo) — 대학생 개발자 자기소개";
 const DEFAULT_DESC =
   "여준수(Junsu Yeo) 공식 자기소개 사이트. 대학생 개발자의 프로필과 연락처를 확인할 수 있습니다.";
 
-type Lang = 'ko' | 'en' | 'ja' | 'zh' | 'es' | 'fr' | 'de' | 'pt' | 'ru';
-
 function detectLang(pathname: string): Lang {
   // 첫 경로 세그먼트만 추출해 정확히 언어 코드와 일치할 때만 판정.
   // startsWith 접두 매칭은 /japan-trip 같은 경로를 /ja로 오분류하므로 사용하지 않음.
   const firstSegment = pathname.split('/').filter(Boolean)[0];
-  if (firstSegment && (LANG_CODES as readonly string[]).includes(firstSegment)) {
-    return firstSegment as Lang;
-  }
+  if (isLang(firstSegment)) return firstSegment;
   // root('/')는 실제 노출 콘텐츠가 한국어(이름·자기소개·관심사)라 ko로 매핑.
   // 검색엔진의 언어 시그널(html lang)과 콘텐츠를 일치시켜 색인 품질을 높임.
   return 'ko';
@@ -83,7 +77,7 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: SITE_URL,
-    languages: buildHreflangLanguages(),
+    languages: hreflangFor(),
   },
   verification: {
     // 파일 방식 인증(google9174e807949ac6f5.html)을 메타 태그로 이중 보강.

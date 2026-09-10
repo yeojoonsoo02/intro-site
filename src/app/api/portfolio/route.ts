@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getClientIp } from '@/lib/clientIp';
 import { adminDb } from '@/lib/firebaseAdmin';
 import { checkRateLimit, RATE_LIMIT_MAX_PORTFOLIO } from '@/lib/rateLimit';
-
-const ALLOWED_LANGS = ['ko', 'en', 'ja', 'zh', 'es', 'fr', 'de', 'pt', 'ru'];
+import { isLang } from '@/lib/site';
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   // 봇·공격자의 반복 호출로 인한 Firestore 읽기 비용만 차단. 정상 방문자의 다중 페이지
@@ -18,7 +17,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   }
 
   const rawLang = req.nextUrl.searchParams.get('lang') || 'ko';
-  const lang = ALLOWED_LANGS.includes(rawLang) ? rawLang : 'ko';
+  const lang = isLang(rawLang) ? rawLang : 'ko';
 
   if (!adminDb) {
     return NextResponse.json({ error: 'Admin SDK not available' }, { status: 500 });

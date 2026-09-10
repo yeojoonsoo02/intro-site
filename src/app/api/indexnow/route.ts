@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { LANGS, langUrl, SITE_HOST, SITE_URL } from '@/lib/site';
 
-const SITE_URL = 'https://yeojoonsoo02.com';
-const SITE_HOST = 'yeojoonsoo02.com';
 // IndexNow 사이트 키. 소스 하드코딩 금지 — 미설정이면 submit 자체를 거부.
 const INDEXNOW_KEY = process.env.INDEXNOW_KEY ?? '';
 const KEY_LOCATION = INDEXNOW_KEY ? `${SITE_URL}/${INDEXNOW_KEY}.txt` : '';
@@ -37,24 +36,8 @@ function sanitizeUrls(input: unknown): string[] {
 }
 
 const DEFAULT_URLS: string[] = [
-  `${SITE_URL}/`,
-  `${SITE_URL}/en`,
-  `${SITE_URL}/ja`,
-  `${SITE_URL}/zh`,
-  `${SITE_URL}/es`,
-  `${SITE_URL}/fr`,
-  `${SITE_URL}/de`,
-  `${SITE_URL}/pt`,
-  `${SITE_URL}/ru`,
-  `${SITE_URL}/about`,
-  `${SITE_URL}/en/about`,
-  `${SITE_URL}/ja/about`,
-  `${SITE_URL}/zh/about`,
-  `${SITE_URL}/es/about`,
-  `${SITE_URL}/fr/about`,
-  `${SITE_URL}/de/about`,
-  `${SITE_URL}/pt/about`,
-  `${SITE_URL}/ru/about`,
+  ...LANGS.map((lang) => langUrl(lang)),
+  ...LANGS.map((lang) => langUrl(lang, 'about')),
   `${SITE_URL}/journey`,
   `${SITE_URL}/portfolio`,
   `${SITE_URL}/sitemap.xml`,

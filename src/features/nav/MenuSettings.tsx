@@ -2,7 +2,7 @@
 
 import { useTranslation } from 'react-i18next'
 import i18n from '@/lib/i18n'
-import { SUPPORTED_LANGS } from '@/lib/i18n-config'
+import { LANGS, LANG_LABELS } from '@/lib/site'
 
 const THEME_OPTIONS = [
   { key: 'light', icon: '☀️' },
@@ -122,12 +122,13 @@ function LanguagePicker({ onSelect }: { onSelect: (code: string) => void }): JSX
         {t('language')}
       </p>
       <div className="px-4 pb-1.5 grid grid-cols-4 gap-1">
-        {SUPPORTED_LANGS.map((l) => {
-          const active = i18n.language === l.code
+        {LANGS.map((code) => {
+          const active = i18n.language === code
           return (
             <button
-              key={l.code}
-              onClick={() => onSelect(l.code)}
+              key={code}
+              title={LANG_LABELS[code]}
+              onClick={() => onSelect(code)}
               className="w-full min-w-0 py-1.5 rounded-md text-xs font-medium transition-colors"
               style={
                 active
@@ -138,7 +139,7 @@ function LanguagePicker({ onSelect }: { onSelect: (code: string) => void }): JSX
                   : { color: 'var(--muted)' }
               }
             >
-              {l.code.toUpperCase()}
+              {code.toUpperCase()}
             </button>
           )
         })}

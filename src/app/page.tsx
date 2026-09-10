@@ -1,23 +1,13 @@
 import type { Metadata } from 'next';
-import HomeClient from './HomeClient';
-import LangInit from '@/lib/LangInit';
-import { buildHreflangLanguages } from '@/lib/seo-utils';
+import { buildHomeMetadata, HomePage } from './homePage';
 
-const SITE_URL = 'https://yeojoonsoo02.com';
+// 루트(/)는 1차 언어인 한국어를 대표한다. 다른 언어는 /[lang]에서 같은 화면을 그린다.
+export const metadata: Metadata = buildHomeMetadata('ko');
 
-export const metadata: Metadata = {
-  alternates: {
-    canonical: SITE_URL,
-    languages: buildHreflangLanguages(),
-  },
-};
-
-// 루트(/)는 1차 언어인 한국어를 대표. LangInit로 한국어를 고정해 SSR(ko)↔CSR 언어 불일치 제거.
 export default function Home() {
   return (
     <>
-      <LangInit lang="ko" />
-      <HomeClient />
+      <HomePage lang="ko" />
       <SiteLinks />
     </>
   );
@@ -38,7 +28,6 @@ function SiteLinks() {
     { href: '/portfolio', label: '포트폴리오' },
     { href: 'https://blog.yeojoonsoo02.com', label: '블로그' },
   ];
-
   return (
     <nav
       aria-label="여준수 사이트 안내"

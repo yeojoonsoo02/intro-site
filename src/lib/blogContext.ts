@@ -1,5 +1,7 @@
+import { cached } from '@/lib/cached'
+
 // 네이버 블로그 "타발추"(blog.naver.com/yeojoonsoo02) RSS를 읽어 챗봇이 "요즘 근황·독서"를
-// 알도록 컨텍스트로 주입한다. liveContext와 동일한 캐시 패턴.
+// 알도록 컨텍스트로 주입한다.
 //
 // 프라이버시 설계:
 // - '책' 카테고리: 제목 + 짧은 발췌(공개해도 안전, 정체성 가치 높음)
@@ -31,14 +33,6 @@ export interface BlogPost {
 // RSS는 외부 입력이다. 피드가 오염돼도 우리 페이지가 임의 호스트로 링크하지 않도록 막는다.
 const ALLOWED_LINK_HOST = 'blog.naver.com'
 
-// 챗봇 컨텍스트 문자열이 아니라 파싱 결과를 캐시한다 — 챗봇과 사이트가 한 번의 RSS
-// 호출을 나눠 쓰기 위함(TTL 24시간, 외부 호출은 늘지 않는다).
-//
-// 실패·빈 결과도 만료 시각으로 관리한다. cached의 truthy 여부로 판정하면 결과가
-// 빈 배열(해당 카테고리 글이 없을 때)일 때 TTL이 무시돼 매 요청마다 RSS를 재호출한다.
-let cached: BlogPost[] | null = null
-let cacheExpiry = 0
-let cachePromise: Promise<BlogPost[]> | null = null
 
 function decode(s: string): string {
   return s
@@ -130,46 +124,19 @@ function format(items: BlogPost[]): string {
   ].join('\n')
 }
 
-// 실패 시 직전 값(없으면 빈 목록)을 짧게 유지. 외부 장애 중에 매 요청이
-// 네이버로 나가는 것을 막되, 복구는 ERROR_TTL 안에 다시 시도한다.
-function holdOnFailure(): BlogPost[] {
-  const fallback = cached ?? []
-  cached = fallback
-  cacheExpiry = Date.now() + ERROR_TTL
-  return fallback
-}
-
 async function fetchPosts(): Promise<BlogPost[]> {
-  try {
-    const res = await fetch(RSS_URL, {
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (compatible; intro-site/1.0; +https://yeojoonsoo02.com)',
-      },
-    })
-    if (!res.ok) {
-      console.error('Blog RSS error:', res.status)
-      return holdOnFailure()
-    }
-    const xml = await res.text()
-    cached = parseRss(xml)
-    cacheExpiry = Date.now() + TTL
-    return cached
-  } catch (err) {
-    console.error('Blog RSS fetch error:', err)
-    return holdOnFailure()
-  } finally {
-    cachePromise = null
-  }
+  const res = await fetch(RSS_URL, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (compatible; intro-site/1.0; +https://yeojoonsoo02.com)',
+    },
+  })
+  if (!res.ok) throw new Error(`Blog RSS ${res.status}`)
+  return parseRss(await res.text())
 }
 
-async function getPosts(): Promise<BlogPost[]> {
-  if (cached !== null && Date.now() < cacheExpiry) return cached
-  if (cachePromise) return cachePromise
-
-  cachePromise = fetchPosts()
-  return cachePromise
-}
+// 챗봇 컨텍스트 문자열이 아니라 파싱 결과를 캐시한다 — 챗봇과 사이트가 한 번의 RSS
+// 호출을 나눠 쓰기 위함(TTL 24시간, 외부 호출은 늘지 않는다).
+const getPosts = cached(fetchPosts, [], { ttl: TTL, errorTtl: ERROR_TTL, name: 'blogContext' })
 
 /** 챗봇 시스템 프롬프트에 넣을 근황 컨텍스트(문자열). */
 export async function getBlogContext(): Promise<string> {

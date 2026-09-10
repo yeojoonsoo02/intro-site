@@ -1,3 +1,4 @@
+import { SITE_URL } from '@/lib/site'
 export interface KakaoTemplate {
   object_type: 'text'
   text: string
@@ -36,8 +37,8 @@ export function buildKakaoTemplate(question: string, answer: string): KakaoTempl
     object_type: 'text',
     text: `Q: ${question} A: ${answer}`,
     link: {
-      web_url: process.env.NEXT_PUBLIC_APP_URL || 'https://yeojoonsoo02.com',
-      mobile_web_url: process.env.NEXT_PUBLIC_APP_URL || 'https://yeojoonsoo02.com',
+      web_url: process.env.NEXT_PUBLIC_APP_URL || SITE_URL,
+      mobile_web_url: process.env.NEXT_PUBLIC_APP_URL || SITE_URL,
     },
   }
 }

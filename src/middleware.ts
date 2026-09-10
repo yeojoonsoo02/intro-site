@@ -1,38 +1,26 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { PREFIXED_LANGS } from '@/lib/site';
 
 // 검색엔진·AI 크롤러는 루트(한국어 대표본) 그대로 두어 색인 안정성 유지
 const BOTS =
   /bot|crawler|spider|slurp|yeti|googlebot|bingbot|duckduckbot|applebot|claudebot|gptbot|oai-searchbot|perplexitybot|google-extended|amazonbot|bytespider|ccbot|meta-externalagent|anthropic-ai|cohere-ai|diffbot|youbot/i;
 
-// 브라우저 언어 태그(prefix)와 실제 라우트 매핑.
+// 브라우저 언어 태그(prefix)와 실제 라우트 매핑. 지원 언어는 site.ts가 단일 출처다.
 // 1차 언어 한국어는 루트(/)이므로 여기에 없음 — ko 선호 사용자는 루트에 머문다.
-const ROUTE_BY_LANG: Record<string, string> = {
-  en: '/en',
-  'en-us': '/en',
-  'en-gb': '/en',
-  ja: '/ja',
-  zh: '/zh',
-  // 중화권 subtag는 zh로 집계
-  'zh-cn': '/zh',
-  'zh-tw': '/zh',
-  'zh-hk': '/zh',
-  'zh-sg': '/zh',
-  es: '/es',
-  'es-es': '/es',
-  'es-419': '/es', // 라틴아메리카 공통 스페인어
-  fr: '/fr',
-  'fr-ca': '/fr',
-  'fr-fr': '/fr',
-  de: '/de',
-  'de-at': '/de',
-  'de-ch': '/de',
-  pt: '/pt',
-  'pt-br': '/pt',
-  'pt-pt': '/pt',
-  ru: '/ru',
-  'ru-ru': '/ru',
+// 지역 subtag(en-us, zh-tw, es-419 …)는 기본 언어로 집계한다.
+const SUBTAGS: Record<string, string[]> = {
+  en: ['en-us', 'en-gb'],
+  zh: ['zh-cn', 'zh-tw', 'zh-hk', 'zh-sg'],
+  es: ['es-es', 'es-419'],
+  fr: ['fr-ca', 'fr-fr'],
+  de: ['de-at', 'de-ch'],
+  pt: ['pt-br', 'pt-pt'],
+  ru: ['ru-ru'],
 };
+const ROUTE_BY_LANG: Record<string, string> = Object.fromEntries(
+  PREFIXED_LANGS.flatMap((lang) => [lang, ...(SUBTAGS[lang] ?? [])].map((tag) => [tag, `/${lang}`])),
+);
 
 // 모든 요청에 x-pathname 헤더를 심어 layout에서 경로별 lang 분기가 가능하게 함
 function withPathname(req: NextRequest): NextResponse {

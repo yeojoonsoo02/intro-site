@@ -7,6 +7,7 @@
 // 임베딩 API 호출이 늘지 않는다. Firestore 읽기도 메모리 캐시로 묶어 요청마다 나가지 않는다.
 
 import { adminDb } from '@/lib/firebaseAdmin'
+import { cached } from '@/lib/cached'
 
 const TTL = 10 * 60 * 1000
 const ERROR_TTL = 60 * 1000
@@ -149,71 +150,52 @@ interface CacheEntry {
   summary: string
 }
 
-let cached: CacheEntry | null = null
-let cacheExpiry = 0
-let loadPromise: Promise<CacheEntry | null> | null = null
+const EMPTY: CacheEntry = { sections: new Map(), summary: '' }
 
-async function loadAll(): Promise<CacheEntry | null> {
-  if (!adminDb) return null
-  try {
-    const col = adminDb.collection('portfolio')
-    const docIds = ['summary', ...SECTIONS.map((s) => s.doc)]
-    const snaps = await Promise.all(docIds.map((id) => col.doc(`${id}_ko`).get()))
+async function loadAll(): Promise<CacheEntry> {
+  if (!adminDb) return EMPTY
+  const col = adminDb.collection('portfolio')
+  const docIds = ['summary', ...SECTIONS.map((s) => s.doc)]
+  const snaps = await Promise.all(docIds.map((id) => col.doc(`${id}_ko`).get()))
 
-    const sections = new Map<string, string>()
-    let summary = ''
+  const sections = new Map<string, string>()
+  let summary = ''
 
-    const summaryData = snaps[0].exists ? (snaps[0].data() as Record<string, unknown>) : null
-    if (summaryData) {
-      const highlights = Array.isArray(summaryData.highlights)
-        ? (summaryData.highlights as Record<string, unknown>[])
-            .map((h) => `${line(h.label)} ${line(h.value)}`)
-            .join(' · ')
-        : ''
-      summary = [line(summaryData.bio), highlights].filter(Boolean).join('\n')
-    }
-
-    SECTIONS.forEach((spec, i) => {
-      const snap = snaps[i + 1]
-      if (!snap.exists) return
-      const lines = spec.format(snap.data() as Record<string, unknown>).filter(Boolean)
-      if (lines.length === 0) return
-
-      const limit = spec.maxItems ?? DEFAULT_MAX_ITEMS
-      const shown = lines.slice(0, limit)
-      // 모델은 목록을 세지 못한다 — 12개짜리 타임라인을 "14개"라고 답했다.
-      // 개수는 항상 제목에 박아두고, 잘렸을 때는 그 사실도 함께 알린다.
-      const note =
-        lines.length > shown.length
-          ? `\n(위는 전체 ${lines.length}개 중 ${shown.length}개만 실었다.)`
-          : ''
-
-      sections.set(
-        spec.doc,
-        `## ${spec.heading} (총 ${lines.length}개)\n${shown.map((l) => `- ${l}`).join('\n')}${note}`,
-      )
-    })
-
-    const entry: CacheEntry = { sections, summary }
-    cached = entry
-    cacheExpiry = Date.now() + TTL
-    return entry
-  } catch (err) {
-    console.error('Portfolio context load error:', err)
-    // 실패 시 직전 값을 짧게 유지해 장애 중 Firestore를 계속 두드리지 않는다.
-    cacheExpiry = Date.now() + ERROR_TTL
-    return cached
-  } finally {
-    loadPromise = null
+  const summaryData = snaps[0].exists ? (snaps[0].data() as Record<string, unknown>) : null
+  if (summaryData) {
+    const highlights = Array.isArray(summaryData.highlights)
+      ? (summaryData.highlights as Record<string, unknown>[])
+          .map((h) => `${line(h.label)} ${line(h.value)}`)
+          .join(' · ')
+      : ''
+    summary = [line(summaryData.bio), highlights].filter(Boolean).join('\n')
   }
+
+  SECTIONS.forEach((spec, i) => {
+    const snap = snaps[i + 1]
+    if (!snap.exists) return
+    const lines = spec.format(snap.data() as Record<string, unknown>).filter(Boolean)
+    if (lines.length === 0) return
+
+    const limit = spec.maxItems ?? DEFAULT_MAX_ITEMS
+    const shown = lines.slice(0, limit)
+    // 모델은 목록을 세지 못한다 — 12개짜리 타임라인을 "14개"라고 답했다.
+    // 개수는 항상 제목에 박아두고, 잘렸을 때는 그 사실도 함께 알린다.
+    const note =
+      lines.length > shown.length
+        ? `\n(위는 전체 ${lines.length}개 중 ${shown.length}개만 실었다.)`
+        : ''
+
+    sections.set(
+      spec.doc,
+      `## ${spec.heading} (총 ${lines.length}개)\n${shown.map((l) => `- ${l}`).join('\n')}${note}`,
+    )
+  })
+
+  return { sections, summary }
 }
 
-async function getCache(): Promise<CacheEntry | null> {
-  if (cached && Date.now() < cacheExpiry) return cached
-  if (loadPromise) return loadPromise
-  loadPromise = loadAll()
-  return loadPromise
-}
+const getCache = cached(loadAll, EMPTY, { ttl: TTL, errorTtl: ERROR_TTL, name: 'portfolioContext' })
 
 /**
  * 질문과 관련된 포트폴리오 섹션만 골라 컨텍스트 문자열로 반환한다.
@@ -221,7 +203,6 @@ async function getCache(): Promise<CacheEntry | null> {
  */
 export async function getPortfolioContext(query: string): Promise<string> {
   const entry = await getCache()
-  if (!entry) return ''
 
   const matched = SECTIONS.filter(
     (s) => (s.always || s.keywords.test(query)) && entry.sections.has(s.doc),

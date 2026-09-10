@@ -1,6 +1,5 @@
 import { DEFAULT_PROFILES } from '@/features/profile/defaultProfiles';
-
-type Lang = 'ko' | 'en' | 'ja' | 'zh' | 'es' | 'fr' | 'de' | 'pt' | 'ru';
+import type { Lang } from '@/lib/site';
 
 interface SEOProfileProps {
   lang?: Lang;

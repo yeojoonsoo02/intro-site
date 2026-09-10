@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getClientIp } from '@/lib/clientIp';
 import { adminDb } from '@/lib/firebaseAdmin';
 import { checkRateLimit, RATE_LIMIT_MAX_PORTFOLIO } from '@/lib/rateLimit';
-import { LANG_CODES } from '@/lib/i18n-config';
+import { isLang } from '@/lib/site';
 
 // 프로필을 서버 경유로 읽는다. 브라우저가 firestore.googleapis.com에 직접 붙으면
 // 그 도메인이 차단된 망(중국 등)·광고 차단기 환경에서 랜딩의 주요 콘텐츠가 비어버린다.
@@ -19,7 +19,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   }
 
   const rawLang = req.nextUrl.searchParams.get('lang') || 'ko';
-  const lang = (LANG_CODES as readonly string[]).includes(rawLang) ? rawLang : 'ko';
+  const lang = isLang(rawLang) ? rawLang : 'ko';
 
   if (!adminDb) {
     return NextResponse.json({ error: 'Admin SDK not available' }, { status: 500 });

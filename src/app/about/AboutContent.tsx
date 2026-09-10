@@ -89,27 +89,6 @@ export default async function AboutContent({
           </div>
         )}
 
-        {/* 실제 고객의 말이 대학생 개발자 소개에서 가장 강한 근거인데 묻혀 있었다. */}
-        {data.testimonials.length > 0 && (
-          <div>
-            <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('testimonials')}</h2>
-            <ul className="space-y-3">
-              {data.testimonials.map((item) => (
-                <li
-                  key={item.content}
-                  className="rounded-lg border p-3.5 text-sm leading-[1.7]"
-                  style={{ borderColor: 'var(--border)', background: 'var(--card-bg)' }}
-                >
-                  <p>{item.content}</p>
-                  <p className="mt-2 text-xs" style={mutedStyle}>
-                    {[item.name, item.role].filter(Boolean).join(' · ')}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
         <AboutWhy
           profile={profile}
           lang={lang}

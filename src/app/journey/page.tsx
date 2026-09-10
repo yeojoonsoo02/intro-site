@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import JourneyGallery from '@/features/journey/JourneyGallery';
-
-const SITE_URL = 'https://yeojoonsoo02.com';
+import { SITE_URL } from '@/lib/site';
 
 export const metadata: Metadata = {
   title: '여준수 — 성장 기록 (Journey)',
