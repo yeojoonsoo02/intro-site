@@ -1,3 +1,11 @@
+export type ProjectStatus = 'live' | 'private' | 'archived' | 'wip';
+
+/** 기술·설계 선택과 그 이유. 이유를 모르면 항목을 넣지 않는다. */
+export interface ProjectDecision {
+  what: string;
+  why: string;
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -9,6 +17,24 @@ export interface Project {
   featured: boolean;
   order: number;
   category?: 'web' | 'mobile' | 'ai' | 'other';
+  // --- 케이스 스터디 (전부 optional, 비어 있으면 UI가 그 섹션을 숨긴다) ---
+  /** 카드·헤더용 한 줄 요약 */
+  summary?: string;
+  status?: ProjectStatus;
+  /** "2025.03 ~ 운영 중" */
+  period?: string;
+  /** "단독 개발 (기획·디자인·개발·배포)" */
+  role?: string;
+  /** 배경·의뢰 이유 */
+  context?: string;
+  /** 풀려던 문제 */
+  problem?: string;
+  decisions?: ProjectDecision[];
+  /** 구현 포인트·난관과 해결 */
+  highlights?: string[];
+  /** 결과. 수치가 있을 때만 수치, 없으면 정성 사실 */
+  outcome?: string[];
+  lessons?: string;
 }
 
 export interface SkillItem {
