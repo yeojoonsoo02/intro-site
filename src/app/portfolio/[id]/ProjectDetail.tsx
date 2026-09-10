@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import type { Project } from '@/features/portfolio/portfolio.model'
+import { safeHttpsUrl } from '@/features/portfolio/safeUrl'
 
 interface ProjectDetailProps {
   project: Project
@@ -70,12 +71,14 @@ function ProjectHeader({ project }: { project: Project }): JSX.Element {
 
 function ProjectActions({ project }: { project: Project }): JSX.Element | null {
   const { t } = useTranslation()
-  if (!project.liveUrl && !project.repoUrl) return null
+  const liveUrl = safeHttpsUrl(project.liveUrl)
+  const repoUrl = safeHttpsUrl(project.repoUrl)
+  if (!liveUrl && !repoUrl) return null
   return (
     <div className="flex gap-3 mb-8">
-      {project.liveUrl && (
+      {liveUrl && (
         <a
-          href={project.liveUrl}
+          href={liveUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
@@ -84,9 +87,9 @@ function ProjectActions({ project }: { project: Project }): JSX.Element | null {
           {t('viewLive')} &rarr;
         </a>
       )}
-      {project.repoUrl && (
+      {repoUrl && (
         <a
-          href={project.repoUrl}
+          href={repoUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
@@ -133,14 +136,15 @@ function ProjectTechStack({ tags }: { tags: string[] }): JSX.Element | null {
 }
 
 function ProjectThumbnail({ project }: { project: Project }): JSX.Element | null {
-  if (!project.thumbnail) return null
+  const thumbnail = safeHttpsUrl(project.thumbnail)
+  if (!thumbnail) return null
   return (
     <div
       className="mb-10 rounded-xl overflow-hidden"
       style={{ border: '1px solid var(--border)' }}
     >
       <Image
-        src={project.thumbnail}
+        src={thumbnail}
         alt={`${project.title} 프로젝트 메인 이미지`}
         width={1600}
         height={900}

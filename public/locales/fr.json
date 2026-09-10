@@ -45,7 +45,7 @@
   "welcomeUser": "Bienvenue, {{name}}",
   "goHome": "Retour à l'accueil",
   "user": "Utilisateur",
-  "suggestQ1": "Tu es où en ce moment ?",
+  "suggestQ1": "Sur quel projet travailles-tu ?",
   "suggestQ2": "Quels sont tes loisirs ?",
   "suggestQ3": "Quel est ton plat préféré ?",
   "suggestQ4": "Qu'est-ce que tu fais en ce moment ?",

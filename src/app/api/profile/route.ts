@@ -10,7 +10,7 @@ import { LANG_CODES } from '@/lib/i18n-config';
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const ip = getClientIp(req);
-  const rateLimit = await checkRateLimit(`pf_${ip}`, false, RATE_LIMIT_MAX_PORTFOLIO);
+  const rateLimit = await checkRateLimit(`prof_${ip}`, false, RATE_LIMIT_MAX_PORTFOLIO);
   if (!rateLimit.allowed) {
     return NextResponse.json(
       { error: 'Too many requests' },

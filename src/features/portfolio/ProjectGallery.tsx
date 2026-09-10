@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import type { Project } from './portfolio.model';
 import SectionWrapper from './SectionWrapper';
+import { safeHttpsUrl } from './safeUrl';
 
 export default function ProjectGallery({ items }: { items: Project[] }) {
   const { t } = useTranslation();
@@ -69,7 +70,10 @@ export default function ProjectGallery({ items }: { items: Project[] }) {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-        {sorted.map((project, idx) => (
+        {sorted.map((project, idx) => {
+          const thumbnail = safeHttpsUrl(project.thumbnail);
+          const liveUrl = safeHttpsUrl(project.liveUrl);
+          return (
           <div
             key={project.id}
             className={`rounded-xl overflow-hidden transition-all duration-200 ${
@@ -84,12 +88,12 @@ export default function ProjectGallery({ items }: { items: Project[] }) {
             }}
           >
             {/* 썸네일 또는 플레이스홀더 */}
-            {project.thumbnail ? (
+            {thumbnail ? (
               <div
                 className="w-full h-40 sm:h-48 bg-cover bg-center"
                 role="img"
                 aria-label={`${project.title} thumbnail`}
-                style={{ backgroundImage: `url(${project.thumbnail})` }}
+                style={{ backgroundImage: `url("${thumbnail}")` }}
               />
             ) : (
               <div
@@ -145,9 +149,9 @@ export default function ProjectGallery({ items }: { items: Project[] }) {
                 >
                   {t('projectDetail')} &rarr;
                 </Link>
-                {project.liveUrl && (
+                {liveUrl && (
                   <a
-                    href={project.liveUrl}
+                    href={liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs font-medium transition-opacity hover:opacity-70"
@@ -159,7 +163,8 @@ export default function ProjectGallery({ items }: { items: Project[] }) {
               </div>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </SectionWrapper>
   );

@@ -55,7 +55,8 @@ export function getDateContext(now: Date = new Date()): string {
 
   return [
     `오늘 날짜: ${dateStr} / ${iso} (한국 시간 기준)`,
-    `내 만 나이: ${age}세 (${BIRTH_YEAR}년 ${BIRTH_MONTH}월 ${BIRTH_DAY}일생)`,
+    // 생일 월·일은 본인확인에 쓰이는 정보라 모델에 주지 않는다. 나이 계산에만 쓴다.
+    `내 만 나이: ${age}세 (${BIRTH_YEAR}년생)`,
     '나이나 날짜 계산은 직접 하지 말고 위 값을 그대로 써.',
   ].join('\n');
 }

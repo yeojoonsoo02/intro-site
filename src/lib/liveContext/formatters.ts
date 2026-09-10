@@ -15,16 +15,6 @@ const MEAL_TYPE_MAP: Record<string, string> = {
   SNACK: '간식',
 }
 
-function formatKST(iso: string): string {
-  const d = new Date(iso)
-  return d.toLocaleString('ko-KR', {
-    timeZone: 'Asia/Seoul',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  })
-}
-
 function formatTimestamp(iso: string): string {
   const d = new Date(iso)
   return d.toLocaleString('ko-KR', {
@@ -56,17 +46,16 @@ function formatMeals(meals: MealEntry[] | null): string {
   return `오늘 식사: ${parts.join(' / ')}${calStr}`
 }
 
+// 취침·기상 시각은 "집에 없는 시간대"를 알려주는 정보라 넣지 않는다. 수면량만 전달.
 function formatSleep(sleep: SleepData | null): string {
   if (!sleep) return '수면: 기록 없음'
   const hours = Math.floor(sleep.totalSleep / 60)
   const mins = sleep.totalSleep % 60
   const deepH = Math.floor(sleep.deep / 60)
   const deepM = sleep.deep % 60
-  const bedtime = formatKST(sleep.sleepStart)
-  const wakeup = formatKST(sleep.sleepEnd)
   const durStr = mins > 0 ? `${hours}시간 ${mins}분` : `${hours}시간`
   const deepStr = deepM > 0 ? `${deepH}시간 ${deepM}분` : `${deepH}시간`
-  return `수면: 어젯밤 ${bedtime} 취침 → ${wakeup} 기상 (${durStr}, 깊은수면 ${deepStr})`
+  return `수면: 어젯밤 ${durStr} (깊은수면 ${deepStr})`
 }
 
 function formatWeather(weather: WeatherData | null): string {
@@ -97,13 +86,13 @@ function formatSchedule(schedule: ScheduleEntry[] | null): string {
   return `일정: ${schedule.map((s) => s.title).join(', ')}`
 }
 
+// 위치는 의도적으로 넣지 않는다. 동 단위라도 실시간 위치가 불특정 방문자에게
+// 그대로 나가면 프로필의 생활 반경과 합쳐져 물리적으로 찾아갈 수 있는 정보가 된다.
 export function formatLiveData(json: ContextResponse): string {
   const { data } = json
-  const locName = data.location?.current?.name
   return [
     `# 실시간 정보 (${formatTimestamp(json.timestamp)} KST)`,
     '',
-    `현재 위치: ${locName || '기록 없음'}`,
     formatMeals(data.meals),
     formatSleep(data.sleep),
     formatWeather(data.weather),
