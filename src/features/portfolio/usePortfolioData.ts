@@ -3,25 +3,23 @@
 import { useState, useEffect } from 'react';
 import type {
   PortfolioHero, Project, SkillCategory, TimelineItem,
-  PortfolioSummary, Education, PersonalInfoItem, GoalItem, ValueQuote, HobbyCategory,
+  Education, Certification, GoalItem, ValueQuote,
 } from './portfolio.model';
 
 export interface PortfolioData {
   hero: PortfolioHero | null;
-  summary: PortfolioSummary | null;
   projects: Project[];
   skills: SkillCategory[];
   timeline: TimelineItem[];
   education: Education[];
-  personalInfo: PersonalInfoItem[];
+  certifications: Certification[];
   goals: GoalItem[];
   values: ValueQuote[];
-  hobbies: HobbyCategory[];
 }
 
 const EMPTY_DATA: PortfolioData = {
-  hero: null, summary: null, projects: [], skills: [], timeline: [],
-  education: [], personalInfo: [], goals: [], values: [], hobbies: [],
+  hero: null, projects: [], skills: [], timeline: [],
+  education: [], certifications: [], goals: [], values: [],
 };
 
 interface UsePortfolioDataReturn {
@@ -31,6 +29,7 @@ interface UsePortfolioDataReturn {
 }
 
 // 브라우저가 Firestore에 직접 붙지 않고 서버 API를 거친다 — googleapis가 차단된 망 대응.
+// 신상·취미(personalInfo·hobbies)는 API에 남아 있지만 포트폴리오 화면은 일 중심이라 쓰지 않는다.
 export function usePortfolioData(lang: string): UsePortfolioDataReturn {
   const [data, setData] = useState<PortfolioData>(EMPTY_DATA);
   const [loaded, setLoaded] = useState(false);
@@ -48,16 +47,14 @@ export function usePortfolioData(lang: string): UsePortfolioDataReturn {
       .then((d) => {
         if (cancelled) return;
         setData({
-          hero: d.hero ?? { headline: '', subline: '' },
-          summary: d.summary ?? null,
+          hero: d.hero ?? null,
           projects: d.projects ?? [],
           skills: d.skills ?? [],
           timeline: d.timeline ?? [],
           education: d.education ?? [],
-          personalInfo: d.personalInfo ?? [],
+          certifications: d.certifications ?? [],
           goals: d.goals ?? [],
           values: d.values ?? [],
-          hobbies: d.hobbies ?? [],
         });
       })
       .catch(() => {

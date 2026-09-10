@@ -2,18 +2,17 @@
 
 import { useTranslation } from 'react-i18next';
 import PortfolioHero from './PortfolioHero';
-import SummarySection from './SummarySection';
-import ProjectGallery from './ProjectGallery';
-import SkillsSection from './SkillsSection';
+import FeaturedProjects from './FeaturedProjects';
+import ProjectArchive from './ProjectArchive';
 import TimelineSection from './TimelineSection';
-import ContactSection from './ContactSection';
 import EducationSection from './EducationSection';
-import PersonalInfoCard from './PersonalInfoCard';
-import GoalsSection from './GoalsSection';
-import ValuesSection from './ValuesSection';
-import HobbiesSection from './HobbiesSection';
+import SkillsSection from './SkillsSection';
+import ValuesGoalsSection from './ValuesGoalsSection';
+import ContactSection from './ContactSection';
 import { usePortfolioData } from './usePortfolioData';
+import { splitProjects } from './projectUtils';
 
+// 순서는 리뷰어의 읽기 순서다: 무엇을 만들었나(대표 3개) → 나머지 → 어디서 일했나 → 배경 → 기술 → 사람 → 연락.
 export default function PortfolioContent() {
   const { i18n, t } = useTranslation();
   const { data, loaded, loadError } = usePortfolioData(i18n.language || 'ko');
@@ -26,31 +25,25 @@ export default function PortfolioContent() {
     );
   }
 
+  const { featured, archive } = splitProjects(data.projects);
+
   return (
-    <div className="max-w-2xl mx-auto px-5 sm:px-6 pt-16 sm:pt-20 pb-20">
+    <div className="max-w-[720px] mx-auto px-5 sm:px-6 pt-16 sm:pt-20 pb-20">
       {loadError && (
-        <div
-          className="mb-6 p-4 rounded-xl text-sm"
-          style={{
-            background: 'color-mix(in srgb, var(--danger) 10%, transparent)',
-            color: 'var(--danger)',
-            border: '1px solid color-mix(in srgb, var(--danger) 25%, transparent)',
-          }}
+        <p
+          className="mb-8 px-4 py-3 rounded-[var(--r-md)] text-[15px]"
+          style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}
         >
           {t('loadError')}
-        </div>
+        </p>
       )}
       <PortfolioHero data={data.hero} />
-      <PersonalInfoCard items={data.personalInfo} />
-      <SummarySection data={data.summary} />
-      <ValuesSection items={data.values} />
-      <GoalsSection items={data.goals} />
-      <EducationSection items={data.education} />
-      <SkillsSection categories={data.skills} />
-      <ProjectGallery items={data.projects} />
-      <HobbiesSection categories={data.hobbies} />
+      <FeaturedProjects items={featured} />
+      <ProjectArchive items={archive} />
       <TimelineSection items={data.timeline} />
-      {/* 목록·요약·태그까지는 공개 — 프로젝트 회고 상세(/portfolio/[id])에서만 로그인 게이트. */}
+      <EducationSection items={data.education} certifications={data.certifications} />
+      <SkillsSection categories={data.skills} />
+      <ValuesGoalsSection values={data.values} goals={data.goals} />
       <ContactSection />
     </div>
   );

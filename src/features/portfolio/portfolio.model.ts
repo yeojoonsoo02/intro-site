@@ -72,6 +72,15 @@ export interface PortfolioSummary {
 
 
 
+export interface Certification {
+  id: string;
+  name: string;
+  issuer: string;
+  date: string;
+  url?: string;
+  order: number;
+}
+
 export interface Education {
   id: string;
   school: string;

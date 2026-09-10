@@ -3,74 +3,41 @@
 import { useTranslation } from 'react-i18next';
 import type { TimelineItem } from './portfolio.model';
 import SectionWrapper from './SectionWrapper';
-
-const TYPE_COLORS: Record<string, string> = {
-  work: 'var(--primary)',
-  education: 'var(--accent)',
-  project: 'var(--success)',
-  etc: 'var(--muted)',
-};
+import { sortByOrder } from './projectUtils';
 
 export default function TimelineSection({ items }: { items: TimelineItem[] }) {
   const { t } = useTranslation();
   if (items.length === 0) return null;
 
-  const sorted = [...items].sort((a, b) => a.order - b.order);
-
   return (
-    <SectionWrapper id="timeline" title={t('timeline')} >
-      <div className="relative pl-6">
-        {/* 세로선 */}
-        <div
-          className="absolute left-[7px] top-2 bottom-2 w-[2px]"
-          style={{ background: 'var(--border)' }}
-        />
-
-        <div className="space-y-6">
-          {sorted.map((item) => (
-            <div key={item.id} className="relative">
-              {/* 도트 */}
-              <div
-                className="absolute -left-6 top-1.5 w-[14px] h-[14px] rounded-full border-2"
-                style={{
-                  borderColor: TYPE_COLORS[item.type] ?? 'var(--muted)',
-                  background: 'var(--background)',
-                }}
-              />
-              <div className="flex items-baseline gap-3 mb-1">
-                <span
-                  className="text-xs font-medium px-2 py-0.5 rounded"
-                  style={{
-                    background: 'color-mix(in srgb, var(--foreground) 6%, transparent)',
-                    color: 'var(--muted)',
-                  }}
-                >
-                  {item.year}
-                </span>
-                <span
-                  className="text-xs px-1.5 py-0.5 rounded"
-                  style={{
-                    color: TYPE_COLORS[item.type] ?? 'var(--muted)',
-                  }}
-                >
-                  {t(`timelineType_${item.type}`)}
-                </span>
-              </div>
-              <h3
-                className="text-base font-bold mb-1"
-                style={{ color: 'var(--foreground)' }}
-              >
-                {item.title}
-              </h3>
-              {item.description && (
-                <p className="text-sm leading-relaxed break-keep" style={{ color: 'var(--muted)' }}>
-                  {item.description}
-                </p>
-              )}
+    <SectionWrapper id="timeline" title={t('timeline')}>
+      <ol className="m-0 p-0 list-none grid gap-6" style={{ borderLeft: '1px solid var(--rule)' }}>
+        {sortByOrder(items).map((item) => (
+          <li key={item.id} className="relative pl-6">
+            <span
+              aria-hidden="true"
+              className="absolute -left-[5px] top-[9px] w-[9px] h-[9px] rounded-full"
+              style={{ background: item.type === 'work' ? 'var(--accent)' : 'var(--paper)', border: '1.5px solid var(--accent)' }}
+            />
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-1">
+              <span className="text-[13px] tracking-[.02em] tabular-nums" style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+                {item.year}
+              </span>
+              <span className="text-[12.5px]" style={{ color: 'var(--muted)' }}>
+                {t(`timelineType_${item.type}`)}
+              </span>
             </div>
-          ))}
-        </div>
-      </div>
+            <h3 className="text-[17px] font-semibold leading-snug mb-1" style={{ color: 'var(--ink)' }}>
+              {item.title}
+            </h3>
+            {item.description && (
+              <p className="text-[15px] leading-[1.65] max-w-[56ch]" style={{ color: 'var(--ink-2)' }}>
+                {item.description}
+              </p>
+            )}
+          </li>
+        ))}
+      </ol>
     </SectionWrapper>
   );
 }

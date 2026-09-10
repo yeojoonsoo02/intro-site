@@ -1,7 +1,5 @@
 'use client';
 
-import useInView from './useInView';
-
 interface SectionWrapperProps {
   id: string;
   title?: string;
@@ -9,30 +7,20 @@ interface SectionWrapperProps {
   className?: string;
 }
 
-export default function SectionWrapper({ id, title, children, className = 'mb-14 sm:mb-16' }: SectionWrapperProps) {
-  const { ref, inView } = useInView();
-
+// 진입 애니메이션을 전 섹션에 똑같이 걸던 것을 없앴다 — 페이지가 처음부터 다 보여야 한다.
+export default function SectionWrapper({ id, title, children, className = 'mb-16 sm:mb-20' }: SectionWrapperProps) {
   return (
-    <div
-      id={id}
-      ref={ref}
-      role="region"
-      aria-label={id}
-      className={`${className} scroll-mt-24 transition-all duration-700`}
-      style={{
-        opacity: inView ? 1 : 0,
-        transform: inView ? 'translateY(0)' : 'translateY(24px)',
-      }}
-    >
+    <section id={id} aria-labelledby={title ? `${id}-title` : undefined} className={`${className} scroll-mt-24`}>
       {title && (
         <h2
-          className="text-base sm:text-lg font-bold tracking-tight mb-5"
-          style={{ color: 'var(--foreground)' }}
+          id={`${id}-title`}
+          className="text-[22px] sm:text-[24px] font-semibold leading-tight mb-6"
+          style={{ fontFamily: 'var(--font-serif)', letterSpacing: '-0.02em', color: 'var(--ink)' }}
         >
           {title}
         </h2>
       )}
       {children}
-    </div>
+    </section>
   );
 }

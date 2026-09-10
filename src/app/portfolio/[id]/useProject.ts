@@ -52,9 +52,11 @@ export function useProject(id: string | undefined, lang: string): UseProjectRetu
     }
   }, [id, lang])
 
+  // 카테고리가 사실상 전부 web이라 카테고리 매칭은 의미가 없다. 대표 프로젝트 우선, order 순.
   const relatedProjects = project
-    ? allProjects
-        .filter((p) => p.id !== project.id && p.category === project.category)
+    ? [...allProjects]
+        .filter((p) => p.id !== project.id)
+        .sort((a, b) => Number(b.featured) - Number(a.featured) || a.order - b.order)
         .slice(0, RELATED_COUNT)
     : []
 
