@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/lib/ThemeProvider";
 import TopBar from "@/features/nav/TopBar";
 import SEOProfile from "@/components/seo/SEOProfile";
 import JsonLd from "@/components/seo/JsonLd";
+import { notFound } from "next/navigation";
 import { hreflangFor, isLang, SITE_URL, type Lang } from "@/lib/site";
 
 const SITE_NAME = "여준수 (Junsu Yeo)";
@@ -108,6 +109,16 @@ export const viewport: Viewport = {
   ],
 };
 
+// [lang] 동적 라우트가 1단계 경로를 전부 받으므로 /xx 같은 미지의 경로도 페이지까지 내려온다.
+// 페이지 안에서 notFound()를 불러도 loading.tsx(Suspense) 때문에 200 셸이 먼저 흘러가
+// 프로덕션에서는 소프트 404가 된다. 스트리밍 전에 실행되는 루트 레이아웃에서 확정한다.
+const TOP_LEVEL_ROUTES = new Set(['about', 'journey', 'portfolio']);
+
+function assertKnownPath(pathname: string): void {
+  const first = pathname.split('/').filter(Boolean)[0];
+  if (first && !isLang(first) && !TOP_LEVEL_ROUTES.has(first)) notFound();
+}
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -115,6 +126,7 @@ export default async function RootLayout({
 }>) {
   const h = await headers();
   const pathname = h.get('x-pathname') || '/';
+  assertKnownPath(pathname);
   const lang = detectLang(pathname);
 
   return (
