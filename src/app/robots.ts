@@ -1,9 +1,8 @@
 import type { MetadataRoute } from 'next';
 
 // 주요 검색·AI 크롤러에 개별 규칙을 명시해 인덱싱과 AI 답변 참조를 모두 허용
-// 비공개·인증 게이트 경로. 이름을 명시한 봇 규칙에도 그대로 적용해야
-// (이전엔 '*'에만 적용돼) Googlebot·Yeti·AI 크롤러에는 열려 있던 문제가 사라진다.
-const COMMON_DISALLOW = ['/api/', '/admin', '/dashboard', '/login'];
+// API는 색인 대상이 아니다. 이름을 명시한 봇 규칙에도 그대로 적용한다.
+const COMMON_DISALLOW = ['/api/'];
 
 const AI_BOTS = [
   'GPTBot', // OpenAI 크롤러

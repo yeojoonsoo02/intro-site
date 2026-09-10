@@ -1,8 +1,6 @@
 'use client';
 
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import dynamic from 'next/dynamic';
 import PortfolioHero from './PortfolioHero';
 import SummarySection from './SummarySection';
 import ProjectGallery from './ProjectGallery';
@@ -15,82 +13,10 @@ import GoalsSection from './GoalsSection';
 import ValuesSection from './ValuesSection';
 import HobbiesSection from './HobbiesSection';
 import { usePortfolioData } from './usePortfolioData';
-import { usePortfolioSave } from './usePortfolioSave';
-import { SUPPORTED_LANGS } from '@/lib/i18n-config';
 
-const HeroEditor = dynamic(() => import('@/features/admin/HeroEditor'), { ssr: false, loading: () => null });
-const ProjectEditor = dynamic(() => import('@/features/admin/ProjectEditor'), { ssr: false, loading: () => null });
-const SkillsEditor = dynamic(() => import('@/features/admin/SkillsEditor'), { ssr: false, loading: () => null });
-const TimelineEditor = dynamic(() => import('@/features/admin/TimelineEditor'), { ssr: false, loading: () => null });
-
-function EditorBox({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div
-      className="mb-14 -mt-6 rounded-xl p-5"
-      style={{
-        background: 'color-mix(in srgb, var(--primary) 4%, transparent)',
-        border: '1px dashed color-mix(in srgb, var(--primary) 25%, transparent)',
-      }}
-    >
-      <p className="text-xs font-bold mb-3" style={{ color: 'var(--primary)' }}>{label}</p>
-      {children}
-    </div>
-  );
-}
-
-function PortfolioSections({ data, isAdmin, setData, t }: {
-  data: ReturnType<typeof usePortfolioData>['data'];
-  isAdmin: boolean;
-  setData: ReturnType<typeof usePortfolioData>['setData'];
-  t: ReturnType<typeof useTranslation>['t'];
-}) {
-  const sections = (
-    <>
-      <PortfolioHero data={data.hero} />
-      {isAdmin && data.hero && (
-        <EditorBox label={`✏️ ${t('hero')}`}>
-          <HeroEditor data={data.hero} onChange={(hero) => setData((d) => ({ ...d, hero }))} />
-        </EditorBox>
-      )}
-      <PersonalInfoCard items={data.personalInfo} />
-      <SummarySection data={data.summary} />
-      <ValuesSection items={data.values} />
-      <GoalsSection items={data.goals} />
-      <EducationSection items={data.education} />
-      <SkillsSection categories={data.skills} />
-      {isAdmin && (
-        <EditorBox label={`✏️ ${t('skills')}`}>
-          <SkillsEditor categories={data.skills} onChange={(skills) => setData((d) => ({ ...d, skills }))} />
-        </EditorBox>
-      )}
-      <ProjectGallery items={data.projects} />
-      {isAdmin && (
-        <EditorBox label={`✏️ ${t('projects')}`}>
-          <ProjectEditor items={data.projects} onChange={(projects) => setData((d) => ({ ...d, projects }))} />
-        </EditorBox>
-      )}
-      <HobbiesSection categories={data.hobbies} />
-      <TimelineSection items={data.timeline} />
-      {isAdmin && (
-        <EditorBox label={`✏️ ${t('timeline')}`}>
-          <TimelineEditor items={data.timeline} onChange={(timeline) => setData((d) => ({ ...d, timeline }))} />
-        </EditorBox>
-      )}
-      <ContactSection />
-    </>
-  );
-
-  // 목록·요약·태그까지는 공개 — 프로젝트 회고 상세(/portfolio/[id])에서만 로그인 게이트.
-  return sections;
-}
-
-export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolean }) {
+export default function PortfolioContent() {
   const { i18n, t } = useTranslation();
-  const [adminLang, setAdminLang] = useState(i18n.language || 'ko');
-  const lang = isAdmin ? adminLang : (i18n.language || 'ko');
-
-  const { data, setData, loaded, loadError } = usePortfolioData(lang, isAdmin);
-  const { saving, saved, saveError, handleSave } = usePortfolioSave();
+  const { data, loaded, loadError } = usePortfolioData(i18n.language || 'ko');
 
   if (!loaded) {
     return (
@@ -99,8 +25,6 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
       </div>
     );
   }
-
-  const onSave = () => handleSave(data, lang);
 
   return (
     <div className="max-w-2xl mx-auto px-5 sm:px-6 pt-16 sm:pt-20 pb-20">
@@ -113,64 +37,21 @@ export default function PortfolioContent({ isAdmin = false }: { isAdmin?: boolea
             border: '1px solid color-mix(in srgb, var(--danger) 25%, transparent)',
           }}
         >
-          {loadError}
+          {t('loadError')}
         </div>
       )}
-
-      {isAdmin && (
-        <div
-          className="sticky top-0 z-30 -mx-5 sm:-mx-6 px-5 sm:px-6 pr-14 sm:pr-16 py-3 mb-8 flex items-center justify-between backdrop-blur-md"
-          style={{
-            background: 'color-mix(in srgb, var(--background) 85%, transparent)',
-            borderBottom: '1px solid var(--border)',
-          }}
-        >
-          <div className="flex gap-1.5 overflow-x-auto scrollbar-hide min-w-0 mr-2">
-            {SUPPORTED_LANGS.map((l) => (
-              <button
-                key={l.code}
-                onClick={() => setAdminLang(l.code)}
-                className="px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all shrink-0 whitespace-nowrap"
-                style={
-                  adminLang === l.code
-                    ? { background: 'var(--primary)', color: 'var(--primary-contrast)' }
-                    : { background: 'color-mix(in srgb, var(--foreground) 8%, transparent)', color: 'var(--muted)' }
-                }
-              >
-                {l.label}
-              </button>
-            ))}
-          </div>
-          <button
-            onClick={onSave}
-            disabled={saving}
-            className="px-5 py-1.5 rounded-lg text-sm font-medium transition-all hover:opacity-90 disabled:opacity-50 shrink-0"
-            style={{
-              background: saveError ? 'var(--danger)' : saved ? '#22c55e' : 'var(--primary)',
-              color: saveError || saved ? '#fff' : 'var(--primary-contrast)',
-            }}
-          >
-            {saving ? '...' : saveError ? `⚠ ${t('saveFailed')}` : saved ? `✓ ${t('saved')}` : t('save')}
-          </button>
-        </div>
-      )}
-
-      <PortfolioSections data={data} isAdmin={isAdmin} setData={setData} t={t} />
-
-      {isAdmin && (
-        <button
-          onClick={onSave}
-          disabled={saving}
-          className="w-full py-3.5 rounded-xl font-medium text-sm transition-all hover:opacity-90 disabled:opacity-50 mt-8"
-          style={{
-            background: saveError ? 'var(--danger)' : saved ? '#22c55e' : 'var(--primary)',
-            color: saveError || saved ? '#fff' : 'var(--primary-contrast)',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-          }}
-        >
-          {saving ? t('loading') : saveError ? `⚠ ${t('saveFailed')}` : saved ? `✓ ${t('saved')}` : t('save')}
-        </button>
-      )}
+      <PortfolioHero data={data.hero} />
+      <PersonalInfoCard items={data.personalInfo} />
+      <SummarySection data={data.summary} />
+      <ValuesSection items={data.values} />
+      <GoalsSection items={data.goals} />
+      <EducationSection items={data.education} />
+      <SkillsSection categories={data.skills} />
+      <ProjectGallery items={data.projects} />
+      <HobbiesSection categories={data.hobbies} />
+      <TimelineSection items={data.timeline} />
+      {/* 목록·요약·태그까지는 공개 — 프로젝트 회고 상세(/portfolio/[id])에서만 로그인 게이트. */}
+      <ContactSection />
     </div>
   );
 }

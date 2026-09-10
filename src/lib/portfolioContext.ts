@@ -231,8 +231,3 @@ export async function getPortfolioContext(query: string): Promise<string> {
   return parts.length > 0 ? parts.join('\n\n') : ''
 }
 
-export function invalidatePortfolioContext(): void {
-  cached = null
-  cacheExpiry = 0
-  loadPromise = null
-}

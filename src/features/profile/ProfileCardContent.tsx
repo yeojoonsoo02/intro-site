@@ -3,7 +3,7 @@ import SocialLinks from '@/features/social/SocialLinks';
 import { useTranslation } from 'react-i18next';
 import Image from 'next/image';
 
-export default function ProfileCardContent({ profile, isDev }: { profile: Profile; isDev: boolean }) {
+export default function ProfileCardContent({ profile }: { profile: Profile }) {
   const { t } = useTranslation();
   return (
     <div
@@ -69,7 +69,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
           </svg>
           <span className="break-all">{profile.email}</span>
         </a>
-        <SocialLinks colored isDev={isDev} />
+        <SocialLinks colored />
       </div>
 
       <div className="w-12 h-[2px] mx-auto my-4 sm:my-5" style={{ background: "var(--border)" }} />

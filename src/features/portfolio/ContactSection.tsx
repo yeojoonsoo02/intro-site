@@ -20,7 +20,7 @@ export default function ContactSection() {
           yeojoonsoo02@gmail.com
         </a>
         <div className="flex justify-start">
-          <SocialLinks colored isDev={false} />
+          <SocialLinks colored />
         </div>
       </div>
     </SectionWrapper>

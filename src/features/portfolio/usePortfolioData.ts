@@ -1,16 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import {
-  fetchHero, fetchProjects, fetchSkills, fetchTimeline,
-  fetchSummary, fetchCertifications, fetchTestimonials,
-  fetchEducation, fetchPersonalInfo, fetchGoals,
-  fetchValues, fetchRoutine, fetchHobbies,
-} from './portfolio.api';
+import { useState, useEffect } from 'react';
 import type {
   PortfolioHero, Project, SkillCategory, TimelineItem,
-  PortfolioSummary, Certification, Testimonial, Education,
-  PersonalInfoItem, GoalItem, ValueQuote, RoutineStep, HobbyCategory,
+  PortfolioSummary, Education, PersonalInfoItem, GoalItem, ValueQuote, HobbyCategory,
 } from './portfolio.model';
 
 export interface PortfolioData {
@@ -19,100 +12,64 @@ export interface PortfolioData {
   projects: Project[];
   skills: SkillCategory[];
   timeline: TimelineItem[];
-  certifications: Certification[];
-  testimonials: Testimonial[];
   education: Education[];
   personalInfo: PersonalInfoItem[];
   goals: GoalItem[];
   values: ValueQuote[];
-  routine: RoutineStep[];
   hobbies: HobbyCategory[];
 }
 
 const EMPTY_DATA: PortfolioData = {
   hero: null, summary: null, projects: [], skills: [], timeline: [],
-  certifications: [], testimonials: [], education: [],
-  personalInfo: [], goals: [], values: [], routine: [], hobbies: [],
+  education: [], personalInfo: [], goals: [], values: [], hobbies: [],
 };
 
-export interface UsePortfolioDataReturn {
+interface UsePortfolioDataReturn {
   data: PortfolioData;
-  setData: React.Dispatch<React.SetStateAction<PortfolioData>>;
   loaded: boolean;
-  loadError: string | null;
+  loadError: boolean;
 }
 
-export function usePortfolioData(lang: string, isAdmin: boolean): UsePortfolioDataReturn {
+// 브라우저가 Firestore에 직접 붙지 않고 서버 API를 거친다 — googleapis가 차단된 망 대응.
+export function usePortfolioData(lang: string): UsePortfolioDataReturn {
   const [data, setData] = useState<PortfolioData>(EMPTY_DATA);
   const [loaded, setLoaded] = useState(false);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState(false);
 
-  const loadData = useCallback(async () => {
+  useEffect(() => {
+    let cancelled = false;
     setLoaded(false);
-    setLoadError(null);
-    try {
-      if (!isAdmin) {
-        const res = await fetch(`/api/portfolio?lang=${lang}`);
-        if (!res.ok) {
-          // 5xx는 서버측 일시 장애, 4xx는 요청/권한 문제 — 사용자에게 다른 안내가 필요.
-          const msg = res.status >= 500
-            ? '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
-            : '데이터를 불러올 수 없습니다.';
-          throw new Error(msg);
-        }
-        const d = await res.json();
+    setLoadError(false);
+    fetch(`/api/portfolio?lang=${encodeURIComponent(lang)}`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`portfolio fetch failed: ${res.status}`);
+        return res.json();
+      })
+      .then((d) => {
+        if (cancelled) return;
         setData({
           hero: d.hero ?? { headline: '', subline: '' },
           summary: d.summary ?? null,
           projects: d.projects ?? [],
           skills: d.skills ?? [],
           timeline: d.timeline ?? [],
-          certifications: d.certifications ?? [],
-          testimonials: d.testimonials ?? [],
           education: d.education ?? [],
           personalInfo: d.personalInfo ?? [],
           goals: d.goals ?? [],
           values: d.values ?? [],
-          routine: d.routine ?? [],
           hobbies: d.hobbies ?? [],
         });
-      } else {
-        const fetchers = [
-          fetchHero(lang), fetchSummary(lang), fetchProjects(lang),
-          fetchSkills(lang), fetchTimeline(lang), fetchCertifications(lang),
-          fetchTestimonials(lang), fetchEducation(lang), fetchPersonalInfo(lang),
-          fetchGoals(lang), fetchValues(lang), fetchRoutine(lang), fetchHobbies(lang),
-        ];
-        const results = await Promise.allSettled(fetchers);
-        const get = <T,>(idx: number, fallback: T): T =>
-          results[idx].status === 'fulfilled' ? (results[idx].value as T) : fallback;
+      })
+      .catch(() => {
+        if (!cancelled) setLoadError(true);
+      })
+      .finally(() => {
+        if (!cancelled) setLoaded(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [lang]);
 
-        setData({
-          hero: get(0, null) ?? { headline: '', subline: '' },
-          summary: get(1, null),
-          projects: get(2, []),
-          skills: get(3, []),
-          timeline: get(4, []),
-          certifications: get(5, []),
-          testimonials: get(6, []),
-          education: get(7, []),
-          personalInfo: get(8, []),
-          goals: get(9, []),
-          values: get(10, []),
-          routine: get(11, []),
-          hobbies: get(12, []),
-        });
-
-        const failures = results.filter((r) => r.status === 'rejected').length;
-        if (failures > 0) setLoadError(`${failures}개 섹션 로드 실패`);
-      }
-    } catch (err) {
-      setLoadError(err instanceof Error ? err.message : 'Failed to load data');
-    }
-    setLoaded(true);
-  }, [lang, isAdmin]);
-
-  useEffect(() => { loadData(); }, [loadData]);
-
-  return { data, setData, loaded, loadError };
+  return { data, loaded, loadError };
 }

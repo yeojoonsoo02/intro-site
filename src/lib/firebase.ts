@@ -1,5 +1,4 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
 import {
   getAuth,
   GoogleAuthProvider,
@@ -20,8 +19,6 @@ const firebaseConfig = {
 // 앱이 있으면 getApp(), 없으면 initializeApp()
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 
-// 항상 정상 객체로 반환
-export const db = getFirestore(app);
 export const auth = getAuth(app);
 export const provider = new GoogleAuthProvider();
 

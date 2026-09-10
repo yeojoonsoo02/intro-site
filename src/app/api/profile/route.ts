@@ -25,17 +25,9 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Admin SDK not available' }, { status: 500 });
   }
 
-  const col = adminDb.collection('profiles');
-  const [main, dev] = await Promise.allSettled([
-    col.doc(`main_${lang}`).get(),
-    col.doc(`dev_${lang}`).get(),
-  ]);
-
-  const pick = (r: PromiseSettledResult<FirebaseFirestore.DocumentSnapshot>) =>
-    r.status === 'fulfilled' && r.value.exists ? r.value.data() : null;
-
+  const snap = await adminDb.collection('profiles').doc(`main_${lang}`).get();
   return NextResponse.json(
-    { main: pick(main), dev: pick(dev) },
+    snap.exists ? snap.data() : null,
     {
       headers: {
         // CDN에서 대부분 처리되게 해 Firestore 읽기와 함수 호출을 함께 줄인다.

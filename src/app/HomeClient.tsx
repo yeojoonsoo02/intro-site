@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import VisitorCount from '@/features/visitors/VisitorCount';
-import FlippableProfileCard from '@/features/profile/FlippableProfileCard';
+import ProfileCard from '@/features/profile/ProfileCard';
 
 export default function HomeClient() {
   const { t, i18n } = useTranslation();
@@ -14,7 +14,7 @@ export default function HomeClient() {
   return (
     <main className="max-w-xl mx-auto p-4 sm:p-6 text-center sm:min-h-[calc(100dvh-3.5rem)] sm:flex sm:flex-col">
       <div className="sm:flex-1 sm:flex sm:flex-col sm:justify-center">
-        <FlippableProfileCard />
+        <ProfileCard />
       </div>
 
       {/* 이 사이트의 대표 기능은 AI 대화인데 진입점이 10초 뒤 뜨는 배너와 메뉴 안뿐이라

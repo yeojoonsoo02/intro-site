@@ -3,62 +3,33 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Server-only collections (Admin SDK bypasses rules)
+    // 서버 전용 컬렉션 — Admin SDK만 쓴다(Rules를 우회함). 클라이언트는 전면 차단.
     match /chat_logs/{doc} {
-      allow read, write: if false;
-    }
-    match /knowledge_custom/{doc} {
-      allow read, write: if false;
-    }
-    match /knowledge_pending/{doc} {
       allow read, write: if false;
     }
     match /rate_limits/{doc} {
       allow read, write: if false;
     }
 
-    // Profiles: public read, admin write
+    // 프로필·포트폴리오: 공개 읽기. 쓰기는 관리자 UI를 없앴으므로 클라이언트에서는
+    // 하지 않는다 — 편집은 Firebase 콘솔이나 서비스 계정 스크립트로만.
     match /profiles/{doc} {
       allow read: if true;
-      allow write: if request.auth != null
-        && request.auth.token.email == "yeojoonsoo02@gmail.com";
+      allow write: if false;
     }
-
-    // Comments: 공개 읽기, 쓰기는 서버(/api/comments)만.
-    // 클라이언트 쓰기를 열어두면 공격자가 Firebase SDK로 직접 써서 서버의
-    // 검증(토큰 확인·작성자 파생·rate limit)을 통째로 우회할 수 있다.
-    // 서버는 Admin SDK로 이 규칙을 우회하므로 정상 동작에는 영향이 없다.
-    match /comments/{doc} {
+    match /portfolio/{doc} {
       allow read: if true;
       allow write: if false;
     }
 
-    // Visitor counter: 공개 읽기, 쓰기는 서버(/api/visits)만.
-    // 이전엔 "정확히 1씩 증가"를 허용해 봇이 무한히 +1을 반복할 수 있었다.
-    // 이제 서버가 봇 검사·rate limit·쿠키 중복 집계를 거쳐서만 증가시킨다.
+    // 방문자 카운터: 공개 읽기, 쓰기는 서버(/api/visits)만.
+    // 서버가 봇 검사·rate limit·쿠키 중복 집계를 거쳐서만 증가시킨다.
     match /counters/{doc} {
       allow read: if true;
       allow write: if false;
     }
 
-    // Portfolio: public read, admin write
-    match /portfolio/{doc} {
-      allow read: if true;
-      allow write: if request.auth != null
-        && request.auth.token.email == "yeojoonsoo02@gmail.com";
-    }
-
-    // Prompt logs: 인증된 사용자만 create + 엄격한 검증.
-    // (이전에 인증 없이 허용되어 악성 로그 주입 가능했던 문제 해결)
-    match /prompt_logs/{doc} {
-      allow create: if request.auth != null
-        && request.resource.data.question is string
-        && request.resource.data.question.size() > 0
-        && request.resource.data.question.size() < 2000;
-      allow read, update, delete: if false;
-    }
-
-    // Deny everything else
+    // 그 외 전부 차단
     match /{document=**} {
       allow read, write: if false;
     }

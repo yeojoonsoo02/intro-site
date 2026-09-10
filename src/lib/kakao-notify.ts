@@ -7,7 +7,7 @@
  * - KAKAO_NOTIFY_SECRET: Bearer 토큰
  */
 
-export async function notifyKakao(params: {
+async function notifyKakao(params: {
   title: string
   message: string
   type?: 'INFO' | 'WARNING' | 'ERROR' | 'SUCCESS'

@@ -1,64 +1,5 @@
-import { serverAdd, serverGet, serverDeleteDoc, serverTimestamp } from '@/lib/serverDb'
 import { splitKnowledge } from '@/lib/chunks'
-import { searchChunks, searchCustom, invalidateEmbeddingCache } from '@/lib/embeddings'
-
-// --- Types ---
-
-type CustomEntry = {
-  id: string
-  text: string
-  category: string
-  createdAt: unknown
-}
-
-// --- In-memory cache ---
-
-let cachedCustom: CustomEntry[] | null = null
-let cacheTimestamp = 0
-let cachePromise: Promise<CustomEntry[]> | null = null
-const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
-
-async function loadCustomEntries(): Promise<CustomEntry[]> {
-  const now = Date.now()
-  if (cachedCustom && now - cacheTimestamp < CACHE_TTL) {
-    return cachedCustom
-  }
-
-  // Deduplicate concurrent requests
-  if (cachePromise) return cachePromise
-
-  cachePromise = (async () => {
-    try {
-      const snap = await serverGet('knowledge_custom')
-      const entries: CustomEntry[] = snap.docs.map((d) => {
-        const data = d.data()
-        return {
-          id: d.id,
-          text: data.text as string,
-          category: data.category as string,
-          createdAt: data.createdAt,
-        }
-      })
-
-      cachedCustom = entries
-      cacheTimestamp = Date.now()
-      return entries
-    } finally {
-      cachePromise = null
-    }
-  })()
-
-  return cachePromise
-}
-
-export function invalidateCache() {
-  cachedCustom = null
-  cacheTimestamp = 0
-  cachePromise = null
-  invalidateEmbeddingCache()
-}
-
-// --- Knowledge context (RAG) ---
+import { searchChunks } from '@/lib/embeddings'
 
 // 인사·짧은 리액션은 검색할 지식이 없다. 실제 로그에서 "안녕", "ㅋㅋ", "ㅎㅇ" 류가
 // 꾸준히 들어오는데 이때도 임베딩 API를 부르고 있었다. 기본 정보만 주고 검색을 건너뛴다.
@@ -74,75 +15,18 @@ export async function getKnowledgeContext(query: string): Promise<string> {
   try {
     const chunks = splitKnowledge()
     const basicChunk = chunks.find((c) => c.id === 'basic')
-
     if (isSmallTalk(query)) {
       return basicChunk ? `# ${basicChunk.text}` : ''
     }
-
-    // Search for top 3 relevant chunks
     const relevant = await searchChunks(query, 3)
-
-    // Always include basic info, deduplicate if already in results
-    const resultChunks = basicChunk && !relevant.some((c) => c.id === 'basic')
-      ? [basicChunk, ...relevant]
-      : relevant
-
-    let context = resultChunks.map((c) => `# ${c.text}`).join('\n\n')
-
-    // Search custom knowledge
-    try {
-      const custom = await loadCustomEntries()
-      if (custom.length > 0) {
-        const customTexts = custom.map((e) => e.text)
-        const matched = await searchCustom(query, customTexts)
-        if (matched.length > 0) {
-          context += `\n\n# 추가 정보\n${matched.join('\n')}`
-        }
-      }
-    } catch {
-      // Firestore unavailable — skip custom knowledge
-    }
-
-    return context
+    // 기본 정보는 항상 포함. 검색 결과에 이미 있으면 중복하지 않는다.
+    const resultChunks =
+      basicChunk && !relevant.some((c) => c.id === 'basic') ? [basicChunk, ...relevant] : relevant
+    return resultChunks.map((c) => `# ${c.text}`).join('\n\n')
   } catch (err) {
-    // Embedding API unavailable — fallback to full knowledge
+    // 임베딩 API가 죽으면 지식 전문을 통째로 넣는다(비싸지만 틀리진 않는다).
     console.error('RAG search failed, falling back to full context:', err)
-    return fallbackFullContext()
-  }
-}
-
-async function fallbackFullContext(): Promise<string> {
-  const { KNOWLEDGE } = await import('@/data/knowledge')
-  try {
-    const custom = await loadCustomEntries()
-    if (custom.length === 0) return KNOWLEDGE
-    const customText = custom.map((e) => e.text).join('\n')
-    return `${KNOWLEDGE}\n\n# 추가 정보\n${customText}`
-  } catch {
+    const { KNOWLEDGE } = await import('@/data/knowledge')
     return KNOWLEDGE
   }
-}
-
-// --- Custom knowledge CRUD ---
-
-export async function addCustomKnowledge(
-  text: string,
-  category: string = 'custom',
-): Promise<string> {
-  const id = await serverAdd('knowledge_custom', {
-    text,
-    category,
-    createdAt: serverTimestamp(),
-  })
-  invalidateCache()
-  return id
-}
-
-export async function listCustomKnowledge(): Promise<CustomEntry[]> {
-  return loadCustomEntries()
-}
-
-export async function deleteCustomKnowledge(id: string): Promise<void> {
-  await serverDeleteDoc('knowledge_custom', id)
-  invalidateCache()
 }

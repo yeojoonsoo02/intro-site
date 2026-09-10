@@ -168,7 +168,7 @@ export default async function AboutContent({
 
         <div>
           <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('contact')}</h2>
-          <SocialLinks colored isDev={false} />
+          <SocialLinks colored />
         </div>
       </section>
 

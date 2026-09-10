@@ -1,4 +1,4 @@
-import { serverAdd, serverTimestamp } from '@/lib/serverDb'
+import { adminDb, FieldValue } from '@/lib/firebaseAdmin'
 
 const MAX_USERINFO_FIELDS = 10
 const MAX_USERINFO_VALUE_LENGTH = 200
@@ -24,17 +24,18 @@ export async function saveChatLog(
   question: string,
   answer: string,
   userInfo?: Record<string, unknown>,
-  // 정보가 없어 답하지 못한 질문 표시 — 텔레그램 /questions에서 골라내는 기준
+  // 정보가 없어 답하지 못한 질문 표시 — 지식으로 채워 넣어야 할 목록을 고르는 기준
   unanswered = false,
 ) {
+  if (!adminDb) return
   try {
     const safeUserInfo = userInfo ? sanitizeUserInfo(userInfo) : null
-    await serverAdd('chat_logs', {
+    await adminDb.collection('chat_logs').add({
       question,
       answer,
       userInfo: safeUserInfo,
       unanswered,
-      createdAt: serverTimestamp(),
+      createdAt: FieldValue.serverTimestamp(),
     })
   } catch (err) {
     console.error('Chat log save error:', err)

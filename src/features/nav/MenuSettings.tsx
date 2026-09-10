@@ -4,13 +4,13 @@ import { useTranslation } from 'react-i18next'
 import i18n from '@/lib/i18n'
 import { SUPPORTED_LANGS } from '@/lib/i18n-config'
 
-export const THEME_OPTIONS = [
+const THEME_OPTIONS = [
   { key: 'light', icon: '☀️' },
   { key: 'dark', icon: '🌙' },
   { key: 'system', icon: '💻' },
 ] as const
 
-export type ThemeKey = (typeof THEME_OPTIONS)[number]['key']
+type ThemeKey = (typeof THEME_OPTIONS)[number]['key']
 
 interface MenuSettingsProps {
   open: boolean

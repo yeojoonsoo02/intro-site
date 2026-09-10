@@ -44,22 +44,7 @@ export interface PortfolioSummary {
   highlights: { label: string; value: string }[];
 }
 
-export interface Certification {
-  id: string;
-  name: string;
-  issuer: string;
-  date: string;
-  url?: string;
-  order: number;
-}
 
-export interface Testimonial {
-  id: string;
-  name: string;
-  role: string;
-  content: string;
-  order: number;
-}
 
 export interface Education {
   id: string;
@@ -88,12 +73,6 @@ export interface ValueQuote {
   order: number;
 }
 
-export interface RoutineStep {
-  id: string;
-  time: string;
-  content: string;
-  order: number;
-}
 
 export interface HobbyCategory {
   id: string;

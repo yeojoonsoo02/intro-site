@@ -28,8 +28,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   const docs = [
     'hero', 'summary', 'projects', 'skills', 'timeline',
-    'certifications', 'testimonials', 'education',
-    'personalInfo', 'goals', 'values', 'routine', 'hobbies',
+    'education', 'personalInfo', 'goals', 'values', 'hobbies',
   ];
   const snaps = await Promise.allSettled(
     docs.map((d) => col.doc(`${d}_${lang}`).get()),
@@ -46,14 +45,11 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     projects: getData(2)?.items ?? [],
     skills: getData(3)?.categories ?? [],
     timeline: getData(4)?.items ?? [],
-    certifications: getData(5)?.items ?? [],
-    testimonials: getData(6)?.items ?? [],
-    education: getData(7)?.items ?? [],
-    personalInfo: getData(8)?.items ?? [],
-    goals: getData(9)?.items ?? [],
-    values: getData(10)?.items ?? [],
-    routine: getData(11)?.items ?? [],
-    hobbies: getData(12)?.categories ?? [],
+    education: getData(5)?.items ?? [],
+    personalInfo: getData(6)?.items ?? [],
+    goals: getData(7)?.items ?? [],
+    values: getData(8)?.items ?? [],
+    hobbies: getData(9)?.categories ?? [],
   }, {
     headers: {
       // CDN·엣지 캐시로 Firestore 중복 접근 최소화(5분 fresh + 30분 SWR)

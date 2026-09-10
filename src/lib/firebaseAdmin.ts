@@ -35,4 +35,3 @@ try {
 }
 
 export { adminDb, adminAuth, FieldValue }
-export const isAdminReady = !!adminDb

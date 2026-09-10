@@ -1,15 +1,14 @@
 'use client';
 
 
-export default function SocialLinks({ colored = false, isDev = false }: { colored?: boolean; isDev?: boolean }) {
+export default function SocialLinks({ colored = false }: { colored?: boolean }) {
   // 테마 훅으로 색을 분기하던 것을 토큰으로 — 하이드레이션 전 잘못된 색이 잠깐 보이는 문제도 함께 사라진다.
   const githubColor = 'var(--foreground)';
-  const isNormal = !isDev;
 
   const SNS = [
     {
-      href: isNormal ? 'https://blog.naver.com/yeojoonsoo02' : 'https://blog.naver.com/chatgpt_krguide',
-      label: isNormal ? '여준수 블로그' : '개발자 블로그',
+      href: 'https://blog.naver.com/yeojoonsoo02',
+      label: '여준수 블로그',
       color: '#03c75a',
       icon: (
         <span className="relative flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6">
@@ -21,8 +20,8 @@ export default function SocialLinks({ colored = false, isDev = false }: { colore
       ),
     },
     {
-      href: isNormal ? 'https://www.instagram.com/yeojoonsoo02/' : 'https://www.instagram.com/chatgpt_krguide/',
-      label: isNormal ? '여준수 인스타그램' : '개발자 인스타그램',
+      href: 'https://www.instagram.com/yeojoonsoo02/',
+      label: '여준수 인스타그램',
       color: '#e1306c',
       icon: (
         <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -33,8 +32,8 @@ export default function SocialLinks({ colored = false, isDev = false }: { colore
       ),
     },
     {
-      href: isNormal ? 'https://open.kakao.com/o/sbUgmzji' : 'https://pf.kakao.com/_dFqxdn',
-      label: isNormal ? '여준수 카카오톡' : '개발자 카카오톡',
+      href: 'https://open.kakao.com/o/sbUgmzji',
+      label: '여준수 카카오톡',
       color: '#fee500',
       icon: (
         <span className="relative flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6">

@@ -30,18 +30,6 @@ async function readCount(): Promise<number> {
   return (snap.data()?.count as number | undefined) ?? 0;
 }
 
-export async function GET(): Promise<NextResponse> {
-  try {
-    return NextResponse.json(
-      { count: await readCount() },
-      { headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' } },
-    );
-  } catch (err) {
-    console.error('[visits] read error', err);
-    return NextResponse.json({ count: 0 });
-  }
-}
-
 export async function POST(req: NextRequest): Promise<NextResponse> {
   if (!adminDb) return NextResponse.json({ count: 0 });
 

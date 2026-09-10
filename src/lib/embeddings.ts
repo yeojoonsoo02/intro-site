@@ -10,11 +10,6 @@ type CachedEmbedding = { id: string; vector: number[] }
 let chunkEmbeddings: CachedEmbedding[] | null = null
 let embedPromise: Promise<CachedEmbedding[]> | null = null
 
-// 커스텀 지식 임베딩 캐시(텍스트 내용 → 벡터). 동일 텍스트는 항상 동일 임베딩이므로
-// 채팅 요청마다 재계산하던 N+1 임베딩 API 호출을 제거한다. 텍스트가 바뀌면 자동 미스.
-const customEmbedCache = new Map<string, number[]>()
-const CUSTOM_CACHE_MAX = 500
-
 // 질문 임베딩 캐시. 실제 로그를 보면 "지금 어디야?" 같은 같은 질문이 반복적으로 들어온다.
 // 표기 흔들림(대소문자·공백·물음표)을 정규화해 맞춰야 캐시가 실제로 맞는다.
 const queryEmbedCache = new Map<string, number[]>()
@@ -156,37 +151,4 @@ export async function searchChunks(
 
   const chunkMap = new Map(chunks.map((c) => [c.id, c]))
   return topIds.map((id) => chunkMap.get(id)!).filter(Boolean)
-}
-
-export async function searchCustom(
-  query: string,
-  texts: string[],
-  threshold = 0.4,
-): Promise<string[]> {
-  if (texts.length === 0) return []
-
-  const queryVec = await embedQuery(query)
-  const results: { text: string; score: number }[] = []
-
-  for (const text of texts) {
-    let vec = customEmbedCache.get(text)
-    if (!vec) {
-      vec = await embed(text)
-      setBounded(customEmbedCache, text, vec, CUSTOM_CACHE_MAX)
-    }
-    const score = cosineSim(queryVec, vec)
-    if (score >= threshold) {
-      results.push({ text, score })
-    }
-  }
-
-  results.sort((a, b) => b.score - a.score)
-  return results.map((r) => r.text)
-}
-
-export function invalidateEmbeddingCache() {
-  chunkEmbeddings = null
-  embedPromise = null
-  customEmbedCache.clear()
-  queryEmbedCache.clear()
 }

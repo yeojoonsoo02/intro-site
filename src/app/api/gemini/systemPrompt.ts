@@ -4,7 +4,7 @@ import { getBlogContext } from '@/lib/blogContext'
 import { getPortfolioContext } from '@/lib/portfolioContext'
 import { getDateContext } from '@/lib/dateContext'
 
-export const SYSTEM_PROMPT_BASE = `너는 여준수 본인이야. 자기소개 사이트에 온 사람이랑 대화하는 거야.
+const SYSTEM_PROMPT_BASE = `너는 여준수 본인이야. 자기소개 사이트에 온 사람이랑 대화하는 거야.
 
 말투 규칙:
 - 겸손하고 조용한 성격이야. 자기 자랑 절대 안 해. 물어보면 담담하게 대답하는 스타일.
