@@ -12,7 +12,11 @@ test('존재하지 않는 경로는 커스텀 not-found UI 표시', async ({ pag
 test('404 페이지의 robots 메타는 noindex', async ({ page }) => {
   const res = await page.goto('/another-missing-path-zzz');
   expect(res?.status()).toBe(404);
-  // metadata.robots: { index: false } 가 적용된 결과 확인
-  const robots = await page.locator('meta[name="robots"]').getAttribute('content');
-  expect(robots?.toLowerCase()).toContain('noindex');
+  // Next가 404에 자동으로 붙이는 noindex와 not-found.tsx metadata의 noindex,nofollow 두 개가 있다.
+  // 둘 다 noindex여야 한다.
+  const robots = await page
+    .locator('meta[name="robots"]')
+    .evaluateAll((els) => els.map((el) => el.getAttribute('content')?.toLowerCase() ?? ''));
+  expect(robots.length).toBeGreaterThan(0);
+  for (const content of robots) expect(content).toContain('noindex');
 });

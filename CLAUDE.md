@@ -1,18 +1,20 @@
 # intro-site
 
-개인 소개 사이트. 다국어 랜딩 + 포트폴리오/여정 + **Gemini 챗봇(RAG)** + 방문자·피드백 수집.
+개인 소개 사이트. 다국어 랜딩 + 포트폴리오/여정 + **Gemini 챗봇(RAG)** + 방문자 수 집계.
 
 > `README.md`는 `create-next-app` 기본 템플릿에 Firebase·Gemini 문단만 덧댄 상태다. **구조 파악은 README가 아니라 이 문서를 본다.**
 
 ## 1. 스택
 
 Next.js **16 App Router** (`src/app/`) · React 18 · TypeScript · Tailwind
-Firebase (Auth + Firestore) · Google Generative AI(Gemini) · react-i18next
+Firebase (Auth + Firestore) · Google Generative AI(Gemini) · react-i18next(리소스 번들, 플러그인 없음)
 Vercel 배포 (GitHub Actions `deploy.yml` — main push 시 type-check → lint → build → deploy)
 
-**Firebase는 Auth와 Firestore만 쓴다.** `firebase.json`에 `firestore.rules`만 있고 Hosting 설정은 없다 — 호스팅은 Vercel이다. Firebase Hosting으로 배포하려 들지 말 것.
+**Firebase는 Auth와 Firestore만 쓴다.** 브라우저의 Firestore 클라이언트 SDK는 이제 쓰지 않는다 — 읽기는 전부 서버 API(`/api/profile`, `/api/portfolio`)나 서버 컴포넌트(Admin SDK)를 거친다(googleapis가 차단된 망 대응). `firebase.json`에 `firestore.rules`만 있고 Hosting 설정은 없다 — 호스팅은 Vercel이다.
 
-⚠️ **Firestore 규칙은 Vercel 파이프라인이 배포하지 않는다.** `firestore.rules`를 고쳤으면 별도로 `firebase deploy --only firestore:rules`를 쳐야 반영된다. 대상 프로젝트는 `.firebaserc`의 **`intro-site-e88aa`** — 이 파일이 없으면 CLI가 전역 활성 프로젝트(다른 프로젝트일 수 있음)로 배포해버리므로 지우지 말 것. 배포 전 `--dry-run`으로 컴파일 확인.
+**콘텐츠 편집 경로는 Firebase 콘솔 또는 서비스 계정 스크립트뿐이다.** 관리자 편집 UI(/admin)는 2026-09에 제거했고, `firestore.rules`는 `profiles`·`portfolio`의 클라이언트 쓰기를 전면 차단한다. 관리자 이메일로 로그인해도 브라우저에서 쓸 수 없는 게 정상이다.
+
+⚠️ **Firestore 규칙은 Vercel 파이프라인이 배포하지 않고, firebase CLI도 쓰지 못한다**(이 머신의 CLI 계정에 프로젝트 권한이 없어 엉뚱한 프로젝트로 갈 수 있다). `.env.local`의 서비스 계정으로 Rules REST API(룰셋 생성 → `releases/cloud.firestore` 전환)를 호출한다. 대상 프로젝트는 **`intro-site-e88aa`**(`.firebaserc`, 지우지 말 것).
 
 ## 2. 다국어 — 루트가 한국어다
 
@@ -21,13 +23,17 @@ Vercel 배포 (GitHub Actions `deploy.yml` — main push 시 type-check → lint
 /en /ja /zh /es /fr /de /pt /ru
 ```
 
-`src/middleware.ts`가 브라우저 `Accept-Language`를 보고 해당 로케일로 보낸다. **한국어 선호 사용자는 루트에 머문다.**
+`src/middleware.ts`가 브라우저 `Accept-Language`를 보고 해당 로케일로 보낸다. **한국어 선호 사용자는 루트에 머문다.** `/ko`는 루트로 308 통합된다(`next.config.ts`).
+
+**라우트는 두 개뿐이다.** 8개 로케일의 홈은 `app/[lang]/page.tsx`, 소개는 `app/[lang]/about/page.tsx`가 `generateStaticParams`로 만든다(`dynamicParams = false`라 모르는 접두사는 404). 한국어는 `app/page.tsx`·`app/about/page.tsx`. 언어별로 다른 건 메타데이터 문자열뿐이라 `app/homePage.tsx`·`app/about/aboutPage.tsx`의 표 하나에 산다.
 
 ⚠️ **검색엔진·AI 크롤러는 리디렉트하지 않고 루트에 그대로 둔다** — `middleware.ts` 상단 `BOTS` 정규식이 그 장치다(googlebot·yeti·claudebot·gptbot·perplexitybot 등). 색인 안정성을 위한 의도된 동작이니 "봇 예외 처리가 왜 있지" 하고 지우지 말 것. 새 크롤러 UA를 추가할 일은 있어도 제거할 일은 없다.
 
-로케일을 추가하면 **라우트 디렉토리(`/{lang}/page.tsx` + `/{lang}/about/page.tsx`) · `ROUTE_BY_LANG` 매핑 · `lib/i18n-config.ts` · sitemap/hreflang · `lib/seo-utils.ts` · `api/portfolio`의 `ALLOWED_LANGS` · `api/indexnow`의 `DEFAULT_URLS` · `public/locales/*.json` · `features/profile/defaultProfiles.ts` · `app/about/factLabels.ts`** 를 함께 손봐야 한다. 하나만 고치면 조용히 어긋난다.
+**지원 언어의 단일 출처는 `src/lib/site.ts`다**(`LANGS`·경로/hreflang·OG locale·BCP-47). 라우트·sitemap·IndexNow·미들웨어·API 언어 검증·JSON-LD가 전부 여기서 파생된다. 로케일을 추가하면 `site.ts`의 `LANGS`에 넣고, 문자열 표들 — `src/locales/{lang}.json` · `app/homePage.tsx` · `app/about/aboutPage.tsx` · `features/profile/defaultProfiles.ts` · `app/about/factLabels.ts` · `components/seo/schemas/{profilePage,website}.ts` · `components/seo/SEOProfile.tsx` — 를 채우면 타입 오류가 빠진 곳을 알려준다.
 
-**`/about`은 9개 언어 전부 있다.** 본문은 `app/about/AboutContent.tsx` 하나를 공유하고 로케일별 `page.tsx`는 메타데이터만 갖는다. 데이터는 서버에서 Firestore를 직접 읽는다(`aboutData.ts`, 10분 캐시) — 클라이언트에서 읽으면 googleapis가 차단된 망에서 비어버린다. **포트폴리오 데이터는 ko·en·ja·zh에만 있어** 나머지 5개 언어는 기술 스택·자격증만 영어 데이터로 채우고 산문형 섹션(후기·목표·가치관)은 아예 표시하지 않는다 — 없는 내용을 번역해 지어내지 않기 위함이다.
+**`/about`은 9개 언어 전부 있다.** 본문은 `app/about/AboutContent.tsx` 하나를 공유한다. 데이터는 서버에서 Firestore를 직접 읽는다(`aboutData.ts`, 10분 캐시) — 클라이언트에서 읽으면 googleapis가 차단된 망에서 비어버린다. **포트폴리오 데이터는 ko·en·ja·zh에만 있어** 나머지 5개 언어는 기술 스택·자격증만 영어 데이터로 채우고 산문형 섹션(목표·가치관)은 아예 표시하지 않는다 — 없는 내용을 번역해 지어내지 않기 위함이다.
+
+**i18n.** UI 문자열은 `src/locales/*.json`을 번들에 넣어 i18next `resources`로 준다(런타임 fetch·언어 감지 플러그인 없음). 언어는 라우트가 정하고 `LangInit`이 `lib/locale.ts`의 `setLocale()`로 i18next·localStorage·`NEXT_LOCALE` 쿠키·`<html lang>`을 한 번에 맞춘다 — 이 넷은 반드시 `setLocale`로만 바꾼다(하나만 바꾸면 미들웨어가 이전 언어로 되돌린다). 서버 컴포넌트(/about)는 같은 사전을 `app/about/labels.ts`로 읽는다.
 
 ## 3. Next 16인데 `middleware.ts`를 쓰고 있다
 
@@ -50,10 +56,12 @@ React는 아직 **18.3.1**이다(Next 16 + React 18 조합). 19 전용 API를 �
 
 `lib/rateLimit.ts` 적용 대상이다 — 챗 API는 비용이 나가는 경로다.
 
+**개인정보 경계.** 실시간 컨텍스트(`lib/liveContext`)에서 위치와 취침·기상 시각은 의도적으로 뺐고, 생일은 나이 계산에만 쓰고 모델에는 연도만 준다(`lib/dateContext.ts`). 시스템 프롬프트에 위치·수면 시각·집/학교 위치 거절 규칙이 있다. 되돌리지 말 것 — 방문자가 실시간 동네를 알아내던 문제의 수정이다. 서버 캐시 4곳(live·blog·portfolio·about)은 `lib/cached.ts` 헬퍼를 쓴다.
+
 ## 5. 시크릿
 
 `.env.local`(로컬) / Vercel 환경변수(프로덕션). `.env.example`에 키 이름만 둔다.
-`firebaseAdmin.ts`가 쓰는 서비스 계정 키, `GEMINI_API_KEY`, 텔레그램·카카오 웹훅 토큰이 여기 해당한다.
+`firebaseAdmin.ts`가 쓰는 서비스 계정 키, `GEMINI_API_KEY`, 실시간 컨텍스트·카카오 알림 토큰이 여기 해당한다.
 
 > Vercel env 설정 시 `echo` 파이프 금지(개행 포함) → `printf` 사용, 설정 후 `vercel env pull`로 빈 값·`\n` 둘 다 검증 (전역 규칙).
 
@@ -71,7 +79,9 @@ npm run embeddings:build # 지식 청크 임베딩 사전계산 (GEMINI_API_KEY 
 
 ⚠️ **`src/data/knowledge.ts`를 고쳤으면 `npm run embeddings:build`를 함께 돌린다.** 청크 임베딩은 빌드 타임에 계산해 `src/data/chunkEmbeddings.generated.ts`에 넣어둔다(콜드스타트마다 임베딩 API를 부르지 않기 위함). 재생성을 잊으면 해시가 어긋난 청크만 런타임에 실시간 임베딩으로 폴백하고 서버 로그에 경고가 남는다 — 동작은 하지만 아끼려던 비용이 다시 나간다.
 
-**push 전 최소 `type-check` + `lint`** — 실패하면 GitHub Actions가 배포 전에 막는다.
+**push 전 최소 `type-check` + `lint`** — 실패하면 GitHub Actions가 배포 전에 막는다. CI는 Playwright를 돌리지 않으니 라우팅·404를 건드렸으면 `npm run test:e2e`를 로컬에서 직접 돈다.
+
+**콘텐츠 정본.** 챗봇 정본은 `src/data/knowledge.ts`, 화면 데이터는 Firestore(`portfolio/*_{lang}`, `profiles/main_{lang}`). 영문 표기는 "Junsu Yeo"(이전 표기 Yeojunsu는 alternateName·키워드로만), 직업은 "대학생 개발자", 기술 스택은 세 곳(knowledge·Firestore skills·JSON-LD)이 같은 합집합을 갖는다. 하나를 고치면 셋을 같이 고친다.
 
 ## 7. 커밋
 

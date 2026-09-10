@@ -4,11 +4,11 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/AuthProvider'
 import { useTheme } from '@/lib/ThemeProvider'
-import i18n from '@/lib/i18n'
 import MenuNavLinks from './MenuNavLinks'
 import MenuSettings from './MenuSettings'
 import MenuAccount from './MenuAccount'
-import { persistLocale, localizePath } from '@/lib/locale'
+import { setLocale, localizePath } from '@/lib/locale'
+import { isLang } from '@/lib/site'
 
 interface TopBarMenuProps {
   onOpenPrompt: () => void
@@ -45,11 +45,10 @@ export default function TopBarMenu({ onOpenPrompt }: TopBarMenuProps): JSX.Eleme
 
   const changeLanguage = useCallback(
     (l: string): void => {
-      if (!i18n) return
-      i18n.changeLanguage(l)
-      // 쿠키까지 함께 갱신하지 않으면 미들웨어가 이전 언어로 되돌린다 —
-      // 메뉴에서 고른 언어가 링크 한 번에 무효가 되던 문제.
-      persistLocale(l)
+      if (!isLang(l)) return
+      // i18next·쿠키·localStorage·html lang을 한 번에. 쿠키를 빼먹으면 미들웨어가
+      // 이전 언어로 되돌린다 — 메뉴에서 고른 언어가 링크 한 번에 무효가 되던 문제.
+      setLocale(l)
       // 홈으로 튕기지 않고 보던 페이지의 같은 언어판으로 이동.
       router.push(localizePath(pathname, l))
     },
