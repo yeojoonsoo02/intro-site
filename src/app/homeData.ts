@@ -9,7 +9,7 @@ import type { Project } from '@/features/portfolio/portfolio.model';
 // 붙으면 googleapis가 차단된 망에서 첫 화면이 비고, SEO도 서버 HTML에 있어야 한다).
 const TTL = 10 * 60 * 1000;
 const ERROR_TTL = 60 * 1000;
-const FEATURED_COUNT = 3;
+const FEATURED_COUNT = 4;
 
 // 포트폴리오 데이터가 실제로 있는 언어. 나머지는 영어 데이터로 대표 프로젝트를 채운다.
 const RICH_LANGS = ['ko', 'en', 'ja', 'zh'] as const;

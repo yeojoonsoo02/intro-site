@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -105,7 +106,7 @@ const HOME_COPY: Record<Lang, HomeCopy> = {
     kicker: '광운대학교 소프트웨어학과',
     identity: '필요한 걸 직접 만드는 대학생 개발자. 웹·앱 외주 개발(챗코가)과 개인 서비스를 운영합니다.',
     seeking: '협업·개발 의뢰는 이메일로 연락 주세요.',
-    featuredNote: '실제로 쓰이고 있는 것 세 가지',
+    featuredNote: '실제로 쓰이고 있는 것 네 가지',
     archiveLink: '전체 프로젝트 보기',
     siteGuide: '사이트 안내',
     photoAlt: '여준수 프로필 사진',
@@ -114,7 +115,7 @@ const HOME_COPY: Record<Lang, HomeCopy> = {
     kicker: 'Dept. of Software, Kwangwoon University',
     identity: 'A student developer who builds what he needs. Runs a web/app freelance studio (Chatkoga) and personal services.',
     seeking: 'For collaboration or project requests, email me.',
-    featuredNote: 'Three things in real use',
+    featuredNote: 'Four things in real use',
     archiveLink: 'All projects',
     siteGuide: 'Site guide',
     photoAlt: 'Photo of Junsu Yeo',
@@ -123,7 +124,7 @@ const HOME_COPY: Record<Lang, HomeCopy> = {
     kicker: '光云大学校 ソフトウェア学科',
     identity: '必要なものを自分で作る大学生開発者。Web・アプリ受託開発（チャットコガ）と個人サービスを運営しています。',
     seeking: '協業・開発のご依頼はメールでご連絡ください。',
-    featuredNote: '実際に使われているもの三つ',
+    featuredNote: '実際に使われているもの四つ',
     archiveLink: 'すべてのプロジェクト',
     siteGuide: 'サイト案内',
     photoAlt: 'ヨ・ジュンスの写真',
@@ -132,7 +133,7 @@ const HOME_COPY: Record<Lang, HomeCopy> = {
     kicker: '光云大学 软件学系',
     identity: '亲手做出自己需要的东西的大学生开发者。运营网页/应用外包开发（ChatKoga）与个人服务。',
     seeking: '合作或开发委托请发邮件联系。',
-    featuredNote: '正在实际使用的三个项目',
+    featuredNote: '正在实际使用的四个项目',
     archiveLink: '查看全部项目',
     siteGuide: '网站导航',
     photoAlt: '呂晙壽的照片',
@@ -141,7 +142,7 @@ const HOME_COPY: Record<Lang, HomeCopy> = {
     kicker: 'Dpto. de Software, Universidad Kwangwoon',
     identity: 'Estudiante desarrollador que construye lo que necesita. Desarrollo web/app freelance (Chatkoga) y servicios propios.',
     seeking: 'Para colaboraciones o encargos, escríbeme por correo.',
-    featuredNote: 'Tres cosas en uso real',
+    featuredNote: 'Cuatro cosas en uso real',
     archiveLink: 'Todos los proyectos',
     siteGuide: 'Guía del sitio',
     photoAlt: 'Foto de Junsu Yeo',
@@ -150,7 +151,7 @@ const HOME_COPY: Record<Lang, HomeCopy> = {
     kicker: 'Dépt. Logiciel, Université Kwangwoon',
     identity: 'Étudiant développeur qui construit ce dont il a besoin. Développement web/app en freelance (Chatkoga) et services personnels.',
     seeking: 'Pour une collaboration ou une commande, écrivez-moi par e-mail.',
-    featuredNote: 'Trois projets réellement utilisés',
+    featuredNote: 'Quatre projets réellement utilisés',
     archiveLink: 'Tous les projets',
     siteGuide: 'Plan du site',
     photoAlt: 'Photo de Junsu Yeo',
@@ -159,7 +160,7 @@ const HOME_COPY: Record<Lang, HomeCopy> = {
     kicker: 'Fachbereich Software, Kwangwoon-Universität',
     identity: 'Studentischer Entwickler, der baut, was er braucht. Freiberufliche Web-/App-Entwicklung (Chatkoga) und eigene Dienste.',
     seeking: 'Für Zusammenarbeit oder Aufträge: E-Mail.',
-    featuredNote: 'Drei Dinge im echten Einsatz',
+    featuredNote: 'Vier Dinge im echten Einsatz',
     archiveLink: 'Alle Projekte',
     siteGuide: 'Seitenübersicht',
     photoAlt: 'Foto von Junsu Yeo',
@@ -168,7 +169,7 @@ const HOME_COPY: Record<Lang, HomeCopy> = {
     kicker: 'Depto. de Software, Universidade Kwangwoon',
     identity: 'Estudante desenvolvedor que constrói o que precisa. Desenvolvimento web/app freelance (Chatkoga) e serviços próprios.',
     seeking: 'Para colaborações ou encomendas, envie um e-mail.',
-    featuredNote: 'Três coisas em uso real',
+    featuredNote: 'Quatro coisas em uso real',
     archiveLink: 'Todos os projetos',
     siteGuide: 'Guia do site',
     photoAlt: 'Foto de Junsu Yeo',
@@ -177,7 +178,7 @@ const HOME_COPY: Record<Lang, HomeCopy> = {
     kicker: 'Факультет ПО, Университет Квангун',
     identity: 'Студент-разработчик, который делает то, что нужно ему самому. Фриланс веб/приложения (Chatkoga) и собственные сервисы.',
     seeking: 'По вопросам сотрудничества и заказов пишите на почту.',
-    featuredNote: 'Три проекта в реальном использовании',
+    featuredNote: 'Четыре проекта в реальном использовании',
     archiveLink: 'Все проекты',
     siteGuide: 'Карта сайта',
     photoAlt: 'Фото Junsu Yeo',
@@ -269,13 +270,13 @@ export async function HomePage({ lang }: { lang: Lang }) {
           </div>
         </section>
 
-        {/* 2. 대표 프로젝트 — 첫 번째를 크게(5:3), 나머지 둘은 옆에 쌓는다 */}
+        {/* 2. 대표 프로젝트 — 첫 번째를 크게(5:3), 나머지는 옆에 세로로 쌓는다(큰 카드가 그 높이를 받친다) */}
         {featured.length > 0 && (
           <section className="mt-16 sm:mt-20">
             <SectionHead title={t('projects')} note={c.featuredNote} />
             <div className="grid grid-cols-1 sm:grid-cols-8 gap-x-6 gap-y-8">
               {featured.map((p, i) => (
-                <FeaturedProject key={p.id} project={p} lang={lang} primary={i === 0} />
+                <FeaturedProject key={p.id} project={p} lang={lang} primary={i === 0} sideCount={featured.length - 1} />
               ))}
             </div>
             <p className="mt-8">
@@ -327,18 +328,25 @@ function FeaturedProject({
   project,
   lang,
   primary,
+  sideCount,
 }: {
   project: Project;
   lang: Lang;
   primary: boolean;
+  /** 옆에 쌓이는 작은 카드 수 — 큰 카드가 그만큼의 행을 차지한다 */
+  sideCount: number;
 }): JSX.Element {
   const live = safeHttpsUrl(project.liveUrl);
   const status = project.status ? STATUS_LABEL[lang][project.status] : null;
   const metaBits = [status, project.period].filter(Boolean);
   return (
     <article
-      className={`flex flex-col min-w-0 ${primary ? 'sm:col-span-5 sm:row-span-2' : 'sm:col-span-3'}`}
-      style={{ borderTop: `${primary ? 3 : 1}px solid ${primary ? 'var(--accent)' : 'var(--rule)'}`, paddingTop: '1rem' }}
+      className={`flex flex-col min-w-0 ${primary ? 'sm:col-span-5 sm:[grid-row:span_var(--side-count)]' : 'sm:col-span-3'}`}
+      style={{
+        borderTop: `${primary ? 3 : 1}px solid ${primary ? 'var(--accent)' : 'var(--rule)'}`,
+        paddingTop: '1rem',
+        ...(primary ? ({ '--side-count': String(Math.max(sideCount, 1)) } as CSSProperties) : {}),
+      }}
     >
       {metaBits.length > 0 && <p className="meta mb-2">{metaBits.join(' · ')}</p>}
       <h3 className={`font-serif ${primary ? 'text-2xl sm:text-[1.75rem]' : 'text-xl'} leading-snug`}>

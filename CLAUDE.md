@@ -29,13 +29,13 @@ Vercel 배포 (GitHub Actions `deploy.yml` — main push 시 type-check → lint
 
 ⚠️ **`app/loading.tsx`를 만들지 말 것.** `[lang]`이 1단계 경로를 전부 받으므로 `/xx` 같은 미지의 경로는 페이지의 `notFound()`로 404가 된다. 루트에 loading.tsx(Suspense 경계)가 있으면 200 셸이 먼저 흘러가 프로덕션에서 소프트 404(200)가 되고, 루트 레이아웃의 `notFound()`는 Next 16에서 허용되지 않는다. 2026-09에 실제로 겪은 문제다.
 
-**홈은 서버 컴포넌트다**(`app/homeData.ts`가 admin SDK로 profiles/main_{lang} + 대표 프로젝트 3개 + 블로그 최근 글을 읽고 10분 캐시). 프로필 카드·/api/profile은 없다.
+**홈은 서버 컴포넌트다**(`app/homeData.ts`가 admin SDK로 profiles/main_{lang} + 대표 프로젝트 4개 + 블로그 최근 글을 읽고 10분 캐시). 프로필 카드·/api/profile은 없다.
 
 ⚠️ **검색엔진·AI 크롤러는 리디렉트하지 않고 루트에 그대로 둔다** — `middleware.ts` 상단 `BOTS` 정규식이 그 장치다(googlebot·yeti·claudebot·gptbot·perplexitybot 등). 색인 안정성을 위한 의도된 동작이니 "봇 예외 처리가 왜 있지" 하고 지우지 말 것. 새 크롤러 UA를 추가할 일은 있어도 제거할 일은 없다.
 
 **지원 언어의 단일 출처는 `src/lib/site.ts`다**(`LANGS`·경로/hreflang·OG locale·BCP-47). 라우트·sitemap·IndexNow·미들웨어·API 언어 검증·JSON-LD가 전부 여기서 파생된다. 로케일을 추가하면 `site.ts`의 `LANGS`에 넣고, 문자열 표들 — `src/locales/{lang}.json` · `app/homePage.tsx` · `app/about/aboutPage.tsx` · `features/profile/defaultProfiles.ts` · `app/about/factLabels.ts` · `components/seo/schemas/{profilePage,website}.ts` · `components/seo/SEOProfile.tsx` — 를 채우면 타입 오류가 빠진 곳을 알려준다.
 
-**`/about`은 9개 언어 전부 있다.** 본문은 `app/about/AboutContent.tsx` 하나를 공유한다. 데이터는 서버에서 Firestore를 직접 읽는다(`aboutData.ts`, 10분 캐시) — 클라이언트에서 읽으면 googleapis가 차단된 망에서 비어버린다. **포트폴리오 데이터는 ko·en·ja·zh에만 있어** 나머지 5개 언어는 기술 스택·자격증만 영어 데이터로 채우고 산문형 섹션(목표·가치관)은 아예 표시하지 않는다 — 없는 내용을 번역해 지어내지 않기 위함이다.
+**`/about`은 9개 언어 전부 있다.** 본문은 `app/about/AboutContent.tsx` 하나를 공유한다. 데이터는 서버에서 Firestore를 직접 읽는다(`aboutData.ts`, 10분 캐시) — 클라이언트에서 읽으면 googleapis가 차단된 망에서 비어버린다. **포트폴리오 데이터는 ko·en·ja·zh에만 있어** 나머지 5개 언어는 기술 스택·학력만 영어 데이터로 채우고 산문형 섹션(목표·가치관)은 아예 표시하지 않는다 — 없는 내용을 번역해 지어내지 않기 위함이다.
 
 **i18n.** UI 문자열은 `src/locales/*.json`을 번들에 넣어 i18next `resources`로 준다(런타임 fetch·언어 감지 플러그인 없음). **서버는 요청마다 `createI18n(lang)` 인스턴스를 만든다**(`I18nProvider`가 layout에서 lang을 받음) — 모듈 싱글턴의 언어를 요청마다 바꾸면 동시 요청이 섞이고, 서버가 ko로만 렌더하면 /zh 등에서 하이드레이션이 깨진다(2026-09 실제 발생). 클라이언트는 `<html lang>`과 같은 언어로 시작하는 싱글턴. 언어 변경은 `lib/locale.ts`의 `setLocale(i18n, lang)`으로만(i18next·localStorage·`NEXT_LOCALE` 쿠키·`<html lang>`을 한 번에). 서버 컴포넌트는 같은 사전을 `app/about/labels.ts`로 읽는다.
 
@@ -85,7 +85,7 @@ npm run embeddings:build # 지식 청크 임베딩 사전계산 (GEMINI_API_KEY 
 
 **push 전 최소 `type-check` + `lint`** — 실패하면 GitHub Actions가 배포 전에 막는다. CI는 Playwright를 돌리지 않으니 라우팅·404를 건드렸으면 `npm run test:e2e`를 로컬에서 직접 돈다.
 
-**포트폴리오는 케이스 스터디 구조다**(2026-09 개편, 근거: 채용 담당자·시니어 조사). `Project`에 summary/status/period/role/context/problem/decisions/highlights/outcome/lessons가 있고 데이터 없는 섹션은 렌더하지 않는다. 대표 3개(featured, order 1~3)는 크게, 나머지는 아카이브 행. **수치·기간·이유를 모르면 비워 둔다 — 지어내지 않는다.** 로그인 게이트는 없앴다(리뷰어의 20초 예산). personalInfo·hobbies는 챗봇용으로만 남아 화면에 없다.
+**포트폴리오는 케이스 스터디 구조다**(2026-09 개편, 근거: 채용 담당자·시니어 조사). `Project`에 summary/status/period/role/context/problem/decisions/highlights/outcome/lessons가 있고 데이터 없는 섹션은 렌더하지 않는다. 대표 4개(featured, order 1~4)는 크게 — 홈은 첫 번째를 5:3으로 크게, 나머지 셋을 옆에 세로로, 나머지는 아카이브 행. **수치·기간·이유를 모르면 비워 둔다 — 지어내지 않는다.** 로그인 게이트는 없앴다(리뷰어의 20초 예산). personalInfo·hobbies는 챗봇용으로만 남아 화면에 없다.
 
 **디자인 시스템**(`globals.css`): 토큰 --paper/--surface/--ink/--muted/--rule/--accent(#b5402c, 유일한 강조색)/--font-serif(Noto Serif KR, 제목만)/--font-sans(Pretendard). 카탈로그 선택은 명조+고딕 혼용·5:3 비대칭·border-left 수작업 디테일 세 가지. 기존 이름(--primary·--foreground 등)은 alias. 그림자는 2층, 다크는 border. Tailwind 기본 파랑·그라디언트·스킬 바·균일 3칸 카드는 넣지 않는다.
 

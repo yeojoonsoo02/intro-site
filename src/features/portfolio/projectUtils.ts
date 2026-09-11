@@ -17,11 +17,11 @@ export function sortByOrder<T extends { order: number }>(items: T[]): T[] {
   return [...items].sort((a, b) => a.order - b.order);
 }
 
-/** 대표(featured) 3개와 나머지. featured가 하나도 없으면 order 상위 3개를 대표로 삼는다. */
+/** 대표(featured) 4개와 나머지. featured가 하나도 없으면 order 상위 4개를 대표로 삼는다. */
 export function splitProjects(projects: Project[]): { featured: Project[]; archive: Project[] } {
   const sorted = sortByOrder(projects);
   const flagged = sorted.filter((p) => p.featured);
-  const featured = (flagged.length > 0 ? flagged : sorted).slice(0, 3);
+  const featured = (flagged.length > 0 ? flagged : sorted).slice(0, 4);
   const ids = new Set(featured.map((p) => p.id));
   return { featured, archive: sorted.filter((p) => !ids.has(p.id)) };
 }

@@ -7,7 +7,7 @@ import SectionWrapper from './SectionWrapper';
 import { StackTags, StatusMark } from './ProjectBits';
 import { oneLiner } from './projectUtils';
 
-// 대표 프로젝트 3개. 첫 번째는 크게(5:3), 나머지 둘은 그 아래 나란히 — 균일 3칸 카드를 피한다.
+// 대표 프로젝트 4개. 첫 번째는 크게(5:3), 나머지 셋은 그 아래 나란히 — 큰 것 하나가 있어 균일 카드 나열로 읽히지 않는다.
 export default function FeaturedProjects({ items }: { items: Project[] }) {
   const { t } = useTranslation();
   if (items.length === 0) return null;
@@ -18,7 +18,7 @@ export default function FeaturedProjects({ items }: { items: Project[] }) {
       <div className="grid gap-4 sm:gap-5">
         <LeadCard project={lead} label={t('viewCaseStudy')} />
         {rest.length > 0 && (
-          <div className="grid gap-4 sm:gap-5 sm:grid-cols-2">
+          <div className={`grid gap-4 sm:gap-5 ${rest.length >= 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}>
             {rest.map((p) => (
               <SmallCard key={p.id} project={p} label={t('viewCaseStudy')} />
             ))}
@@ -83,10 +83,10 @@ function SmallCard({ project, label }: { project: Project; label: string }) {
       className="group flex flex-col gap-4 rounded-[var(--r-lg)] p-5 sm:p-6 transition-transform duration-200 hover:-translate-y-0.5"
       style={{ background: 'var(--surface)', border: '1px solid var(--rule)' }}
     >
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
         <StatusMark status={project.status} />
         {project.period && (
-          <span className="text-[12.5px] tracking-[.02em]" style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+          <span className="text-[12.5px] tracking-[.02em] whitespace-nowrap" style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
             {project.period}
           </span>
         )}

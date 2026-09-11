@@ -37,7 +37,7 @@ export function StatusMark({ status }: { status: Project['status'] }) {
   const live = status === 'live';
   return (
     <span
-      className="inline-flex items-center gap-1.5 text-[12.5px] tracking-[.02em]"
+      className="inline-flex items-center gap-1.5 text-[12.5px] tracking-[.02em] whitespace-nowrap"
       style={{ fontFamily: 'var(--font-mono)', color: live ? 'var(--accent)' : 'var(--muted)' }}
     >
       <span
