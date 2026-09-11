@@ -25,15 +25,9 @@ export interface SkillCategory {
   items: string[];
 }
 
-export interface Certification {
-  name: string;
-  issuer: string;
-}
-
 export interface AboutData {
   profile: Profile;
   skills: SkillCategory[];
-  certifications: Certification[];
   goals: string[];
   values: string[];
   /** "광운대학교 — 소프트웨어학과 — 2021.03 ~ 재학 중" 형태의 한 줄 */
@@ -53,7 +47,6 @@ function emptyData(lang: string): AboutData {
   return {
     profile: DEFAULT_PROFILES[lang] ?? DEFAULT_PROFILES.en,
     skills: [],
-    certifications: [],
     goals: [],
     values: [],
     education: '',
@@ -66,15 +59,14 @@ async function loadAboutData(lang: string): Promise<AboutData> {
   if (!adminDb) return fallback;
 
   const hasProse = (RICH_LANGS as readonly string[]).includes(lang);
-  // 산문이 없는 언어라도 기술 스택·자격증은 고유명사 위주라 영어판을 쓰면 도움이 된다.
+  // 산문이 없는 언어라도 기술 스택·학력은 고유명사 위주라 영어판을 쓰면 도움이 된다.
   const dataLang = hasProse ? lang : NEUTRAL_FALLBACK;
 
   const col = adminDb.collection('portfolio');
-  const [profileSnap, skillsSnap, certSnap, eduSnap, goalsSnap, valuesSnap] =
+  const [profileSnap, skillsSnap, eduSnap, goalsSnap, valuesSnap] =
     await Promise.all([
       adminDb.collection('profiles').doc(`main_${lang}`).get(),
       col.doc(`skills_${dataLang}`).get(),
-      col.doc(`certifications_${dataLang}`).get(),
       col.doc(`education_${dataLang}`).get(),
       hasProse ? col.doc(`goals_${lang}`).get() : Promise.resolve(null),
       hasProse ? col.doc(`values_${lang}`).get() : Promise.resolve(null),
@@ -95,9 +87,6 @@ async function loadAboutData(lang: string): Promise<AboutData> {
           : [],
       }))
       .filter((c) => c.name && c.items.length > 0),
-    certifications: list(certSnap.data(), 'items')
-      .map((c) => ({ name: str(c.name), issuer: str(c.issuer) }))
-      .filter((c) => c.name),
     // 첫 항목(대학)만 한 줄로. 상세 학력은 포트폴리오 페이지의 몫이다.
     education: (() => {
       const first = list(eduSnap.data(), 'items')[0];

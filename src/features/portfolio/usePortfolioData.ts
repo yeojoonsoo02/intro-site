@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import type {
   PortfolioHero, Project, SkillCategory, TimelineItem,
-  Education, Certification, GoalItem, ValueQuote,
+  Education, GoalItem, ValueQuote,
 } from './portfolio.model';
 
 export interface PortfolioData {
@@ -12,14 +12,13 @@ export interface PortfolioData {
   skills: SkillCategory[];
   timeline: TimelineItem[];
   education: Education[];
-  certifications: Certification[];
   goals: GoalItem[];
   values: ValueQuote[];
 }
 
 const EMPTY_DATA: PortfolioData = {
   hero: null, projects: [], skills: [], timeline: [],
-  education: [], certifications: [], goals: [], values: [],
+  education: [], goals: [], values: [],
 };
 
 interface UsePortfolioDataReturn {
@@ -52,7 +51,6 @@ export function usePortfolioData(lang: string): UsePortfolioDataReturn {
           skills: d.skills ?? [],
           timeline: d.timeline ?? [],
           education: d.education ?? [],
-          certifications: d.certifications ?? [],
           goals: d.goals ?? [],
           values: d.values ?? [],
         });

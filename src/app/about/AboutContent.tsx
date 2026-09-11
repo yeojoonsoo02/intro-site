@@ -122,20 +122,6 @@ export default async function AboutContent({
           </div>
         )}
 
-        {data.certifications.length > 0 && (
-          <div>
-            <AboutSectionTitle>{t('certifications')}</AboutSectionTitle>
-            <ul className="space-y-2 text-base leading-[1.7]">
-              {data.certifications.map((c) => (
-                <li key={c.name} className="flex flex-wrap items-baseline gap-x-3">
-                  <span>{c.name}</span>
-                  {c.issuer && <span className="meta">{c.issuer}</span>}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
         <AboutInterests interests={profile.interests} lang={lang} />
 
         <div>

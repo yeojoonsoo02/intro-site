@@ -41,7 +41,7 @@ export default function PortfolioContent() {
       <FeaturedProjects items={featured} />
       <ProjectArchive items={archive} />
       <TimelineSection items={data.timeline} />
-      <EducationSection items={data.education} certifications={data.certifications} />
+      <EducationSection items={data.education} />
       <SkillsSection categories={data.skills} />
       <ValuesGoalsSection values={data.values} goals={data.goals} />
       <ContactSection />
