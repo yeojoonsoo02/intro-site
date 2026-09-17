@@ -1,10 +1,11 @@
 import type {
   ContextResponse,
+  DwellDay,
+  LocationData,
   MealEntry,
   MoodEntry,
   ScheduleEntry,
   SleepData,
-  TaskEntry,
   WeatherData,
 } from './types'
 
@@ -22,6 +23,14 @@ function formatKST(iso: string): string {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
+  })
+}
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('ko-KR', {
+    timeZone: 'Asia/Seoul',
+    month: 'long',
+    day: 'numeric',
   })
 }
 
@@ -56,17 +65,46 @@ function formatMeals(meals: MealEntry[] | null): string {
   return `오늘 식사: ${parts.join(' / ')}${calStr}`
 }
 
+function formatMinutes(total: number): string {
+  const h = Math.floor(total / 60)
+  const m = total % 60
+  if (h === 0) return `${m}분`
+  return m > 0 ? `${h}시간 ${m}분` : `${h}시간`
+}
+
+// 기록일을 함께 넘긴다 — 수면 기록이 며칠씩 밀려 있는데 "어젯밤"으로 넘겨
+// 보름 전 기록을 어젯밤 일처럼 답한 적이 있다.
 function formatSleep(sleep: SleepData | null): string {
   if (!sleep) return '수면: 기록 없음'
-  const hours = Math.floor(sleep.totalSleep / 60)
-  const mins = sleep.totalSleep % 60
-  const deepH = Math.floor(sleep.deep / 60)
-  const deepM = sleep.deep % 60
+  const date = formatDate(sleep.sleepEnd || sleep.date)
   const bedtime = formatKST(sleep.sleepStart)
   const wakeup = formatKST(sleep.sleepEnd)
-  const durStr = mins > 0 ? `${hours}시간 ${mins}분` : `${hours}시간`
-  const deepStr = deepM > 0 ? `${deepH}시간 ${deepM}분` : `${deepH}시간`
-  return `수면: 어젯밤 ${bedtime} 취침 → ${wakeup} 기상 (${durStr}, 깊은수면 ${deepStr})`
+  const stages = [
+    `깊은수면 ${formatMinutes(sleep.deep)}`,
+    `REM ${formatMinutes(sleep.rem)}`,
+    `코어 ${formatMinutes(sleep.core)}`,
+    sleep.awake ? `깬 시간 ${formatMinutes(sleep.awake)}` : '',
+  ].filter(Boolean)
+  return `수면(가장 최근 기록, ${date} 아침 기상): ${bedtime} 취침 → ${wakeup} 기상, 총 ${formatMinutes(sleep.totalSleep)} (${stages.join(', ')})`
+}
+
+function formatLocation(location: LocationData | null): string[] {
+  const lines = [`현재 위치: ${location?.current?.name || '기록 없음'}`]
+  const history = (location?.history ?? [])
+    .map((h) => ({ place: h.place || h.locationName, at: h.recordedAt }))
+    .filter((h): h is { place: string; at: string } => Boolean(h.place && h.at))
+  if (history.length > 0) {
+    lines.push(`최근 이동 기록: ${history.map((h) => `${formatKST(h.at)} ${h.place}`).join(' / ')}`)
+  }
+  return lines
+}
+
+function formatDwell(days: DwellDay[] | undefined): string {
+  if (!days || days.length === 0) return '최근 머문 곳: 기록 없음'
+  const parts = days.map(
+    (d) => `${d.date}: ${d.places.map((p) => `${p.place} ${formatMinutes(p.minutes)}`).join(', ')}`,
+  )
+  return `최근 날짜별 머문 곳:\n${parts.map((p) => `- ${p}`).join('\n')}`
 }
 
 function formatWeather(weather: WeatherData | null): string {
@@ -87,29 +125,24 @@ function formatMood(mood: MoodEntry | null): string {
   return `기분: ${moodStr}`
 }
 
-function formatTasks(tasks: TaskEntry[] | null): string {
-  if (!tasks || tasks.length === 0) return '할 일: 없음'
-  return `할 일: ${tasks.map((t) => t.title).join(', ')}`
-}
-
 function formatSchedule(schedule: ScheduleEntry[] | null): string {
   if (!schedule || schedule.length === 0) return '일정: 없음'
   return `일정: ${schedule.map((s) => s.title).join(', ')}`
 }
 
-// 위치·취침/기상 시각 공개는 본인 결정이다(2026-09-16). 방문자에게 그대로 나간다.
+// 위치(현재·이동 기록·머문 곳)와 수면 공개는 본인 결정이다(2026-09-16~17).
+// 할 일 목록과 GPS 좌표는 넘기지 않는다.
 export function formatLiveData(json: ContextResponse): string {
   const { data } = json
-  const locName = data.location?.current?.name
   return [
     `# 실시간 정보 (${formatTimestamp(json.timestamp)} KST)`,
     '',
-    `현재 위치: ${locName || '기록 없음'}`,
+    ...formatLocation(data.location),
+    formatDwell(data.dwell?.days),
     formatMeals(data.meals),
     formatSleep(data.sleep),
     formatWeather(data.weather),
     formatMood(data.mood),
-    formatTasks(data.tasks),
     formatSchedule(data.schedule),
   ].join('\n')
 }

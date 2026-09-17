@@ -5,10 +5,12 @@ export interface MealEntry {
 }
 
 export interface SleepData {
+  date: string
   totalSleep: number
   deep: number
   rem: number
   core: number
+  awake?: number
   sleepStart: string
   sleepEnd: string
 }
@@ -23,19 +25,26 @@ export interface WeatherData {
   uvIndex: number | null
 }
 
+export interface LocationHistoryEntry {
+  place?: string
+  locationName?: string
+  recordedAt: string
+}
+
 export interface LocationData {
   current: { name: string } | null
+  history?: LocationHistoryEntry[]
+}
+
+export interface DwellDay {
+  date: string
+  places: { place: string; minutes: number }[]
 }
 
 export interface ScheduleEntry {
   title: string
   start?: string
   end?: string
-}
-
-export interface TaskEntry {
-  title: string
-  status?: string
 }
 
 export interface MoodEntry {
@@ -50,7 +59,7 @@ export interface ContextResponse {
     location: LocationData | null
     meals: MealEntry[] | null
     mood: MoodEntry | null
-    tasks: TaskEntry[] | null
+    dwell?: { days: DwellDay[] } | null
     sleep: SleepData | null
     weather: WeatherData | null
     checkin: unknown
