@@ -25,7 +25,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   if (!sameOrigin(req)) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   const me = readSession(req);
-  if (!me) return NextResponse.json({ error: 'Please log in.' }, { status: 401 });
+  if (!me) return NextResponse.json({ error: '로그인이 필요해요.' }, { status: 401 });
   if (!adminDb) return NextResponse.json({ ok: false });
   const body = (await req.json().catch(() => null)) as { tab?: unknown; away?: unknown } | null;
   const tab = typeof body?.tab === 'string' ? body.tab.slice(0, 32) : '';

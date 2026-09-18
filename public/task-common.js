@@ -10,7 +10,7 @@
       credentials: 'same-origin',
     });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+    if (!res.ok) throw new Error(data.error || `요청에 실패했어요 (${res.status})`);
     return data;
   }
 
@@ -26,17 +26,17 @@
 
   function renderBar(el) {
     if (state.me) {
-      el.innerHTML = `<span>Logged in as <b>${esc(state.me.name)}</b></span>
-        <button type="button" class="linkbtn" data-act="logout">Log out</button>`;
+      el.innerHTML = `<span><b>${esc(state.me.name)}</b>님으로 로그인됨</span>
+        <button type="button" class="linkbtn" data-act="logout">로그아웃</button>`;
       return;
     }
     el.innerHTML = `<form class="login" autocomplete="on">
-        <select name="member" required aria-label="Name">
-          <option value="">Select name</option>
+        <select name="member" required aria-label="이름">
+          <option value="">이름 선택</option>
           ${state.members.map((m) => `<option value="${esc(m.id)}">${esc(m.name)}</option>`).join('')}
         </select>
-        <input name="password" type="password" placeholder="Password" required autocomplete="current-password" aria-label="Password">
-        <button type="submit">Log in</button>
+        <input name="password" type="password" placeholder="비밀번호" inputmode="numeric" required autocomplete="current-password" aria-label="비밀번호">
+        <button type="submit">로그인</button>
         <span class="err" role="alert"></span>
       </form>`;
   }

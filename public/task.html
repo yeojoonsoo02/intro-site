@@ -1,64 +1,87 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>TemuTemu Docs</title>
+<title>테무테무 자료실</title>
 <link rel="stylesheet" href="/task-common.css">
 <style>
-  :root { --bg:#fafaf9; --fg:#1c1917; --muted:#78716c; --line:#e7e5e4; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#1c1917; --fg:#f5f5f4; --muted:#a8a29e; --line:#44403c; } }
-  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.5 -apple-system, system-ui, sans-serif; }
-  main { max-width:560px; margin:0 auto; padding:56px 16px; }
-  h1 { font-size:22px; margin:0 0 4px; }
-  p { color:var(--muted); margin:0 0 28px; font-size:14px; }
-  a { display:flex; justify-content:space-between; gap:12px; padding:16px 0; border-top:1px solid var(--line); color:inherit; text-decoration:none; }
-  .list a:last-child { border-bottom:1px solid var(--line); }
-  h2 { font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin:32px 0 4px; }
-  a:hover span:first-child { text-decoration:underline; }
-  small { color:var(--muted); white-space:nowrap; }
-  .file { display:flex; align-items:center; gap:12px; padding:14px 0; border-top:1px solid var(--line); }
-  .file:last-child { border-bottom:1px solid var(--line); }
-  .file a { display:block; flex:1; min-width:0; padding:0; border:0; overflow-wrap:anywhere; }
-  .file a:hover { text-decoration:underline; }
-  .file .linkbtn { font-size:13px; }
-  .uploader { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:10px 0 4px; }
-  .uploader input[type=file] { flex:1 1 200px; min-width:0; }
-  .preview { position:fixed; z-index:10; width:280px; max-height:380px; overflow:hidden; background:var(--bg); border:1px solid var(--line); border-radius:10px; box-shadow:0 12px 32px rgba(0,0,0,.18); padding:8px; pointer-events:none; opacity:0; transition:opacity .12s; }
-  .preview.on { opacity:1; }
-  .preview canvas, .preview img { display:block; width:100%; height:auto; border-radius:4px; }
-  .preview pre { margin:0; font:11px/1.45 ui-monospace, Menlo, monospace; white-space:pre-wrap; word-break:break-all; color:var(--fg); max-height:360px; overflow:hidden; }
+  main { max-width:600px; margin:0 auto; padding:40px 16px 80px; }
+  .top { margin:0 0 44px; }
+  .top h1 { font-size:40px; line-height:1.1; font-weight:800; letter-spacing:-.03em; margin:14px 0 10px; }
+  .lede { color:var(--muted); margin:0; font-size:15px; max-width:30em; }
+  section { margin:0 0 40px; }
+  h2 { font-size:17px; font-weight:700; margin:0 0 6px; display:flex; align-items:baseline; gap:8px; }
+  h2 .n { font-size:13px; font-weight:500; color:var(--muted); font-variant-numeric:tabular-nums; }
+  .list { border-top:1.5px solid var(--fg); }
+  .row { display:grid; grid-template-columns:1fr auto; align-items:center; gap:14px; padding:13px 10px 13px 12px;
+         border-bottom:1px solid var(--line); border-left:3px solid transparent; color:inherit; text-decoration:none; transition:background .15s ease-out, border-color .15s ease-out; }
+  a.row:hover { background:var(--tape-soft); border-left-color:var(--tape); }
+  .row .t { font-weight:500; overflow-wrap:anywhere; }
+  .row .t em { font-style:normal; color:var(--muted); font-weight:400; font-size:14px; margin-left:6px; }
+  .meta { display:flex; align-items:center; gap:10px; font-size:13px; color:var(--muted); white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .kind { font-size:10.5px; font-weight:700; letter-spacing:.05em; border:1px solid currentColor; border-radius:3px; padding:0 5px; line-height:17px; }
+  .file .t a { color:inherit; text-decoration:none; }
+  .file .t a:hover { text-decoration:underline; text-decoration-color:var(--tape); text-underline-offset:3px; }
+  .file .by { display:block; font-size:13px; color:var(--muted); font-weight:400; }
+  .uploader { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:12px 0 14px; padding:12px; background:var(--soft); border-radius:8px; }
+  .uploader input[type=file] { position:absolute; width:1px; height:1px; opacity:0; }
+  .pick { flex:0 0 auto; }
+  .picked { flex:1 1 140px; min-width:0; font-size:14px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .uploader:focus-within .pick { outline:2px solid var(--tape); outline-offset:1px; }
+  .empty { color:var(--muted); font-size:14px; padding:18px 0; border-bottom:1px solid var(--line); }
+  .preview { position:fixed; z-index:10; width:280px; max-height:380px; overflow:hidden; background:var(--bg); border:1px solid var(--line); border-radius:8px;
+             box-shadow:0 1px 2px rgba(28,27,26,.12), 0 14px 32px -8px rgba(28,27,26,.28); padding:8px; pointer-events:none; opacity:0; transform:translateY(4px);
+             transition:opacity .14s ease-out, transform .22s cubic-bezier(.34,1.4,.64,1); }
+  .preview.on { opacity:1; transform:none; }
+  .preview canvas, .preview img { display:block; width:100%; height:auto; border-radius:3px; }
+  .preview pre { margin:0; font:11px/1.5 ui-monospace, Menlo, monospace; white-space:pre-wrap; word-break:break-all; color:var(--fg); max-height:360px; overflow:hidden; }
   .preview .msg { font-size:12px; color:var(--muted); padding:20px 0; text-align:center; }
-  .empty { color:var(--muted); font-size:14px; padding:14px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
 </style>
 </head>
 <body>
 <main>
   <div class="bar" id="bar"></div>
-  <h1>TemuTemu</h1>
-  <p>Technology &amp; Management team project · Kwangwoon Univ.</p>
-  <h2>Meeting Notes</h2>
-  <div class="list">
-    <a href="/task.pdf"><span>Meeting Minutes #1</span><small>Sep 17, 2026 · PDF</small></a>
-    <a href="/task-transcript.txt"><span>Meeting #1 Transcript</span><small>Sep 17, 2026 · TXT</small></a>
-  </div>
-  <h2>Slides</h2>
-  <div class="list">
-    <a href="/task-proposal.pdf"><span>Project Proposal</span><small>Sep 17, 2026 · PDF</small></a>
-  </div>
-  <h2>Schedule</h2>
-  <div class="list">
-    <a href="/task-schedule.pdf"><span>Project Schedule</span><small>v2 · PDF</small></a>
-    <a href="/task-timetable.html"><span>Team Timetables</span><small>8 members · Web</small></a>
-  </div>
-  <h2>Shared Files</h2>
-  <form class="uploader" id="uploader" hidden>
-    <input type="file" name="file" required aria-label="File">
-    <button class="btn primary" type="submit">Upload</button>
-    <span class="err" role="alert"></span>
-  </form>
-  <div id="files"><div class="empty">Loading…</div></div>
+  <header class="top">
+    <span class="tape">광운대 기술과경영 · 팀 프로젝트</span>
+    <h1>테무테무</h1>
+    <p class="lede">중국에서 떼 와서 직접 팔아 보는 한 학기 프로젝트. 회의록, 발표 자료, 일정과 팀원들이 올린 파일을 여기 모아 둡니다.</p>
+  </header>
+
+  <section>
+    <h2>회의 기록 <span class="n">2</span></h2>
+    <div class="list">
+      <a class="row" href="/task.pdf"><span class="t">1차 회의록</span><span class="meta">9월 17일 <span class="kind">PDF</span></span></a>
+      <a class="row" href="/task-transcript.txt"><span class="t">1차 회의 녹취 원문<em>57분</em></span><span class="meta">9월 17일 <span class="kind">TXT</span></span></a>
+    </div>
+  </section>
+
+  <section>
+    <h2>발표 자료 <span class="n">1</span></h2>
+    <div class="list">
+      <a class="row" href="/task-proposal.pdf"><span class="t">팀 프로젝트 제안서</span><span class="meta">9월 17일 <span class="kind">PDF</span></span></a>
+    </div>
+  </section>
+
+  <section>
+    <h2>일정 <span class="n">2</span></h2>
+    <div class="list">
+      <a class="row" href="/task-schedule.pdf"><span class="t">프로젝트 일정표<em>v2</em></span><span class="meta">9월 18일 <span class="kind">PDF</span></span></a>
+      <a class="row" href="/task-timetable.html"><span class="t">팀원 시간표<em>8명 · 빈 시간 찾기</em></span><span class="meta"><span class="kind">WEB</span></span></a>
+    </div>
+  </section>
+
+  <section>
+    <h2>공유 파일 <span class="n" id="file-count"></span></h2>
+    <form class="uploader" id="uploader" hidden>
+      <label class="btn pick">파일 선택<input type="file" name="file" required aria-label="올릴 파일"></label>
+      <span class="picked" id="picked">선택한 파일 없음</span>
+      <button class="btn primary" type="submit">올리기</button>
+      <span class="err" role="alert"></span>
+    </form>
+    <div class="list" id="files"><div class="empty">불러오는 중…</div></div>
+  </section>
 </main>
 <script src="/task-common.js"></script>
 <script type="module">
@@ -68,16 +91,18 @@ const filesEl = document.getElementById('files');
 const form = document.getElementById('uploader');
 
 const fmtSize = (b) => b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB';
-const fmtDate = (t) => new Date(t).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+const fmtDate = (t) => { const d = new Date(t); return `${d.getMonth() + 1}월 ${d.getDate()}일`; };
+const kindLabel = (name) => (name.split('.').pop() || '').slice(0, 4).toUpperCase();
 
 async function loadFiles() {
   try {
     const { files } = await api('/api/task/files');
-    filesEl.innerHTML = files.length ? files.map((f) => `<div class="file">
-        <a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name)}</a>
-        <small>${esc(f.uploaderName)} · ${fmtDate(f.createdAt)} · ${fmtSize(f.size)}</small>
-        ${state.me && state.me.id === f.uploader ? `<button class="linkbtn" data-del="${esc(f.id)}">Delete</button>` : ''}
-      </div>`).join('') : '<div class="empty">No files yet. Log in to upload.</div>';
+    document.getElementById('file-count').textContent = files.length || '';
+    filesEl.innerHTML = files.length ? files.map((f) => `<div class="row file">
+        <span class="t"><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name)}</a>
+          <span class="by">${esc(f.uploaderName)} · ${fmtSize(f.size)}${state.me && state.me.id === f.uploader ? ` · <button class="linkbtn" data-del="${esc(f.id)}">삭제</button>` : ''}</span></span>
+        <span class="meta">${fmtDate(f.createdAt)} <span class="kind">${esc(kindLabel(f.name))}</span></span>
+      </div>`).join('') : `<div class="empty">${state.me ? '아직 올라온 파일이 없어요. 위에서 첫 파일을 올려 보세요.' : '아직 올라온 파일이 없어요. 로그인하면 올릴 수 있어요.'}</div>`;
   } catch (e) {
     filesEl.innerHTML = `<div class="empty">${esc(e.message)}</div>`;
   }
@@ -91,24 +116,29 @@ filesEl.addEventListener('click', async (e) => {
   loadFiles();
 });
 
+form.file.addEventListener('change', () => {
+  document.getElementById('picked').textContent = form.file.files[0]?.name || '선택한 파일 없음';
+});
+
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   const file = form.file.files[0];
   const btn = form.querySelector('button');
   const err = form.querySelector('.err');
   if (!file) return;
-  if (file.size > 50 * 1024 * 1024) { err.textContent = 'Max file size is 50 MB.'; return; }
+  if (file.size > 50 * 1024 * 1024) { err.textContent = '50MB까지 올릴 수 있어요.'; return; }
   err.textContent = '';
-  btn.disabled = true; btn.textContent = 'Uploading…';
+  btn.disabled = true; btn.textContent = '올리는 중…';
   try {
     const blob = await upload('task/' + file.name, file, { access: 'public', handleUploadUrl: '/api/task/upload' });
     await api('/api/task/files', { method: 'POST', body: JSON.stringify({ url: blob.url, name: file.name }) });
     form.reset();
+    document.getElementById('picked').textContent = '선택한 파일 없음';
     loadFiles();
   } catch (ex) {
     err.textContent = ex.message;
   } finally {
-    btn.disabled = false; btn.textContent = 'Upload';
+    btn.disabled = false; btn.textContent = '올리기';
   }
 });
 
@@ -171,7 +201,7 @@ if (matchMedia('(hover: hover)').matches) {
     const kind = kindOf(href);
     if (!kind) return;
     current = a;
-    tip.innerHTML = '<div class="msg">Loading preview…</div>';
+    tip.innerHTML = '<div class="msg">미리보기 불러오는 중…</div>';
     tip.classList.add('on');
     place(e.clientX, e.clientY);
     if (!cache.has(href)) cache.set(href, build(href, kind).catch(() => null));
@@ -179,7 +209,7 @@ if (matchMedia('(hover: hover)').matches) {
     if (current !== a) return;
     tip.innerHTML = '';
     if (el) tip.appendChild(el instanceof HTMLCanvasElement ? copyCanvas(el) : el.cloneNode(true));
-    else tip.innerHTML = '<div class="msg">Preview not available</div>';
+    else tip.innerHTML = '<div class="msg">미리보기를 지원하지 않는 형식이에요</div>';
     place(e.clientX, e.clientY);
   });
   document.querySelector('main').addEventListener('mousemove', (e) => { if (current) place(e.clientX, e.clientY); });

@@ -22,7 +22,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   if (!sameOrigin(req)) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   const me = readSession(req);
-  if (!me) return NextResponse.json({ error: 'Please log in.' }, { status: 401 });
+  if (!me) return NextResponse.json({ error: '로그인이 필요해요.' }, { status: 401 });
   if (!adminDb) return NextResponse.json({ error: 'unavailable' }, { status: 503 });
 
   const body = (await req.json().catch(() => null)) as { url?: unknown; name?: unknown } | null;
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
   try {
     meta = await head(body.url);
   } catch {
-    return NextResponse.json({ error: 'File not found.' }, { status: 400 });
+    return NextResponse.json({ error: '파일을 찾을 수 없어요.' }, { status: 400 });
   }
   if (!meta.pathname.startsWith('task/')) return NextResponse.json({ error: 'invalid' }, { status: 400 });
 
@@ -48,16 +48,16 @@ export async function POST(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   if (!sameOrigin(req)) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   const me = readSession(req);
-  if (!me) return NextResponse.json({ error: 'Please log in.' }, { status: 401 });
+  if (!me) return NextResponse.json({ error: '로그인이 필요해요.' }, { status: 401 });
   if (!adminDb) return NextResponse.json({ error: 'unavailable' }, { status: 503 });
 
   const id = req.nextUrl.searchParams.get('id');
   if (!id || id.length > 64) return NextResponse.json({ error: 'invalid' }, { status: 400 });
   const ref = adminDb.collection('task_files').doc(id);
   const snap = await ref.get();
-  if (!snap.exists) return NextResponse.json({ error: 'Not found.' }, { status: 404 });
+  if (!snap.exists) return NextResponse.json({ error: '이미 삭제된 파일이에요.' }, { status: 404 });
   if (snap.data()!.uploader !== me) {
-    return NextResponse.json({ error: 'Only the uploader can delete this file.' }, { status: 403 });
+    return NextResponse.json({ error: '올린 사람만 삭제할 수 있어요.' }, { status: 403 });
   }
 
   await del(snap.data()!.url as string).catch(() => {});
