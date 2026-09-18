@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>TemuTemu Timetables</title>
+<style>
+  :root { --bg:#fafaf9; --fg:#1c1917; --muted:#78716c; --line:#e7e5e4; --soft:#f5f5f4; --accent:#e8590c; --free:#dcfce7; --free-fg:#166534; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#1c1917; --fg:#f5f5f4; --muted:#a8a29e; --line:#3a3532; --soft:#292524; --accent:#fb923c; --free:#14532d; --free-fg:#bbf7d0; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 -apple-system, system-ui, "Apple SD Gothic Neo", sans-serif; }
+  main { max-width:760px; margin:0 auto; padding:40px 16px 64px; }
+  .back { color:var(--muted); text-decoration:none; font-size:14px; }
+  h1 { font-size:22px; margin:12px 0 4px; }
+  .sub { color:var(--muted); margin:0 0 20px; font-size:14px; }
+  .tabs { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }
+  .tabs button { font:inherit; font-size:14px; padding:6px 12px; border:1px solid var(--line); background:transparent; color:var(--fg); border-radius:999px; cursor:pointer; }
+  .tabs button[aria-selected="true"] { background:var(--fg); color:var(--bg); border-color:var(--fg); }
+  .grid { display:grid; grid-template-columns:36px repeat(5, 1fr); border:1px solid var(--line); border-radius:10px; overflow:hidden; position:relative; }
+  .head { font-size:13px; color:var(--muted); text-align:center; padding:6px 0; border-bottom:1px solid var(--line); background:var(--soft); }
+  .times { position:relative; border-right:1px solid var(--line); }
+  .times span { position:absolute; right:4px; font-size:11px; color:var(--muted); transform:translateY(-1px); }
+  .col { position:relative; border-left:1px solid var(--line); }
+  .col:first-of-type { border-left:0; }
+  .hr { position:absolute; left:0; right:0; border-top:1px solid var(--line); }
+  .blk { position:absolute; left:2px; right:2px; border-radius:6px; padding:4px 5px; font-size:12px; line-height:1.25; overflow:hidden; color:#1c1917; }
+  .blk b { display:block; font-weight:600; word-break:keep-all; }
+  .blk small { opacity:.75; }
+  .cell { position:absolute; left:0; right:0; display:flex; align-items:center; justify-content:center; font-size:11px; }
+  .online { margin-top:14px; font-size:14px; color:var(--muted); }
+  .legend { display:flex; gap:14px; align-items:center; font-size:13px; color:var(--muted); margin:0 0 10px; flex-wrap:wrap; }
+  .sw { display:inline-block; width:12px; height:12px; border-radius:3px; vertical-align:-1px; margin-right:4px; }
+  .note { font-size:12px; color:var(--muted); margin-top:10px; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="/task.html">← TemuTemu Docs</a>
+  <h1>Team Timetables</h1>
+  <p class="sub">Fall 2026 · 7 members · Mon–Fri</p>
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div id="legend"></div>
+  <div class="grid" id="grid"></div>
+  <div class="online" id="online"></div>
+  <p class="note" id="note"></p>
+</main>
+<script>
+// [day(0=Mon), start, end, course, room]; times in 24h "HH:MM"
+const PEOPLE = [
+  { name: "여준수", classes: [
+    [0,"10:30","12:00","인공지능","새빛204"], [0,"12:00","13:30","TOEIC말하기연습","한울404"],
+    [0,"13:30","15:00","인공지능응용","참105"], [0,"15:00","16:30","컴퓨터네트워크","참B101"],
+    [0,"18:00","21:00","인체데이터분석및실습","",true],
+    [2,"09:00","10:30","인공지능","새빛204"], [2,"12:00","13:30","인공지능응용","참105"],
+    [2,"13:30","15:00","TOEIC말하기연습","한울404"], [2,"16:30","18:00","컴퓨터네트워크","참B101"],
+    [4,"12:00","15:00","기술과경영","새빛205"], [4,"18:00","21:00","첨단기술을연결하는스마트…","",true],
+  ], online: [] },
+  { name: "최우진", classes: [
+    [0,"13:30","15:00","로봇내비게이션","참B101"], [0,"16:30","18:00","강화학습","새빛202"],
+    [2,"12:00","13:30","로봇내비게이션","참B101"], [2,"15:00","16:30","강화학습","새빛202"],
+    [4,"12:00","15:00","기술과경영","새빛205"],
+  ], online: ["4차산업혁명과인공지능:융합적분석과인문학적통찰","글로벌모빌리티와지속가능성"] },
+  { name: "박성준", classes: [
+    [0,"11:30","13:00","근로",""], [0,"13:30","15:00","이산수학","새빛205"], [0,"18:00","21:00","학회",""],
+    [1,"08:45","11:15","근로",""], [1,"13:30","15:00","고급C프로그래밍","새빛205"],
+    [2,"08:45","11:15","근로",""], [2,"12:00","13:30","이산수학","새빛205"], [2,"18:00","20:30","로봇산업입문","기305"],
+    [3,"12:00","13:30","고급C프로그래밍","새빛205"], [3,"14:00","19:00","근로",""],
+    [4,"09:00","12:00","로봇명사와의만남","비504"], [4,"12:00","15:00","기술과경영","새빛205"],
+    [4,"15:00","18:00","로봇기업경영","새빛B101"], [4,"18:30","21:00","근로",""],
+  ], online: [] },
+  { name: "박선영", classes: [
+    [0,"13:30","15:00","인공지능응용",""], [0,"15:00","16:30","빅데이터프로그래밍",""],
+    [1,"15:00","16:30","데이터사이언스개론",""],
+    [2,"12:00","13:30","인공지능응용",""], [2,"16:30","18:00","빅데이터프로그래밍",""],
+    [3,"16:30","18:00","데이터사이언스개론",""],
+    [4,"12:00","15:00","기술과경영",""], [4,"15:00","18:00","인공지능과법",""],
+  ], online: ["데이터마이닝"] },
+  { name: "원성호", classes: [
+    [0,"15:00","16:30","금융과인공지능","누403"], [0,"16:30","18:45","경력개발과취업전략","새빛205"],
+    [1,"13:30","15:00","AI프로그래밍2","누405"],
+    [2,"16:30","18:00","금융과인공지능","누403"],
+    [3,"12:00","13:30","AI프로그래밍2","누405"],
+    [4,"09:00","12:00","로봇명사와의만남","비504"], [4,"12:00","15:00","기술과경영","새빛205"],
+  ], online: ["자료구조","인터랙티브심리학","데이터마이닝"] },
+  { name: "신창하", classes: [
+    [0,"12:00","13:30","이산수학","새빛205"], [0,"13:30","15:00","AI멀티미디어활용","비502"],
+    [1,"12:00","13:30","선형대수","새빛102"],
+    [2,"12:00","13:30","AI멀티미디어활용","비502"], [2,"13:30","15:00","이산수학","새빛205"],
+    [3,"13:30","15:00","선형대수","새빛102"],
+    [4,"12:00","15:00","기술과경영","새빛205"], [4,"15:00","18:00","지능형로봇의이해","비504"],
+  ], online: ["생체데이터와인공지능의이해","자료구조","인터랙티브심리학"] },
+  { name: "부연후", classes: [
+    [1,"10:30","12:00","모바일프로그래밍","새빛103"], [1,"12:00","13:30","선형대수","새빛102"],
+    [1,"13:30","15:00","상주",""], [1,"15:00","18:45","협동로봇실습","새빛B101"], [1,"19:00","20:00","하성 회의",""],
+    [2,"15:30","18:00","봉사",""],
+    [3,"09:00","10:30","모바일프로그래밍","새빛103"], [3,"13:30","15:00","선형대수","새빛102"], [3,"16:00","18:00","봉사",""],
+    [4,"12:00","15:00","기술과경영","새빛205"], [4,"15:00","18:00","로봇기업경영","새빛B101"],
+  ], online: ["웨어러블로봇하드웨어의특징과제어시스템의이해"] },
+];
+const DAYS = ["Mon","Tue","Wed","Thu","Fri"];
+const START = 8.5, END = 21, PX = 44; // px per hour
+const PALETTE = ["#f4b4a4","#f7d58b","#b9dc9b","#9fd8c8","#a9c1f0","#d3b5ec","#f5b8cf","#c9d3a0","#f2c79e","#a8d4ea"];
+const toH = t => { const [h,m] = t.split(":").map(Number); return h + m/60; };
+const y = h => (h - START) * PX;
+const colorOf = name => { let s = 0; for (const c of name) s = (s*31 + c.charCodeAt(0)) >>> 0; return PALETTE[s % PALETTE.length]; };
+
+function frame() {
+  const g = document.getElementById("grid");
+  g.innerHTML = '<div class="head"></div>' + DAYS.map(d => `<div class="head">${d}</div>`).join("");
+  const H = (END - START) * PX;
+  const times = document.createElement("div"); times.className = "times"; times.style.height = H + "px";
+  for (let h = 9; h <= END; h++) times.insertAdjacentHTML("beforeend", `<span style="top:${y(h)}px">${h}</span>`);
+  g.appendChild(times);
+  return DAYS.map(() => {
+    const c = document.createElement("div"); c.className = "col"; c.style.height = H + "px";
+    for (let h = 9; h < END; h++) c.insertAdjacentHTML("beforeend", `<div class="hr" style="top:${y(h)}px"></div>`);
+    g.appendChild(c); return c;
+  });
+}
+
+function showPerson(p) {
+  const cols = frame();
+  let guessed = false;
+  for (const [d, s, e, course, room, est] of p.classes) {
+    if (est) guessed = true;
+    const top = y(toH(s)), h = (toH(e) - toH(s)) * PX;
+    cols[d].insertAdjacentHTML("beforeend",
+      `<div class="blk" style="top:${top+1}px;height:${h-2}px;background:${colorOf(course)}" title="${course} ${s}–${e}">
+        <b>${course}</b><small>${s}–${e}${est ? "?" : ""}${room ? " · " + room : ""}</small></div>`);
+  }
+  document.getElementById("legend").innerHTML = "";
+  document.getElementById("online").textContent = p.online.length ? "Online: " + p.online.join(" · ") : "";
+  document.getElementById("note").textContent = guessed ? "? = end time cut off in the screenshot (estimated)." : "";
+}
+
+function showAll() {
+  const cols = frame();
+  const STEP = 0.5;
+  for (let d = 0; d < 5; d++) {
+    for (let t = START; t < END; t += STEP) {
+      const busy = PEOPLE.filter(p => p.classes.some(([cd, s, e]) => cd === d && toH(s) < t + STEP && toH(e) > t)).map(p => p.name);
+      const free = PEOPLE.length - busy.length;
+      let bg = "transparent", fg = "var(--muted)", label = "";
+      if (busy.length === 0) { bg = "var(--free)"; fg = "var(--free-fg)"; label = "All free"; }
+      else { bg = `rgba(232,89,12,${0.08 + busy.length / PEOPLE.length * 0.55})`; fg = "var(--fg)"; label = `${free}/7`; }
+      const tip = busy.length ? "Busy: " + busy.join(", ") : "Everyone free";
+      cols[d].insertAdjacentHTML("beforeend",
+        `<div class="cell" style="top:${y(t)+1}px;height:${STEP*PX-1}px;background:${bg};color:${fg}" title="${tip}">${t >= 9 ? label : ""}</div>`);
+    }
+  }
+  document.getElementById("legend").innerHTML =
+    `<div class="legend"><span><i class="sw" style="background:var(--free)"></i>Everyone free</span>
+     <span><i class="sw" style="background:rgba(232,89,12,.35)"></i>Darker = more people busy</span><span>Number = people free</span></div>`;
+  document.getElementById("online").textContent = "";
+  document.getElementById("note").textContent = "Hover or tap a slot to see who is busy. Online-only courses are not counted.";
+}
+
+document.getElementById("grid").addEventListener("click", e => {
+  const c = e.target.closest(".cell"); if (c) document.getElementById("note").textContent = c.title;
+});
+const tabs = document.getElementById("tabs");
+const views = [{ label: "All · Free time", run: showAll }, ...PEOPLE.map(p => ({ label: p.name, run: () => showPerson(p) }))];
+views.forEach((v, i) => {
+  const b = document.createElement("button");
+  b.textContent = v.label; b.setAttribute("role", "tab");
+  b.onclick = () => { tabs.querySelectorAll("button").forEach(x => x.setAttribute("aria-selected", "false")); b.setAttribute("aria-selected", "true"); v.run(); };
+  tabs.appendChild(b);
+  if (i === 0) b.click();
+});
+</script>
+</body>
+</html>
