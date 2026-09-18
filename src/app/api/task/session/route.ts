@@ -1,25 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
   SESSION_COOKIE,
-  SESSION_MAX_AGE,
   TASK_MEMBERS,
-  createSession,
   isMemberId,
   memberName,
   readSession,
   sameOrigin,
+  setSessionCookie,
   verifyLogin,
 } from '@/lib/task/auth';
 
 export const dynamic = 'force-dynamic';
 
-// GET: 멤버 목록 + 현재 로그인한 사람
+// GET: 멤버 목록 + 현재 로그인한 사람. 로그인 상태면 세션 만료를 연장한다.
 export async function GET(req: NextRequest) {
   const me = readSession(req);
-  return NextResponse.json(
+  const res = NextResponse.json(
     { members: TASK_MEMBERS, me: me ? { id: me, name: memberName(me) } : null },
     { headers: { 'Cache-Control': 'no-store' } },
   );
+  if (me) setSessionCookie(res, me);
+  return res;
 }
 
 // POST: 로그인 { member, password }
@@ -44,13 +45,7 @@ export async function POST(req: NextRequest) {
   }
 
   const res = NextResponse.json({ me: { id: member, name: memberName(member) } });
-  res.cookies.set(SESSION_COOKIE, createSession(member), {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    path: '/',
-    maxAge: SESSION_MAX_AGE,
-  });
+  setSessionCookie(res, member);
   return res;
 }
 

@@ -42,6 +42,7 @@
   }
 
   async function mountBar(el) {
+    startPresence(el);
     el.addEventListener('submit', async (e) => {
       e.preventDefault();
       const f = e.target;
@@ -61,6 +62,7 @@
     });
     el.addEventListener('click', async (e) => {
       if (e.target.dataset.act !== 'logout') return;
+      await api('/api/task/presence', { method: 'POST', body: JSON.stringify({ tab: TAB, away: true }) }).catch(() => {});
       await api('/api/task/session', { method: 'DELETE' }).catch(() => {});
       state.me = null;
       renderBar(el);
@@ -75,6 +77,49 @@
     }
     renderBar(el);
     emit();
+  }
+
+  // Presence: logged-in viewers send a heartbeat while the tab is visible; everyone polls the list.
+  const BEAT_MS = 25000;
+  const TAB = Math.random().toString(36).slice(2, 12);
+  let presenceEl = null;
+  let online = [];
+
+  function renderPresence() {
+    if (!presenceEl) return;
+    const names = state.members.filter((m) => online.includes(m.id)).map((m) => m.name);
+    presenceEl.innerHTML = names.length
+      ? `<span class="dot"></span>접속 중 · ${names.map(esc).join(', ')}`
+      : '<span class="dot off"></span>접속 중인 팀원 없음';
+  }
+
+  async function pollPresence() {
+    try {
+      online = (await api('/api/task/presence')).online;
+      renderPresence();
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function beat() {
+    if (!state.me || document.visibilityState !== 'visible') return;
+    api('/api/task/presence', { method: 'POST', body: JSON.stringify({ tab: TAB }) }).then(pollPresence, () => {});
+  }
+
+  function away() {
+    if (!state.me) return;
+    navigator.sendBeacon('/api/task/presence', new Blob([JSON.stringify({ tab: TAB, away: true })], { type: 'application/json' }));
+  }
+
+  function startPresence(bar) {
+    presenceEl = document.createElement('div');
+    presenceEl.className = 'presence';
+    bar.after(presenceEl);
+    onAuth(() => { beat(); pollPresence(); });
+    setInterval(() => { beat(); pollPresence(); }, BEAT_MS);
+    document.addEventListener('visibilitychange', () => (document.visibilityState === 'visible' ? beat() : away()));
+    window.addEventListener('pagehide', away);
   }
 
   window.Task = { esc, api, onAuth, mountBar, state };
