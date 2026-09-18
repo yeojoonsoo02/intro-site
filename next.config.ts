@@ -18,6 +18,12 @@ const nextConfig: NextConfig = {
       { source: '/ko', destination: '/', permanent: true },
       // Team meeting minutes (TemuTemu #1) — short link
       { source: '/task', destination: '/task.pdf', permanent: false },
+      {
+        source: '/',
+        has: [{ type: 'host', value: 'task.yeojoonsoo02.com' }],
+        destination: '/task.pdf',
+        permanent: false,
+      },
     ];
   },
   async headers() {
