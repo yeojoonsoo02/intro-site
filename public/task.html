@@ -25,6 +25,11 @@
   .file .linkbtn { font-size:13px; }
   .uploader { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:10px 0 4px; }
   .uploader input[type=file] { flex:1 1 200px; min-width:0; }
+  .preview { position:fixed; z-index:10; width:280px; max-height:380px; overflow:hidden; background:var(--bg); border:1px solid var(--line); border-radius:10px; box-shadow:0 12px 32px rgba(0,0,0,.18); padding:8px; pointer-events:none; opacity:0; transition:opacity .12s; }
+  .preview.on { opacity:1; }
+  .preview canvas, .preview img { display:block; width:100%; height:auto; border-radius:4px; }
+  .preview pre { margin:0; font:11px/1.45 ui-monospace, Menlo, monospace; white-space:pre-wrap; word-break:break-all; color:var(--fg); max-height:360px; overflow:hidden; }
+  .preview .msg { font-size:12px; color:var(--muted); padding:20px 0; text-align:center; }
   .empty { color:var(--muted); font-size:14px; padding:14px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
 </style>
 </head>
@@ -108,6 +113,88 @@ form.addEventListener('submit', async (e) => {
 });
 
 onAuth((me) => { form.hidden = !me; loadFiles(); });
+
+// Hover preview: first page of PDFs, first lines of text files, images as-is. Mouse only (touch just opens).
+const PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/';
+const kindOf = (href) => {
+  const ext = (href.split('?')[0].split('.').pop() || '').toLowerCase();
+  return ext === 'pdf' ? 'pdf' : ext === 'txt' || ext === 'md' || ext === 'csv' ? 'text' : ['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext) ? 'image' : null;
+};
+const tip = document.createElement('div');
+tip.className = 'preview';
+document.body.appendChild(tip);
+const cache = new Map();   // href -> Promise<HTMLElement>
+let pdfjs = null, current = null;
+
+async function loadPdfjs() {
+  if (!pdfjs) {
+    pdfjs = await import(PDFJS + 'pdf.min.mjs');
+    pdfjs.GlobalWorkerOptions.workerSrc = PDFJS + 'pdf.worker.min.mjs';
+  }
+  return pdfjs;
+}
+
+async function build(href, kind) {
+  if (kind === 'image') {
+    const img = new Image(); img.src = href; await img.decode(); return img;
+  }
+  if (kind === 'text') {
+    const pre = document.createElement('pre');
+    pre.textContent = (await (await fetch(href)).text()).split('\n').slice(0, 28).join('\n');
+    return pre;
+  }
+  const lib = await loadPdfjs();
+  const task = lib.getDocument({ url: new URL(href, location.href).href });
+  const doc = await task.promise;
+  const page = await doc.getPage(1);
+  const base = page.getViewport({ scale: 1 });
+  const vp = page.getViewport({ scale: (264 / base.width) * (window.devicePixelRatio || 1) });
+  const canvas = document.createElement('canvas');
+  canvas.width = vp.width; canvas.height = vp.height;
+  await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+  task.destroy();
+  return canvas;
+}
+
+function place(x, y) {
+  const w = 298, h = tip.offsetHeight || 380;
+  const left = x + 20 + w > innerWidth ? Math.max(8, x - w - 12) : x + 20;
+  const top = Math.min(Math.max(8, y - 40), innerHeight - h - 8);
+  tip.style.left = left + 'px'; tip.style.top = top + 'px';
+}
+
+if (matchMedia('(hover: hover)').matches) {
+  document.querySelector('main').addEventListener('mouseover', async (e) => {
+    const a = e.target.closest('a[href]');
+    if (!a || a === current) return;
+    const href = a.getAttribute('href');
+    const kind = kindOf(href);
+    if (!kind) return;
+    current = a;
+    tip.innerHTML = '<div class="msg">Loading preview…</div>';
+    tip.classList.add('on');
+    place(e.clientX, e.clientY);
+    if (!cache.has(href)) cache.set(href, build(href, kind).catch(() => null));
+    const el = await cache.get(href);
+    if (current !== a) return;
+    tip.innerHTML = '';
+    if (el) tip.appendChild(el instanceof HTMLCanvasElement ? copyCanvas(el) : el.cloneNode(true));
+    else tip.innerHTML = '<div class="msg">Preview not available</div>';
+    place(e.clientX, e.clientY);
+  });
+  document.querySelector('main').addEventListener('mousemove', (e) => { if (current) place(e.clientX, e.clientY); });
+  document.querySelector('main').addEventListener('mouseout', (e) => {
+    const a = e.target.closest('a[href]');
+    if (a && a === current && !a.contains(e.relatedTarget)) { current = null; tip.classList.remove('on'); }
+  });
+}
+
+function copyCanvas(src) {
+  const c = document.createElement('canvas');
+  c.width = src.width; c.height = src.height;
+  c.getContext('2d').drawImage(src, 0, 0);
+  return c;
+}
 mountBar(document.getElementById('bar'));
 </script>
 </body>
