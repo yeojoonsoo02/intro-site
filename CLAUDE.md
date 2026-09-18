@@ -93,7 +93,16 @@ npm run embeddings:build # 지식 청크 임베딩 사전계산 (GEMINI_API_KEY 
 
 **콘텐츠 정본.** 챗봇 정본은 `src/data/knowledge.ts`, 화면 데이터는 Firestore(`portfolio/*_{lang}`, `profiles/main_{lang}`). 영문 표기는 "Junsu Yeo"(이전 표기 Yeojunsu는 alternateName·키워드로만), 직업은 "대학생 개발자", 기술 스택은 세 곳(knowledge·Firestore skills·JSON-LD)이 같은 합집합을 갖는다. 하나를 고치면 셋을 같이 고친다.
 
-## 7. 커밋
+## 7. TemuTemu 팀 공간 (task.yeojoonsoo02.com)
+
+같은 Vercel 프로젝트에 붙은 서브도메인. 루트는 `next.config.ts` host 리디렉트로 `public/task.html`로 간다. 페이지는 **정적 HTML**(`public/task*.html` + `task-common.js/css`)이고 API는 `src/app/api/task/*`.
+
+- 로그인: 이름 8명 중 선택 + 개인 비밀번호. 해시는 Firestore `task_members/{id}`(scrypt), 세션은 `TASK_SESSION_SECRET` HMAC 쿠키. 8회 실패 시 15분 잠금. 멤버 목록은 `src/lib/task/auth.ts`
+- 시간표: `task_timetables/{id}` — 읽기 공개, 본인만 수정
+- 파일: Vercel Blob 스토어 `temutemu-files`(`task/` 경로, 공개 URL) + 목록 `task_files`. 업로드는 브라우저 직접(`/api/task/upload` 토큰), 삭제는 올린 사람만
+- 비밀번호 재발급은 서비스 계정으로 `task_members` 문서의 hash/salt를 교체한다(평문은 어디에도 저장하지 않음)
+
+## 8. 커밋
 
 Conventional Commits + 스코프: `feat(chat):`, `fix(seo):`, `chore(chat):`
 main push = 프로덕션 배포다. 확인 없이 main에 올리지 않는다.

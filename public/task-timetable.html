@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>TemuTemu Timetables</title>
+<link rel="stylesheet" href="/task-common.css">
 <style>
   :root { --bg:#fafaf9; --fg:#1c1917; --muted:#78716c; --line:#e7e5e4; --soft:#f5f5f4; --accent:#e8590c; --free:#dcfce7; --free-fg:#166534; }
   @media (prefers-color-scheme: dark) { :root { --bg:#1c1917; --fg:#f5f5f4; --muted:#a8a29e; --line:#3a3532; --soft:#292524; --accent:#fb923c; --free:#14532d; --free-fg:#bbf7d0; } }
@@ -32,81 +33,49 @@
   .legend { display:flex; gap:14px; align-items:center; font-size:13px; color:var(--muted); margin:0 0 10px; flex-wrap:wrap; }
   .sw { display:inline-block; width:12px; height:12px; border-radius:3px; vertical-align:-1px; margin-right:4px; }
   .note { font-size:12px; color:var(--muted); margin-top:10px; }
+  .include { display:flex; flex-wrap:wrap; gap:6px 14px; font-size:13px; color:var(--muted); margin:0 0 10px; }
+  .include label { display:flex; align-items:center; gap:4px; cursor:pointer; }
+  .blk .x { position:absolute; top:2px; right:3px; border:0; background:rgba(0,0,0,.12); color:#1c1917; border-radius:4px; font-size:12px; line-height:1; padding:3px 5px; cursor:pointer; }
+  .editor { margin-top:14px; padding:14px; border:1px solid var(--line); border-radius:10px; display:grid; gap:10px; }
+  .editor .row { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+  .editor .row > * { flex:1 1 90px; min-width:0; }
+  .editor .row .btn { flex:0 0 auto; }
+  .editor label { font-size:13px; color:var(--muted); }
+  .tools { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:12px; }
 </style>
 </head>
 <body>
 <main>
+  <div class="bar" id="bar"></div>
   <a class="back" href="/task.html">← TemuTemu Docs</a>
   <h1>Team Timetables</h1>
-  <p class="sub">Fall 2026 · 7 members · Mon–Fri</p>
+  <p class="sub">Fall 2026 · 8 members · Mon–Fri</p>
   <div class="tabs" role="tablist" id="tabs"></div>
   <div id="legend"></div>
   <div class="grid" id="grid"></div>
   <div class="online" id="online"></div>
+  <div id="tools"></div>
   <p class="note" id="note"></p>
 </main>
+<script src="/task-common.js"></script>
 <script>
-// [day(0=Mon), start, end, course, room]; times in 24h "HH:MM"
-const PEOPLE = [
-  { name: "여준수", classes: [
-    [0,"10:30","12:00","인공지능","새빛204"], [0,"12:00","13:30","TOEIC말하기연습","한울404"],
-    [0,"13:30","15:00","인공지능응용","참105"], [0,"15:00","16:30","컴퓨터네트워크","참B101"],
-    [0,"18:00","21:00","인체데이터분석및실습","",true],
-    [2,"09:00","10:30","인공지능","새빛204"], [2,"12:00","13:30","인공지능응용","참105"],
-    [2,"13:30","15:00","TOEIC말하기연습","한울404"], [2,"16:30","18:00","컴퓨터네트워크","참B101"],
-    [4,"12:00","15:00","기술과경영","새빛205"], [4,"18:00","21:00","첨단기술을연결하는스마트…","",true],
-  ], online: [] },
-  { name: "최우진", classes: [
-    [0,"13:30","15:00","로봇내비게이션","참B101"], [0,"16:30","18:00","강화학습","새빛202"],
-    [2,"12:00","13:30","로봇내비게이션","참B101"], [2,"15:00","16:30","강화학습","새빛202"],
-    [4,"12:00","15:00","기술과경영","새빛205"],
-  ], online: ["4차산업혁명과인공지능:융합적분석과인문학적통찰","글로벌모빌리티와지속가능성"] },
-  { name: "박성준", classes: [
-    [0,"11:30","13:00","근로",""], [0,"13:30","15:00","이산수학","새빛205"], [0,"18:00","21:00","학회",""],
-    [1,"08:45","11:15","근로",""], [1,"13:30","15:00","고급C프로그래밍","새빛205"],
-    [2,"08:45","11:15","근로",""], [2,"12:00","13:30","이산수학","새빛205"], [2,"18:00","20:30","로봇산업입문","기305"],
-    [3,"12:00","13:30","고급C프로그래밍","새빛205"], [3,"14:00","19:00","근로",""],
-    [4,"09:00","12:00","로봇명사와의만남","비504"], [4,"12:00","15:00","기술과경영","새빛205"],
-    [4,"15:00","18:00","로봇기업경영","새빛B101"], [4,"18:30","21:00","근로",""],
-  ], online: [] },
-  { name: "박선영", classes: [
-    [0,"13:30","15:00","인공지능응용",""], [0,"15:00","16:30","빅데이터프로그래밍",""],
-    [1,"15:00","16:30","데이터사이언스개론",""],
-    [2,"12:00","13:30","인공지능응용",""], [2,"16:30","18:00","빅데이터프로그래밍",""],
-    [3,"16:30","18:00","데이터사이언스개론",""],
-    [4,"12:00","15:00","기술과경영",""], [4,"15:00","18:00","인공지능과법",""],
-  ], online: ["데이터마이닝"] },
-  { name: "원성호", classes: [
-    [0,"15:00","16:30","금융과인공지능","누403"], [0,"16:30","18:45","경력개발과취업전략","새빛205"],
-    [1,"13:30","15:00","AI프로그래밍2","누405"],
-    [2,"16:30","18:00","금융과인공지능","누403"],
-    [3,"12:00","13:30","AI프로그래밍2","누405"],
-    [4,"09:00","12:00","로봇명사와의만남","비504"], [4,"12:00","15:00","기술과경영","새빛205"],
-  ], online: ["자료구조","인터랙티브심리학","데이터마이닝"] },
-  { name: "신창하", classes: [
-    [0,"12:00","13:30","이산수학","새빛205"], [0,"13:30","15:00","AI멀티미디어활용","비502"],
-    [1,"12:00","13:30","선형대수","새빛102"],
-    [2,"12:00","13:30","AI멀티미디어활용","비502"], [2,"13:30","15:00","이산수학","새빛205"],
-    [3,"13:30","15:00","선형대수","새빛102"],
-    [4,"12:00","15:00","기술과경영","새빛205"], [4,"15:00","18:00","지능형로봇의이해","비504"],
-  ], online: ["생체데이터와인공지능의이해","자료구조","인터랙티브심리학"] },
-  { name: "부연후", classes: [
-    [1,"10:30","12:00","모바일프로그래밍","새빛103"], [1,"12:00","13:30","선형대수","새빛102"],
-    [1,"13:30","15:00","상주",""], [1,"15:00","18:45","협동로봇실습","새빛B101"], [1,"19:00","20:00","하성 회의",""],
-    [2,"15:30","18:00","봉사",""],
-    [3,"09:00","10:30","모바일프로그래밍","새빛103"], [3,"13:30","15:00","선형대수","새빛102"], [3,"16:00","18:00","봉사",""],
-    [4,"12:00","15:00","기술과경영","새빛205"], [4,"15:00","18:00","로봇기업경영","새빛B101"],
-  ], online: ["웨어러블로봇하드웨어의특징과제어시스템의이해"] },
-];
+const { esc, api, onAuth, mountBar } = window.Task;
 const DAYS = ["Mon","Tue","Wed","Thu","Fri"];
 const START = 8.5, END = 21, PX = 44; // px per hour
 const PALETTE = ["#f4b4a4","#f7d58b","#b9dc9b","#9fd8c8","#a9c1f0","#d3b5ec","#f5b8cf","#c9d3a0","#f2c79e","#a8d4ea"];
 const toH = t => { const [h,m] = t.split(":").map(Number); return h + m/60; };
 const y = h => (h - START) * PX;
 const colorOf = name => { let s = 0; for (const c of name) s = (s*31 + c.charCodeAt(0)) >>> 0; return PALETTE[s % PALETTE.length]; };
+const $ = id => document.getElementById(id);
+
+let PEOPLE = [];          // [{ id, name, classes:[{day,start,end,name,room,est}], online:[] }]
+let me = null;            // logged-in member { id, name }
+let current = "all";      // "all" or member id
+let draft = null;         // editable copy of my timetable while editing
+const included = new Set();
 
 function frame() {
-  const g = document.getElementById("grid");
+  const g = $("grid");
   g.innerHTML = '<div class="head"></div>' + DAYS.map(d => `<div class="head">${d}</div>`).join("");
   const H = (END - START) * PX;
   const times = document.createElement("div"); times.className = "times"; times.style.height = H + "px";
@@ -121,53 +90,142 @@ function frame() {
 
 function showPerson(p) {
   const cols = frame();
-  let guessed = false;
-  for (const [d, s, e, course, room, est] of p.classes) {
-    if (est) guessed = true;
-    const top = y(toH(s)), h = (toH(e) - toH(s)) * PX;
-    cols[d].insertAdjacentHTML("beforeend",
-      `<div class="blk" style="top:${top+1}px;height:${h-2}px;background:${colorOf(course)}" title="${course} ${s}–${e}">
-        <b>${course}</b><small>${s}–${e}${est ? "?" : ""}${room ? " · " + room : ""}</small></div>`);
+  const editing = draft && me && me.id === p.id;
+  const data = editing ? draft : p;
+  data.classes.forEach((k, i) => {
+    const top = y(Math.max(toH(k.start), START)), h = (Math.min(toH(k.end), END) - Math.max(toH(k.start), START)) * PX;
+    if (h <= 0) return;
+    cols[k.day].insertAdjacentHTML("beforeend",
+      `<div class="blk" style="top:${top+1}px;height:${h-2}px;background:${colorOf(k.name)}" title="${esc(k.name)} ${k.start}–${k.end}">
+        <b>${esc(k.name)}</b><small>${k.start}–${k.end}${k.est ? "?" : ""}${k.room ? " · " + esc(k.room) : ""}</small>
+        ${editing ? `<button class="x" data-rm="${i}" aria-label="Remove">×</button>` : ""}</div>`);
+  });
+  $("legend").innerHTML = "";
+  $("online").textContent = data.online.length ? "Online: " + data.online.join(" · ") : "";
+  const guessed = data.classes.some(k => k.est);
+  $("note").textContent = !data.classes.length && !editing ? "No timetable yet." : guessed ? "? = end time estimated." : "";
+  renderTools(p);
+}
+
+function renderTools(p) {
+  const t = $("tools");
+  if (!me || me.id !== p.id) { t.innerHTML = ""; return; }
+  if (!draft) {
+    t.innerHTML = `<div class="tools"><button class="btn primary" data-act="edit">Edit my timetable</button></div>`;
+    return;
   }
-  document.getElementById("legend").innerHTML = "";
-  document.getElementById("online").textContent = p.online.length ? "Online: " + p.online.join(" · ") : "";
-  document.getElementById("note").textContent = guessed ? "? = end time cut off in the screenshot (estimated)." : "";
+  t.innerHTML = `<div class="editor">
+      <label>Add a class</label>
+      <div class="row">
+        <select id="f-day">${DAYS.map((d, i) => `<option value="${i}">${d}</option>`).join("")}</select>
+        <input id="f-start" type="time" value="12:00" step="900" aria-label="Start">
+        <input id="f-end" type="time" value="13:30" step="900" aria-label="End">
+      </div>
+      <div class="row">
+        <input id="f-name" placeholder="Course / activity" maxlength="40">
+        <input id="f-room" placeholder="Room (optional)" maxlength="20">
+        <button class="btn" data-act="add">Add</button>
+      </div>
+      <label for="f-online">Online courses (comma separated)</label>
+      <input id="f-online" value="${esc(draft.online.join(", "))}">
+      <div class="row">
+        <button class="btn primary" data-act="save">Save</button>
+        <button class="btn" data-act="cancel">Cancel</button>
+      </div>
+      <span class="err" id="f-err" role="alert"></span>
+    </div>`;
 }
 
 function showAll() {
   const cols = frame();
   const STEP = 0.5;
+  const group = PEOPLE.filter(p => included.has(p.id));
   for (let d = 0; d < 5; d++) {
     for (let t = START; t < END; t += STEP) {
-      const busy = PEOPLE.filter(p => p.classes.some(([cd, s, e]) => cd === d && toH(s) < t + STEP && toH(e) > t)).map(p => p.name);
-      const free = PEOPLE.length - busy.length;
+      const busy = group.filter(p => p.classes.some(k => k.day === d && toH(k.start) < t + STEP && toH(k.end) > t)).map(p => p.name);
+      const free = group.length - busy.length;
       let bg = "transparent", fg = "var(--muted)", label = "";
-      if (busy.length === 0) { bg = "var(--free)"; fg = "var(--free-fg)"; label = "All free"; }
-      else { bg = `rgba(232,89,12,${0.08 + busy.length / PEOPLE.length * 0.55})`; fg = "var(--fg)"; label = `${free}/7`; }
+      if (!group.length) label = "";
+      else if (busy.length === 0) { bg = "var(--free)"; fg = "var(--free-fg)"; label = "All free"; }
+      else { bg = `rgba(232,89,12,${0.08 + busy.length / group.length * 0.55})`; fg = "var(--fg)"; label = `${free}/${group.length}`; }
       const tip = busy.length ? "Busy: " + busy.join(", ") : "Everyone free";
       cols[d].insertAdjacentHTML("beforeend",
-        `<div class="cell" style="top:${y(t)+1}px;height:${STEP*PX-1}px;background:${bg};color:${fg}" title="${tip}">${t >= 9 ? label : ""}</div>`);
+        `<div class="cell" style="top:${y(t)+1}px;height:${STEP*PX-1}px;background:${bg};color:${fg}" title="${esc(tip)}">${t >= 9 ? label : ""}</div>`);
     }
   }
-  document.getElementById("legend").innerHTML =
-    `<div class="legend"><span><i class="sw" style="background:var(--free)"></i>Everyone free</span>
+  $("legend").innerHTML =
+    `<div class="include">Include: ${PEOPLE.map(p => `<label><input type="checkbox" data-inc="${esc(p.id)}" ${included.has(p.id) ? "checked" : ""}>${esc(p.name)}${p.classes.length ? "" : " (no timetable)"}</label>`).join("")}</div>
+     <div class="legend"><span><i class="sw" style="background:var(--free)"></i>Everyone free</span>
      <span><i class="sw" style="background:rgba(232,89,12,.35)"></i>Darker = more people busy</span><span>Number = people free</span></div>`;
-  document.getElementById("online").textContent = "";
-  document.getElementById("note").textContent = "Hover or tap a slot to see who is busy. Online-only courses are not counted.";
+  $("online").textContent = "";
+  $("tools").innerHTML = "";
+  $("note").textContent = "Hover or tap a slot to see who is busy. Online-only courses are not counted.";
 }
 
-document.getElementById("grid").addEventListener("click", e => {
-  const c = e.target.closest(".cell"); if (c) document.getElementById("note").textContent = c.title;
+function render() {
+  if (current === "all") showAll();
+  else showPerson(PEOPLE.find(p => p.id === current));
+}
+
+function renderTabs() {
+  const tabs = $("tabs");
+  const views = [{ id: "all", label: "All · Free time" }, ...PEOPLE.map(p => ({ id: p.id, label: p.name }))];
+  tabs.innerHTML = views.map(v => `<button role="tab" data-tab="${esc(v.id)}" aria-selected="${v.id === current}">${esc(v.label)}</button>`).join("");
+}
+
+$("tabs").addEventListener("click", e => {
+  const id = e.target.dataset.tab; if (!id) return;
+  current = id; draft = null; renderTabs(); render();
 });
-const tabs = document.getElementById("tabs");
-const views = [{ label: "All · Free time", run: showAll }, ...PEOPLE.map(p => ({ label: p.name, run: () => showPerson(p) }))];
-views.forEach((v, i) => {
-  const b = document.createElement("button");
-  b.textContent = v.label; b.setAttribute("role", "tab");
-  b.onclick = () => { tabs.querySelectorAll("button").forEach(x => x.setAttribute("aria-selected", "false")); b.setAttribute("aria-selected", "true"); v.run(); };
-  tabs.appendChild(b);
-  if (i === 0) b.click();
+$("legend").addEventListener("change", e => {
+  const id = e.target.dataset.inc; if (!id) return;
+  e.target.checked ? included.add(id) : included.delete(id); render();
 });
+$("grid").addEventListener("click", e => {
+  const rm = e.target.dataset.rm;
+  if (rm !== undefined && draft) { draft.classes.splice(Number(rm), 1); render(); return; }
+  const c = e.target.closest(".cell"); if (c) $("note").textContent = c.title;
+});
+$("tools").addEventListener("click", async e => {
+  const act = e.target.dataset.act; if (!act) return;
+  const mine = PEOPLE.find(p => p.id === me.id);
+  const err = () => $("f-err");
+  if (act === "edit") { draft = structuredClone({ classes: mine.classes, online: mine.online }); render(); }
+  if (act === "cancel") { draft = null; render(); }
+  if (act === "add") {
+    const k = { day: Number($("f-day").value), start: $("f-start").value, end: $("f-end").value, name: $("f-name").value.trim(), room: $("f-room").value.trim() };
+    if (!k.name) { err().textContent = "Enter a course name."; return; }
+    if (!k.start || !k.end || k.start >= k.end) { err().textContent = "End time must be after start time."; return; }
+    const online = $("f-online").value;
+    draft.classes.push(k); render(); $("f-online").value = online;
+  }
+  if (act === "save") {
+    draft.online = $("f-online").value.split(",").map(s => s.trim()).filter(Boolean);
+    e.target.disabled = true;
+    try {
+      await api("/api/task/timetables", { method: "PUT", body: JSON.stringify(draft) });
+      mine.classes = draft.classes; mine.online = draft.online;
+      if (mine.classes.length) included.add(mine.id);
+      draft = null; render();
+      $("note").textContent = "Saved.";
+    } catch (ex) { err().textContent = ex.message; e.target.disabled = false; }
+  }
+});
+
+async function load() {
+  try {
+    const r = await api("/api/task/timetables");
+    PEOPLE = r.people;
+    PEOPLE.forEach(p => p.classes.length && included.add(p.id));
+  } catch (ex) {
+    $("note").textContent = ex.message;
+  }
+  renderTabs(); render();
+}
+
+onAuth(m => { me = m; draft = null; if (PEOPLE.length) render(); });
+mountBar($("bar"));
+load();
 </script>
 </body>
 </html>

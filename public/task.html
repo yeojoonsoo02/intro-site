@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>TemuTemu Docs</title>
+<link rel="stylesheet" href="/task-common.css">
 <style>
   :root { --bg:#fafaf9; --fg:#1c1917; --muted:#78716c; --line:#e7e5e4; }
   @media (prefers-color-scheme: dark) { :root { --bg:#1c1917; --fg:#f5f5f4; --muted:#a8a29e; --line:#44403c; } }
@@ -17,10 +18,19 @@
   h2 { font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin:32px 0 4px; }
   a:hover span:first-child { text-decoration:underline; }
   small { color:var(--muted); white-space:nowrap; }
+  .file { display:flex; align-items:center; gap:12px; padding:14px 0; border-top:1px solid var(--line); }
+  .file:last-child { border-bottom:1px solid var(--line); }
+  .file a { display:block; flex:1; min-width:0; padding:0; border:0; overflow-wrap:anywhere; }
+  .file a:hover { text-decoration:underline; }
+  .file .linkbtn { font-size:13px; }
+  .uploader { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:10px 0 4px; }
+  .uploader input[type=file] { flex:1 1 200px; min-width:0; }
+  .empty { color:var(--muted); font-size:14px; padding:14px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
 </style>
 </head>
 <body>
 <main>
+  <div class="bar" id="bar"></div>
   <h1>TemuTemu</h1>
   <p>Technology &amp; Management team project · Kwangwoon Univ.</p>
   <h2>Meeting Notes</h2>
@@ -35,8 +45,70 @@
   <h2>Schedule</h2>
   <div class="list">
     <a href="/task-schedule.pdf"><span>Project Schedule</span><small>v2 · PDF</small></a>
-    <a href="/task-timetable.html"><span>Team Timetables</span><small>7 members · Web</small></a>
+    <a href="/task-timetable.html"><span>Team Timetables</span><small>8 members · Web</small></a>
   </div>
+  <h2>Shared Files</h2>
+  <form class="uploader" id="uploader" hidden>
+    <input type="file" name="file" required aria-label="File">
+    <button class="btn primary" type="submit">Upload</button>
+    <span class="err" role="alert"></span>
+  </form>
+  <div id="files"><div class="empty">Loading…</div></div>
 </main>
+<script src="/task-common.js"></script>
+<script type="module">
+import { upload } from 'https://cdn.jsdelivr.net/npm/@vercel/blob@2.8.0/client/+esm';
+const { esc, api, onAuth, mountBar, state } = window.Task;
+const filesEl = document.getElementById('files');
+const form = document.getElementById('uploader');
+
+const fmtSize = (b) => b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB';
+const fmtDate = (t) => new Date(t).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+async function loadFiles() {
+  try {
+    const { files } = await api('/api/task/files');
+    filesEl.innerHTML = files.length ? files.map((f) => `<div class="file">
+        <a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name)}</a>
+        <small>${esc(f.uploaderName)} · ${fmtDate(f.createdAt)} · ${fmtSize(f.size)}</small>
+        ${state.me && state.me.id === f.uploader ? `<button class="linkbtn" data-del="${esc(f.id)}">Delete</button>` : ''}
+      </div>`).join('') : '<div class="empty">No files yet. Log in to upload.</div>';
+  } catch (e) {
+    filesEl.innerHTML = `<div class="empty">${esc(e.message)}</div>`;
+  }
+}
+
+filesEl.addEventListener('click', async (e) => {
+  const id = e.target.dataset.del;
+  if (!id) return;
+  e.target.disabled = true;
+  try { await api('/api/task/files?id=' + encodeURIComponent(id), { method: 'DELETE' }); } catch (ex) { e.target.textContent = ex.message; return; }
+  loadFiles();
+});
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const file = form.file.files[0];
+  const btn = form.querySelector('button');
+  const err = form.querySelector('.err');
+  if (!file) return;
+  if (file.size > 50 * 1024 * 1024) { err.textContent = 'Max file size is 50 MB.'; return; }
+  err.textContent = '';
+  btn.disabled = true; btn.textContent = 'Uploading…';
+  try {
+    const blob = await upload('task/' + file.name, file, { access: 'public', handleUploadUrl: '/api/task/upload' });
+    await api('/api/task/files', { method: 'POST', body: JSON.stringify({ url: blob.url, name: file.name }) });
+    form.reset();
+    loadFiles();
+  } catch (ex) {
+    err.textContent = ex.message;
+  } finally {
+    btn.disabled = false; btn.textContent = 'Upload';
+  }
+});
+
+onAuth((me) => { form.hidden = !me; loadFiles(); });
+mountBar(document.getElementById('bar'));
+</script>
 </body>
 </html>
