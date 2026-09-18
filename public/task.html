@@ -13,7 +13,8 @@
   h1 { font-size:22px; margin:0 0 4px; }
   p { color:var(--muted); margin:0 0 28px; font-size:14px; }
   a { display:flex; justify-content:space-between; gap:12px; padding:16px 0; border-top:1px solid var(--line); color:inherit; text-decoration:none; }
-  a:last-child { border-bottom:1px solid var(--line); }
+  .list a:last-child { border-bottom:1px solid var(--line); }
+  h2 { font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin:32px 0 4px; }
   a:hover span:first-child { text-decoration:underline; }
   small { color:var(--muted); white-space:nowrap; }
 </style>
@@ -22,10 +23,19 @@
 <main>
   <h1>TemuTemu</h1>
   <p>Technology &amp; Management team project · Kwangwoon Univ.</p>
-  <a href="/task-proposal.pdf"><span>Project Proposal</span><small>Sep 17, 2026 · PDF</small></a>
-  <a href="/task-schedule.pdf"><span>Project Schedule</span><small>v2 · PDF</small></a>
-  <a href="/task.pdf"><span>Meeting Minutes #1</span><small>Sep 17, 2026 · PDF</small></a>
-  <a href="/task-transcript.txt"><span>Meeting #1 Transcript</span><small>Sep 17, 2026 · TXT</small></a>
+  <h2>Meeting Notes</h2>
+  <div class="list">
+    <a href="/task.pdf"><span>Meeting Minutes #1</span><small>Sep 17, 2026 · PDF</small></a>
+    <a href="/task-transcript.txt"><span>Meeting #1 Transcript</span><small>Sep 17, 2026 · TXT</small></a>
+  </div>
+  <h2>Slides</h2>
+  <div class="list">
+    <a href="/task-proposal.pdf"><span>Project Proposal</span><small>Sep 17, 2026 · PDF</small></a>
+  </div>
+  <h2>Schedule</h2>
+  <div class="list">
+    <a href="/task-schedule.pdf"><span>Project Schedule</span><small>v2 · PDF</small></a>
+  </div>
 </main>
 </body>
 </html>
