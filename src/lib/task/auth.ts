@@ -1,5 +1,5 @@
 import { createHmac, scryptSync, timingSafeEqual } from 'crypto';
-import type { NextRequest } from 'next/server';
+import type { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebaseAdmin';
 
 // TemuTemu 팀 공간(task.yeojoonsoo02.com) 전용 로그인.
@@ -20,7 +20,8 @@ export const TASK_MEMBERS = [
 export type TaskMemberId = (typeof TASK_MEMBERS)[number]['id'];
 
 export const SESSION_COOKIE = 'task_s';
-export const SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30일
+// 한 기기에서 한 번 로그인하면 계속 유지 — 방문할 때마다 만료를 다시 1년 뒤로 민다(sliding).
+export const SESSION_MAX_AGE = 60 * 60 * 24 * 365;
 
 const MAX_FAILS = 8;
 const LOCK_MS = 15 * 60 * 1000;
@@ -46,6 +47,16 @@ function sign(payload: string): string {
 export function createSession(id: TaskMemberId): string {
   const payload = `${id}.${Date.now() + SESSION_MAX_AGE * 1000}`;
   return `${payload}.${sign(payload)}`;
+}
+
+export function setSessionCookie(res: NextResponse, id: TaskMemberId): void {
+  res.cookies.set(SESSION_COOKIE, createSession(id), {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+    maxAge: SESSION_MAX_AGE,
+  });
 }
 
 export function readSession(req: NextRequest): TaskMemberId | null {

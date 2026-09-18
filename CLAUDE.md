@@ -97,7 +97,8 @@ npm run embeddings:build # 지식 청크 임베딩 사전계산 (GEMINI_API_KEY 
 
 같은 Vercel 프로젝트에 붙은 서브도메인. 루트는 `next.config.ts` host 리디렉트로 `public/task.html`로 간다. 페이지는 **정적 HTML**(`public/task*.html` + `task-common.js/css`)이고 API는 `src/app/api/task/*`.
 
-- 로그인: 이름 8명 중 선택 + 개인 비밀번호. 해시는 Firestore `task_members/{id}`(scrypt), 세션은 `TASK_SESSION_SECRET` HMAC 쿠키. 8회 실패 시 15분 잠금. 멤버 목록은 `src/lib/task/auth.ts`
+- 로그인: 이름 8명 중 선택 + 개인 비밀번호. 해시는 Firestore `task_members/{id}`(scrypt), 세션은 `TASK_SESSION_SECRET` HMAC 쿠키(1년, 방문 시마다 연장 — 한 기기에서 계속 로그인 유지). 8회 실패 시 15분 잠금. 멤버 목록은 `src/lib/task/auth.ts`
+- 접속 중 표시: `task_presence/{id}` = { lastSeen, tab }. 보이는 탭이 25초마다 heartbeat, 70초 내면 접속 중. away는 **같은 tab일 때만** 반영(페이지 이동 시 늦게 도착한 away 비콘이 새 페이지를 오프라인으로 만들던 경쟁 방지)
 - 시간표: `task_timetables/{id}` — 읽기 공개, 본인만 수정
 - 파일: Vercel Blob 스토어 `temutemu-files`(`task/` 경로, 공개 URL) + 목록 `task_files`. 업로드는 브라우저 직접(`/api/task/upload` 토큰), 삭제는 올린 사람만
 - 비밀번호 재발급은 서비스 계정으로 `task_members` 문서의 hash/salt를 교체한다(평문은 어디에도 저장하지 않음)
