@@ -17,11 +17,11 @@ const nextConfig: NextConfig = {
       // 루트로 308 통합해 중복 색인을 방지(hreflang/canonical은 ko→/ 로 매핑).
       { source: '/ko', destination: '/', permanent: true },
       // Team meeting minutes (TemuTemu #1) — short link
-      { source: '/task', destination: '/task.pdf', permanent: false },
+      { source: '/task', destination: '/task.html', permanent: false },
       {
         source: '/',
         has: [{ type: 'host', value: 'task.yeojoonsoo02.com' }],
-        destination: '/task.pdf',
+        destination: '/task.html',
         permanent: false,
       },
     ];
@@ -65,8 +65,8 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        // Meeting minutes PDF: keep out of search results (contains teammates' names)
-        source: '/task.pdf',
+        // TemuTemu docs: keep out of search results (contains teammates' names)
+        source: '/task(.*)',
         headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
       },
       {
