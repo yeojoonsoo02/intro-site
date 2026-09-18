@@ -63,13 +63,13 @@ export async function GET() {
 export async function PUT(req: NextRequest) {
   if (!sameOrigin(req)) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   const me = readSession(req);
-  if (!me) return NextResponse.json({ error: 'Please log in.' }, { status: 401 });
+  if (!me) return NextResponse.json({ error: '로그인이 필요해요.' }, { status: 401 });
   if (!adminDb) return NextResponse.json({ error: 'unavailable' }, { status: 503 });
 
   const body = (await req.json().catch(() => null)) as { classes?: unknown; online?: unknown } | null;
   const classes = parseClasses(body?.classes);
   const online = parseOnline(body?.online ?? []);
-  if (!classes || !online) return NextResponse.json({ error: 'Invalid timetable.' }, { status: 400 });
+  if (!classes || !online) return NextResponse.json({ error: '시간표 형식이 올바르지 않아요.' }, { status: 400 });
 
   await adminDb.collection('task_timetables').doc(me).set({ classes, online, updatedAt: Date.now() });
   return NextResponse.json({ ok: true });

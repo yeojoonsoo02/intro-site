@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   // 토큰 발급 요청은 로그인한 팀원 브라우저에서만.
   // (upload-completed 콜백은 Vercel이 서명해서 보내므로 handleUpload가 검증한다)
   if (body.type === 'blob.generate-client-token' && (!sameOrigin(req) || !readSession(req))) {
-    return NextResponse.json({ error: 'Please log in.' }, { status: 401 });
+    return NextResponse.json({ error: '로그인이 필요해요.' }, { status: 401 });
   }
 
   try {

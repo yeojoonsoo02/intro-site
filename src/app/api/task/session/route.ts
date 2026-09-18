@@ -35,13 +35,13 @@ export async function POST(req: NextRequest) {
 
   const result = await verifyLogin(member, password);
   if (result === 'locked') {
-    return NextResponse.json({ error: 'Too many attempts. Try again in 15 minutes.' }, { status: 429 });
+    return NextResponse.json({ error: '비밀번호를 여러 번 틀려서 15분 동안 잠겼어요.' }, { status: 429 });
   }
   if (result === 'unavailable') {
-    return NextResponse.json({ error: 'Login is not available right now.' }, { status: 503 });
+    return NextResponse.json({ error: '지금은 로그인할 수 없어요. 잠시 후 다시 시도해 주세요.' }, { status: 503 });
   }
   if (result === 'wrong') {
-    return NextResponse.json({ error: 'Wrong password.' }, { status: 401 });
+    return NextResponse.json({ error: '비밀번호가 맞지 않아요.' }, { status: 401 });
   }
 
   const res = NextResponse.json({ me: { id: member, name: memberName(member) } });
