@@ -70,6 +70,11 @@ const nextConfig: NextConfig = {
         headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
       },
       {
+        // Korean transcript: force UTF-8 so browsers don't garble it
+        source: '/task-transcript.txt',
+        headers: [{ key: 'Content-Type', value: 'text/plain; charset=utf-8' }],
+      },
+      {
         // 프로필 이미지 긴 캐시 (LCP 성능)
         source: '/profile.jpg',
         headers: [
