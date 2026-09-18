@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
       // 1차 언어가 한국어이므로 루트(`/`)가 한국어 대표본. /ko 직접 접속·기존 색인은
       // 루트로 308 통합해 중복 색인을 방지(hreflang/canonical은 ko→/ 로 매핑).
       { source: '/ko', destination: '/', permanent: true },
+      // Team meeting minutes (TemuTemu #1) — short link
+      { source: '/task', destination: '/task.pdf', permanent: false },
     ];
   },
   async headers() {
@@ -55,6 +57,11 @@ const nextConfig: NextConfig = {
           { key: 'Cache-Control', value: 'no-store, max-age=0' },
           { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
         ],
+      },
+      {
+        // Meeting minutes PDF: keep out of search results (contains teammates' names)
+        source: '/task.pdf',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
       },
       {
         // 프로필 이미지 긴 캐시 (LCP 성능)
