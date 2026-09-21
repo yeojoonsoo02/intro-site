@@ -16,12 +16,12 @@ const nextConfig: NextConfig = {
       // 1차 언어가 한국어이므로 루트(`/`)가 한국어 대표본. /ko 직접 접속·기존 색인은
       // 루트로 308 통합해 중복 색인을 방지(hreflang/canonical은 ko→/ 로 매핑).
       { source: '/ko', destination: '/', permanent: true },
-      // Team meeting minutes (TemuTemu #1) — short link
-      { source: '/task', destination: '/task.html', permanent: false },
+      // TemuTemu 팀 공간은 별도 프로젝트(temutemu-task)로 분리됨 — 예전에 공유된 링크만 넘겨 준다
+      { source: '/task', destination: 'https://task.yeojoonsoo02.com/', permanent: false },
+      { source: '/task.html', destination: 'https://task.yeojoonsoo02.com/task.html', permanent: false },
       {
-        source: '/',
-        has: [{ type: 'host', value: 'task.yeojoonsoo02.com' }],
-        destination: '/task.html',
+        source: '/task-timetable.html',
+        destination: 'https://task.yeojoonsoo02.com/task-timetable.html',
         permanent: false,
       },
     ];
@@ -63,16 +63,6 @@ const nextConfig: NextConfig = {
           { key: 'Cache-Control', value: 'no-store, max-age=0' },
           { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
         ],
-      },
-      {
-        // TemuTemu docs: keep out of search results (contains teammates' names)
-        source: '/task(.*)',
-        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
-      },
-      {
-        // Korean transcript: force UTF-8 so browsers don't garble it
-        source: '/task-transcript.txt',
-        headers: [{ key: 'Content-Type', value: 'text/plain; charset=utf-8' }],
       },
       {
         // 프로필 이미지 긴 캐시 (LCP 성능)
