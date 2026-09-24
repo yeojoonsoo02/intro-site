@@ -38,7 +38,9 @@
   /* 타이포 */
   --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Segoe UI", sans-serif;
   --font-serif-stack: var(--font-serif, "Noto Serif KR"), "Noto Serif KR", "Apple SD Gothic Neo", Georgia, serif;
-  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  /* 공백은 "Meta Space"(비례폭)에서, 한글은 monospace 뒤의 Pretendard에서 온다.
+     mono 폰트엔 한글이 없어 대체되는데 공백만 고정폭으로 남아 "운영  중"처럼 벌어졌다. */
+  --font-mono: "Meta Space", ui-monospace, "SF Mono", Menlo, Consolas, monospace, "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", sans-serif;
 
   /* ---- 호환 alias (다른 팀 코드용) ---- */
   --background: var(--paper);
@@ -97,6 +99,14 @@ html.dark {
     --shadow-2: none;
     --shadow: 0 0 0 1px var(--rule);
   }
+}
+
+/* 공백 글리프만 담당 — 보이지 않는 글자라 폭만 맞으면 어떤 산세리프든 된다.
+   로컬 폰트를 못 찾으면 이 face는 건너뛰어 이전(고정폭 공백) 동작으로 돌아간다. */
+@font-face {
+  font-family: "Meta Space";
+  src: local("Helvetica"), local("Arial"), local("ArialMT"), local("Roboto"), local("Roboto-Regular"), local("Liberation Sans"), local("DejaVu Sans");
+  unicode-range: U+0020, U+00A0;
 }
 
 @layer base {

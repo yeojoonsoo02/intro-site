@@ -337,7 +337,8 @@ function FeaturedProject({
   sideCount: number;
 }): JSX.Element {
   const live = safeHttpsUrl(project.liveUrl);
-  const status = project.status ? STATUS_LABEL[lang][project.status] : null;
+  // 운영 중인 프로젝트의 기간은 "2025.12 ~ 운영 중"처럼 이미 상태를 담고 있다 — 중복 표기 방지
+  const status = project.status && !(project.status === 'live' && project.period) ? STATUS_LABEL[lang][project.status] : null;
   const metaBits = [status, project.period].filter(Boolean);
   return (
     <article
@@ -385,10 +386,10 @@ function SiteLinks({ lang, label }: { lang: Lang; label: string }): JSX.Element 
   ];
   return (
     <nav aria-label={label}>
-      <ul className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[0.9375rem]">
+      <ul className="flex flex-wrap items-center gap-x-5 -my-2.5 text-[0.9375rem]">
         {links.map((link) => (
           <li key={link.href}>
-            <a href={link.href} className="link-u" style={{ color: 'var(--ink-2)' }}>
+            <a href={link.href} className="link-u inline-block py-2.5" style={{ color: 'var(--ink-2)' }}>
               {link.label}
             </a>
           </li>

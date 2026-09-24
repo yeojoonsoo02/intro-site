@@ -43,6 +43,22 @@ export default function TopBarMenu({ onOpenPrompt }: TopBarMenuProps): JSX.Eleme
     }
   }, [menuOpen])
 
+  // 좁은 화면에선 떠 있는 버튼이 본문 오른쪽 끝을 가린다 — 내려 읽을 땐 숨기고
+  // 위로 올리면 다시 보인다. 넓은 화면은 본문 열 밖이라 항상 보인다.
+  const [hidden, setHidden] = useState(false)
+  useEffect(() => {
+    const narrow = window.matchMedia('(max-width: 639px)')
+    let lastY = window.scrollY
+    const onScroll = (): void => {
+      const y = window.scrollY
+      if (Math.abs(y - lastY) < 8) return
+      setHidden(narrow.matches && y > lastY && y > 80)
+      lastY = y
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   const closeMenu = useCallback((): void => setMenuOpen(false), [])
 
   const changeLanguage = useCallback(
@@ -59,8 +75,9 @@ export default function TopBarMenu({ onOpenPrompt }: TopBarMenuProps): JSX.Eleme
 
   return (
     <div
-      className="fixed z-50"
+      className="fixed z-50 transition-[opacity,transform] duration-200"
       style={{
+        ...(hidden && !menuOpen && { opacity: 0, transform: 'translateY(-0.5rem)', pointerEvents: 'none' }),
         // viewport-fit=cover라 노치 영역까지 뷰포트가 확장돼 있다. 사이트의 유일한
         // 전역 내비게이션이 센서 하우징에 가리지 않도록 안전영역을 존중한다.
         top: 'max(0.75rem, env(safe-area-inset-top))',
