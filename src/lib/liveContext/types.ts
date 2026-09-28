@@ -45,6 +45,9 @@ export interface ScheduleEntry {
   title: string
   start?: string
   end?: string
+  allDay?: boolean
+  location?: string
+  calendarName?: string
 }
 
 export interface MoodEntry {

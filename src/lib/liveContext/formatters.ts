@@ -125,9 +125,27 @@ function formatMood(mood: MoodEntry | null): string {
   return `기분: ${moodStr}`
 }
 
+// 캘린더는 오늘·내일치가 온다(플랫폼 /api/external/context). '수업' 캘린더는 플랫폼 크론이
+// task.yeojoonsoo02.com 시간표로 채운다 — 제목만 넘기면 몇 시 수업인지 모르니 시간·장소를 붙인다.
+function formatScheduleEntry(s: ScheduleEntry): string {
+  const tag = s.calendarName === '수업' ? '[수업] ' : ''
+  const place = s.location ? ` @${s.location}` : ''
+  if (!s.start) return `- ${tag}${s.title}${place}`
+  const day = new Date(s.start).toLocaleDateString('ko-KR', {
+    timeZone: 'Asia/Seoul',
+    month: 'numeric',
+    day: 'numeric',
+    weekday: 'short',
+  })
+  if (s.allDay) return `- ${day} 종일 ${tag}${s.title}${place}`
+  const time = s.end ? `${formatKST(s.start)}~${formatKST(s.end)}` : formatKST(s.start)
+  return `- ${day} ${time} ${tag}${s.title}${place}`
+}
+
 function formatSchedule(schedule: ScheduleEntry[] | null): string {
-  if (!schedule || schedule.length === 0) return '일정: 없음'
-  return `일정: ${schedule.map((s) => s.title).join(', ')}`
+  if (!schedule || schedule.length === 0) return '일정(오늘·내일): 없음'
+  const sorted = [...schedule].sort((a, b) => (a.start ?? '').localeCompare(b.start ?? ''))
+  return ['일정(오늘·내일, 캘린더 기준):', ...sorted.map(formatScheduleEntry)].join('\n')
 }
 
 // 위치(현재·이동 기록·머문 곳)와 수면 공개는 본인 결정이다(2026-09-16~17).
