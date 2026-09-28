@@ -122,7 +122,7 @@ export async function HomePage({ lang }: { lang: Lang }) {
     <>
       {/* LangInit로 언어를 고정해 SSR↔CSR 언어 불일치를 없앤다 */}
       <LangInit lang={lang} />
-      <main className="max-w-xl mx-auto px-4 pt-14 pb-4 sm:p-6 sm:pt-14 text-center sm:min-h-[calc(100dvh-3.5rem)] sm:flex sm:flex-col">
+      <main className="theme-classic max-w-xl mx-auto px-4 pt-14 pb-4 sm:p-6 sm:pt-14 text-center sm:min-h-[calc(100dvh-3.5rem)] sm:flex sm:flex-col">
         {/* 회전 프로필 카드 — 가장자리를 좌우로 스와이프하면 뒷면(챗코가)으로 뒤집힌다 */}
         <div className="sm:flex-1 sm:flex sm:flex-col sm:justify-center">
           <FlippableProfileCard profile={profile} devProfile={devProfileFor(lang)} />

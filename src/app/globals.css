@@ -101,6 +101,59 @@ html.dark {
   }
 }
 
+/* 홈 전용 클래식 팔레트 — 2026-09-28 회전 카드 홈을 복원하며 9/10 개편 전 색(파랑 강조·호박색 소개 선)을
+   되살렸다. 홈에 .theme-classic이 있을 때만 html 전체(메뉴·챗 패널 포함)의 토큰을 바꾸고,
+   소개·포트폴리오 등 다른 페이지는 위의 기본 팔레트를 그대로 쓴다. */
+html:has(.theme-classic) {
+  --paper: #f9fafb;
+  --surface: #ffffff;
+  --surface-2: #f3f4f6;
+  --ink: #171717;
+  --ink-2: #404040;
+  --muted: #5b6a7f;
+  --rule: #e5e7eb;
+  --accent: #2563eb;
+  --accent-strong: #1d4ed8;
+  --accent-soft: #dbeafe;
+  --accent-contrast: #ffffff;
+  --card-rule: #b45309;
+  --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+html.dark:has(.theme-classic) {
+  --paper: #18181b;
+  --surface: #232329;
+  --surface-2: #2a2a31;
+  --ink: #ededed;
+  --ink-2: #c4c4cc;
+  --muted: #a1a1aa;
+  --rule: #3f3f46;
+  --accent: #60a5fa;
+  --accent-strong: #3b82f6;
+  --accent-soft: #1e293b;
+  --accent-contrast: #18181b;
+  --card-rule: #fbbf24;
+  --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.dark):not(.light):has(.theme-classic) {
+    --paper: #18181b;
+    --surface: #232329;
+    --surface-2: #2a2a31;
+    --ink: #ededed;
+    --ink-2: #c4c4cc;
+    --muted: #a1a1aa;
+    --rule: #3f3f46;
+    --accent: #60a5fa;
+    --accent-strong: #3b82f6;
+    --accent-soft: #1e293b;
+    --accent-contrast: #18181b;
+    --card-rule: #fbbf24;
+    --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  }
+}
+
 /* 공백 글리프만 담당 — 보이지 않는 글자라 폭만 맞으면 어떤 산세리프든 된다.
    로컬 폰트를 못 찾으면 이 face는 건너뛰어 이전(고정폭 공백) 동작으로 돌아간다. */
 @font-face {

@@ -153,7 +153,7 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
           <p
             key={i}
             className="break-keep whitespace-pre-wrap overflow-wrap-anywhere pl-4"
-            style={{ borderLeft: "3px solid var(--accent, var(--primary))" }}
+            style={{ borderLeft: "3px solid var(--card-rule, var(--accent))" }}
           >
             {p}
           </p>

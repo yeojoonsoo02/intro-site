@@ -23,13 +23,13 @@ Vercel 배포 (GitHub Actions `deploy.yml` — main push 시 type-check → lint
 /en /ja /zh /es /fr /de /pt /ru
 ```
 
-`src/middleware.ts`가 브라우저 `Accept-Language`를 보고 해당 로케일로 보낸다. **한국어 선호 사용자는 루트에 머문다.** `/ko`는 루트로 308 통합된다(`next.config.ts`).
+`src/middleware.ts`가 브라우저 `Accept-Language`를 보고 해당 로케일로 보낸다. **한국어 선호 사용자는 루트에 머문다.** `/ko`와 `/ko/*`는 접두사를 뗀 경로로 308 통합된다(`next.config.ts`).
 
 **라우트는 두 개뿐이다.** 8개 로케일의 홈은 `app/[lang]/page.tsx`, 소개는 `app/[lang]/about/page.tsx`가 `generateStaticParams`로 만든다. 한국어는 `app/page.tsx`·`app/about/page.tsx`. 언어별로 다른 건 메타데이터·짧은 라벨뿐이라 `app/homePage.tsx`·`app/about/aboutPage.tsx`의 표 하나에 산다.
 
 ⚠️ **`app/loading.tsx`를 만들지 말 것.** `[lang]`이 1단계 경로를 전부 받으므로 `/xx` 같은 미지의 경로는 페이지의 `notFound()`로 404가 된다. 루트에 loading.tsx(Suspense 경계)가 있으면 200 셸이 먼저 흘러가 프로덕션에서 소프트 404(200)가 되고, 루트 레이아웃의 `notFound()`는 Next 16에서 허용되지 않는다. 2026-09에 실제로 겪은 문제다.
 
-**홈은 회전 프로필 카드다**(2026-09-28, 본인 요청으로 9/10 개편 전 디자인 복원). 앞면은 profiles/main_{lang}(`app/homeData.ts`가 admin SDK로 읽고 10분 캐시), 뒷면은 챗코가 개발자 프로필 — Firestore dev_* 문서는 9/10에 삭제돼 `features/profile/devProfiles.ts` 코드 상수로 둔다(옛 데이터 그대로, 본인 결정). 카드 가장자리 좌우 스와이프로 뒤집힌다(`useCardFlip`). 데이터는 서버에서 props로 넘기므로 /api/profile은 없다. 9/10 개편판 홈(대표 프로젝트 5:3·요즘·연락)은 `68d9d01`에 있다.
+**홈은 회전 프로필 카드다**(2026-09-28, 본인 요청으로 9/10 개편 전 디자인 복원). 앞면은 profiles/main_{lang}(`app/homeData.ts`가 admin SDK로 읽고 10분 캐시), 뒷면은 챗코가 개발자 프로필 — Firestore dev_* 문서는 9/10에 삭제돼 `features/profile/devProfiles.ts` 코드 상수로 둔다(옛 데이터 그대로, 본인 결정). 카드 가장자리 좌우 스와이프로 뒤집힌다(`useCardFlip`). 데이터는 서버에서 props로 넘기므로 /api/profile은 없다. 9/10 개편판 홈(대표 프로젝트 5:3·요즘·연락)은 `68d9d01`에 있다. **홈만 예전 색(파랑 강조·호박색 소개 선)이다** — `<main className="theme-classic">`가 있으면 `globals.css`의 `html:has(.theme-classic)`이 토큰을 바꾼다(메뉴·챗 패널 포함). 다른 페이지는 기본 팔레트.
 
 ⚠️ **검색엔진·AI 크롤러는 리디렉트하지 않고 루트에 그대로 둔다** — `middleware.ts` 상단 `BOTS` 정규식이 그 장치다(googlebot·yeti·claudebot·gptbot·perplexitybot 등). 색인 안정성을 위한 의도된 동작이니 "봇 예외 처리가 왜 있지" 하고 지우지 말 것. 새 크롤러 UA를 추가할 일은 있어도 제거할 일은 없다.
 
