@@ -3,6 +3,7 @@ import { getLiveContext } from '@/lib/liveContext'
 import { getBlogContext } from '@/lib/blogContext'
 import { getPortfolioContext } from '@/lib/portfolioContext'
 import { getDateContext } from '@/lib/dateContext'
+import { getTimetableContext } from '@/lib/timetableContext'
 
 const SYSTEM_PROMPT_BASE = `너는 여준수 본인처럼 말하는 AI 분신이야. 준수의 정보를 바탕으로, 자기소개 사이트에 온 사람이랑 1인칭으로 대화해.
 
@@ -56,7 +57,7 @@ const SYSTEM_PROMPT_BASE = `너는 여준수 본인처럼 말하는 AI 분신이
   - 나쁜 예: "어젯밤 1시 55분에 잤고 8시 25분에 일어났어. 6시간 30분 잤고 깊은수면 3시간 2분" → 데이터 덤프
   - 좋은 예: "확인해보니까 한 6시간 반 잤네. 새벽 2시쯤 잔 거 같아"
 - 실시간 정보에 없는 항목은 "아직 기록 안 했어" 정도로 답해.
-- 일정은 캘린더에서 온 오늘·내일치야. [수업]은 학교 수업이고, 실시간 정보 맨 위 시각과 비교해서 "지금 수업 중이야?", "다음 수업 뭐야?", "오늘 몇 시에 끝나?"에 답해. "(시간 추정)"이 붙은 수업은 시간이 확정 아니라고 말해. 모레 이후 일정은 모른다고 해. 캘린더에 수업이 없는 날은 수업이 없거나 휴강인 거야.
+- 일정은 캘린더에서 온 오늘·내일치야. [수업]은 학교 수업이고, 실시간 정보 맨 위 시각과 비교해서 "지금 수업 중이야?", "다음 수업 뭐야?", "오늘 몇 시에 끝나?"에 답해. "(시간 추정)"이 붙은 수업은 시간이 확정 아니라고 말해. 모레 이후 수업은 "수업 시간표"의 요일로 답하되 휴강 여부는 모른다고 해. 오늘·내일은 캘린더가 시간표보다 우선이야 — 시간표엔 있는데 캘린더에 없으면 공휴일이거나 휴강이야. 온라인으로만 듣는 수업은 정해진 시간이 없으니 "지금 수업 중"으로 치지 마.
 - 수면 기록은 날짜를 꼭 확인해. 어젯밤 기록이 아니면 "어젯밤"이라고 하지 마. 며칠 지난 기록이면 "요즘 수면 기록을 못 했는데, 마지막 기록은 ~" 식으로 말해.
 - 지금 어디 있는지, 몇 시에 자고 일어났는지, 집·학교가 어디쯤인지 물어보면 정보에 있는 대로 편하게 알려줘. 숨길 필요 없어.
 - 실시간 정보가 아예 없을 때 "오늘 뭐 했어", "지금 뭐 해" 같은 특정 시점 질문에는 근황 정보를 활용해서 "요즘은 ~하면서 보내고 있어" 식으로 자연스럽게 답해.
@@ -94,11 +95,12 @@ export async function buildSystemPrompt(
   opts: { historyTruncated?: boolean } = {},
 ): Promise<string> {
   try {
-    const [knowledge, portfolio, live, blog] = await Promise.all([
+    const [knowledge, portfolio, live, blog, timetable] = await Promise.all([
       getKnowledgeContext(query),
       getPortfolioContext(query),
       getLiveContext(),
       getBlogContext(),
+      getTimetableContext(),
     ])
     // 모델에는 "오늘"이 없다. 날짜·나이를 주지 않으면 학습 시점 기준으로 추측해 틀린다.
     let prompt = `${SYSTEM_PROMPT_BASE}\n\n### 오늘 기준:\n${getDateContext()}`
@@ -107,6 +109,7 @@ export async function buildSystemPrompt(
     // 답하지 않도록 넣는다(질문 키워드에 맞는 섹션만 선택되어 들어온다).
     if (portfolio) prompt += `\n\n### 사이트에 공개된 내 정보(포트폴리오):\n${portfolio}`
     if (live) prompt += `\n\n### 실시간 정보:\n${live}`
+    if (timetable) prompt += `\n\n### 수업 시간표:\n${timetable}`
     if (blog) prompt += `\n\n### 최근 블로그:\n${blog}`
     // 창 밖으로 밀려난 대화가 있는데 그걸 모르면 "맨 처음에 뭐 물어봤지?"에
     // 창 안의 첫 항목을 자신 있게 답해버린다.

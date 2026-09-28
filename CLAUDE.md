@@ -56,6 +56,8 @@ React는 아직 **18.3.1**이다(Next 16 + React 18 조합). 19 전용 API를 �
 - `lib/rag.ts` · `chunks.ts` · `embeddings.ts` — 청킹·임베딩·검색
 - `lib/blogContext.ts` — **네이버 블로그 RSS를 근황 컨텍스트로 주입** (캐시 TTL 24시간)
 
+- `lib/timetableContext.ts` — **이번 학기 주간 시간표·온라인 수업·학기 중 공휴일** (Firestore `task_timetables/yeojunsu`, TemuTemu와 공유, 1시간 캐시). 날짜별 수업(휴강 반영)은 개인 플랫폼 `sync-timetable` 크론이 같은 시간표로 Google '수업' 캘린더를 채워 liveContext 일정으로 들어온다. 학기 기간·과목 메모·공휴일은 파일 상단 상수 — 학기가 바뀌면 여기와 플랫폼 `lib/timetable-sync.ts`를 같이 고친다.
+
 블로그 RSS TTL을 줄이면 외부 호출이 늘어난다. 1시간 → 24시간으로 올린 이력이 있으니 되돌리지 말 것.
 
 `lib/rateLimit.ts` 적용 대상이다 — 챗 API는 비용이 나가는 경로다.
