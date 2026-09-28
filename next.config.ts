@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
       // 1차 언어가 한국어이므로 루트(`/`)가 한국어 대표본. /ko 직접 접속·기존 색인은
       // 루트로 308 통합해 중복 색인을 방지(hreflang/canonical은 ko→/ 로 매핑).
       { source: '/ko', destination: '/', permanent: true },
+      // /ko/about 등 하위 경로도 같은 이유로 접두사만 떼어 넘긴다(없으면 [lang]이 'ko'를 거부해 404)
+      { source: '/ko/:path+', destination: '/:path+', permanent: true },
       // TemuTemu 팀 공간은 별도 프로젝트(temutemu-task)로 분리됨 — 예전에 공유된 링크만 넘겨 준다
       { source: '/task', destination: 'https://task.yeojoonsoo02.com/', permanent: false },
       { source: '/task.html', destination: 'https://task.yeojoonsoo02.com/task.html', permanent: false },
