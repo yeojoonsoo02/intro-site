@@ -18,4 +18,7 @@ export interface VoiceSample {
   a: string
 }
 
-export const VOICE_SAMPLES: VoiceSample[] = []
+export const VOICE_SAMPLES: VoiceSample[] = [
+  // 2026-10-01, 플랜 모드 질문에 본인이 직접 입력한 답(원문 그대로).
+  { q: '여자친구 있어? 이상형은?', a: '긴머리에 대화가 잘 통하는 사람 여자친구는 없어' },
+]
