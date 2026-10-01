@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getClientIp } from '@/lib/clientIp'
-import {
-  GoogleGenerativeAI,
-  HarmCategory,
-  HarmBlockThreshold,
-} from '@google/generative-ai'
 import { checkRateLimit, checkDailyBudget, consumeDailyBudget } from '@/lib/rateLimit'
 import { adminAuth } from '@/lib/firebaseAdmin'
 import { buildSystemPrompt } from './systemPrompt'
-import { isBot, resolveFallbackUrl } from './security'
+import { createChatModel } from './model'
+import { findPromptLeak, isBot, resolveFallbackUrl } from './security'
 import { fireSideEffects } from './sideEffects'
 import {
   sanitizeHistory,
@@ -20,15 +16,7 @@ import {
 const MAX_MESSAGE_LENGTH = 2000
 // 외부 fallback 서비스가 멈추면 함수가 최대 실행 시간까지 붙잡힌다.
 const FALLBACK_TIMEOUT_MS = 20_000
-const FALLBACK_REPLY = '음.. 그건 좀 대답하기 어렵네. 다른 거 물어봐!'
-
-const SAFETY_SETTINGS = [
-  { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-  { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-  { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-  { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-  { category: HarmCategory.HARM_CATEGORY_CIVIC_INTEGRITY, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
-]
+const FALLBACK_REPLY = '그건 좀 대답하기 어렵네. 다른 거 물어봐!'
 
 const pickNumber = (v: unknown): number | undefined =>
   typeof v === 'number' && Number.isFinite(v) ? v : undefined
@@ -153,7 +141,9 @@ async function proxyToFallback(
     }
     const data = (await res.json()) as Record<string, unknown>
     const rawReply = data.reply ?? data.text
-    const replyText = typeof rawReply === 'string' ? rawReply.trim() : ''
+    const rawText = typeof rawReply === 'string' ? rawReply.trim() : ''
+    const leakAt = findPromptLeak(rawText)
+    const replyText = leakAt >= 0 ? rawText.slice(0, leakAt).trim() : rawText
     const reply = replyText || FALLBACK_REPLY
 
     fireSideEffects(message, reply, userInfo)
@@ -183,13 +173,7 @@ async function callGemini(
 ): Promise<NextResponse> {
   try {
     const systemPrompt = await buildSystemPrompt(message, { historyTruncated })
-    const genAI = new GoogleGenerativeAI(apiKey)
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash',
-      systemInstruction: systemPrompt,
-      safetySettings: SAFETY_SETTINGS,
-    })
-    const chat = model.startChat({ history })
+    const chat = createChatModel(apiKey, systemPrompt).startChat({ history })
 
     // 네트워크·일시 오류만 1회 재시도. Safety 차단은 재시도하지 않는다 —
     // 리프레이밍으로 정책을 우회하게 되는 걸 막기 위함.
@@ -238,6 +222,15 @@ async function callGemini(
               break
             }
             if (!piece) continue
+            // 프롬프트가 새기 시작하면 그 앞까지만 내보내고 끊는다.
+            const leakAt = findPromptLeak(full + piece)
+            if (leakAt >= 0) {
+              const safe = (full + piece).slice(0, leakAt).slice(full.length)
+              if (safe) controller.enqueue(encoder.encode(safe))
+              full = (full + piece).slice(0, leakAt)
+              console.warn('Gemini reply cut: system prompt leak detected')
+              break
+            }
             full += piece
             controller.enqueue(encoder.encode(piece))
           }

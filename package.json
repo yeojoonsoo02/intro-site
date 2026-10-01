@@ -12,7 +12,8 @@
     "test:e2e:install": "playwright install --with-deps chromium",
     "indexnow": "node scripts/indexnow.mjs",
     "embeddings:build": "node --env-file=.env.local scripts/build-embeddings.mjs",
-    "profile:sync": "node --env-file=.env.local scripts/export-profile.mjs"
+    "profile:sync": "node --env-file=.env.local scripts/export-profile.mjs",
+    "persona:eval": "tsx --env-file=.env.local scripts/persona-eval.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -34,6 +35,7 @@
     "eslint": "^9",
     "eslint-config-next": "^16.3.8",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

@@ -48,6 +48,9 @@ export interface ScheduleEntry {
   allDay?: boolean
   location?: string
   calendarName?: string
+  /** 구글 공휴일 달력은 여기에 'Public holiday' / 'Observance'(기념일)를 적어 준다 */
+  description?: string
+  calendarId?: string
 }
 
 export interface MoodEntry {

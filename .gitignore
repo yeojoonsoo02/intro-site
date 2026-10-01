@@ -53,3 +53,6 @@ next-env.d.ts
 # playwright
 /test-results/
 /playwright-report/
+
+# 챗봇 말투 평가 결과(npm run persona:eval) — 실시간 위치·수면 등이 답변에 섞여 있다
+/eval-results/
