@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { SITE_URL } from '@/lib/site';
+import { OG_IMAGES, TWITTER_IMAGES } from '@/components/seo/ogMeta';
 
 const URL = `${SITE_URL}/portfolio`;
 
@@ -17,11 +18,13 @@ export const metadata: Metadata = {
     siteName: '여준수 자기소개',
     locale: 'ko_KR',
     type: 'profile',
+    images: OG_IMAGES,
   },
   twitter: {
     card: 'summary',
     title: '포트폴리오 | 여준수',
     description: '여준수의 프로젝트, 기술 스택, 경력을 확인할 수 있는 포트폴리오 페이지입니다.',
+    images: TWITTER_IMAGES,
   },
 };
 

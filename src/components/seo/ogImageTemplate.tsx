@@ -1,9 +1,9 @@
 import { ImageResponse } from 'next/og';
 
+import { OG_ALT, OG_CONTENT_TYPE, OG_SIZE } from './ogMeta';
+
 // OG/Twitter 카드 공통 규격·문구. opengraph-image / twitter-image 가 함께 사용한다.
-export const OG_ALT = '여준수 (Junsu Yeo) — 대학생 개발자 자기소개';
-export const OG_SIZE = { width: 1200, height: 630 };
-export const OG_CONTENT_TYPE = 'image/png';
+export { OG_ALT, OG_CONTENT_TYPE, OG_SIZE };
 
 // 부제는 검증된 사실(직업·소속)만 사용한다. 미검증 키워드는 넣지 않는다.
 const SUBTITLE = '대학생 개발자 · 광운대 소프트웨어학과';

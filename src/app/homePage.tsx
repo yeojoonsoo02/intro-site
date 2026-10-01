@@ -3,6 +3,7 @@ import Link from 'next/link';
 import LangInit from '@/lib/LangInit';
 import { hreflangFor, langPath, langUrl, OG_LOCALE, type Lang } from '@/lib/site';
 import { getLabels } from './about/labels';
+import { OG_IMAGES } from '@/components/seo/ogMeta';
 import { getHomeData } from './homeData';
 import ChatCtaButton from '@/features/prompt/ChatCtaButton';
 import FlippableProfileCard from '@/features/profile/FlippableProfileCard';
@@ -109,6 +110,7 @@ export function buildHomeMetadata(lang: Lang): Metadata {
       description: m.ogDescription,
       locale: OG_LOCALE[lang],
       url: langUrl(lang),
+      images: OG_IMAGES,
     },
     alternates: { canonical: langUrl(lang), languages: hreflangFor() },
   };

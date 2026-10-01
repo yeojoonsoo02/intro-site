@@ -22,13 +22,6 @@ const ROUTE_BY_LANG: Record<string, string> = Object.fromEntries(
   PREFIXED_LANGS.flatMap((lang) => [lang, ...(SUBTAGS[lang] ?? [])].map((tag) => [tag, `/${lang}`])),
 );
 
-// 모든 요청에 x-pathname 헤더를 심어 layout에서 경로별 lang 분기가 가능하게 함
-function withPathname(req: NextRequest): NextResponse {
-  const headers = new Headers(req.headers);
-  headers.set('x-pathname', req.nextUrl.pathname);
-  return NextResponse.next({ request: { headers } });
-}
-
 // 언어 전환 대상 경로. 루트만 처리하면 /about의 로케일판(9개 언어)이 있어도
 // 자동으로 뜨지 않아, 직접 URL을 치거나 검색으로 들어오는 사람만 볼 수 있다.
 // 값은 "그 언어에서 갈 경로"를 만드는 함수다.
@@ -41,24 +34,24 @@ export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   const buildTarget = LOCALIZABLE[pathname];
-  // 전환 대상이 아닌 경로는 x-pathname만 주입하고 통과
-  if (!buildTarget) return withPathname(req);
+  // 전환 대상이 아닌 경로는 그대로 통과
+  if (!buildTarget) return NextResponse.next();
 
   const ua = (req.headers.get('user-agent') || '').toLowerCase();
-  if (BOTS.test(ua)) return withPathname(req);
+  if (BOTS.test(ua)) return NextResponse.next();
 
   // 사용자가 직접 선택한 언어 쿠키가 있으면 최우선 존중
   const cookieLang = req.cookies.get('NEXT_LOCALE')?.value?.toLowerCase();
   if (cookieLang) {
     // 한국어 선호는 루트(한국어 대표본)에 그대로 머문다
-    if (cookieLang.startsWith('ko')) return withPathname(req);
+    if (cookieLang.startsWith('ko')) return NextResponse.next();
     const route =
       ROUTE_BY_LANG[cookieLang] ?? ROUTE_BY_LANG[cookieLang.split('-')[0]];
     if (route) return NextResponse.redirect(new URL(buildTarget(route), req.url));
   }
 
   const accept = req.headers.get('accept-language') || '';
-  if (!accept) return withPathname(req);
+  if (!accept) return NextResponse.next();
 
   const langs = accept
     .toLowerCase()
@@ -67,7 +60,7 @@ export function middleware(req: NextRequest) {
     .filter(Boolean);
 
   for (const lang of langs) {
-    if (lang.startsWith('ko')) return withPathname(req); // 한국어가 우선이면 루트(ko) 유지
+    if (lang.startsWith('ko')) return NextResponse.next(); // 한국어가 우선이면 루트(ko) 유지
     const full = ROUTE_BY_LANG[lang];
     const prefix = ROUTE_BY_LANG[lang.split('-')[0]];
     const route = full ?? prefix;
@@ -75,7 +68,7 @@ export function middleware(req: NextRequest) {
   }
 
   // 지원하지 않는 언어 → 한국어(루트) 유지
-  return withPathname(req);
+  return NextResponse.next();
 }
 
 export const config = {

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import AboutContent from './AboutContent';
 import { safeJsonLd } from '@/lib/seo-utils';
+import { OG_IMAGES } from '@/components/seo/ogMeta';
 import { BCP47, hreflangFor, langUrl, OG_LOCALE, SITE_URL, type Lang } from '@/lib/site';
 
 // /about은 9개 언어 전부 있다. 본문(AboutContent)은 공유하고 언어별로 다른 건
@@ -82,6 +83,7 @@ export function buildAboutMetadata(lang: Lang): Metadata {
       description: m.description,
       url,
       locale: OG_LOCALE[lang],
+      images: OG_IMAGES,
     },
   };
 }

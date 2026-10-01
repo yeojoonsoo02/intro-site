@@ -3,9 +3,19 @@ import { notFound } from 'next/navigation'
 import { getPortfolioData } from '@/features/portfolio/portfolioData'
 import { oneLiner } from '@/features/portfolio/projectUtils'
 import { SITE_URL } from '@/lib/site'
+import { OG_IMAGES, TWITTER_IMAGES } from '@/components/seo/ogMeta'
 import ProjectDetailClient from './ProjectDetailClient'
 
 type Params = { params: Promise<{ id: string }> }
+
+// 지금 있는 프로젝트는 빌드 때 미리 만들고 10분마다 다시 만든다. 빌드 뒤에 추가된 프로젝트는
+// 첫 요청 때 만들어진다. 빌드 중 Firestore를 못 읽으면 빈 목록 — 전부 첫 요청 때 만든다.
+export const revalidate = 600
+
+export async function generateStaticParams(): Promise<{ id: string }[]> {
+  const data = await getPortfolioData('ko')
+  return (data?.projects ?? []).map((p) => ({ id: p.id }))
+}
 
 // 상세 페이지마다 자기 제목·설명·canonical을 갖는다. 예전엔 전부 클라이언트 렌더라
 // 포트폴리오 레이아웃의 canonical(/portfolio)을 물려받아, 검색엔진에 "목록의 중복"으로 신고됐다.
@@ -13,8 +23,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { id } = await params
   const url = `${SITE_URL}/portfolio/${id}`
   const project = (await getPortfolioData('ko'))?.projects.find((p) => p.id === id)
-  // 없는 id는 아래 페이지의 notFound()가 404를 확정한다. Firestore를 못 읽은 경우에도
-  // canonical만은 자기 주소로 둔다.
+  // 없는 id는 아래 페이지의 notFound()가 404를 확정한다(Next가 noindex를 붙인다).
+  // Firestore를 못 읽은 경우에도 canonical만은 자기 주소로 둔다.
   if (!project) return { alternates: { canonical: url } }
 
   const title = `${project.title} — 포트폴리오 | 여준수`
@@ -31,8 +41,9 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
       siteName: '여준수 자기소개',
       locale: 'ko_KR',
       type: 'article',
+      images: OG_IMAGES,
     },
-    twitter: { card: 'summary', title, description },
+    twitter: { card: 'summary', title, description, images: TWITTER_IMAGES },
   }
 }
 

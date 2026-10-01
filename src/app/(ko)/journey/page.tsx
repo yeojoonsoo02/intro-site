@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import JourneyGallery from '@/features/journey/JourneyGallery';
 import { SITE_URL } from '@/lib/site';
+import { OG_IMAGES } from '@/components/seo/ogMeta';
 
 export const metadata: Metadata = {
   title: '여준수 — 성장 기록 (Journey)',
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
     title: '여준수 — 성장 기록',
     description: '여준수의 시기별 사진 기록',
     url: `${SITE_URL}/journey`,
+    images: OG_IMAGES,
   },
 };
 

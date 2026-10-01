@@ -5,6 +5,8 @@ import { isLang, PREFIXED_LANGS } from '@/lib/site';
 
 // 한국어를 뺀 8개 로케일 홈. 목록은 site.ts가 단일 출처다.
 export const dynamicParams = false;
+// 미리 만들어 두고 10분마다 다시 만든다 — Firestore 프로필 수정이 그 안에 반영된다.
+export const revalidate = 600;
 
 export function generateStaticParams() {
   return PREFIXED_LANGS.map((lang) => ({ lang }));
