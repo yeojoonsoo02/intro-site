@@ -10,7 +10,7 @@ Next.js **16 App Router** (`src/app/`) · React 18 · TypeScript · Tailwind
 Firebase (Auth + Firestore) · Google Generative AI(Gemini) · react-i18next(리소스 번들, 플러그인 없음)
 Vercel 배포 (GitHub Actions `deploy.yml` — main push 시 type-check → lint → build → deploy)
 
-**Firebase는 Auth와 Firestore만 쓴다.** 브라우저의 Firestore 클라이언트 SDK는 이제 쓰지 않는다 — 읽기는 전부 서버 API(`/api/profile`, `/api/portfolio`)나 서버 컴포넌트(Admin SDK)를 거친다(googleapis가 차단된 망 대응). `firebase.json`에 `firestore.rules`만 있고 Hosting 설정은 없다 — 호스팅은 Vercel이다.
+**Firebase는 Auth와 Firestore만 쓴다.** 브라우저의 Firestore 클라이언트 SDK는 이제 쓰지 않는다 — 읽기는 전부 서버 API(`/api/portfolio`)나 서버 컴포넌트(Admin SDK)를 거친다(googleapis가 차단된 망 대응). `firebase.json`에 `firestore.rules`만 있고 Hosting 설정은 없다 — 호스팅은 Vercel이다.
 
 **콘텐츠 편집 경로는 Firebase 콘솔 또는 서비스 계정 스크립트뿐이다.** 관리자 편집 UI(/admin)는 2026-09에 제거했고, `firestore.rules`는 `profiles`·`portfolio`의 클라이언트 쓰기를 전면 차단한다. 관리자 이메일로 로그인해도 브라우저에서 쓸 수 없는 게 정상이다.
 
@@ -25,11 +25,13 @@ Vercel 배포 (GitHub Actions `deploy.yml` — main push 시 type-check → lint
 
 `src/middleware.ts`가 브라우저 `Accept-Language`를 보고 해당 로케일로 보낸다. **한국어 선호 사용자는 루트에 머문다.** `/ko`와 `/ko/*`는 접두사를 뗀 경로로 308 통합된다(`next.config.ts`).
 
-**라우트는 두 개뿐이다.** 8개 로케일의 홈은 `app/[lang]/page.tsx`, 소개는 `app/[lang]/about/page.tsx`가 `generateStaticParams`로 만든다. 한국어는 `app/page.tsx`·`app/about/page.tsx`. 언어별로 다른 건 메타데이터·짧은 라벨뿐이라 `app/homePage.tsx`·`app/about/aboutPage.tsx`의 표 하나에 산다.
+**루트 레이아웃이 둘이다**(2026-10). 한국어 쪽은 라우트 그룹 `app/(ko)/`(홈·소개·여정·포트폴리오), 8개 로케일은 `app/[lang]/`(홈·소개, `generateStaticParams`). `app/layout.tsx`는 없다 — 각 레이아웃이 공통 껍데기 `app/RootShell.tsx`에 언어만 넘긴다. 예전엔 레이아웃 하나가 `<html lang>`을 정하려고 `headers()`로 경로를 읽었고, 그 한 줄 때문에 **모든 페이지가 요청마다 서버 렌더**됐다. 지금은 전부 사전 렌더 + 10분 재검증(`export const revalidate = 600`)이다. **레이아웃·페이지에서 `headers()`·`cookies()`를 읽으면 그 경로가 다시 동적 렌더로 돌아간다** — `npm run build` 출력에서 `ƒ`가 아니라 `○`/`●`인지 확인할 것. 두 루트 레이아웃 사이의 이동(`/` ↔ `/en`)은 전체 페이지 로드다(Next의 동작).
 
-⚠️ **`app/loading.tsx`를 만들지 말 것.** `[lang]`이 1단계 경로를 전부 받으므로 `/xx` 같은 미지의 경로는 페이지의 `notFound()`로 404가 된다. 루트에 loading.tsx(Suspense 경계)가 있으면 200 셸이 먼저 흘러가 프로덕션에서 소프트 404(200)가 되고, 루트 레이아웃의 `notFound()`는 Next 16에서 허용되지 않는다. 2026-09에 실제로 겪은 문제다.
+언어별로 다른 건 메타데이터·짧은 라벨뿐이라 `app/homePage.tsx`·`app/about/aboutPage.tsx`의 표 하나에 산다(`(ko)`와 `[lang]`의 page.tsx가 같이 쓴다). 루트 메타데이터는 `app/rootMetadata.ts`. **자기 `openGraph`를 정의하는 페이지는 `images: OG_IMAGES`(`components/seo/ogMeta.ts`)를 같이 넣어야 한다** — 얕은 병합이라 빼먹으면 그 페이지의 og:image가 사라진다.
 
-**홈은 회전 프로필 카드다**(2026-09-28, 본인 요청으로 9/10 개편 전 디자인 복원). 앞면은 profiles/main_{lang}(`app/homeData.ts`가 admin SDK로 읽고 10분 캐시), 뒷면은 챗코가 개발자 프로필 — Firestore dev_* 문서는 9/10에 삭제돼 `features/profile/devProfiles.ts` 코드 상수로 둔다(옛 데이터 그대로, 본인 결정). 카드 가장자리 좌우 스와이프로 뒤집힌다(`useCardFlip`). 데이터는 서버에서 props로 넘기므로 /api/profile은 없다. 9/10 개편판 홈(대표 프로젝트 5:3·요즘·연락)은 `68d9d01`에 있다. **홈만 예전 색(파랑 강조·호박색 소개 선)이다** — `<main className="theme-classic">`가 있으면 `globals.css`의 `html:has(.theme-classic)`이 토큰을 바꾼다(메뉴·챗 패널 포함). 다른 페이지는 기본 팔레트.
+⚠️ **`loading.tsx`를 만들지 말 것.** `[lang]`이 1단계 경로를 전부 받으므로 `/xx` 같은 미지의 경로는 `[lang]/layout.tsx`의 `dynamicParams = false`로 404가 되고, 화면은 `app/global-not-found.tsx`가 그린다(`next.config.ts`의 `experimental.globalNotFound` — 루트 레이아웃이 둘이라 `app/not-found.tsx` 하나로는 받을 수 없다). loading.tsx(Suspense 경계)가 있으면 200 셸이 먼저 흘러가 프로덕션에서 소프트 404(200)가 된다. 2026-09에 실제로 겪은 문제다. `(ko)/not-found.tsx`는 한국어 쪽 페이지가 `notFound()`를 던졌을 때 쓰인다.
+
+**홈은 회전 프로필 카드다**(2026-09-28, 본인 요청으로 9/10 개편 전 디자인 복원). 앞면은 profiles/main_{lang}(`app/homeData.ts`가 admin SDK로 읽고 10분 캐시), 뒷면은 챗코가 개발자 프로필 — Firestore dev_* 문서는 9/10에 삭제돼 `features/profile/devProfiles.ts` 코드 상수로 둔다(옛 데이터 그대로, 본인 결정). 카드 가장자리 좌우 스와이프, 또는 카드에 포커스한 뒤 좌우 화살표 키로 뒤집힌다(`useCardFlip`). 안 보이는 면은 `inert`다. 데이터는 서버에서 props로 넘기므로 /api/profile은 없다. 9/10 개편판 홈(대표 프로젝트 5:3·요즘·연락)은 `68d9d01`에 있다. **홈만 예전 색(파랑 강조·호박색 소개 선)이다** — `<main className="theme-classic">`가 있으면 `globals.css`의 `html:has(.theme-classic)`이 토큰을 바꾼다(메뉴·챗 패널 포함). 다른 페이지는 기본 팔레트.
 
 ⚠️ **검색엔진·AI 크롤러는 리디렉트하지 않고 루트에 그대로 둔다** — `middleware.ts` 상단 `BOTS` 정규식이 그 장치다(googlebot·yeti·claudebot·gptbot·perplexitybot 등). 색인 안정성을 위한 의도된 동작이니 "봇 예외 처리가 왜 있지" 하고 지우지 말 것. 새 크롤러 UA를 추가할 일은 있어도 제거할 일은 없다.
 
@@ -49,7 +51,7 @@ React는 아직 **18.3.1**이다(Next 16 + React 18 조합). 19 전용 API를 �
 
 ## 4. 챗봇 — 두 개의 경로와 살아있는 컨텍스트
 
-`/api/gemini`로 POST. **`GEMINI_API_KEY`가 있으면 서버가 직접 처리하고, 없으면 외부 Cloud Run 서비스로 포워딩한다**(`NEXT_PUBLIC_GEMINI_API_URL`). 챗봇이 "왜 다른 답을 하지" 싶으면 **어느 경로를 타는지부터** 확인한다.
+`/api/gemini`로 POST. **`GEMINI_API_KEY`가 있으면 서버가 직접 처리하고, 없으면 외부 Cloud Run 서비스로 포워딩한다**(`GEMINI_API_FALLBACK_URL`, 허용 호스트는 `api/gemini/security.ts`). 챗봇이 "왜 다른 답을 하지" 싶으면 **어느 경로를 타는지부터** 확인한다.
 
 컨텍스트 구성:
 - `src/data/knowledge.ts` — 정적 지식 베이스
@@ -60,11 +62,13 @@ React는 아직 **18.3.1**이다(Next 16 + React 18 조합). 19 전용 API를 �
 
 블로그 RSS TTL을 줄이면 외부 호출이 늘어난다. 1시간 → 24시간으로 올린 이력이 있으니 되돌리지 말 것.
 
-`lib/rateLimit.ts` 적용 대상이다 — 챗 API는 비용이 나가는 경로다.
+`lib/rateLimit.ts` 적용 대상이다 — 챗 API는 비용이 나가는 경로다. rate limit 문서에는 `expireAt`(Timestamp)이 들어간다 — **`rate_limits` 컬렉션에 `expireAt` 필드로 Firestore TTL 정책을 켜 둬야** 만료 문서가 지워진다(코드는 필드만 쓴다. 정책은 콘솔에서 한 번 설정).
+
+**대화 로그·웹훅·카톡 알림은 `after()`로 예약한다**(`api/gemini/sideEffects.ts`). await 없이 던져 두면 서버리스 함수가 응답 종료와 함께 멈춰 간헐적으로 사라진다. 챗 경로의 외부 호출(실시간 컨텍스트·블로그 RSS·fallback·알림)에는 전부 타임아웃이 있다 — 새 외부 호출을 넣으면 `AbortSignal.timeout`을 같이 넣는다.
 
 **페르소나.** 챗봇은 "준수 정보로 만든 AI 분신"이다 — 1인칭으로 말하되 "AI냐"고 물으면 속이지 않는다. 말투는 긍정적·담백, 1~3문장, 추임새("음")로 시작하지 않음, 문단 나누기·되풀이 맞장구 금지. 2026-09-17 실대화 테스트에서 "음," 남발·취향 모순(매운 거 못 먹는데 짬뽕)·AI 부정을 고친 결과다.
 
-**개인정보 경계.** 실시간 컨텍스트(`lib/liveContext`)는 위치(현재·최근 이동 기록·날짜별 머문 곳)와 수면(기록일·취침/기상·단계)을 **그대로 넘기고**, 할 일 목록과 GPS 좌표는 넘기지 않는다. 챗봇은 위치·수면 시각·집/학교 위치 질문에 답한다 — 2026-09-10에 막았다가 2026-09-16 본인 결정으로 다시 열었다. 생일은 월·일까지 모델에 준다(`lib/dateContext.ts`, 2026-09-17 공개). “개인정보가 새는 버그”로 보고 다시 막지 말 것. 서버 캐시 4곳(live·blog·portfolio·about)은 `lib/cached.ts` 헬퍼를 쓴다.
+**개인정보 경계.** 실시간 컨텍스트(`lib/liveContext`)는 위치(현재·최근 이동 기록·날짜별 머문 곳)와 수면(기록일·취침/기상·단계)을 **그대로 넘기고**, 할 일 목록과 GPS 좌표는 넘기지 않는다. 챗봇은 위치·수면 시각·집/학교 위치 질문에 답한다 — 2026-09-10에 막았다가 2026-09-16 본인 결정으로 다시 열었다. 생일은 월·일까지 모델에 준다(`lib/dateContext.ts`, 2026-09-17 공개). “개인정보가 새는 버그”로 보고 다시 막지 말 것. 서버 캐시(live·blog·timetable·portfolioContext·portfolioData·about·home)는 `lib/cached.ts` 헬퍼를 쓴다.
 
 ## 5. 시크릿
 
@@ -89,7 +93,7 @@ npm run embeddings:build # 지식 청크 임베딩 사전계산 (GEMINI_API_KEY 
 
 **push 전 최소 `type-check` + `lint`** — 실패하면 GitHub Actions가 배포 전에 막는다. CI는 Playwright를 돌리지 않으니 라우팅·404를 건드렸으면 `npm run test:e2e`를 로컬에서 직접 돈다.
 
-**포트폴리오는 케이스 스터디 구조다**(2026-09 개편, 근거: 채용 담당자·시니어 조사). `Project`에 summary/status/period/role/context/problem/decisions/highlights/outcome/lessons가 있고 데이터 없는 섹션은 렌더하지 않는다. 대표 4개(featured, order 1~4)는 /portfolio에서 크게, 나머지는 아카이브 행. **수치·기간·이유를 모르면 비워 둔다 — 지어내지 않는다.** 로그인 게이트는 없앴다(리뷰어의 20초 예산). personalInfo·hobbies는 챗봇용으로만 남아 화면에 없다.
+**포트폴리오는 케이스 스터디 구조다**(2026-09 개편, 근거: 채용 담당자·시니어 조사). `Project`에 summary/status/period/role/context/problem/decisions/highlights/outcome/lessons가 있고 데이터 없는 섹션은 렌더하지 않는다. 대표 4개(featured, order 1~4)는 /portfolio에서 크게, 나머지는 아카이브 행. **수치·기간·이유를 모르면 비워 둔다 — 지어내지 않는다.** 로그인 게이트는 없앴다(리뷰어의 20초 예산). personalInfo·hobbies는 챗봇용으로만 남아 화면에 없다. **목록·상세 모두 한국어판을 서버에서 읽어 첫 HTML에 싣는다**(`features/portfolio/portfolioData.ts` — `/api/portfolio`와 같은 캐시). 상세는 자기 제목·canonical을 갖고 없는 id는 404다. 다른 언어는 브라우저가 `/api/portfolio?lang=`으로 받는데, **데이터는 ko·en·ja·zh에만 있어 나머지 5개 언어는 영어판을 돌려준다.**
 
 **디자인 시스템**(`globals.css`): 토큰 --paper/--surface/--ink/--muted/--rule/--accent(#b5402c, 유일한 강조색)/--font-serif(Noto Serif KR, 제목만)/--font-sans(Pretendard). 카탈로그 선택은 명조+고딕 혼용·5:3 비대칭·border-left 수작업 디테일 세 가지. 기존 이름(--primary·--foreground 등)은 alias. 그림자는 2층, 다크는 border. Tailwind 기본 파랑·그라디언트·스킬 바·균일 3칸 카드는 넣지 않는다.
 
