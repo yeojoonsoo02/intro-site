@@ -18,6 +18,8 @@ import {
 } from './history'
 
 const MAX_MESSAGE_LENGTH = 2000
+// 외부 fallback 서비스가 멈추면 함수가 최대 실행 시간까지 붙잡힌다.
+const FALLBACK_TIMEOUT_MS = 20_000
 const FALLBACK_REPLY = '음.. 그건 좀 대답하기 어렵네. 다른 거 물어봐!'
 
 const SAFETY_SETTINGS = [
@@ -53,6 +55,18 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const rawMessage = body.message || body.prompt
   const message = typeof rawMessage === 'string' ? rawMessage.trim() : rawMessage
 
+  // 입력 검증은 rate limit보다 먼저 한다 — 빈 메시지·과대 입력이 방문자의 질문 횟수를
+  // 깎아 먹지 않게.
+  if (!message || typeof message !== 'string') {
+    return NextResponse.json({ error: 'Missing prompt' }, { status: 400 })
+  }
+  if (message.length > MAX_MESSAGE_LENGTH) {
+    return NextResponse.json(
+      { error: `Message too long (max ${MAX_MESSAGE_LENGTH} chars)` },
+      { status: 400 },
+    )
+  }
+
   // 로그인 등급·식별을 서버에서 Firebase ID 토큰으로 검증한다. 클라이언트가 보낸 email
   // 문자열은 더 이상 신뢰하지 않음(한도 위조·강등 방지). 토큰 없거나 위조/만료면 게스트로 처리.
   let verifiedUser: { uid: string; email: string } | null = null
@@ -78,16 +92,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json(
       { error: 'Too many requests. Please try again later.', remaining: 0, isLoggedIn },
       { status: 429, headers: { 'X-RateLimit-Remaining': '0' } },
-    )
-  }
-
-  if (!message || typeof message !== 'string') {
-    return NextResponse.json({ error: 'Missing prompt' }, { status: 400 })
-  }
-  if (message.length > MAX_MESSAGE_LENGTH) {
-    return NextResponse.json(
-      { error: `Message too long (max ${MAX_MESSAGE_LENGTH} chars)` },
-      { status: 400 },
     )
   }
 
@@ -133,6 +137,7 @@ async function proxyToFallback(
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: augmentedMessage }),
+      signal: AbortSignal.timeout(FALLBACK_TIMEOUT_MS),
     })
     if (!res.ok) {
       console.error('External API error:', res.status, res.statusText)
@@ -206,6 +211,14 @@ async function callGemini(
       return textResponse(FALLBACK_REPLY, remaining)
     }
 
+    // 로그·알림은 답변 전문이 있어야 하는데 그건 스트림이 끝나야 정해진다. 요청 처리 중인
+    // 지금 after()에 예약해 두고, 전문은 스트림이 끝날 때 채워 준다.
+    let resolveReply: (text: string) => void = () => {}
+    const replyDone = new Promise<string>((resolve) => {
+      resolveReply = resolve
+    })
+    fireSideEffects(message, replyDone, userInfo)
+
     const encoder = new TextEncoder()
     const activeStream = stream
     const body = new ReadableStream<Uint8Array>({
@@ -232,13 +245,19 @@ async function callGemini(
           console.error('Gemini stream error', streamErr)
         }
 
-        // 빈 응답은 절대 내보내지 않는다(시스템 프롬프트의 절대 규칙과 동일한 취지).
-        if (!full.trim()) {
-          full = FALLBACK_REPLY
-          controller.enqueue(encoder.encode(full))
+        // 방문자가 중간에 창을 닫으면 enqueue·close가 던진다. 그래도 받은 데까지는 기록한다.
+        try {
+          // 빈 응답은 절대 내보내지 않는다(시스템 프롬프트의 절대 규칙과 동일한 취지).
+          if (!full.trim()) {
+            full = FALLBACK_REPLY
+            controller.enqueue(encoder.encode(full))
+          }
+          controller.close()
+        } catch {
+          // 이미 닫힌 스트림 — 보낼 곳이 없을 뿐 기록은 남긴다.
+        } finally {
+          resolveReply(full.trim())
         }
-        controller.close()
-        fireSideEffects(message, full.trim(), userInfo)
       },
     })
 

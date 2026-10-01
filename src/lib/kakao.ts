@@ -23,6 +23,7 @@ export async function sendKakaoMemo(template: KakaoTemplate) {
         Authorization: `Bearer ${accessToken}`,
       },
       body: payload.toString(),
+      signal: AbortSignal.timeout(5000),
     })
     if (!res.ok) {
       console.error('Kakao API error:', res.status, res.statusText)

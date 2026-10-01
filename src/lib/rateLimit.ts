@@ -1,4 +1,4 @@
-import { adminDb, FieldValue } from './firebaseAdmin';
+import { adminDb, FieldValue, Timestamp } from './firebaseAdmin';
 
 const RATE_LIMIT_MAX_GUEST = 5;
 const RATE_LIMIT_MAX_USER = 20;
@@ -7,6 +7,23 @@ const RATE_LIMIT_MAX_USER = 20;
 export const RATE_LIMIT_MAX_PORTFOLIO = 120;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 const DAILY_MAX_REQUESTS = 500;
+// 일일 카운터 문서를 남겨 두는 기간. 지나면 Firestore TTL 정책이 지운다.
+const DAILY_DOC_RETENTION_MS = 3 * 24 * 60 * 60 * 1000;
+
+// 문서마다 expireAt(Timestamp)을 넣는다. rate_limits 컬렉션에 expireAt 필드로 TTL 정책을
+// 켜 두면 Firestore가 만료된 문서를 지운다 — 없으면 방문자 IP마다 문서가 영원히 쌓인다.
+// (resetAt은 숫자라 TTL 정책의 기준 필드가 될 수 없다.)
+const expireAt = (ms: number): Timestamp => Timestamp.fromMillis(ms);
+
+// 일일 예산은 한국 날짜로 끊는다. UTC로 끊으면 한국 시간 오전 9시에 리셋된다.
+function seoulDate(): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date());
+}
 
 interface RateLimitResult {
   allowed: boolean;
@@ -67,7 +84,7 @@ export async function checkRateLimit(
 
       if (!data || now > (data.resetAt ?? 0)) {
         const resetAt = now + RATE_LIMIT_WINDOW_MS;
-        tx.set(docRef, { count: 1, resetAt, isLoggedIn });
+        tx.set(docRef, { count: 1, resetAt, isLoggedIn, expireAt: expireAt(resetAt) });
         return { allowed: true, count: 1, resetAt };
       }
 
@@ -106,7 +123,7 @@ export async function checkRateLimit(
 export async function checkDailyBudget(): Promise<boolean> {
   if (!adminDb) return true;
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = seoulDate();
   const docRef = adminDb.collection('rate_limits').doc(`daily_${today}`);
 
   try {
@@ -123,11 +140,18 @@ export async function checkDailyBudget(): Promise<boolean> {
 export async function consumeDailyBudget(): Promise<void> {
   if (!adminDb) return;
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = seoulDate();
   const docRef = adminDb.collection('rate_limits').doc(`daily_${today}`);
 
   try {
-    await docRef.set({ count: FieldValue.increment(1), date: today }, { merge: true });
+    await docRef.set(
+      {
+        count: FieldValue.increment(1),
+        date: today,
+        expireAt: expireAt(Date.now() + DAILY_DOC_RETENTION_MS),
+      },
+      { merge: true },
+    );
   } catch (err) {
     console.error('[DailyBudget] increment error:', err);
   }

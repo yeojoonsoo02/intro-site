@@ -3,6 +3,7 @@ import {
   getFirestore,
   Firestore,
   FieldValue,
+  Timestamp,
 } from 'firebase-admin/firestore'
 import { getAuth, Auth } from 'firebase-admin/auth'
 
@@ -34,4 +35,4 @@ try {
   adminAuth = null
 }
 
-export { adminDb, adminAuth, FieldValue }
+export { adminDb, adminAuth, FieldValue, Timestamp }

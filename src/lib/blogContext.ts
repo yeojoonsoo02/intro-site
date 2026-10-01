@@ -12,6 +12,8 @@ import { cached } from '@/lib/cached'
 const RSS_URL = 'https://rss.blog.naver.com/yeojoonsoo02.xml'
 const TTL = 24 * 60 * 60 * 1000 // 24시간 — 블로그 글 빈도상 하루 1회 갱신으로 충분
 const ERROR_TTL = 5 * 60 * 1000 // RSS 실패 시 재시도 간격
+// 네이버가 응답하지 않으면 챗 요청과 /about 렌더가 같이 멈춘다. 끊고 직전 값으로 간다.
+const TIMEOUT_MS = 8000
 const ALLOWED_CATEGORIES = new Set(['책', '일상'])
 const BOOK_CATEGORY = '책'
 // 일기가 몰아서 올라오면 8건 창에 서평이 안 들어온다. 창을 조금 넓혀
@@ -129,6 +131,7 @@ async function fetchPosts(): Promise<BlogPost[]> {
     headers: {
       'User-Agent': 'Mozilla/5.0 (compatible; intro-site/1.0; +https://yeojoonsoo02.com)',
     },
+    signal: AbortSignal.timeout(TIMEOUT_MS),
   })
   if (!res.ok) throw new Error(`Blog RSS ${res.status}`)
   return parseRss(await res.text())

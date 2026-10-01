@@ -1,5 +1,8 @@
 import { buildKakaoTemplate, sendKakaoMemo } from './kakao'
 
+// 응답 뒤에 도는 호출이라 방문자는 기다리지 않지만, 멈추면 함수가 최대 실행 시간까지 붙잡힌다.
+const TIMEOUT_MS = 5000
+
 // 사설/로컬 호스트 차단 패턴 — SSRF 표면 축소 (localhost, 루프백, 링크로컬, 사설 대역)
 const PRIVATE_HOST_PATTERNS = [
   /^localhost$/i,
@@ -47,6 +50,7 @@ export async function sendQuestionAnswer(
           timestamp: new Date().toISOString(),
           template_object: JSON.stringify(template),
         }),
+        signal: AbortSignal.timeout(TIMEOUT_MS),
       })
     } catch (err) {
       console.error('Failed to send webhook:', err)

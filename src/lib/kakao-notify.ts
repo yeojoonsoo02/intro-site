@@ -27,6 +27,7 @@ async function notifyKakao(params: {
         Authorization: `Bearer ${secret}`,
       },
       body: JSON.stringify({ source: 'intro-site', ...params }),
+      signal: AbortSignal.timeout(5000),
     })
     if (!res.ok) console.warn('[KakaoNotify] 릴레이 응답 실패:', res.status)
     return res.ok
