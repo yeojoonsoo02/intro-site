@@ -29,17 +29,23 @@ export function storedLocale(): Lang | null {
   }
 }
 
+// 언어판(/{lang}/…)이 실제로 있는 페이지. 미들웨어의 LOCALIZABLE과 같은 목록이다.
+// 여정·포트폴리오는 접두사 없는 경로 하나뿐이라 /en/portfolio 같은 주소는 404다.
+const LOCALIZED_PAGES = new Set(['', 'about']);
+
 /**
  * 현재 경로를 같은 페이지의 다른 언어판 경로로 바꾼다.
  * 언어를 바꿨을 때 홈으로 튕기지 않고 보던 페이지에 머물게 하기 위함.
  * 한국어는 접두사 없는 루트가 대표본이다.
+ * 언어판이 없는 페이지(여정·포트폴리오)는 null — 이동하지 않고 제자리에서 언어만 바꾼다.
  */
-export function localizePath(pathname: string, lang: string): string {
+export function localizePath(pathname: string, lang: string): string | null {
   const segments = pathname.split('/').filter(Boolean);
   if (segments.length > 0 && isLang(segments[0])) {
     segments.shift();
   }
   const rest = segments.join('/');
+  if (!LOCALIZED_PAGES.has(rest)) return null;
   if (lang === 'ko') return rest ? `/${rest}` : '/';
   return rest ? `/${lang}/${rest}` : `/${lang}`;
 }

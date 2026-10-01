@@ -68,7 +68,9 @@ export default function TopBarMenu({ onOpenPrompt }: TopBarMenuProps): JSX.Eleme
       // 이전 언어로 되돌린다 — 메뉴에서 고른 언어가 링크 한 번에 무효가 되던 문제.
       setLocale(i18n, l)
       // 홈으로 튕기지 않고 보던 페이지의 같은 언어판으로 이동.
-      router.push(localizePath(pathname, l))
+      // 언어판이 없는 페이지(여정·포트폴리오)는 그 자리에 머문다 — /en/portfolio는 404다.
+      const target = localizePath(pathname, l)
+      if (target && target !== pathname) router.push(target)
     },
     [i18n, pathname, router],
   )
