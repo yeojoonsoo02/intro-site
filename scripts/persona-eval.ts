@@ -149,7 +149,8 @@ const median = (xs: number[]): number => {
   return s[s.length >> 1]
 }
 
-const isKorean = (s: string): boolean => /[가-힣]/.test(s)
+// 'ㅎㅇ', 'ㅋㅋㅋ'처럼 자모만 있는 말도 한국어로 센다.
+const isKorean = (s: string): boolean => /[가-힣ㄱ-ㅎㅏ-ㅣ]/.test(s)
 
 function topCounts(items: string[], n: number): string {
   const counts = new Map<string, number>()

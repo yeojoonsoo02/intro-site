@@ -158,7 +158,9 @@ function formatWeather(weather: WeatherData | null): string {
 }
 
 function formatMood(mood: MoodEntry | null): string {
-  if (!mood) return '기분: 기록 안 함(알 수 없음)'
+  // 기분은 기록하지 않는다. "기록 안 했어"라고 답하는 대신 좋다고 가볍게 답한다 — 본인 결정이다
+  // (2026-10-01: "그냥 좋다고 해"). "지어내지 않는다"의 예외이니 되돌리지 말 것.
+  if (!mood) return '기분: 기록은 없음 — 물으면 "좋아" 정도로 가볍게 답할 것(이유를 물으면 "그냥"이라고 넘기고, 있었던 일을 지어 붙이지는 말 것)'
   const moodStr = mood.note ? `${mood.value} (${mood.note})` : mood.value
   return `기분: ${moodStr}`
 }

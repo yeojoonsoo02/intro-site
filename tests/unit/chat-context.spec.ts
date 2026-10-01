@@ -86,6 +86,16 @@ test.describe('실시간 컨텍스트: 수면·식사 기록', () => {
     expect(out).toContain('30일 전');
   });
 
+  test('기분 기록이 없으면 좋다고 가볍게 답하라고 적는다(본인 결정)', () => {
+    const out = formatLiveData(context({ mood: null }));
+    expect(out).toContain('기분: 기록은 없음 — 물으면 "좋아" 정도로 가볍게 답할 것');
+  });
+
+  test('기분 기록이 있으면 그 값을 넘긴다', () => {
+    const out = formatLiveData(context({ mood: { value: '피곤', note: '시험기간' } }));
+    expect(out).toContain('기분: 피곤 (시험기간)');
+  });
+
   test('식사 기록이 없으면 안 먹었다는 뜻이 아님을 적는다', () => {
     const out = formatLiveData(context({ meals: [] }));
     expect(out).toContain('아직 기록 안 함');
