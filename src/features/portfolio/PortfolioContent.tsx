@@ -9,13 +9,13 @@ import EducationSection from './EducationSection';
 import SkillsSection from './SkillsSection';
 import ValuesGoalsSection from './ValuesGoalsSection';
 import ContactSection from './ContactSection';
-import { usePortfolioData } from './usePortfolioData';
+import { usePortfolioData, type PortfolioData } from './usePortfolioData';
 import { splitProjects } from './projectUtils';
 
 // 순서는 리뷰어의 읽기 순서다: 무엇을 만들었나(대표 3개) → 나머지 → 어디서 일했나 → 배경 → 기술 → 사람 → 연락.
-export default function PortfolioContent() {
+export default function PortfolioContent({ initial }: { initial: PortfolioData | null }) {
   const { i18n, t } = useTranslation();
-  const { data, loaded, loadError } = usePortfolioData(i18n.language || 'ko');
+  const { data, loaded, loadError } = usePortfolioData(i18n.language || 'ko', initial);
 
   if (!loaded) {
     return (

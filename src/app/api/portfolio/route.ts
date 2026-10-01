@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getClientIp } from '@/lib/clientIp';
-import { adminDb } from '@/lib/firebaseAdmin';
 import { checkRateLimit, RATE_LIMIT_MAX_PORTFOLIO } from '@/lib/rateLimit';
 import { isLang } from '@/lib/site';
+import { getPortfolioData } from '@/features/portfolio/portfolioData';
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   // 봇·공격자의 반복 호출로 인한 Firestore 읽기 비용만 차단. 정상 방문자의 다중 페이지
@@ -19,38 +19,13 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const rawLang = req.nextUrl.searchParams.get('lang') || 'ko';
   const lang = isLang(rawLang) ? rawLang : 'ko';
 
-  if (!adminDb) {
-    return NextResponse.json({ error: 'Admin SDK not available' }, { status: 500 });
+  // 데이터가 없는 언어(es·fr·de·pt·ru)는 getPortfolioData가 영어판으로 돌려준다.
+  const data = await getPortfolioData(lang);
+  if (!data) {
+    return NextResponse.json({ error: 'Portfolio unavailable' }, { status: 503 });
   }
 
-  const col = adminDb.collection('portfolio');
-
-  const docs = [
-    'hero', 'summary', 'projects', 'skills', 'timeline',
-    'education', 'certifications', 'personalInfo', 'goals', 'values', 'hobbies',
-  ];
-  const snaps = await Promise.allSettled(
-    docs.map((d) => col.doc(`${d}_${lang}`).get()),
-  );
-
-  const getData = (idx: number) =>
-    snaps[idx].status === 'fulfilled' && snaps[idx].value.exists
-      ? snaps[idx].value.data()
-      : null;
-
-  return NextResponse.json({
-    hero: getData(0),
-    summary: getData(1),
-    projects: getData(2)?.items ?? [],
-    skills: getData(3)?.categories ?? [],
-    timeline: getData(4)?.items ?? [],
-    education: getData(5)?.items ?? [],
-    certifications: getData(6)?.items ?? [],
-    personalInfo: getData(7)?.items ?? [],
-    goals: getData(8)?.items ?? [],
-    values: getData(9)?.items ?? [],
-    hobbies: getData(10)?.categories ?? [],
-  }, {
+  return NextResponse.json(data, {
     headers: {
       // CDN·엣지 캐시로 Firestore 중복 접근 최소화(5분 fresh + 30분 SWR)
       'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=1800',
