@@ -35,7 +35,7 @@ test.describe('실시간 컨텍스트: 장소 이름', () => {
     }));
     expect(out).toContain('현재 위치: 김철수 집');
     expect(out).toContain('김철수 집 30분');
-    expect(out).toContain('자취방 9시간');
+    expect(out).toContain('- 2026-09-30(수, 어제): 김철수 집 30분, 자취방 9시간');
   });
 });
 
@@ -109,8 +109,9 @@ test.describe('실시간 컨텍스트: 할 일·공부 기록', () => {
       { date: '2026-09-30', metric: 'duolingo_total_xp', value: '888', minutes: null },
       { date: '2026-09-29', metric: 'app_usage', value: '말해보카', minutes: 71 },
     ] } }));
-    expect(out).toContain('- 2026-09-30: 말해보카 1시간 27분');
-    expect(out).toContain('- 2026-09-29: 말해보카 1시간 11분');
+    // 요일과 어제·그저께는 코드가 붙인다(모델이 날짜를 요일로 옮기다 틀린다).
+    expect(out).toContain('- 2026-09-30(수, 어제): 말해보카 1시간 27분');
+    expect(out).toContain('- 2026-09-29(화, 그저께): 말해보카 1시간 11분');
     expect(out).not.toContain('888');
   });
 

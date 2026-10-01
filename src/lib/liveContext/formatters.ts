@@ -85,6 +85,19 @@ function kstDayNumber(value: string | Date): number {
   return Date.UTC(y, m - 1, d) / 86_400_000
 }
 
+const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
+const DAYS_AGO = ['오늘', '어제', '그저께']
+
+// 'YYYY-MM-DD'에 요일과 오늘·어제·그저께를 붙인다. 날짜만 주고 모델이 요일로 옮기게 두면
+// 월~수 기록을 "월요일부터 목요일까지 매일 했어"라고 답한다(2026-10 대화 점검).
+function dayLabel(ymd: string, now: Date): string {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(ymd)) return ymd
+  const dayNumber = kstDayNumber(ymd)
+  const weekday = WEEKDAYS[new Date(dayNumber * 86_400_000).getUTCDay()]
+  const ago = DAYS_AGO[kstDayNumber(now) - dayNumber]
+  return `${ymd}(${weekday}${ago ? `, ${ago}` : ''})`
+}
+
 /** 한국 날짜 기준으로 두 시각이 며칠 떨어져 있는지(같은 날이면 0). */
 function daysApartKST(earlier: Date, later: Date): number {
   return kstDayNumber(later) - kstDayNumber(earlier)
@@ -107,7 +120,7 @@ function formatSleep(sleep: SleepData | null, now: Date): string {
   ].filter(Boolean)
   const detail = `${bedtime} 취침 → ${wakeup} 기상, 총 ${formatMinutes(sleep.totalSleep)} (${stages.join(', ')})`
   if (age <= 0) return `수면(어젯밤 — 오늘 아침 기상): ${detail}`
-  return `수면: 어젯밤 기록은 없음. 마지막 기록은 ${age}일 전(${date} 아침 기상)이라 어젯밤 얘기가 아님 — ${detail}`
+  return `수면: 어젯밤 기록은 없음. 마지막 기록은 ${age}일 전(${date} 아침 기상)이라 어젯밤 얘기가 아님. "보통 몇 시에 자?" 같은 질문에는 "마지막 기록으로는"이라고 밝히고 써도 됨 — ${detail}`
 }
 
 // 장소 이름은 본인이 플랫폼에 붙인 그대로 넘긴다. "OOO 집"처럼 지인 이름이 들어 있어도 가리지 않는다 —
@@ -124,10 +137,10 @@ function formatLocation(location: LocationData | null): string[] {
   return lines
 }
 
-function formatDwell(days: DwellDay[] | undefined): string {
+function formatDwell(days: DwellDay[] | undefined, now: Date): string {
   if (!days || days.length === 0) return '최근 머문 곳: 기록 없음'
   const parts = days.map(
-    (d) => `${d.date}: ${d.places.map((p) => `${p.place} ${formatMinutes(p.minutes)}`).join(', ')}`,
+    (d) => `${dayLabel(d.date, now)}: ${d.places.map((p) => `${p.place} ${formatMinutes(p.minutes)}`).join(', ')}`,
   )
   return `최근 날짜별 머문 곳:\n${parts.map((p) => `- ${p}`).join('\n')}`
 }
@@ -242,7 +255,7 @@ function formatTasks(tasks: TaskEntry[] | null | undefined): string {
 
 // 공부 기록은 날짜마다 지표가 여러 줄로 온다. 앱 사용 시간만 날짜별로 모아 한 줄씩 적는다
 // (누적 XP·연속 일수 같은 값은 하루치로 읽히지 않아 뺀다).
-function formatStudy(days: StudyEntry[] | undefined): string {
+function formatStudy(days: StudyEntry[] | undefined, now: Date): string {
   const byDate = new Map<string, string[]>()
   for (const d of days ?? []) {
     if (d.metric !== 'app_usage' || !d.value || !d.minutes) continue
@@ -253,8 +266,8 @@ function formatStudy(days: StudyEntry[] | undefined): string {
   const lines = [...byDate.entries()]
     .sort((a, b) => b[0].localeCompare(a[0]))
     .slice(0, 7)
-    .map(([date, apps]) => `- ${date}: ${apps.join(', ')}`)
-  return `최근 영어 공부(앱 사용 시간):\n${lines.join('\n')}`
+    .map(([date, apps]) => `- ${dayLabel(date, now)}: ${apps.join(', ')}`)
+  return `최근 영어 공부(앱 사용 시간, 적힌 날만 기록이 있음 — 오늘 치는 아직 안 들어왔을 수 있음):\n${lines.join('\n')}`
 }
 
 // 공개 범위는 본인 결정이다: "너무 위험한 것만 빼고 다 준다"(2026-10-01). 위치(현재·이동 기록·
@@ -262,18 +275,19 @@ function formatStudy(days: StudyEntry[] | undefined): string {
 // 넘기지 않는 것은 GPS 좌표와 저장된 장소의 좌표뿐이다 — 집 위치를 정확히 특정한다.
 export function formatLiveData(json: ContextResponse): string {
   const { data } = json
+  const now = new Date(json.timestamp)
   return [
     `# 실시간 정보 (${formatTimestamp(json.timestamp)} KST)`,
     '',
     ...formatLocation(data.location),
-    formatDwell(data.dwell?.days),
+    formatDwell(data.dwell?.days, now),
     formatMeals(data.meals),
-    formatSleep(data.sleep, new Date(json.timestamp)),
+    formatSleep(data.sleep, now),
     formatWeather(data.weather),
     formatMood(data.mood),
-    formatSchedule(data.schedule, new Date(json.timestamp)),
+    formatSchedule(data.schedule, now),
     formatTasks(data.tasks),
-    formatStudy(data.study?.days),
+    formatStudy(data.study?.days, now),
   ]
     .filter(Boolean)
     .join('\n')
