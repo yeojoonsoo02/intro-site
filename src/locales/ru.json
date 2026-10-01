@@ -77,5 +77,6 @@
   "outcome": "Результат",
   "lessons": "Выводы",
   "viewCaseStudy": "Подробнее",
-  "projectNotFound": "Проект не найден"
+  "projectNotFound": "Проект не найден",
+  "flipCardHint": "Карточка профиля — стрелки влево и вправо переворачивают её"
 }

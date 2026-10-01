@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { Profile } from './profile.model';
 import ProfileCardContent from './ProfileCardContent';
 import useCardFlip from './useCardFlip';
@@ -13,8 +14,27 @@ export default function FlippableProfileCard({ profile, devProfile }: { profile:
   const frontRef = useRef<HTMLDivElement>(null);
   const backRef = useRef<HTMLDivElement>(null);
 
-  // 카드 뒤집기는 좌우 스와이프(pointer)로만 동작. isFlipped는 컨테이너 높이 계산에 사용.
-  const { isFlipped, ...pointerHandlers } = useCardFlip({ innerRef });
+  const { t } = useTranslation();
+
+  // 카드 뒤집기는 가장자리 좌우 스와이프(pointer) 또는 카드에 포커스한 뒤 좌우 화살표 키.
+  // isFlipped는 컨테이너 높이 계산과, 안 보이는 면을 조작 대상에서 빼는 데 쓴다.
+  const { isFlipped, flip, ...pointerHandlers } = useCardFlip({ innerRef });
+
+  // 안 보이는 면의 링크는 화면에 없는데도 Tab으로 포커스되고 스크린리더에 읽혔다.
+  // inert로 그 면을 통째로 조작·읽기 대상에서 뺀다.
+  useEffect(() => {
+    if (frontRef.current) frontRef.current.inert = isFlipped;
+    if (backRef.current) backRef.current.inert = !isFlipped;
+  }, [isFlipped]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>): void => {
+    // 카드 자체에 포커스가 있을 때만 — 안쪽 링크에서의 키 입력은 건드리지 않는다.
+    if (e.target !== e.currentTarget) return;
+    if (e.key === 'ArrowRight') flip(1);
+    else if (e.key === 'ArrowLeft') flip(-1);
+    else return;
+    e.preventDefault();
+  };
 
   // 마운트 시 1회만 흔들림 애니메이션 실행 (reduced-motion 사용자는 스킵)
   useEffect(() => {
@@ -58,6 +78,9 @@ export default function FlippableProfileCard({ profile, devProfile }: { profile:
       style={{ perspective: 1200, overflow: 'visible', touchAction: 'pan-y' }}
       {...pointerHandlers}
       ref={containerRef}
+      tabIndex={0}
+      aria-label={t('flipCardHint')}
+      onKeyDown={handleKeyDown}
     >
       <div
         className="relative w-full"

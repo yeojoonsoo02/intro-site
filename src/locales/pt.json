@@ -77,5 +77,6 @@
   "outcome": "Resultado",
   "lessons": "Aprendizados",
   "viewCaseStudy": "Ver mais",
-  "projectNotFound": "Projeto não encontrado"
+  "projectNotFound": "Projeto não encontrado",
+  "flipCardHint": "Cartão de perfil — use a seta esquerda ou direita para virar"
 }

@@ -77,5 +77,6 @@
   "outcome": "結果",
   "lessons": "学んだこと",
   "viewCaseStudy": "詳しく見る",
-  "projectNotFound": "プロジェクトが見つかりません"
+  "projectNotFound": "プロジェクトが見つかりません",
+  "flipCardHint": "プロフィールカード — 左右の矢印キーで裏返す"
 }

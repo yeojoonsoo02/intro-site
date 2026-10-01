@@ -52,6 +52,22 @@ export default function useCardFlip({ innerRef, onAngleChange }: UseCardFlipProp
     onAngleChange?.(totalAngle);
   };
 
+  // 현재 각도(currentAngle)로 카드를 부드럽게 돌려 놓는다.
+  const settle = () => {
+    if (!innerRef.current) return;
+    innerRef.current.style.transition = 'transform 0.4s ease';
+    innerRef.current.style.transform = `rotateY(${currentAngle.current}deg)`;
+    onAngleChange?.(currentAngle.current);
+  };
+
+  /** 스와이프 없이 뒤집기 — 키보드 사용자용. direction은 도는 방향(1: 오른쪽, -1: 왼쪽). */
+  const flip = (direction: 1 | -1) => {
+    if (!innerRef.current) return;
+    currentAngle.current += 180 * direction;
+    setIsFlipped(currentAngle.current % 360 !== 0);
+    settle();
+  };
+
   const handlePointerEnd = (e: React.PointerEvent) => {
     if (!dragging.current || !innerRef.current) return;
 
@@ -64,9 +80,7 @@ export default function useCardFlip({ innerRef, onAngleChange }: UseCardFlipProp
       setIsFlipped(currentAngle.current % 360 !== 0);
     }
 
-    innerRef.current.style.transition = 'transform 0.4s ease';
-    innerRef.current.style.transform = `rotateY(${currentAngle.current}deg)`;
-    onAngleChange?.(currentAngle.current);
+    settle();
 
     dragging.current = false;
     startX.current = null;
@@ -81,5 +95,6 @@ export default function useCardFlip({ innerRef, onAngleChange }: UseCardFlipProp
     onPointerUp: handlePointerEnd,
     onPointerCancel: handlePointerEnd,
     isFlipped,
+    flip,
   };
 }

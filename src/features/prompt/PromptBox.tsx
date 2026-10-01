@@ -23,6 +23,21 @@ export default function PromptBox({ open, onClose }: PromptBoxProps): JSX.Elemen
   const [dots, setDots] = useState(1)
   const listRef = useRef<HTMLDivElement | null>(null)
   const inputRef = useRef<HTMLInputElement | null>(null)
+  const panelRef = useRef<HTMLDivElement | null>(null)
+
+  // 닫힌 패널은 화면 밖으로 밀려 있을 뿐 DOM에 남아 있어, 입력창과 버튼이 Tab으로 포커스됐다.
+  useEffect(() => {
+    if (panelRef.current) panelRef.current.inert = !open
+  }, [open])
+
+  useEffect(() => {
+    if (!open) return
+    const onKeyDown = (e: KeyboardEvent): void => {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [open, onClose])
 
   const maxChars = user ? MAX_CHARS_USER : MAX_CHARS_GUEST
 
@@ -50,6 +65,7 @@ export default function PromptBox({ open, onClose }: PromptBoxProps): JSX.Elemen
 
   return (
     <div
+      ref={panelRef}
       // 키보드가 뜨면 가용 높이가 ~300px로 줄어 헤더(닫기 버튼)가 화면 밖으로 밀렸다.
       // 뷰포트 기준 상한 + 스크롤로 항상 닫을 수 있게 한다.
       className={`fixed bottom-0 left-0 w-full max-h-[85dvh] overflow-y-auto overscroll-contain backdrop-blur-md border-t p-3 transition-transform duration-300 z-40 ${

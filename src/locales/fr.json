@@ -77,5 +77,6 @@
   "outcome": "Résultat",
   "lessons": "Enseignements",
   "viewCaseStudy": "Voir plus",
-  "projectNotFound": "Projet introuvable"
+  "projectNotFound": "Projet introuvable",
+  "flipCardHint": "Carte de profil — flèche gauche ou droite pour la retourner"
 }

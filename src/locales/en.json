@@ -77,5 +77,6 @@
   "outcome": "Outcome",
   "lessons": "Lessons",
   "viewCaseStudy": "Read more",
-  "projectNotFound": "Project not found"
+  "projectNotFound": "Project not found",
+  "flipCardHint": "Profile card — press the left or right arrow key to flip"
 }

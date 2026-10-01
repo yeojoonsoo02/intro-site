@@ -35,7 +35,8 @@ export default function ProfileCardContent({ profile, isDev }: { profile: Profil
           alt={t('profilePhoto', { defaultValue: 'profile photo' })}
           width={144}
           height={144}
-          priority
+          // 앞면 사진이 홈의 LCP다. 뒷면은 처음엔 안 보이니 미리 받지 않는다.
+          preload={!isDev}
           sizes="(max-width: 640px) 120px, 144px"
           className={`
             w-[120px] h-[120px] sm:w-[144px] sm:h-[144px]

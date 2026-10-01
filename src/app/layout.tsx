@@ -138,13 +138,6 @@ export default async function RootLayout({
             __html: `(function(){try{var t=localStorage.getItem('theme');var valid=['light','dark','system'];if(valid.indexOf(t)===-1){t='system';}var isDark=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);var r=document.documentElement;r.classList.remove('dark','light');r.classList.add(isDark?'dark':'light');r.style.colorScheme=isDark?'dark':'light';}catch(e){}})();`,
           }}
         />
-        {/* LCP 이미지(프로필 사진) preload — 초기 렌더 지연 감소 */}
-        <link
-          rel="preload"
-          as="image"
-          href="/profile.jpg"
-          fetchPriority="high"
-        />
       </head>
       <body className="antialiased relative">
         <JsonLd lang={lang} />
