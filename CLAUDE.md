@@ -95,11 +95,11 @@ npm run embeddings:build # 지식 청크 임베딩 사전계산 (GEMINI_API_KEY 
 
 **콘텐츠 정본.** 챗봇 정본은 `src/data/knowledge.ts`, 화면 데이터는 Firestore(`portfolio/*_{lang}`, `profiles/main_{lang}`). 영문 표기는 "Junsu Yeo"(이전 표기 Yeojunsu는 alternateName·키워드로만), 직업은 "대학생 개발자", 기술 스택은 세 곳(knowledge·Firestore skills·JSON-LD)이 같은 합집합을 갖는다. 하나를 고치면 셋을 같이 고친다.
 
-## 7. TemuTemu 팀 공간 (task.yeojoonsoo02.com)
+## 7. TnB (옛 TemuTemu 팀 공간, task.yeojoonsoo02.com)
 
-2026-09-21에 별도 프로젝트 `Work/temutemu-task`로 분리했다. 이 저장소에는 옛 링크(`/task`, `/task.html`, `/task-timetable.html`)를 새 도메인으로 넘기는 리디렉트만 남아 있다(`next.config.ts`).
+2026-09-21에 별도 프로젝트로 분리했다 — 지금은 `Work/ETC/TnB`(GitHub `chatgptkrguide/TnB`, Vercel 프로젝트 `tnb`, 2026-10-01 이름 변경). 이 저장소에는 옛 링크(`/task`, `/task.html`, `/task-timetable.html`)를 새 도메인으로 넘기는 리디렉트만 남아 있다(`next.config.ts`).
 
-단, **Firestore는 계속 공유한다** — `task_members`·`task_presence`·`task_timetables`·`task_files` 컬렉션은 이 Firebase 프로젝트에 있고 temutemu-task가 서비스 계정으로 읽고 쓴다. 이 컬렉션들을 정리하거나 서비스 계정 키를 교체할 때는 그쪽도 같이 챙긴다.
+단, **Firestore는 계속 공유한다** — `task_members`·`task_presence`·`task_timetables`·`task_files` 컬렉션은 이 Firebase 프로젝트에 있고 TnB가 서비스 계정으로 읽고 쓴다(이름만 바뀌었고 컬렉션 · Blob 스토어 `temutemu-files`는 그대로). 이 컬렉션들을 정리하거나 서비스 계정 키를 교체할 때는 그쪽도 같이 챙긴다.
 
 ## 8. 커밋
 
