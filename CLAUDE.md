@@ -66,6 +66,14 @@ React는 아직 **18.3.1**이다(Next 16 + React 18 조합). 19 전용 API를 �
 
 **대화 로그·웹훅·카톡 알림은 `after()`로 예약한다**(`api/gemini/sideEffects.ts`). await 없이 던져 두면 서버리스 함수가 응답 종료와 함께 멈춰 간헐적으로 사라진다. 챗 경로의 외부 호출(실시간 컨텍스트·블로그 RSS·fallback·알림)에는 전부 타임아웃이 있다 — 새 외부 호출을 넣으면 `AbortSignal.timeout`을 같이 넣는다.
 
+**고칠 때는 평가부터.** `npm run persona:eval -- <라벨> [--base 이전결과.json]`이 고정 질문 58개(실제 로그의 상위 질문, `scripts/persona-eval.questions.ts`)를 운영과 같은 프롬프트·모델 설정으로 돌려 `eval-results/`(gitignore)에 답변과 지표를 남긴다. 프롬프트·`knowledge.ts`·컨텍스트 포맷을 고치기 전후로 돌려 나란히 본다 — 방문이 적어 운영에서는 비교가 안 되고, 감으로 고치면 옆이 튀어나온다("음," 남발을 잡았더니 다른 버릇이 생김). 확률적인 실패는 `--only <id> --repeat 6`으로 찾는다. Gemini를 질문 수만큼 부르지만 로그·알림·rate limit은 건드리지 않는다.
+
+**말투의 재료는 `src/data/voiceSamples.ts`다.** 본인이 직접 쓴 답만 넣는다(AI가 대신 쓰거나 다듬은 문장 금지 — 모델의 말투를 다시 먹이는 꼴이 된다). 규칙은 "하지 말 것"을 줄일 뿐 말투를 만들지 못하고, `knowledge.ts`는 일부러 명사형 사실만 담아서, 표본이 없으면 답이 정확해도 FAQ처럼 읽힌다.
+
+**날짜·기록 유무 같은 판정은 모델에게 시키지 않고 코드가 적어 준다**(`lib/liveContext/formatters.ts`). 수면 기록이 어젯밤 것인지, 식사 기록이 없는 게 안 먹었다는 뜻인지, 달력 항목이 쉬는 날인지를 모델이 추론하게 두면 틀린다 — 2026-10 평가에서 한 달 전 수면 기록을 어젯밤 일로, 국군의 날을 휴강 사유로 답했다. 공휴일 달력의 기념일은 아예 넘기지 않고, 장소 이름의 지인 실명("OOO 집")은 "지인 집"으로 바꿔 넘긴다(내 위치 공개 결정에 남의 이름은 들어 있지 않다).
+
+**모델 설정은 `api/gemini/model.ts` 한 곳.** 추론 토큰 상한(`DEFAULT_THINKING_BUDGET`)은 512 — 0이면 3배 빠르지만 금지한 추임새와 지어낸 일화가 늘었다(같은 파일 주석에 실험 수치). 시스템 프롬프트 유출은 규칙만으로 못 막는다(같은 요청에 한 번은 거절, 한 번은 전문 출력) — `security.ts`의 `findPromptLeak`이 출력에서 프롬프트 소제목을 보면 끊는다. **`systemPrompt.ts`의 소제목("말투 규칙:" 등)을 바꾸면 그 정규식도 맞출 것.**
+
 **페르소나.** 챗봇은 "준수 정보로 만든 AI 분신"이다 — 1인칭으로 말하되 "AI냐"고 물으면 속이지 않는다. 말투는 긍정적·담백, 1~3문장, 추임새("음")로 시작하지 않음, 문단 나누기·되풀이 맞장구 금지. 2026-09-17 실대화 테스트에서 "음," 남발·취향 모순(매운 거 못 먹는데 짬뽕)·AI 부정을 고친 결과다.
 
 **개인정보 경계.** 실시간 컨텍스트(`lib/liveContext`)는 위치(현재·최근 이동 기록·날짜별 머문 곳)와 수면(기록일·취침/기상·단계)을 **그대로 넘기고**, 할 일 목록과 GPS 좌표는 넘기지 않는다. 챗봇은 위치·수면 시각·집/학교 위치 질문에 답한다 — 2026-09-10에 막았다가 2026-09-16 본인 결정으로 다시 열었다. 생일은 월·일까지 모델에 준다(`lib/dateContext.ts`, 2026-09-17 공개). “개인정보가 새는 버그”로 보고 다시 막지 말 것. 서버 캐시(live·blog·timetable·portfolioContext·portfolioData·about·home)는 `lib/cached.ts` 헬퍼를 쓴다.
@@ -87,6 +95,7 @@ npm run lint            # eslint src tests
 npm run test:e2e        # playwright (최초 1회 test:e2e:install)
 npm run indexnow        # 색인 즉시 제출
 npm run embeddings:build # 지식 청크 임베딩 사전계산 (GEMINI_API_KEY 필요)
+npm run persona:eval -- <라벨>  # 챗봇 말투 평가 (Gemini 58회 호출, 결과는 eval-results/)
 ```
 
 ⚠️ **`src/data/knowledge.ts`를 고쳤으면 `npm run embeddings:build`를 함께 돌린다.** 청크 임베딩은 빌드 타임에 계산해 `src/data/chunkEmbeddings.generated.ts`에 넣어둔다(콜드스타트마다 임베딩 API를 부르지 않기 위함). 재생성을 잊으면 해시가 어긋난 청크만 런타임에 실시간 임베딩으로 폴백하고 서버 로그에 경고가 남는다 — 동작은 하지만 아끼려던 비용이 다시 나간다.
