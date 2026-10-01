@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/lib/AuthProvider'
 
@@ -30,19 +30,17 @@ export function useChat(): UseChatReturn {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [loading, setLoading] = useState(false)
   const [streaming, setStreaming] = useState(false)
-  const [remaining, setRemaining] = useState<number | null>(null)
-  const [limitExhausted, setLimitExhausted] = useState(false)
+  // 한도는 계정(로그인) 또는 IP(게스트) 기준으로 따로 센다. 누구의 한도인지 함께 들고 있다가
+  // 로그인·로그아웃으로 주인이 바뀌면 버린다 — 안 그러면 한도를 다 쓴 게스트가 로그인해도
+  // 입력이 닫힌 채라 "로그인하면 더 질문할 수 있어요"가 거짓말이 된다.
+  const [limit, setLimit] = useState<{ uid: string | null; remaining: number } | null>(null)
   const idCounter = useRef(0)
   // 렌더 상태와 별개로 "지금까지 오간 대화"를 즉시 읽어야 해서 ref로도 들고 있는다.
   const historyRef = useRef<ChatMessage[]>([])
 
-  // 한도는 계정(로그인) 또는 IP(게스트) 기준으로 따로 센다. 로그인·로그아웃하면 다른 한도가
-  // 적용되므로 "소진" 표시를 걷어낸다 — 안 그러면 "로그인하면 더 질문할 수 있어요"가 거짓말이 된다.
   const uid = user?.uid ?? null
-  useEffect(() => {
-    setLimitExhausted(false)
-    setRemaining(null)
-  }, [uid])
+  const remaining = limit && limit.uid === uid ? limit.remaining : null
+  const limitExhausted = remaining !== null && remaining <= 0
 
   const nextId = useCallback((): string => {
     idCounter.current += 1
@@ -154,11 +152,12 @@ export function useChat(): UseChatReturn {
       }
 
       function applyRemaining(value: number): void {
-        setRemaining(value)
-        if (value <= 0) setLimitExhausted(true)
+        // 요청을 보낸 시점의 주인으로 기록한다. 응답을 기다리는 사이 로그인 상태가 바뀌었으면
+        // 지금 주인과 달라 자연히 무시된다.
+        setLimit({ uid, remaining: value })
       }
     },
-    [append, loading, t, updateText, user],
+    [append, loading, t, uid, updateText, user],
   )
 
   return { messages, loading, streaming, remaining, limitExhausted, send }

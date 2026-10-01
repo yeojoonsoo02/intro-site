@@ -54,8 +54,15 @@ const nextConfig: NextConfig = {
           { key: 'X-DNS-Prefetch-Control', value: 'on' },
           // Google 로그인 팝업 유지하면서 크로스오리진 공격 방어
           { key: 'Cross-Origin-Opener-Policy', value: 'same-origin-allow-popups' },
-          // 레거시 XSS 필터 (구형 브라우저 호환)
-          { key: 'X-XSS-Protection', value: '1; mode=block' },
+          // 스크립트·연결 출처는 아직 제한하지 않는다(인라인 테마 스크립트·JSON-LD·Firebase 로그인
+          // 팝업이 있어 허용 목록을 로그인 흐름으로 검증한 뒤 넣어야 한다). 여기 있는 건 어떤
+          // 페이지도 깨뜨리지 않는 지시문만: 프레임 삽입·<base> 바꿔치기·플러그인·외부 폼 전송 차단.
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'",
+          },
+          // X-XSS-Protection은 넣지 않는다 — 폐기된 헤더이고, 구형 브라우저의 XSS 필터는
+          // 그 자체가 정보 유출 통로로 악용된 이력이 있다.
         ],
       },
       {

@@ -1,22 +1,19 @@
 'use client'
 
-import { forwardRef } from 'react'
+import { forwardRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { ChatMessage } from './useChat'
 
 interface MessageListProps {
   messages: ChatMessage[]
   loading: boolean
-  dots: number
   onSuggestionClick: (text: string) => void
 }
 
 const MessageList = forwardRef<HTMLDivElement, MessageListProps>(function MessageList(
-  { messages, loading, dots, onSuggestionClick },
+  { messages, loading, onSuggestionClick },
   ref,
 ) {
-  const { t } = useTranslation()
-
   return (
     <div
       ref={ref}
@@ -30,20 +27,35 @@ const MessageList = forwardRef<HTMLDivElement, MessageListProps>(function Messag
       {messages.map((m) => (
         <MessageBubble key={m.id} role={m.role} text={m.text} />
       ))}
-      {loading && (
-        <div
-          className="text-[0.9375rem] max-w-[85%] sm:max-w-[75%] mr-auto px-3.5 py-2 rounded-xl rounded-bl-sm"
-          style={{ background: 'var(--surface-2)', color: 'var(--muted)' }}
-        >
-          {t('typing')}
-          {'.'.repeat(dots)}
-        </div>
-      )}
+      {loading && <TypingIndicator />}
     </div>
   )
 })
 
 export default MessageList
+
+// 기다리는 동안에만 마운트된다 — 점 개수는 마운트할 때마다 1부터 다시 센다.
+function TypingIndicator(): JSX.Element {
+  const { t } = useTranslation()
+  const [dots, setDots] = useState(1)
+
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setDots((d) => (d % 3) + 1)
+    }, 500)
+    return () => window.clearInterval(id)
+  }, [])
+
+  return (
+    <div
+      className="text-[0.9375rem] max-w-[85%] sm:max-w-[75%] mr-auto px-3.5 py-2 rounded-xl rounded-bl-sm"
+      style={{ background: 'var(--surface-2)', color: 'var(--muted)' }}
+    >
+      {t('typing')}
+      {'.'.repeat(dots)}
+    </div>
+  )
+}
 
 function MessageBubble({ role, text }: { role: ChatMessage['role']; text: string }): JSX.Element {
   const isUser = role === 'user'

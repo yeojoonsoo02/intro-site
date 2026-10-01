@@ -30,6 +30,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const stored = localStorage.getItem('theme')
     if (isValidTheme(stored)) {
+      // 서버 렌더·하이드레이션은 localStorage를 볼 수 없어 'system'으로 시작해야 한다.
+      // 마운트 뒤 한 번 복원하는 것이 이 effect의 목적이다.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTheme(stored)
     } else if (stored !== null) {
       // 손상된 값 정리

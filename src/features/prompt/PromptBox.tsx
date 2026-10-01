@@ -20,7 +20,6 @@ export default function PromptBox({ open, onClose }: PromptBoxProps): JSX.Elemen
   const { user, login } = useAuth()
   const { messages, loading, streaming, remaining, limitExhausted, send } = useChat()
   const [collapsed, setCollapsed] = useState(false)
-  const [dots, setDots] = useState(1)
   const listRef = useRef<HTMLDivElement | null>(null)
   const inputRef = useRef<HTMLInputElement | null>(null)
   const panelRef = useRef<HTMLDivElement | null>(null)
@@ -52,17 +51,6 @@ export default function PromptBox({ open, onClose }: PromptBoxProps): JSX.Elemen
     return () => window.clearTimeout(id)
   }, [open])
 
-  useEffect(() => {
-    if (!loading) {
-      setDots(1)
-      return
-    }
-    const id = window.setInterval(() => {
-      setDots((d) => (d % 3) + 1)
-    }, 500)
-    return () => window.clearInterval(id)
-  }, [loading])
-
   return (
     <div
       ref={panelRef}
@@ -90,7 +78,6 @@ export default function PromptBox({ open, onClose }: PromptBoxProps): JSX.Elemen
             messages={messages}
             // 첫 글자가 도착하면 답변 말풍선이 자라기 시작하므로 "입력 중" 표시는 거둔다.
             loading={loading && !streaming}
-            dots={dots}
             onSuggestionClick={send}
           />
         )}

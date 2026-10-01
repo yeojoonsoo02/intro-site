@@ -14,7 +14,7 @@ interface Props {
 /**
  * Intersection Observer 기반 스크롤 진입 애니메이션 래퍼.
  * 한 번 보이면 disconnect — 스크롤 다시 위로 가도 깜빡이지 않음.
- * prefers-reduced-motion 사용자에게는 즉시 표시 (transition만 0).
+ * prefers-reduced-motion 사용자에게는 처음부터 표시 — CSS(motion-reduce:)가 숨김 상태를 덮는다.
  */
 export default function RevealOnScroll({
   children,
@@ -28,11 +28,6 @@ export default function RevealOnScroll({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) {
-      setVisible(true);
-      return;
-    }
     const obs = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -60,6 +55,7 @@ export default function RevealOnScroll({
       className={[
         'transition-all duration-[800ms] ease-[cubic-bezier(0.22,1,0.36,1)]',
         'motion-reduce:transition-none motion-reduce:transform-none',
+        'motion-reduce:opacity-100 motion-reduce:translate-y-0 motion-reduce:scale-100 motion-reduce:blur-0',
         visible ? settled : initial,
         className,
       ].join(' ')}
