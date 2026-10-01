@@ -31,21 +31,51 @@ interface Klass {
   est?: boolean
 }
 
-async function load(): Promise<string> {
-  if (!adminDb) return ''
+interface Timetable {
+  classes: Klass[]
+  online: string[]
+}
+
+const EMPTY: Timetable = { classes: [], online: [] }
+
+async function load(): Promise<Timetable> {
+  if (!adminDb) return EMPTY
   const snap = await adminDb.collection('task_timetables').doc(DOC).get()
-  const data = snap.data() as { classes?: Klass[]; online?: string[] } | undefined
+  const data = snap.data() as Partial<Timetable> | undefined
   const classes = [...(data?.classes ?? [])].sort((a, b) => a.day - b.day || a.start.localeCompare(b.start))
-  const online = data?.online ?? []
+  return { classes, online: data?.online ?? [] }
+}
+
+const getTimetable = cached(load, EMPTY, { ttl: TTL, errorTtl: ERROR_TTL, name: 'timetableContext' })
+
+/** 한국 시간 기준 오늘의 요일(월=0 … 금=4, 주말은 5·6). */
+function seoulWeekday(now: Date): number {
+  const name = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Seoul', weekday: 'short' }).format(now)
+  return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(name)
+}
+
+const WEEKDAY_NAMES = ['월', '화', '수', '목', '금', '토', '일']
+
+// 시간표(캐시 1시간)와 달리 "오늘이 무슨 요일이고 오늘 수업이 뭔지"는 호출할 때마다 계산한다.
+// 요일별 목록만 주고 모델이 오늘 요일과 맞춰 보게 두면 다른 요일 수업을 "오늘 들었다"고 답한다
+// (2026-10 평가). 날짜·요일 판정은 모델에게 시키지 않는다.
+export async function getTimetableContext(now: Date = new Date()): Promise<string> {
+  const { classes, online } = await getTimetable()
   if (classes.length === 0 && online.length === 0) return ''
 
   const note = (name: string) => (COURSE_NOTE[name] ? ` — ${COURSE_NOTE[name]}` : '')
-  const lines = classes.map((c) => {
-    const room = c.room ? ` @${c.room}` : ''
-    const est = c.est ? ' (시간 추정)' : ''
-    return `- ${DAYS[c.day] ?? '?'} ${c.start}~${c.end} ${c.name}${room}${est}${note(c.name)}`
-  })
+  const describe = (c: Klass) => `${c.start}~${c.end} ${c.name}${c.room ? ` @${c.room}` : ''}${c.est ? ' (시간 추정)' : ''}`
+  const lines = classes.map((c) => `- ${DAYS[c.day] ?? '?'} ${describe(c)}${note(c.name)}`)
+
+  const weekday = seoulWeekday(now)
+  const todays = classes.filter((c) => c.day === weekday)
+  const todayLine =
+    todays.length > 0
+      ? `오늘은 ${WEEKDAY_NAMES[weekday]}요일 — 시간표상 오늘 대면 수업: ${todays.map(describe).join(', ')} (휴강·공휴일 여부는 실시간 정보의 일정이 우선)`
+      : `오늘은 ${WEEKDAY_NAMES[weekday]}요일 — 시간표상 오늘은 대면 수업이 없는 날`
+
   return [
+    todayLine,
     `이번 학기 ${SEMESTER} 대면 수업(매주, 공휴일 제외):`,
     ...lines,
     online.length ? `온라인으로만 듣는 수업(정해진 시간 없음): ${online.map((n) => `${n}${note(n)}`).join(', ')}` : '',
@@ -54,5 +84,3 @@ async function load(): Promise<string> {
     .filter(Boolean)
     .join('\n')
 }
-
-export const getTimetableContext = cached(load, '', { ttl: TTL, errorTtl: ERROR_TTL, name: 'timetableContext' })

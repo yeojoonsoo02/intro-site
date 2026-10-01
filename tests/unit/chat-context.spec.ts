@@ -49,12 +49,18 @@ test.describe('실시간 컨텍스트: 일정', () => {
   test('쉬지 않는 기념일은 넘기지 않는다', () => {
     const out = formatLiveData(context({ schedule: [holiday('Armed Forces Day', 'Observance\nTo hide observances, …')] }));
     expect(out).not.toContain('Armed Forces Day');
-    expect(out).toContain('일정(오늘·내일): 없음');
+    expect(out).toContain('- 오늘(10월 1일 (목)): 일정 없음, 수업 없음');
   });
 
-  test('공휴일은 표시를 붙여 넘긴다', () => {
+  test('공휴일은 표시를 붙이고 이름을 한국어로 바꿔 넘긴다', () => {
     const out = formatLiveData(context({ schedule: [holiday('National Foundation Day', 'Public holiday')] }));
-    expect(out).toContain('[공휴일] National Foundation Day');
+    expect(out).toContain('[공휴일] 개천절');
+    expect(out).not.toContain('대체공휴일');
+  });
+
+  test('모르는 공휴일 이름은 그대로 둔다', () => {
+    const out = formatLiveData(context({ schedule: [holiday('Election Day', 'Public holiday')] }));
+    expect(out).toContain('[공휴일] Election Day');
   });
 
   test('수업 일정은 시간·장소와 함께 넘긴다', () => {
@@ -62,7 +68,8 @@ test.describe('실시간 컨텍스트: 일정', () => {
       title: '기술과경영', start: '2026-10-02T12:00:00+09:00', end: '2026-10-02T15:00:00+09:00',
       location: '새빛205', calendarName: '수업',
     }] }));
-    expect(out).toMatch(/12:00~15:00 \[수업\] 기술과경영 @새빛205/);
+    expect(out).toContain('- 오늘(10월 1일 (목)): 일정 없음, 수업 없음');
+    expect(out).toContain('- 내일(10월 2일 (금)): 12:00~15:00 [수업] 기술과경영 @새빛205');
   });
 });
 
@@ -82,6 +89,36 @@ test.describe('실시간 컨텍스트: 수면·식사 기록', () => {
     const out = formatLiveData(context({ meals: [] }));
     expect(out).toContain('아직 기록 안 함');
     expect(out).toContain('안 먹었다는 뜻이 아님');
+  });
+});
+
+test.describe('실시간 컨텍스트: 할 일·공부 기록', () => {
+  test('안 끝낸 할 일을 넘긴다', () => {
+    const out = formatLiveData(context({ tasks: [
+      { title: '15분 독서', status: 'TODO' },
+      { title: '블로그 글 작성', status: 'TODO', dueDate: '2026-10-03T00:00:00+09:00' },
+      { title: '끝낸 일', status: 'DONE' },
+    ] }));
+    expect(out).toContain('할 일 목록(아직 안 끝낸 것): 15분 독서, 블로그 글 작성(기한 10월 3일)');
+    expect(out).not.toContain('끝낸 일');
+  });
+
+  test('공부 기록은 날짜별 앱 사용 시간만 넘긴다', () => {
+    const out = formatLiveData(context({ study: { days: [
+      { date: '2026-09-30', metric: 'app_usage', value: '말해보카', minutes: 87 },
+      { date: '2026-09-30', metric: 'duolingo_total_xp', value: '888', minutes: null },
+      { date: '2026-09-29', metric: 'app_usage', value: '말해보카', minutes: 71 },
+    ] } }));
+    expect(out).toContain('- 2026-09-30: 말해보카 1시간 27분');
+    expect(out).toContain('- 2026-09-29: 말해보카 1시간 11분');
+    expect(out).not.toContain('888');
+  });
+
+  test('GPS 좌표는 넘기지 않는다', () => {
+    const location = { current: { name: '자취방', latitude: 37.123456, longitude: 127.654321 }, history: [] };
+    const out = formatLiveData(context({ location }));
+    expect(out).toContain('현재 위치: 자취방');
+    expect(out).not.toMatch(/37\.123|127\.654/);
   });
 });
 

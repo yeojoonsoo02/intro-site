@@ -3,11 +3,11 @@ import { cached } from '@/lib/cached'
 // 네이버 블로그 "타발추"(blog.naver.com/yeojoonsoo02) RSS를 읽어 챗봇이 "요즘 근황·독서"를
 // 알도록 컨텍스트로 주입한다.
 //
-// 프라이버시 설계:
-// - '책' 카테고리: 제목 + 짧은 발췌(공개해도 안전, 정체성 가치 높음)
-// - '일상'(일기): 제목만. 본문엔 가족·지인 실명·사적 사건이 섞여 있어 본문은 가져오지 않는다.
-// - 사이트 렌더는 제목·링크·날짜만(getRecentPosts). 일기 본문은 어디에도 나가지 않는다.
-//   책 발췌는 챗봇 컨텍스트와 사이트 양쪽에 쓴다 — 공개 서평이라 원래 공개 정보다.
+// 무엇을 어디에 쓰는가:
+// - 챗봇: 모든 글의 제목 + RSS에 실린 본문 앞부분(네이버가 360자쯤에서 자른다). 일기도 포함한다 —
+//   공개 블로그에 본인이 올린 글이고, "너무 위험한 것만 빼고 다 준다"가 본인 결정이다(2026-10-01).
+//   그 전에는 일기를 제목만 넘겨서 "8월에 뭐 했어?"에 "여행 다녀오고 일기를 남겼어"밖에 못 했다.
+// - 사이트(/about의 최근 글): 제목·링크·날짜, 그리고 서평('책')에만 짧은 발췌. 화면은 그대로다.
 
 const RSS_URL = 'https://rss.blog.naver.com/yeojoonsoo02.xml'
 const TTL = 24 * 60 * 60 * 1000 // 24시간 — 블로그 글 빈도상 하루 1회 갱신으로 충분
@@ -20,12 +20,17 @@ const BOOK_CATEGORY = '책'
 // 챗봇·사이트 양쪽이 "최근 근황"과 "요즘 읽은 책"을 함께 확보하게 한다.
 const MAX_ITEMS = 12
 const SNIPPET_LEN = 120
+// RSS description이 원래 360자 안팎이라 사실상 전부다.
+const EXCERPT_LEN = 400
 
-// 렌더에도 쓰이므로 export한다. snippet은 '책'에만 채워진다(위 프라이버시 설계).
+// 렌더에도 쓰이므로 export한다.
 export interface BlogPost {
   category: string
   title: string
+  /** 사이트에 보여주는 짧은 발췌. '책'에만 채워진다. */
   snippet: string
+  /** 챗봇에 넘기는 본문 앞부분. 모든 글에 채워진다. */
+  excerpt: string
   /** 원문 링크. blog.naver.com 호스트만 통과시킨다. */
   link: string
   /** ISO 문자열. 파싱 실패 시 빈 문자열 */
@@ -100,12 +105,16 @@ function parseRss(xml: string): BlogPost[] {
     if (!ALLOWED_CATEGORIES.has(category)) continue
     const title = clean(firstCdata(block, 'title'))
     if (!title) continue
-    // 일기(일상)는 제3자 정보 보호를 위해 제목만. 책은 짧은 발췌 포함.
-    const snippet =
-      category === BOOK_CATEGORY
-        ? clean(firstCdata(block, 'description')).slice(0, SNIPPET_LEN)
-        : ''
-    items.push({ category, title, snippet, link: pickLink(block), date: pickDate(block) })
+    const body = clean(firstCdata(block, 'description'))
+    const snippet = category === BOOK_CATEGORY ? body.slice(0, SNIPPET_LEN) : ''
+    items.push({
+      category,
+      title,
+      snippet,
+      excerpt: body.slice(0, EXCERPT_LEN),
+      link: pickLink(block),
+      date: pickDate(block),
+    })
     if (items.length >= MAX_ITEMS) break
   }
   return items
@@ -113,14 +122,16 @@ function parseRss(xml: string): BlogPost[] {
 
 function format(items: BlogPost[]): string {
   if (items.length === 0) return ''
-  const lines = items.map((it) =>
-    it.snippet
-      ? `- [${it.category}] ${it.title} — ${it.snippet}…`
-      : `- [${it.category}] ${it.title}`,
-  )
+  const lines = items.map((it) => {
+    const when = it.date ? ` (${it.date.slice(0, 10)} 게시)` : ''
+    return it.excerpt
+      ? `- [${it.category}] ${it.title}${when} — ${it.excerpt}…`
+      : `- [${it.category}] ${it.title}${when}`
+  })
   return [
     '# 최근 블로그 (네이버 블로그 "타발추", 최신순)',
-    '요즘 읽은 책·근황. "요즘 뭐 해/뭐 읽어" 류 질문에 활용.',
+    '내가 직접 쓴 글의 앞부분. 요즘 근황·다녀온 곳·읽은 책 질문에 활용. 글이 "…"로 끊긴 뒤의 내용은 모른다.',
+    '블로그용 존댓말("~습니다")로 쓰여 있다. 내용만 가져오고 글의 말투는 따라 하지 말 것.',
     '',
     ...lines,
   ].join('\n')

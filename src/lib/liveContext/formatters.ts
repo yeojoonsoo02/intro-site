@@ -6,6 +6,8 @@ import type {
   MoodEntry,
   ScheduleEntry,
   SleepData,
+  StudyEntry,
+  TaskEntry,
   WeatherData,
 } from './types'
 
@@ -73,16 +75,19 @@ function formatMinutes(total: number): string {
   return m > 0 ? `${h}시간 ${m}분` : `${h}시간`
 }
 
+/** 한국 날짜의 일련번호(일 단위). 날짜만 있는 값('2026-10-01', 종일 일정)은 그 날짜 그대로 본다. */
+function kstDayNumber(value: string | Date): number {
+  const ymd =
+    typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)
+      ? value
+      : new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date(value))
+  const [y, m, d] = ymd.split('-').map(Number)
+  return Date.UTC(y, m - 1, d) / 86_400_000
+}
+
 /** 한국 날짜 기준으로 두 시각이 며칠 떨어져 있는지(같은 날이면 0). */
 function daysApartKST(earlier: Date, later: Date): number {
-  const day = (d: Date): number => {
-    const [y, m, dd] = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' })
-      .format(d)
-      .split('-')
-      .map(Number)
-    return Date.UTC(y, m - 1, dd) / 86_400_000
-  }
-  return day(later) - day(earlier)
+  return kstDayNumber(later) - kstDayNumber(earlier)
 }
 
 // 어젯밤 기록인지 아닌지를 여기서 판정해 적어 준다. 기록일만 넘기고 모델이 오늘 날짜와
@@ -154,6 +159,32 @@ function formatMood(mood: MoodEntry | null): string {
 const isHolidayCalendar = (s: ScheduleEntry): boolean => Boolean(s.calendarId?.includes('#holiday@'))
 const isPublicHoliday = (s: ScheduleEntry): boolean => /public holiday/i.test(s.description ?? '')
 
+// 달력이 영어판이라 이름이 영어로 온다. 모델이 옮기게 두면 시간표의 "개천절 대체공휴일"과 섞어
+// "모레는 개천절 대체공휴일"처럼 틀린다. 아는 이름은 여기서 바꿔 준다(모르는 건 그대로).
+const HOLIDAY_NAMES: Record<string, string> = {
+  "New Year's Day": '신정',
+  'Seollal': '설날',
+  'Seollal Holiday': '설날 연휴',
+  'Independence Movement Day': '삼일절',
+  "Children's Day": '어린이날',
+  "Buddha's Birthday": '부처님오신날',
+  'Memorial Day': '현충일',
+  'Liberation Day': '광복절',
+  'Chuseok': '추석',
+  'Chuseok Holiday': '추석 연휴',
+  'National Foundation Day': '개천절',
+  'Hangeul Day': '한글날',
+  'Christmas Day': '크리스마스',
+}
+
+function scheduleTitle(s: ScheduleEntry): string {
+  if (!isHolidayCalendar(s)) return s.title
+  const base = s.title.replace(/\s*\(?(observed|substitute holiday)\)?$/i, '')
+  const ko = HOLIDAY_NAMES[base]
+  if (!ko) return s.title
+  return base === s.title ? ko : `${ko} 대체공휴일`
+}
+
 function scheduleTag(s: ScheduleEntry): string {
   if (s.calendarName === '수업') return '[수업] '
   if (isHolidayCalendar(s)) return '[공휴일] '
@@ -161,29 +192,74 @@ function scheduleTag(s: ScheduleEntry): string {
 }
 
 function formatScheduleEntry(s: ScheduleEntry): string {
-  const tag = scheduleTag(s)
-  const place = s.location ? ` @${s.location}` : ''
-  if (!s.start) return `- ${tag}${s.title}${place}`
-  const day = new Date(s.start).toLocaleDateString('ko-KR', {
-    timeZone: 'Asia/Seoul',
-    month: 'numeric',
-    day: 'numeric',
-    weekday: 'short',
-  })
-  if (s.allDay) return `- ${day} 종일 ${tag}${s.title}${place}`
+  const what = `${scheduleTag(s)}${scheduleTitle(s)}${s.location ? ` @${s.location}` : ''}`
+  if (!s.start) return what
+  if (s.allDay) return `종일 ${what}`
   const time = s.end ? `${formatKST(s.start)}~${formatKST(s.end)}` : formatKST(s.start)
-  return `- ${day} ${time} ${tag}${s.title}${place}`
+  return `${time} ${what}`
 }
 
-function formatSchedule(schedule: ScheduleEntry[] | null): string {
-  const mine = (schedule ?? []).filter((s) => !isHolidayCalendar(s) || isPublicHoliday(s))
-  if (mine.length === 0) return '일정(오늘·내일): 없음'
-  const sorted = [...mine].sort((a, b) => (a.start ?? '').localeCompare(b.start ?? ''))
-  return ['일정(오늘·내일, 캘린더 기준):', ...sorted.map(formatScheduleEntry)].join('\n')
+const DAY_WORDS = ['오늘', '내일', '모레']
+
+// 오늘·내일·모레로 나눠 날짜별 한 줄로 적는다. 날짜만 붙인 목록을 주고 모델이 오늘과 비교하게
+// 두면 내일 수업을 "오늘 들으러 왔다"고 하거나 다른 요일 수업을 "오늘 들었다"고 답한다
+// (2026-10 평가). 오늘 줄은 일정이 없어도 항상 적고, 수업이 없으면 그것도 적는다.
+function formatSchedule(schedule: ScheduleEntry[] | null, now: Date): string {
+  const today = kstDayNumber(now)
+  const byDay = new Map<number, ScheduleEntry[]>([[0, []]])
+  for (const s of schedule ?? []) {
+    if (isHolidayCalendar(s) && !isPublicHoliday(s)) continue
+    const offset = Math.max(0, s.start ? kstDayNumber(s.start) - today : 0)
+    if (!byDay.has(offset)) byDay.set(offset, [])
+    byDay.get(offset)!.push(s)
+  }
+
+  const lines = [...byDay.entries()]
+    .sort((a, b) => a[0] - b[0])
+    .map(([offset, entries]) => {
+      const date = new Date(now.getTime() + offset * 86_400_000).toLocaleDateString('ko-KR', {
+        timeZone: 'Asia/Seoul',
+        month: 'long',
+        day: 'numeric',
+        weekday: 'short',
+      })
+      const label = `${DAY_WORDS[offset] ?? `${offset}일 뒤`}(${date})`
+      const sorted = [...entries].sort((a, b) => (a.start ?? '').localeCompare(b.start ?? ''))
+      const hasClass = sorted.some((s) => s.calendarName === '수업')
+      if (sorted.length === 0) return `- ${label}: 일정 없음, 수업 없음`
+      const noClass = offset === 0 && !hasClass ? ' (오늘 수업은 없음)' : ''
+      return `- ${label}: ${sorted.map(formatScheduleEntry).join(' / ')}${noClass}`
+    })
+  return ['일정(캘린더 기준):', ...lines].join('\n')
 }
 
-// 위치(현재·이동 기록·머문 곳)와 수면 공개는 본인 결정이다(2026-09-16~17).
-// 할 일 목록과 GPS 좌표는 넘기지 않는다.
+function formatTasks(tasks: TaskEntry[] | null | undefined): string {
+  const open = (tasks ?? []).filter((t) => t.title && t.status !== 'DONE')
+  if (open.length === 0) return ''
+  const items = open.map((t) => (t.dueDate ? `${t.title}(기한 ${formatDate(t.dueDate)})` : t.title))
+  return `할 일 목록(아직 안 끝낸 것): ${items.join(', ')}`
+}
+
+// 공부 기록은 날짜마다 지표가 여러 줄로 온다. 앱 사용 시간만 날짜별로 모아 한 줄씩 적는다
+// (누적 XP·연속 일수 같은 값은 하루치로 읽히지 않아 뺀다).
+function formatStudy(days: StudyEntry[] | undefined): string {
+  const byDate = new Map<string, string[]>()
+  for (const d of days ?? []) {
+    if (d.metric !== 'app_usage' || !d.value || !d.minutes) continue
+    if (!byDate.has(d.date)) byDate.set(d.date, [])
+    byDate.get(d.date)!.push(`${d.value} ${formatMinutes(d.minutes)}`)
+  }
+  if (byDate.size === 0) return ''
+  const lines = [...byDate.entries()]
+    .sort((a, b) => b[0].localeCompare(a[0]))
+    .slice(0, 7)
+    .map(([date, apps]) => `- ${date}: ${apps.join(', ')}`)
+  return `최근 영어 공부(앱 사용 시간):\n${lines.join('\n')}`
+}
+
+// 공개 범위는 본인 결정이다: "너무 위험한 것만 빼고 다 준다"(2026-10-01). 위치(현재·이동 기록·
+// 머문 곳)·수면(2026-09-16~17)에 이어 할 일 목록과 공부 기록도 넘긴다.
+// 넘기지 않는 것은 GPS 좌표와 저장된 장소의 좌표뿐이다 — 집 위치를 정확히 특정한다.
 export function formatLiveData(json: ContextResponse): string {
   const { data } = json
   return [
@@ -195,6 +271,10 @@ export function formatLiveData(json: ContextResponse): string {
     formatSleep(data.sleep, new Date(json.timestamp)),
     formatWeather(data.weather),
     formatMood(data.mood),
-    formatSchedule(data.schedule),
-  ].join('\n')
+    formatSchedule(data.schedule, new Date(json.timestamp)),
+    formatTasks(data.tasks),
+    formatStudy(data.study?.days),
+  ]
+    .filter(Boolean)
+    .join('\n')
 }

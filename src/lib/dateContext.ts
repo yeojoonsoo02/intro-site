@@ -46,6 +46,11 @@ function koreanAge(today: SeoulDate): number {
   return age;
 }
 
+/** 한국 시간 기준 올해 연도. */
+export function getSeoulYear(now: Date = new Date()): number {
+  return seoulToday(now).year;
+}
+
 export function getDateContext(now: Date = new Date()): string {
   const today = seoulToday(now);
   const pad = (n: number): string => String(n).padStart(2, '0');
@@ -55,6 +60,8 @@ export function getDateContext(now: Date = new Date()): string {
 
   return [
     `오늘 날짜: ${dateStr} / ${iso} (한국 시간 기준)`,
+    // "2026년 8월 입양"을 "작년 8월"이라고 답한 적이 있다(2026-10 평가). 연도 환산도 적어 준다.
+    `올해는 ${today.year}년, 작년은 ${today.year - 1}년, 내년은 ${today.year + 1}년.`,
     // 생일 월·일 공개는 본인 결정이다(2026-09-17).
     `내 만 나이: ${age}세 (${BIRTH_YEAR}년 ${BIRTH_MONTH}월 ${BIRTH_DAY}일생)`,
     '나이나 날짜 계산은 직접 하지 말고 위 값을 그대로 써.',

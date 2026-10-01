@@ -1,5 +1,13 @@
+import { KNOWLEDGE } from '@/data/knowledge'
 import { splitKnowledge } from '@/lib/chunks'
 import { searchChunks } from '@/lib/embeddings'
+
+// 지식 전문이 이 길이 이하면 검색하지 않고 통째로 넣는다. 지금 전문은 4천 자가 안 되는데
+// 질문과 가까운 3조각만 넣다 보니, 표현이 조금만 달라도 조각이 빗나가 "모르겠어"가 나오고
+// 여러 조각을 엮어야 하는 답(취미 + 요즘 집중하는 것)은 아예 못 했다. "너무 위험한 것만 빼고
+// 다 준다"가 본인 결정이기도 하다(2026-10-01). 통째로 넣으면 질문마다 하던 임베딩 호출도 사라진다.
+// 지식이 이보다 커지면 아래 검색(RAG) 경로가 다시 쓰인다 — 임베딩 사전계산은 계속 유지할 것.
+const FULL_KNOWLEDGE_MAX_CHARS = 12_000
 
 // 인사·짧은 리액션은 검색할 지식이 없다. 실제 로그에서 "안녕", "ㅋㅋ", "ㅎㅇ" 류가
 // 꾸준히 들어오는데 이때도 임베딩 API를 부르고 있었다. 기본 정보만 주고 검색을 건너뛴다.
@@ -12,6 +20,8 @@ function isSmallTalk(query: string): boolean {
 }
 
 export async function getKnowledgeContext(query: string): Promise<string> {
+  if (KNOWLEDGE.length <= FULL_KNOWLEDGE_MAX_CHARS) return KNOWLEDGE.trim()
+
   try {
     const chunks = splitKnowledge()
     const basicChunk = chunks.find((c) => c.id === 'basic')
@@ -26,7 +36,6 @@ export async function getKnowledgeContext(query: string): Promise<string> {
   } catch (err) {
     // 임베딩 API가 죽으면 지식 전문을 통째로 넣는다(비싸지만 틀리진 않는다).
     console.error('RAG search failed, falling back to full context:', err)
-    const { KNOWLEDGE } = await import('@/data/knowledge')
     return KNOWLEDGE
   }
 }

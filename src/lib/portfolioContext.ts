@@ -3,8 +3,12 @@
 // 왜: knowledge.ts에는 프로젝트 요약 정도만 있어서, 방문자가 화면에서 방금 본 내용
 // (프로젝트 9개·타임라인·자격증·학력·추천사·MBTI 등)을 물으면 챗봇이 모른다고 답했다.
 //
-// 비용 설계: 임베딩을 쓰지 않는다. 질문의 키워드로 필요한 섹션만 골라 넣으므로
-// 임베딩 API 호출이 늘지 않는다. Firestore 읽기도 메모리 캐시로 묶어 요청마다 나가지 않는다.
+// 무엇을 넣는가: 섹션은 전부 항상 넣는다. 예전엔 질문 키워드에 맞는 섹션만 골라 넣었는데,
+// 표현이 조금만 달라도 빗나가 "모르겠어"가 됐고("너 뭐 좋아해?"에 취미 섹션이 안 붙는 식),
+// "너무 위험한 것만 빼고 다 준다"가 본인 결정이다(2026-10-01). 전부 사이트에 공개된 내용이다.
+// 프로젝트의 케이스 스터디(배경·문제·결정·결과)만은 분량이 커서 프로젝트를 묻는 질문에만 붙인다.
+//
+// 비용 설계: 임베딩을 쓰지 않는다. Firestore 읽기는 메모리 캐시로 묶어 요청마다 나가지 않는다.
 
 import { adminDb } from '@/lib/firebaseAdmin'
 import { cached } from '@/lib/cached'
@@ -18,14 +22,41 @@ interface SectionSpec {
   doc: string
   key: 'items' | 'categories'
   heading: string
-  // 이 섹션을 끌어올 질문 키워드. 한국어 위주지만 영어 질문도 자주 들어와 함께 둔다.
-  keywords: RegExp
   format: (data: Record<string, unknown>) => string[]
   maxItems?: number
-  // 키워드와 무관하게 항상 넣는 섹션. 질문의 표현이 조금만 달라도 매칭이 빗나가는데,
-  // 연표·학력은 거의 모든 개인 질문의 근거가 되어 빠지면 "기록에 없다"는 오답이 난다.
-  // (실제로 "호주 워홀 어디였어?"에 연표가 안 붙어 브리즈번을 못 답했다.)
-  always?: boolean
+}
+
+// 프로젝트를 묻는 질문인지. 맞으면 케이스 스터디까지 붙인다.
+// 한국어 위주지만 영어·일본어·중국어 질문도 들어와 함께 둔다.
+const PROJECT_QUESTION =
+  /프로젝트|포트폴리오|만든|만들|개발한|개발했|작업|서비스|앱|사이트|플랫폼|외주|왜 그걸|어려웠|배운|project|portfolio|built|made|プロジェクト|作った|開発|サービス|项目|做过|开发|作品/i
+
+const DETAIL_MAX_LENGTH = 700
+const detail = (v: unknown): string => String(v ?? '').replace(/\s+/g, ' ').slice(0, DETAIL_MAX_LENGTH).trim()
+const detailList = (v: unknown): string =>
+  Array.isArray(v) ? v.map((x) => detail(x)).filter(Boolean).join(' / ') : ''
+
+// 케이스 스터디가 있는 프로젝트의 상세. 값이 없는 항목은 적지 않는다.
+function projectDetail(p: Record<string, unknown>): string {
+  const decisions = Array.isArray(p.decisions)
+    ? (p.decisions as Record<string, unknown>[])
+        .map((d) => [detail(d.what), detail(d.why)].filter(Boolean).join(' — '))
+        .filter(Boolean)
+        .join(' / ')
+    : ''
+  const head = [line(p.title), line(p.period), line(p.role)].filter(Boolean).join(' · ')
+  const fields: [string, string][] = [
+    ['한 줄', detail(p.summary) || detail(p.description)],
+    ['기술', names(p.tags)],
+    ['주소', line(p.liveUrl)],
+    ['배경', detail(p.context)],
+    ['문제', detail(p.problem)],
+    ['결정', decisions],
+    ['구현', detailList(p.highlights)],
+    ['결과', detailList(p.outcome)],
+    ['배운 점', detail(p.lessons)],
+  ]
+  return [head, ...fields.filter(([, v]) => v).map(([k, v]) => `  ${k}: ${v}`)].join('\n')
 }
 
 const line = (v: unknown): string => String(v ?? '').slice(0, MAX_VALUE_LENGTH).trim()
@@ -49,7 +80,6 @@ const SECTIONS: SectionSpec[] = [
     doc: 'projects',
     key: 'items',
     heading: '프로젝트',
-    keywords: /프로젝트|포트폴리오|만든|만들|개발한|작업|서비스|앱|사이트|project|portfolio|built|made|プロジェクト|作った|開発|サービス|项目|做过|开发|作品/i,
     format: (d) =>
       listOf(d, 'items').map((p) =>
         [line(p.title), line(p.description), names(p.tags)].filter(Boolean).join(' — '),
@@ -59,8 +89,6 @@ const SECTIONS: SectionSpec[] = [
     doc: 'timeline',
     key: 'items',
     heading: '연표·경력',
-    always: true,
-    keywords: /경력|이력|언제|타임라인|연표|history|career|timeline|when|경험|해왔|살아온|어디서 자|고향|経歴|学歴|いつ|经历|履历|什么时候/i,
     format: (d) =>
       listOf(d, 'items').map((t) =>
         [line(t.year), line(t.title), line(t.description)].filter(Boolean).join(' — '),
@@ -70,7 +98,6 @@ const SECTIONS: SectionSpec[] = [
     doc: 'certifications',
     key: 'items',
     heading: '자격증',
-    keywords: /자격증|자격|취득|certificat|license|시험|資格|資格証|资格证|证书/i,
     format: (d) =>
       listOf(d, 'items').map((c) =>
         [line(c.name), line(c.issuer), line(c.date)].filter(Boolean).join(' — '),
@@ -80,8 +107,6 @@ const SECTIONS: SectionSpec[] = [
     doc: 'education',
     key: 'items',
     heading: '학력',
-    always: true,
-    keywords: /학력|학교|대학|전공|학과|학부|졸업|재학|수업|education|school|university|major|大学|学校|専攻|学歴|学部|学科|专业|学历/i,
     format: (d) =>
       listOf(d, 'items').map((e) =>
         [line(e.school), line(e.major), line(e.period), line(e.description)]
@@ -93,7 +118,6 @@ const SECTIONS: SectionSpec[] = [
     doc: 'skills',
     key: 'categories',
     heading: '기술 스택',
-    keywords: /기술|스택|언어|프레임워크|다룰|할 줄|쓸 줄|skill|stack|tech|language|技術|スタック|言語|技能|技术|语言/i,
     format: (d) =>
       listOf(d, 'categories').map((c) => `${line(c.name)}: ${names(c.items)}`),
   },
@@ -101,21 +125,18 @@ const SECTIONS: SectionSpec[] = [
     doc: 'personalInfo',
     key: 'items',
     heading: '신상 정보',
-    keywords: /mbti|생일|생년|나이|몇 살|혈액형|키가|별자리|지역|사는|사세|birthday|age|height|blood|誕生日|年齢|身長|血液型|星座|住んで|生日|年龄|身高|血型|住在/i,
     format: (d) => listOf(d, 'items').map((i) => `${line(i.label)}: ${line(i.value)}`),
   },
   {
     doc: 'hobbies',
     key: 'categories',
     heading: '취미·좋아하는 것',
-    keywords: /취미|좋아하|즐기|쉴 때|주말|hobby|like|enjoy|음식|먹|food|운동|게임|趣味|好きな|食べ物|爱好|喜欢|食物/i,
     format: (d) => listOf(d, 'categories').map((c) => `${line(c.name)}: ${names(c.items)}`),
   },
   {
     doc: 'routine',
     key: 'items',
     heading: '하루 루틴',
-    keywords: /루틴|하루|일과|아침|저녁|습관|몇 시|routine|daily|schedule|ルーティン|一日|習慣|日常|作息/i,
     format: (d) =>
       listOf(d, 'items').map((r) => [line(r.time), line(r.content)].filter(Boolean).join(' ')),
   },
@@ -123,14 +144,12 @@ const SECTIONS: SectionSpec[] = [
     doc: 'goals',
     key: 'items',
     heading: '목표',
-    keywords: /목표|꿈|계획|앞으로|장래|goal|dream|plan|future|目標|夢|将来|目标|梦想/i,
     format: (d) => listOf(d, 'items').map((g) => line(g.content)),
   },
   {
     doc: 'testimonials',
     key: 'items',
     heading: '주변 평가·외주 후기',
-    keywords: /평가|평판|주변|동료|어떤 사람|추천|후기|고객|외주|testimonial|reputation|client|評価|評判|评价|口碑/i,
     format: (d) =>
       listOf(d, 'items').map((t) =>
         [line(t.name), line(t.role)].filter(Boolean).join('/') + `: ${line(t.content)}`,
@@ -140,7 +159,6 @@ const SECTIONS: SectionSpec[] = [
     doc: 'values',
     key: 'items',
     heading: '가치관',
-    keywords: /가치관|신념|중요하게|철학|원칙|value|belief|principle|価値観|信念|价值观/i,
     format: (d) => listOf(d, 'items').map((v) => line(v.content)),
   },
 ]
@@ -148,9 +166,11 @@ const SECTIONS: SectionSpec[] = [
 interface CacheEntry {
   sections: Map<string, string>
   summary: string
+  /** 프로젝트 섹션의 상세판(케이스 스터디 포함). 프로젝트를 묻는 질문에만 쓴다. */
+  projectsDetailed: string
 }
 
-const EMPTY: CacheEntry = { sections: new Map(), summary: '' }
+const EMPTY: CacheEntry = { sections: new Map(), summary: '', projectsDetailed: '' }
 
 async function loadAll(): Promise<CacheEntry> {
   if (!adminDb) return EMPTY
@@ -192,23 +212,31 @@ async function loadAll(): Promise<CacheEntry> {
     )
   })
 
-  return { sections, summary }
+  const projectsSnap = snaps[1 + SECTIONS.findIndex((s) => s.doc === 'projects')]
+  const projects = projectsSnap?.exists ? listOf(projectsSnap.data() as Record<string, unknown>, 'items') : []
+  const projectsDetailed =
+    projects.length > 0
+      ? `## 프로젝트 (총 ${projects.length}개, 상세)\n${projects.map((p) => `- ${projectDetail(p)}`).join('\n')}`
+      : ''
+
+  return { sections, summary, projectsDetailed }
 }
 
 const getCache = cached(loadAll, EMPTY, { ttl: TTL, errorTtl: ERROR_TTL, name: 'portfolioContext' })
 
 /**
- * 질문과 관련된 포트폴리오 섹션만 골라 컨텍스트 문자열로 반환한다.
- * 소개(summary)는 "누구세요" 류 질문의 기본 답이라 항상 포함한다.
+ * 포트폴리오 섹션 전부를 컨텍스트 문자열로 반환한다.
+ * 프로젝트를 묻는 질문이면 프로젝트 섹션을 케이스 스터디가 든 상세판으로 바꿔 넣는다.
  */
 export async function getPortfolioContext(query: string): Promise<string> {
   const entry = await getCache()
+  const wantsDetail = PROJECT_QUESTION.test(query) && entry.projectsDetailed
 
-  const matched = SECTIONS.filter(
-    (s) => (s.always || s.keywords.test(query)) && entry.sections.has(s.doc),
-  ).map((s) => entry.sections.get(s.doc)!)
+  const sections = SECTIONS.filter((s) => entry.sections.has(s.doc)).map((s) =>
+    s.doc === 'projects' && wantsDetail ? entry.projectsDetailed : entry.sections.get(s.doc)!,
+  )
 
-  const parts = [entry.summary && `## 소개\n${entry.summary}`, ...matched].filter(Boolean)
+  const parts = [entry.summary && `## 소개\n${entry.summary}`, ...sections].filter(Boolean)
   return parts.length > 0 ? parts.join('\n\n') : ''
 }
 

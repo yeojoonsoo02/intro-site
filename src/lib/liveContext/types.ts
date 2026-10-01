@@ -53,6 +53,22 @@ export interface ScheduleEntry {
   calendarId?: string
 }
 
+export interface TaskEntry {
+  title: string
+  status?: string
+  priority?: string
+  dueDate?: string | null
+}
+
+/** 날짜별 공부 지표. metric이 app_usage면 value는 앱 이름, minutes는 쓴 시간이다. */
+export interface StudyEntry {
+  date: string
+  subject?: string
+  metric: string
+  value?: string
+  minutes?: number | null
+}
+
 export interface MoodEntry {
   value: string
   note?: string
@@ -70,5 +86,7 @@ export interface ContextResponse {
     weather: WeatherData | null
     checkin: unknown
     schedule: ScheduleEntry[] | null
+    tasks?: TaskEntry[] | null
+    study?: { days: StudyEntry[] } | null
   }
 }
