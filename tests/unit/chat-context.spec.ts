@@ -26,26 +26,16 @@ const sleep = (wakeIso: string) => ({
   sleepEnd: wakeIso,
 });
 
-test.describe('실시간 컨텍스트: 장소 이름의 지인 실명', () => {
-  test('"이름 + 집"은 지인 집으로 바꾼다', () => {
+test.describe('실시간 컨텍스트: 장소 이름', () => {
+  // 지인 이름이 든 장소 이름도 가리지 않는다 — 본인 결정(2026-10-01).
+  test('플랫폼에 붙인 이름 그대로 넘긴다', () => {
     const out = formatLiveData(context({
       location: { current: { name: '김철수 집' }, history: [{ place: '김철수 집', recordedAt: NOW }] },
       dwell: { days: [{ date: '2026-09-30', places: [{ place: '김철수 집', minutes: 30 }, { place: '자취방', minutes: 540 }] }] },
     }));
-    expect(out).not.toContain('김철수');
-    expect(out).toContain('현재 위치: 지인 집');
+    expect(out).toContain('현재 위치: 김철수 집');
+    expect(out).toContain('김철수 집 30분');
     expect(out).toContain('자취방 9시간');
-  });
-
-  test('내 집·가족 집·일반 장소는 그대로 둔다', () => {
-    const out = formatLiveData(context({
-      dwell: { days: [{ date: '2026-09-30', places: [
-        { place: '부모님 집', minutes: 60 }, { place: '광운대 새빛관', minutes: 120 }, { place: '석계역 철봉', minutes: 30 },
-      ] }] },
-    }));
-    expect(out).toContain('부모님 집');
-    expect(out).toContain('광운대 새빛관');
-    expect(out).toContain('석계역 철봉');
   });
 });
 

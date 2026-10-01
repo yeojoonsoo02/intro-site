@@ -105,24 +105,16 @@ function formatSleep(sleep: SleepData | null, now: Date): string {
   return `수면: 어젯밤 기록은 없음. 마지막 기록은 ${age}일 전(${date} 아침 기상)이라 어젯밤 얘기가 아님 — ${detail}`
 }
 
-// 장소 이름은 본인이 플랫폼에 붙인 것이라 "OOO 집"처럼 지인 실명이 들어가기도 한다.
-// 내 위치는 공개하기로 했지만(2026-09-16) 남의 이름은 그 결정에 들어 있지 않다 —
-// 블로그 컨텍스트가 일기 본문을 빼는 것과 같은 이유로, 모델에 넘기기 전에 "지인 집"으로 바꾼다.
-const OWN_HOME_WORDS = /^(우리|본가|부모님|할머니|외할머니|할아버지|외할아버지|누나|형|동생|이모|고모|삼촌)/
-function publicPlace(name: string): string {
-  const m = /^([가-힣]{2,4})\s?(?:네\s?)?집$/.exec(name.trim())
-  if (!m || OWN_HOME_WORDS.test(m[1])) return name
-  return '지인 집'
-}
-
+// 장소 이름은 본인이 플랫폼에 붙인 그대로 넘긴다. "OOO 집"처럼 지인 이름이 들어 있어도 가리지 않는다 —
+// 본인 결정이다(2026-10-01: 가렸다가 요청으로 되돌림). 위치 공개와 같은 범주로 본다.
 function formatLocation(location: LocationData | null): string[] {
   const current = location?.current?.name
-  const lines = [`현재 위치: ${current ? publicPlace(current) : '기록 없음'}`]
+  const lines = [`현재 위치: ${current || '기록 없음'}`]
   const history = (location?.history ?? [])
     .map((h) => ({ place: h.place || h.locationName, at: h.recordedAt }))
     .filter((h): h is { place: string; at: string } => Boolean(h.place && h.at))
   if (history.length > 0) {
-    lines.push(`최근 이동 기록: ${history.map((h) => `${formatKST(h.at)} ${publicPlace(h.place)}`).join(' / ')}`)
+    lines.push(`최근 이동 기록: ${history.map((h) => `${formatKST(h.at)} ${h.place}`).join(' / ')}`)
   }
   return lines
 }
@@ -130,7 +122,7 @@ function formatLocation(location: LocationData | null): string[] {
 function formatDwell(days: DwellDay[] | undefined): string {
   if (!days || days.length === 0) return '최근 머문 곳: 기록 없음'
   const parts = days.map(
-    (d) => `${d.date}: ${d.places.map((p) => `${publicPlace(p.place)} ${formatMinutes(p.minutes)}`).join(', ')}`,
+    (d) => `${d.date}: ${d.places.map((p) => `${p.place} ${formatMinutes(p.minutes)}`).join(', ')}`,
   )
   return `최근 날짜별 머문 곳:\n${parts.map((p) => `- ${p}`).join('\n')}`
 }
