@@ -21,7 +21,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { buildSystemPrompt } from '@/app/api/gemini/systemPrompt'
 import { CHAT_MODEL, createChatModel } from '@/app/api/gemini/model'
 import { sanitizeHistory } from '@/app/api/gemini/history'
-import { findPromptLeak } from '@/app/api/gemini/security'
+import { filterReply } from '@/app/api/gemini/replyFilter'
 import { isUnanswered } from '@/lib/unanswered'
 import { KNOWLEDGE } from '@/data/knowledge'
 import { QUESTIONS, type EvalQuestion } from './persona-eval.questions'
@@ -98,9 +98,9 @@ async function ask(apiKey: string, item: EvalQuestion, thinkingBudget?: number):
     if (piece && !firstMs) firstMs = Date.now() - started
     a += piece
   }
-  // 운영과 같은 유출 차단을 적용해 방문자가 실제로 보게 될 답을 평가한다.
-  const leakAt = findPromptLeak(a)
-  if (leakAt >= 0) a = a.slice(0, leakAt)
+  // 운영과 같은 거름(추임새 제거·유출 차단)을 적용해 방문자가 실제로 보게 될 답을 평가한다.
+  const filtered = filterReply(a)
+  a = filtered.text
   const usage = ((await stream.response).usageMetadata ?? {}) as Record<string, number | undefined>
 
   return {
@@ -113,7 +113,7 @@ async function ask(apiKey: string, item: EvalQuestion, thinkingBudget?: number):
     promptTokens: usage.promptTokenCount ?? 0,
     outputTokens: usage.candidatesTokenCount ?? 0,
     thoughtTokens: usage.thoughtsTokenCount ?? 0,
-    leaked: leakAt >= 0,
+    leaked: filtered.leaked,
   }
 }
 

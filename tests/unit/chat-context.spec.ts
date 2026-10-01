@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { formatLiveData } from '@/lib/liveContext/formatters';
 import type { ContextResponse } from '@/lib/liveContext/types';
 import { findPromptLeak } from '@/app/api/gemini/security';
+import { createReplyFilter, filterReply, stripLeadingFiller } from '@/app/api/gemini/replyFilter';
 
 // 챗봇에 넘기는 실시간 컨텍스트와 출력 차단의 회귀 방지. 브라우저 없이 함수만 검증한다.
 // 전부 2026-10 평가에서 실제로 틀린 답이 나왔던 지점이다.
@@ -139,5 +140,41 @@ test.describe('프롬프트 유출 차단', () => {
     ]) {
       expect(findPromptLeak(reply), reply).toBe(-1);
     }
+  });
+});
+
+test.describe('답변 거름: 맨 앞 추임새', () => {
+  test('맨 앞의 추임새만 뗀다', () => {
+    expect(stripLeadingFiller('음, 그건 잘 모르겠어')).toBe('그건 잘 모르겠어');
+    expect(stripLeadingFiller('음.. 글쎄')).toBe('글쎄');
+    expect(stripLeadingFiller('Um, these days I study.')).toBe('These days I study.');
+    expect(stripLeadingFiller('えっと、今は大学にいるよ')).toBe('今は大学にいるよ');
+  });
+
+  test('단어의 일부이거나 문장 중간이면 건드리지 않는다', () => {
+    for (const reply of ['음악은 한로로를 자주 들어', '인생 조언이라, 음. 낭중지추를 좋아해', 'Umbrella is not needed today.', '']) {
+      expect(stripLeadingFiller(reply), reply).toBe(reply);
+    }
+  });
+
+  test('조각으로 나뉘어 와도 추임새를 떼고 이어 붙인다', () => {
+    const filter = createReplyFilter();
+    const out = ['음', '..', ' 지금 ', '광운대 새빛관에 있어.'].map((p) => filter.push(p)).join('') + filter.flush();
+    expect(out).toBe('지금 광운대 새빛관에 있어.');
+    expect(filter.text).toBe('지금 광운대 새빛관에 있어.');
+  });
+
+  test('짧은 답은 스트림이 끝날 때 내보낸다', () => {
+    const filter = createReplyFilter();
+    expect(filter.push('ㅋㅋ 왜')).toBe('');
+    expect(filter.flush()).toBe('ㅋㅋ 왜');
+  });
+
+  test('프롬프트가 새기 시작하면 그 앞에서 끊는다', () => {
+    const filter = createReplyFilter();
+    const out = filter.push('나는 AI 분신이야.\n\n말투 규칙:\n- 긍정적이고') + filter.push(' 담백한 성격') + filter.flush();
+    expect(filter.leaked).toBe(true);
+    expect(out).toBe('나는 AI 분신이야.\n\n');
+    expect(filterReply('음, 그건 안 알려줘.').text).toBe('그건 안 알려줘.');
   });
 });

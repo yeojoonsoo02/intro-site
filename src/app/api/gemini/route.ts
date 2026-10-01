@@ -4,7 +4,8 @@ import { checkRateLimit, checkDailyBudget, consumeDailyBudget } from '@/lib/rate
 import { adminAuth } from '@/lib/firebaseAdmin'
 import { buildSystemPrompt } from './systemPrompt'
 import { createChatModel } from './model'
-import { findPromptLeak, isBot, resolveFallbackUrl } from './security'
+import { isBot, resolveFallbackUrl } from './security'
+import { createReplyFilter, filterReply } from './replyFilter'
 import { fireSideEffects } from './sideEffects'
 import {
   sanitizeHistory,
@@ -141,9 +142,7 @@ async function proxyToFallback(
     }
     const data = (await res.json()) as Record<string, unknown>
     const rawReply = data.reply ?? data.text
-    const rawText = typeof rawReply === 'string' ? rawReply.trim() : ''
-    const leakAt = findPromptLeak(rawText)
-    const replyText = leakAt >= 0 ? rawText.slice(0, leakAt).trim() : rawText
+    const replyText = typeof rawReply === 'string' ? filterReply(rawReply).text : ''
     const reply = replyText || FALLBACK_REPLY
 
     fireSideEffects(message, reply, userInfo)
@@ -208,6 +207,8 @@ async function callGemini(
     const body = new ReadableStream<Uint8Array>({
       async start(controller) {
         let full = ''
+        // 맨 앞 추임새를 떼고 프롬프트 유출을 끊는다(replyFilter.ts).
+        const filter = createReplyFilter()
         try {
           for await (const chunk of activeStream.stream) {
             // safety 차단 시 text()가 던진다 — 그 시점까지 받은 내용은 그대로 둔다.
@@ -222,17 +223,12 @@ async function callGemini(
               break
             }
             if (!piece) continue
-            // 프롬프트가 새기 시작하면 그 앞까지만 내보내고 끊는다.
-            const leakAt = findPromptLeak(full + piece)
-            if (leakAt >= 0) {
-              const safe = (full + piece).slice(0, leakAt).slice(full.length)
-              if (safe) controller.enqueue(encoder.encode(safe))
-              full = (full + piece).slice(0, leakAt)
+            const out = filter.push(piece)
+            if (out) controller.enqueue(encoder.encode(out))
+            if (filter.leaked) {
               console.warn('Gemini reply cut: system prompt leak detected')
               break
             }
-            full += piece
-            controller.enqueue(encoder.encode(piece))
           }
         } catch (streamErr) {
           console.error('Gemini stream error', streamErr)
@@ -240,6 +236,10 @@ async function callGemini(
 
         // 방문자가 중간에 창을 닫으면 enqueue·close가 던진다. 그래도 받은 데까지는 기록한다.
         try {
+          // 첫 글자를 판단하느라 붙잡아 둔 글이 있으면 마저 내보낸다.
+          const rest = filter.flush()
+          if (rest) controller.enqueue(encoder.encode(rest))
+          full = filter.text
           // 빈 응답은 절대 내보내지 않는다(시스템 프롬프트의 절대 규칙과 동일한 취지).
           if (!full.trim()) {
             full = FALLBACK_REPLY
@@ -249,7 +249,7 @@ async function callGemini(
         } catch {
           // 이미 닫힌 스트림 — 보낼 곳이 없을 뿐 기록은 남긴다.
         } finally {
-          resolveReply(full.trim())
+          resolveReply((full || filter.text).trim())
         }
       },
     })
