@@ -17,6 +17,8 @@ import { CheckTable, CompareTable, Range, ScoreBar, VerdictCard, type CheckRow, 
 const MAX_BYTES = 40 * 1024 * 1024;
 const ACCEPT = 'image/jpeg,image/png,image/webp';
 const PREF_KEY = 'aicheck:autoModel';
+/** 처음 열면 미리 넣어 두는 견본: 로컬 오픈소스 모델(FLUX.2 klein 4B, mflux)로 만든 원본 PNG. 생성 프로그램이 XMP·EXIF에 이름을 남겼다. */
+const SAMPLE = { url: '/portfolio/ai-check/sample-flux2-klein.png', name: 'sample-flux2-klein.png' };
 
 interface Loaded {
   name: string;
@@ -102,6 +104,7 @@ export default function AiCheckDemo(): JSX.Element {
   const [maxEdge, setMaxEdge] = useState(1080);
   const [comp, setComp] = useState<CompressedView | null>(null);
   const [compError, setCompError] = useState<string | null>(null);
+  const [sample, setSample] = useState(false);
   const fileRef = useRef<Loaded | null>(null);
   const compRef = useRef<CompressedView | null>(null);
   const runId = useRef(0);
@@ -194,6 +197,24 @@ export default function AiCheckDemo(): JSX.Element {
     }
   }, []);
 
+  // 예시 자동 실행: 견본 그림을 받아 1단계(표시 확인)와 압축 실험을 바로 돌린다. 판별 모델(약 83MB)은 받지 않는다 — 버튼으로만.
+  useEffect(() => {
+    const ctrl = new AbortController();
+    void (async () => {
+      try {
+        const res = await fetch(SAMPLE.url, { signal: ctrl.signal });
+        if (!res.ok) return;
+        const blob = await res.blob();
+        if (ctrl.signal.aborted || fileRef.current) return;
+        setSample(true);
+        await onFile(new File([blob], SAMPLE.name, { type: 'image/png' }));
+      } catch {
+        // 견본을 못 받아도 데모는 그대로 쓸 수 있다
+      }
+    })();
+    return () => ctrl.abort();
+  }, [onFile]);
+
   // 압축본 만들기: 파일·설정이 바뀌면 잠깐 기다렸다가 다시 만든다
   useEffect(() => {
     if (!file) return;
@@ -268,7 +289,10 @@ export default function AiCheckDemo(): JSX.Element {
 
   const onInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const f = e.target.files?.[0];
-    if (f) void onFile(f);
+    if (f) {
+      setSample(false);
+      void onFile(f);
+    }
     e.target.value = '';
   };
 
@@ -276,7 +300,10 @@ export default function AiCheckDemo(): JSX.Element {
     e.preventDefault();
     setDragging(false);
     const f = e.dataTransfer.files?.[0];
-    if (f) void onFile(f);
+    if (f) {
+      setSample(false);
+      void onFile(f);
+    }
   };
 
   const toggleAuto = (on: boolean): void => {
@@ -320,6 +347,12 @@ export default function AiCheckDemo(): JSX.Element {
             JPEG · PNG · WebP, 40MB까지. SNS에서 받은 사본과 원본을 둘 다 넣어 보면 차이가 보입니다.
           </span>
         </label>
+        {sample && file?.name === SAMPLE.name && (
+          <p className="m-0 text-[13.5px] leading-[1.6] pl-3" style={{ color: 'var(--ink-2)', borderLeft: '3px solid var(--accent)' }}>
+            예시 자동 실행됨 · 견본 그림을 미리 넣어 표시 확인과 압축 실험을 돌려 두었습니다. 견본은 이 작업용 맥에서 오픈소스 모델(FLUX.2 klein 4B)로
+            만든 AI 이미지 원본 PNG입니다. 내 그림을 고르면 바뀝니다. 판별 모델은 아래 버튼을 눌러야 받습니다.
+          </p>
+        )}
         <p className="text-[13.5px] leading-[1.6] pl-3" style={{ color: 'var(--ink-2)', borderLeft: '2px solid var(--rule)' }}>
           고른 파일은 이 브라우저 안에서만 읽고 <b>어디에도 올리지 않습니다</b>. 처음 쓸 때 판독기와 모델 파일만 내려받습니다(C2PA 판독기 약 9MB ·
           jsDelivr — C2PA 상자가 있을 때만, 판별 모델 약 83MB · Hugging Face와 실행기 약 15MB · 이 사이트 — 누를 때만).

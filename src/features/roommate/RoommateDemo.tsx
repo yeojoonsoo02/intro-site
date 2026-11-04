@@ -94,6 +94,10 @@ export default function RoommateDemo(): JSX.Element {
   const [retryWaiting, setRetryWaiting] = useState(false);
 
   const counter = useRef(0);
+  // 소리는 방문자가 데모를 한 번 누르거나 키를 친 뒤부터 낸다(브라우저가 사용자 동작 없는 재생을 막고, 갑자기 소리가 나면 놀란다)
+  const userActed = useRef(false);
+  const [showcase, setShowcase] = useState(false);
+  const showcaseDone = useRef(false);
   const logId = useRef(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const logBoxRef = useRef<HTMLOListElement>(null);
@@ -141,7 +145,7 @@ export default function RoommateDemo(): JSX.Element {
   const say = useCallback(
     async (text: string, id: number, end = false) => {
       setLog((l) => [...l, { id: ++logId.current, who: 'device' as const, text }].slice(-60));
-      if (soundOn && speech.canSpeak) {
+      if (soundOn && speech.canSpeak && userActed.current) {
         setPhase('speaking');
         await speak(text);
       }
@@ -210,6 +214,22 @@ export default function RoommateDemo(): JSX.Element {
     loaded, session, phase, conditionMet, alreadyTalked, learnedQuiet, startsToday, waitingRetry,
     retryKey, slotKey, trigger, slot, startSession,
   ]);
+
+  // 예시 자동 실행: 처음 열면 레이더·폰 근접을 켜 둔다 → 위 효과가 기기의 첫마디를 글로 띄운다.
+  // 오늘 이 시간대엔 이미 말을 걸었거나(기억이 남은 재방문) 상한에 닿았으면 직접 시작으로 한 번 보여 준다.
+  useEffect(() => {
+    if (!loaded || showcaseDone.current) return;
+    showcaseDone.current = true;
+    const d = demoRef.current;
+    const blocked =
+      d.started.includes(`${d.day}:${slot}`) ||
+      d.deferrals[slot] >= LEARN_AFTER ||
+      d.started.filter((k) => k.startsWith(`${d.day}:`)).length >= DAILY_CAP;
+    setRadar(true);
+    setPhone(true);
+    setShowcase(true);
+    if (blocked) startSession(slot, '예시 자동 실행', true);
+  }, [loaded, demoRef, slot, startSession]);
 
   /** 시간대·날짜가 바뀌면 진행 중인 대화를 끊는다(바꾸는 핸들러에서 부른다). */
   function interrupt(): void {
@@ -412,8 +432,36 @@ export default function RoommateDemo(): JSX.Element {
   const busy = phase === 'thinking';
   const lastDeviceLine = [...log].reverse().find((e) => e.who === 'device')?.text ?? '';
 
+  const markActed = (): void => {
+    userActed.current = true;
+  };
+
   return (
-    <div className="grid gap-10 md:grid-cols-[300px_minmax(0,1fr)] md:gap-12">
+    <div className="grid gap-10 md:grid-cols-[300px_minmax(0,1fr)] md:gap-12" onPointerDownCapture={markActed} onKeyDownCapture={markActed}>
+      {showcase && (
+        <p className="md:col-span-2 m-0 text-[13.5px] leading-[1.6] pl-3" style={{ color: 'var(--ink-2)', borderLeft: '3px solid var(--accent)' }}>
+          예시 자동 실행됨 · 레이더와 폰 근접을 켜 둔 상태로 시작해 기기가 먼저 말을 걸었습니다
+          {lastDeviceLine && (
+            <>
+              : <q lang="en" className="font-semibold" style={{ color: 'var(--ink)' }}>{lastDeviceLine}</q>
+            </>
+          )}
+          . 소리는 화면을 한 번 누른 뒤부터 나옵니다.{' '}
+          <button
+            type="button"
+            className="link-u font-semibold"
+            style={{ color: 'var(--accent)' }}
+            onClick={() => {
+              interrupt();
+              setRadar(false);
+              setPhone(false);
+              setShowcase(false);
+            }}
+          >
+            센서 끄고 직접 해 보기
+          </button>
+        </p>
+      )}
       {/* 왼쪽: 센서 시뮬레이션 + 기기 */}
       <div className="grid gap-8 content-start">
         <fieldset className="m-0 p-0 border-0 min-w-0">

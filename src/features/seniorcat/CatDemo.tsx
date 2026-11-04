@@ -20,6 +20,8 @@ const NOISE: { g: number; label: string }[] = [
   { g: 20, label: '높음 (±20g)' },
 ];
 const BASELINE_OPTIONS = [14, 21, 28];
+/** 처음 열면 바로 보이게 미리 돌려 두는 예시: 세 마리 중 한 마리의 소변이 30일째부터 는다 → 8주째 화면(차트·알림이 이미 있다) */
+const SHOWCASE: { scenario: ScenarioId; day: number } = { scenario: 'similar', day: 56 };
 const NAMES = ['보리', '두부', '콩이'];
 const EXTRA: CatConfig[] = [
   { id: 'A', name: '보리', weightG: 3600, male: false },
@@ -68,16 +70,20 @@ export default function CatDemo(): JSX.Element {
   const [visitId, setVisitId] = useState<number | null>(null);
   const [playing, setPlaying] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [showcase, setShowcase] = useState(false);
 
   // 저장해 둔 설정(시나리오·기준선 기간·머문 시간 사용) — 사소한 것만
   useEffect(() => {
     const p = loadPrefs();
-    const sc = SCENARIOS.find((s) => s.id === p.scenario);
-    if (sc) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- 마운트 때 한 번, 저장소에서 읽은 뒤 저장을 켠다(서버 HTML과 첫 화면을 맞추기 위해)
-      setScenario(sc.id);
-      setCats(sc.cats);
-    }
+    // 예시 자동 실행: 기억해 둔 시나리오가 변화가 있는 것이면 그걸, 아니면 SHOWCASE 시나리오를 SHOWCASE.day일까지 돌려 둔다
+    const saved = SCENARIOS.find((s) => s.id === p.scenario && s.onsetDay !== null);
+    const sc = saved ?? scenarioById(SHOWCASE.scenario);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 마운트 때 한 번, 저장소에서 읽은 뒤 저장을 켠다(서버 HTML과 첫 화면을 맞추기 위해)
+    setScenario(sc.id);
+    setCats(sc.cats);
+    if (sc.target !== null) setCatTab(sc.cats[sc.target].id);
+    setDay(SHOWCASE.day);
+    setShowcase(true);
     if (p.baselineDays && BASELINE_OPTIONS.includes(p.baselineDays)) setBaselineDays(p.baselineDays);
     if (typeof p.useStay === 'boolean') setUseStay(p.useStay);
     setLoaded(true);
@@ -117,17 +123,20 @@ export default function CatDemo(): JSX.Element {
   }, [playing]);
 
   const advance = (n: number): void => {
+    setShowcase(false);
     setDay((d) => Math.min(MAX_DAYS, d + n));
     setViewDay(null);
     setVisitId(null);
   };
   const reset = (): void => {
+    setShowcase(false);
     setPlaying(false);
     setDay(0);
     setViewDay(null);
     setVisitId(null);
   };
   const pickScenario = (id: ScenarioId): void => {
+    setShowcase(false);
     const sc = scenarioById(id);
     setScenario(id);
     setCats(sc.cats);
@@ -166,6 +175,16 @@ export default function CatDemo(): JSX.Element {
     <div className="grid gap-10 md:grid-cols-[300px_minmax(0,1fr)] md:gap-12">
       {/* 날 넘기기 — 폰에서도 맨 위에 오게 두 칸을 가로지른다 */}
       <section aria-labelledby="time-title" className="md:col-span-2 grid gap-3 p-5 rounded-[var(--r-lg)] cat-report-noprint" style={{ background: 'var(--surface)', border: '1px solid var(--rule)', boxShadow: 'var(--shadow)' }}>
+        {showcase && (
+          <p className="m-0 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13.5px] pl-3" style={{ color: 'var(--ink-2)', borderLeft: '3px solid var(--accent)' }}>
+            <span>
+              예시 시나리오 자동 실행됨 · {sc.label} · {SHOWCASE.day}일까지 미리 돌려 둠
+            </span>
+            <button type="button" className="link-u text-[13.5px] font-semibold" style={{ color: 'var(--accent)' }} onClick={reset}>
+              다시 해 보기 (0일부터)
+            </button>
+          </p>
+        )}
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
           <h2 id="time-title" className="text-[17px] font-semibold" style={{ color: 'var(--ink)' }}>
             {day}일 기록됨
@@ -189,7 +208,10 @@ export default function CatDemo(): JSX.Element {
           <button type="button" className="btn btn-ghost" onClick={() => advance(30)} disabled={day >= MAX_DAYS}>
             +30일
           </button>
-          <button type="button" className="btn btn-ghost" onClick={() => setPlaying((p) => !p)} aria-pressed={playing} disabled={day >= MAX_DAYS}>
+          <button type="button" className="btn btn-ghost" onClick={() => {
+              setShowcase(false);
+              setPlaying((p) => !p);
+            }} aria-pressed={playing} disabled={day >= MAX_DAYS}>
             {playing ? '멈춤' : '재생'}
           </button>
           <button type="button" className="btn btn-ghost" onClick={reset}>

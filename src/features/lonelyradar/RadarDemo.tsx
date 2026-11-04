@@ -22,6 +22,8 @@ const NOISES: { id: Noise; label: string }[] = [
   { id: 'high', label: '높음 (커튼·선풍기·유리 너머)' },
 ];
 const BASELINE_OPTIONS = [7, 14, 21];
+/** 처음 열면 바로 보이게 고르는 예시 시나리오(쓰러진 날로 바로 가서 단계 알림이 보인다) */
+const SHOWCASE: ScenarioId = 'fall';
 const TRUTH_LABEL: Record<TruthState, string> = { away: '집에 없음', active: '움직이는 중', rest: '쉬는 중', sleep: '자는 중', fallen: '쓰러짐' };
 const SWEEP_LABEL: Record<SweepParam, { label: string; unit: string }> = {
   graceMin: { label: '여유 시간', unit: '분' },
@@ -69,14 +71,17 @@ export default function RadarDemo(): JSX.Element {
   const [pickedDay, setPickedDay] = useState<number | null>(null);
   const [sweepParam, setSweepParam] = useState<SweepParam>('graceMin');
   const [loaded, setLoaded] = useState(false);
+  const [showcase, setShowcase] = useState(false);
   const [meterInputs, setMeterInputs] = useState<MeterInputs | null>(null);
   const [meter, setMeter] = useState<{ key: string; cell: MeterCell; rows: { value: number; cell: MeterCell }[] } | null>(null);
 
   useEffect(() => {
     const p = loadPrefs();
-    const sc = SCENARIOS.find((s) => s.id === p.scenario);
+    // 예시 자동 실행: 기억해 둔 시나리오가 '정상 생활'이 아니면 그걸, 아니면 SHOWCASE(쓰러진 뒤 무활동)를 고른다
+    const saved = SCENARIOS.find((s) => s.id === p.scenario && s.id !== 'normal');
     // eslint-disable-next-line react-hooks/set-state-in-effect -- 마운트 때 한 번, 저장소에서 읽은 뒤 저장을 켠다(서버 HTML과 첫 화면을 맞추기 위해)
-    if (sc) setScenario(sc.id);
+    setScenario(saved?.id ?? SHOWCASE);
+    setShowcase(true);
     if (p.sweepParam && p.sweepParam in SWEEP_VALUES) setSweepParam(p.sweepParam);
     setLoaded(true);
   }, []);
@@ -118,6 +123,7 @@ export default function RadarDemo(): JSX.Element {
   const contactCount = incidents.filter((i) => i.outcome === 'contact').length;
 
   const pickScenario = (id: ScenarioId): void => {
+    setShowcase(false);
     setScenario(id);
     setPickedDay(null);
   };
@@ -129,6 +135,14 @@ export default function RadarDemo(): JSX.Element {
         className="md:col-span-2 grid gap-2 p-5 rounded-[var(--r-lg)]"
         style={{ background: 'var(--surface)', border: '1px solid var(--rule)', boxShadow: 'var(--shadow)' }}
       >
+        {showcase && (
+          <p className="m-0 mb-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13.5px] pl-3" style={{ color: 'var(--ink-2)', borderLeft: '3px solid var(--accent)' }}>
+            <span>예시 시나리오 자동 실행됨 · {sc.label} · 알림이 난 날을 펼쳐 두었습니다</span>
+            <button type="button" className="link-u text-[13.5px] font-semibold" style={{ color: 'var(--accent)' }} onClick={() => pickScenario('normal')}>
+              정상 생활로 바꿔 보기
+            </button>
+          </p>
+        )}
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
           <h2 id="run-title" className="text-[17px] font-semibold" style={{ color: 'var(--ink)' }}>
             {sc.label} · {DAYS}일
