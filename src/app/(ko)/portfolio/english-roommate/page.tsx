@@ -34,19 +34,6 @@ export const metadata: Metadata = {
 
 const DEMO = '/portfolio/english-roommate/demo';
 
-const RAIL_LABEL: Record<string, string> = {
-  t0730: '방에 오면 먼저 인사',
-  t1200: '2분 영어 브리핑',
-  anytime: '“나중에” 버튼',
-  t1900: '3분 대화 · 실수 기록',
-  t2200: '1분 복습 퀴즈',
-};
-
-const RAIL: { href: string; time: string; label: string }[] = [
-  ...SCENES.map((sc) => ({ href: `#${sc.id}`, time: sc.time, label: RAIL_LABEL[sc.id] ?? sc.title })),
-  { href: '#after-night', time: '밤 이후', label: '자세히 — 비교·구성·실험' },
-];
-
 export default function EnglishRoommatePage(): JSX.Element {
   return (
     <main className={`${s.root} ${storyFontVars}`}>
@@ -88,22 +75,12 @@ export default function EnglishRoommatePage(): JSX.Element {
             </dl>
           </div>
 
-          <nav className={s.rail} aria-label="이 기기와 보내는 하루">
-            <p className={`${s.mono} m-0 mb-3 inline-flex items-center gap-2`}>
-              <DeviceFace className="w-6 h-6" />
-              이 기기와 보내는 하루 — 아래로 내려가면 아침에서 밤이 됩니다
-            </p>
-            <ol>
-              {RAIL.map((r) => (
-                <li key={r.href}>
-                  <a href={r.href}>
-                    <span className={s.railTime}>{r.time}</span>
-                    <span className={s.railLabel}>{r.label}</span>
-                  </a>
-                </li>
-              ))}
-            </ol>
-          </nav>
+          <p className={`${s.hint} ${s.mono}`}>
+            <DeviceFace className="w-6 h-6" />
+            <span>
+              <b>07:30 → 22:00</b> · 아래로 내려가면 이 기기와 보내는 하루가 아침에서 밤이 됩니다
+            </span>
+          </p>
         </div>
       </header>
 

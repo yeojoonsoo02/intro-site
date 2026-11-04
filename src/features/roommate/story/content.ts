@@ -9,13 +9,6 @@ export type Line =
   /** 학습자가 누른 버튼 */
   | { who: 'press'; text: string };
 
-export interface SceneFact {
-  value: string;
-  unit?: string;
-  label: string;
-  source: string;
-}
-
 export interface SceneData {
   id: string;
   /** 큰 시각. 시각이 없는 장면은 "언제든" */
@@ -27,7 +20,10 @@ export interface SceneData {
   tech: string;
   body: string;
   lines: Line[];
-  facts?: SceneFact[];
+  /** 본문 아래 작은 한 줄(이 장면과 관련된 숫자와 출처) */
+  aside?: string;
+  /** 장면마다 시각·배치를 다르게 둔다 */
+  layout: 'photoRight' | 'compact' | 'word' | 'mirror' | 'center';
   photo?: { src: string; alt: string; position?: string };
   tone: 'morning' | 'noon' | 'afternoon' | 'evening' | 'night';
 }
@@ -46,14 +42,8 @@ export const SCENES: SceneData[] = [
       { who: 'me', lang: 'en', text: 'I’m running late.' },
       { who: 'device', lang: 'en', text: 'Exactly! “I’m running late.” So, what’s your plan for today?' },
     ],
-    facts: [
-      {
-        value: '4',
-        unit: '가지',
-        label: '먼저 말 거는 신호 비교: 정해진 시간 · 레이더 · 폰 근접 · 폰+레이더',
-        source: '연구 질문 2 · 계획',
-      },
-    ],
+    aside: '비교할 신호는 4가지다 — 정해진 시간 · 레이더 · 폰 근접 · 폰+레이더 (연구 질문 2 · 계획).',
+    layout: 'photoRight',
     photo: {
       src: '/portfolio/capstone/roommate-hero.webp',
       alt: '아침빛이 드는 작은 원룸. 책상 위 둥근 기기의 윗면 링이 주황빛으로 켜져 있고, 뒤로 정리 안 된 침대와 의자에 걸린 후드티가 보인다.',
@@ -77,6 +67,7 @@ export const SCENES: SceneData[] = [
       },
       { who: 'me', lang: 'en', text: 'I check the tests first.' },
     ],
+    layout: 'compact',
     tone: 'noon',
   },
   {
@@ -92,6 +83,7 @@ export const SCENES: SceneData[] = [
       { who: 'note', text: '“나중에” — 잠시 뒤 다시 말을 겁니다.' },
       { who: 'note', text: '같은 시간대에 “나중에”가 쌓이면, 그 시간대엔 먼저 말 걸지 않습니다.' },
     ],
+    layout: 'word',
     tone: 'afternoon',
   },
   {
@@ -111,25 +103,9 @@ export const SCENES: SceneData[] = [
       },
       { who: 'note', text: '기억에 추가: “Yesterday I go” → “Yesterday I went”' },
     ],
-    facts: [
-      {
-        value: '1.1',
-        unit: '초',
-        label: '로컬 음성 파이프라인 평균 응답 (받아쓰기 → gemma4 → Kokoro)',
-        source: '맥 시제품 · 합성 음성으로 잰 값',
-      },
-      {
-        value: '약 200',
-        unit: '원',
-        label: '학생 1명이 한 달 3시간쯤 쓸 때 대화 API 비용',
-        source: '추정 · Claude Haiku 5.5 가격 기준',
-      },
-    ],
-    photo: {
-      src: '/portfolio/english-roommate/room-evening.webp',
-      alt: '해 질 녘의 같은 원룸. 책상 스탠드가 주황빛을 비추고, 둥근 기기와 머그잔 뒤로 노을 진 창과 침대가 흐리게 보인다.',
-      position: '48% 50%',
-    },
+    aside:
+      '로컬 음성 파이프라인(받아쓰기 → gemma4 → Kokoro) 평균 응답 1.1초 — 맥 시제품 · 합성 음성으로 잰 값. 대화 API 비용은 학생 1명이 한 달 3시간쯤 쓸 때 약 200원 — 추정 · Claude Haiku 5.5 가격 기준.',
+    layout: 'mirror',
     tone: 'evening',
   },
   {
@@ -148,8 +124,9 @@ export const SCENES: SceneData[] = [
     photo: {
       src: '/portfolio/english-roommate/room-night.webp',
       alt: '밤의 같은 원룸. 불은 꺼져 있고 창으로 푸른 빛이 들며, 책상 위 둥근 기기의 링만 주황빛으로 은은하게 켜져 있다.',
-      position: '50% 50%',
+      position: '50% 55%',
     },
+    layout: 'center',
     tone: 'night',
   },
 ];

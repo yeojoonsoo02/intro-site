@@ -40,13 +40,10 @@ const ROADMAP: { step: string; detail: string; now?: boolean }[] = [
 const LABEL = 'text-[12.5px] tracking-[.03em]';
 const MONO = { fontFamily: 'var(--font-mono)' } as const;
 
-function Fold({ id, no, title, hint, children }: { id: string; no: string; title: string; hint: string; children: React.ReactNode }): JSX.Element {
+function Fold({ id, title, hint, children }: { id: string; title: string; hint: string; children: React.ReactNode }): JSX.Element {
   return (
     <details id={id} className={s.fold}>
       <summary>
-        <span className={s.foldNo} aria-hidden="true">
-          {no}
-        </span>
         <span className={s.foldText}>
           <span className={s.foldTitle}>{title}</span>
           <span className={s.foldHint}>{hint}</span>
@@ -104,7 +101,7 @@ export default function Appendix(): JSX.Element {
         </div>
 
         <div className={s.folds}>
-          <Fold id="problem" no="01" title="대상과 문제" hint="혼자 사는 20~30대 영어 학습자 · 앱을 더 이상 열지 않는 문제">
+          <Fold id="problem" title="대상과 문제" hint="혼자 사는 20~30대 영어 학습자 · 앱을 더 이상 열지 않는 문제">
             <div className="grid gap-4">
               <p className={s.p}>
                 언어 앱이 실패하는 건 기능이 모자라서라기보다, 사람이 앱을 더 이상 열지 않아서라고 본다. 이 프로젝트의 출발 가설이다. 그래서 기능을
@@ -117,7 +114,7 @@ export default function Appendix(): JSX.Element {
             </div>
           </Fold>
 
-          <Fold id="compare" no="02" title="폰 앱과 다른 점" hint="누가 시작 · 어디서 · 듣기 입력 · 기억 · 방해 · 타이밍 — 6가지 비교표">
+          <Fold id="compare" title="폰 앱과 다른 점" hint="누가 시작 · 어디서 · 듣기 입력 · 기억 · 방해 · 타이밍 — 6가지 비교표">
             <div className="overflow-x-auto">
               <table className="w-full border-collapse text-[15px] leading-[1.6]">
                 <caption className="sr-only">폰 영어 앱과 이 기기의 비교</caption>
@@ -156,7 +153,7 @@ export default function Appendix(): JSX.Element {
             </p>
           </Fold>
 
-          <Fold id="system" no="03" title="시스템 구성" hint="구성도 · LLM은 클라우드 API로(확정) · 기기 안 LLM은 쓰지 않는다 외 결정 4개">
+          <Fold id="system" title="시스템 구성" hint="구성도 · LLM은 클라우드 API로(확정) · 기기 안 LLM은 쓰지 않는다 외 결정 4개">
             <SystemDiagram />
             <div className="grid gap-5 mt-8">
               <Decision what="LLM은 클라우드 API로 (확정)">
@@ -175,7 +172,7 @@ export default function Appendix(): JSX.Element {
             </div>
           </Fold>
 
-          <Fold id="hardware" no="04" title="하드웨어" hint="레이더 · 버튼 2개 + 마이크 LED · 마이크·스피커 · ESP32-S3 — 폰 근접은 이렇게 안다">
+          <Fold id="hardware" title="하드웨어" hint="레이더 · 버튼 2개 + 마이크 LED · 마이크·스피커 · ESP32-S3 — 폰 근접은 이렇게 안다">
             <dl className="m-0 grid gap-4">
               {HARDWARE.map((h) => (
                 <div key={h.part} className="pl-4" style={{ borderLeft: '2px solid var(--rule)' }}>
@@ -208,7 +205,7 @@ export default function Appendix(): JSX.Element {
             </ul>
           </Fold>
 
-          <Fold id="research" no="05" title="연구 질문과 실험 설계" hint="교차 설계 20~30명 · 앱 모드 2주 vs 기기 모드 2주 · 질문 3개">
+          <Fold id="research" title="연구 질문과 실험 설계" hint="교차 설계 20~30명 · 앱 모드 2주 vs 기기 모드 2주 · 질문 3개">
             <div className="grid gap-6">
               <Question no="1 · 핵심" title="먼저 말 거는 기기가, 내가 여는 앱보다 더 자주·더 오래 쓰이나?">
                 교차 설계. 참가자 20~30명이 앱 모드 2주, 기기 모드 2주를 쓰고 순서는 무작위로 정한다. 하루 말한 시간(분), 계속 쓰는 비율, 기기가 말
@@ -227,7 +224,7 @@ export default function Appendix(): JSX.Element {
             </p>
           </Fold>
 
-          <Fold id="risks" no="06" title="위험과 대응" hint="귀찮음 · 사생활 · 참가자당 기기 값 · 음성 처리 비용">
+          <Fold id="risks" title="위험과 대응" hint="귀찮음 · 사생활 · 참가자당 기기 값 · 음성 처리 비용">
             <dl className="m-0 grid gap-0" style={{ borderTop: '1px solid var(--rule)' }}>
               {RISKS.map((r) => (
                 <div key={r.risk} className="grid gap-1 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-6 py-4" style={{ borderBottom: '1px solid var(--rule)' }}>
@@ -242,7 +239,7 @@ export default function Appendix(): JSX.Element {
             </dl>
           </Fold>
 
-          <Fold id="roadmap" no="07" title="로드맵" hint="6단계 · 지금은 웹 가상 기기 데모 → 폰 웹앱 → 기기 시제품 → 교차 실험">
+          <Fold id="roadmap" title="로드맵" hint="6단계 · 지금은 웹 가상 기기 데모 → 폰 웹앱 → 기기 시제품 → 교차 실험">
             <ol className="list-none m-0 p-0 grid gap-4">
               {ROADMAP.map((r, i) => (
                 <li key={r.step} className="pl-4 grid gap-0.5" style={{ borderLeft: r.now ? '3px solid var(--accent)' : '2px solid var(--rule)' }}>
@@ -265,7 +262,7 @@ export default function Appendix(): JSX.Element {
             </ol>
           </Fold>
 
-          <Fold id="sources" no="08" title="숫자와 출처" hint="g≈0.53(Kim, 2023) · 1인 가구 약 35% · 약 200원 · 1.1초 · 사진">
+          <Fold id="sources" title="숫자와 출처" hint="g≈0.53(Kim, 2023) · 1인 가구 약 35% · 약 200원 · 1.1초 · 사진">
             <ul className="m-0 p-0 list-none grid gap-3 max-w-[66ch] text-[15.5px] leading-[1.65]">
               <li>
                 <b>효과 크기 g≈0.53</b> — 챗봇 언어 학습 메타분석(Kim, 2023). 대부분 작은 표본·짧은 기간 연구.

@@ -52,15 +52,19 @@
   position: relative;
 }
 
+/* 라이트: 아침 크림 → 한낮 흰빛 → 오후 회갈색 → 저녁 호박빛 → 밤 남색 */
 .morning {
   --bg: #fbf2e5;
 }
 .noon {
-  --bg: #fffdf8;
+  --bg: #fffefa;
+  --dev: #f6efe4;
   --card: rgba(246, 239, 228, 0.7);
 }
 .afternoon {
-  --bg: #f3eee5;
+  --bg: #ece2d1;
+  --muted-c: #665240;
+  --acc: #8f4206;
 }
 .evening {
   --bg: #f2dcbd;
@@ -97,48 +101,72 @@
   --dev: #1a2240;
 }
 
-/* 다크 테마: 명시(html.dark) + 시스템 폴백 */
+/* 다크: 띠 사이 밝기 차이를 크게 둔다 — 아침이 가장 밝고 따뜻하고, 한낮은 밝은 무채색, 저녁은 짙은 호박, 밤은 깊은 남색.
+   대비는 전부 계산해 확인했다(글자 ≥9.9:1, 강조 ≥6.1:1, 말풍선 글자 ≥7.2:1). */
 :global(html.dark) .band {
-  --bg: #1a1511;
+  --bg: #241b14;
   --fg: #f1e8dc;
   --fg2: #c9b9a6;
   --muted-c: #a8977f;
   --acc: #f0a24a;
   --acc-strong: #f6b971;
   --acc-fg: #1a1206;
-  --line: rgba(201, 185, 166, 0.18);
-  --dev: #2d251d;
+  --line: rgba(201, 185, 166, 0.2);
+  --dev: #3a2e24;
   --dev-fg: #f1e8dc;
-  --dev-line: rgba(201, 185, 166, 0.14);
+  --dev-line: rgba(201, 185, 166, 0.16);
   --me: #f0a24a;
   --me-fg: #1a1206;
-  --card: rgba(45, 37, 29, 0.7);
+  --card: rgba(58, 46, 36, 0.7);
 }
 :global(html.dark) .morning {
-  --bg: #1e1813;
+  --bg: #45352a;
+  --fg: #f6eee4;
+  --fg2: #e0d0bc;
+  --muted-c: #c9b49c;
+  --acc: #f8b86c;
+  --acc-strong: #fbca8f;
+  --dev: #5b4737;
+  --dev-fg: #f6eee4;
+  --me: #f8b86c;
+  --line: rgba(224, 208, 188, 0.22);
+  --card: rgba(91, 71, 55, 0.6);
 }
 :global(html.dark) .noon {
-  --bg: #23211e;
-  --dev: #302d29;
+  --bg: #3b3a35;
+  --fg: #f3efe8;
+  --fg2: #d6d0c4;
+  --muted-c: #bdb5a6;
+  --acc: #f6b064;
+  --dev: #504e48;
+  --dev-fg: #f3efe8;
+  --me: #f6b064;
+  --line: rgba(214, 208, 196, 0.2);
+  --card: rgba(80, 78, 72, 0.6);
 }
 :global(html.dark) .afternoon {
-  --bg: #1c1a17;
+  --bg: #2b2722;
+  --fg2: #cdbfad;
+  --muted-c: #ab9c88;
+  --dev: #3d3730;
+  --card: rgba(61, 55, 48, 0.7);
 }
 :global(html.dark) .evening {
-  --bg: #2b1d10;
-  --fg: #f5e6d2;
-  --fg2: #d2bc9f;
-  --muted-c: #b39b7c;
-  --acc: #f5a957;
-  --acc-strong: #f8be7e;
-  --dev: #3a2a1a;
-  --dev-fg: #f5e6d2;
-  --me: #f5a957;
-  --card: rgba(58, 42, 26, 0.7);
+  --bg: #3d200a;
+  --fg: #f8e7d2;
+  --fg2: #e6c9a6;
+  --muted-c: #cfab84;
+  --acc: #ffb466;
+  --acc-strong: #ffc78a;
+  --dev: #5a3418;
+  --dev-fg: #f8e7d2;
+  --me: #ffb466;
+  --line: rgba(230, 201, 166, 0.22);
+  --card: rgba(90, 52, 24, 0.6);
 }
 :global(html.dark) .night,
 :global(html.dark) .appendix {
-  --bg: #0c1125;
+  --bg: #0a0f22;
   --fg: #e6e9f3;
   --fg2: #b3bbd1;
   --muted-c: #929cb8;
@@ -153,51 +181,74 @@
   --card: rgba(28, 37, 69, 0.6);
 }
 :global(html.dark) .appendix {
-  --bg: #090d1d;
+  --bg: #070a17;
   --dev: #141b36;
 }
 @media (prefers-color-scheme: dark) {
   :global(html:not(.dark):not(.light)) .band {
-    --bg: #1a1511;
+    --bg: #241b14;
     --fg: #f1e8dc;
     --fg2: #c9b9a6;
     --muted-c: #a8977f;
     --acc: #f0a24a;
     --acc-strong: #f6b971;
     --acc-fg: #1a1206;
-    --line: rgba(201, 185, 166, 0.18);
-    --dev: #2d251d;
+    --line: rgba(201, 185, 166, 0.2);
+    --dev: #3a2e24;
     --dev-fg: #f1e8dc;
-    --dev-line: rgba(201, 185, 166, 0.14);
+    --dev-line: rgba(201, 185, 166, 0.16);
     --me: #f0a24a;
     --me-fg: #1a1206;
-    --card: rgba(45, 37, 29, 0.7);
+    --card: rgba(58, 46, 36, 0.7);
   }
   :global(html:not(.dark):not(.light)) .morning {
-    --bg: #1e1813;
+    --bg: #45352a;
+    --fg: #f6eee4;
+    --fg2: #e0d0bc;
+    --muted-c: #c9b49c;
+    --acc: #f8b86c;
+    --acc-strong: #fbca8f;
+    --dev: #5b4737;
+    --dev-fg: #f6eee4;
+    --me: #f8b86c;
+    --line: rgba(224, 208, 188, 0.22);
+    --card: rgba(91, 71, 55, 0.6);
   }
   :global(html:not(.dark):not(.light)) .noon {
-    --bg: #23211e;
-    --dev: #302d29;
+    --bg: #3b3a35;
+    --fg: #f3efe8;
+    --fg2: #d6d0c4;
+    --muted-c: #bdb5a6;
+    --acc: #f6b064;
+    --dev: #504e48;
+    --dev-fg: #f3efe8;
+    --me: #f6b064;
+    --line: rgba(214, 208, 196, 0.2);
+    --card: rgba(80, 78, 72, 0.6);
   }
   :global(html:not(.dark):not(.light)) .afternoon {
-    --bg: #1c1a17;
+    --bg: #2b2722;
+    --fg2: #cdbfad;
+    --muted-c: #ab9c88;
+    --dev: #3d3730;
+    --card: rgba(61, 55, 48, 0.7);
   }
   :global(html:not(.dark):not(.light)) .evening {
-    --bg: #2b1d10;
-    --fg: #f5e6d2;
-    --fg2: #d2bc9f;
-    --muted-c: #b39b7c;
-    --acc: #f5a957;
-    --acc-strong: #f8be7e;
-    --dev: #3a2a1a;
-    --dev-fg: #f5e6d2;
-    --me: #f5a957;
-    --card: rgba(58, 42, 26, 0.7);
+    --bg: #3d200a;
+    --fg: #f8e7d2;
+    --fg2: #e6c9a6;
+    --muted-c: #cfab84;
+    --acc: #ffb466;
+    --acc-strong: #ffc78a;
+    --dev: #5a3418;
+    --dev-fg: #f8e7d2;
+    --me: #ffb466;
+    --line: rgba(230, 201, 166, 0.22);
+    --card: rgba(90, 52, 24, 0.6);
   }
   :global(html:not(.dark):not(.light)) .night,
   :global(html:not(.dark):not(.light)) .appendix {
-    --bg: #0c1125;
+    --bg: #0a0f22;
     --fg: #e6e9f3;
     --fg2: #b3bbd1;
     --muted-c: #929cb8;
@@ -212,7 +263,7 @@
     --card: rgba(28, 37, 69, 0.6);
   }
   :global(html:not(.dark):not(.light)) .appendix {
-    --bg: #090d1d;
+    --bg: #070a17;
     --dev: #141b36;
   }
 }
@@ -330,66 +381,19 @@
   margin: 0;
 }
 
-/* 하루 순서(목차) */
-.rail {
-  margin-top: 36px;
+/* 하루 힌트(첫 화면 아래 작은 한 줄) */
+.hint {
+  margin: 30px 0 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
 }
-.rail ol {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px;
-}
-@media (min-width: 760px) {
-  .rail ol {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 0;
-    border-top: 2px solid var(--line);
-  }
-}
-.rail a {
-  display: grid;
-  gap: 2px;
-  padding: 10px 10px 8px;
-  border-radius: 10px;
-  text-decoration: none;
-  color: var(--fg);
-  position: relative;
-}
-.rail a:hover {
-  background: var(--card);
-}
-@media (min-width: 760px) {
-  .rail a {
-    border-radius: 0 0 10px 10px;
-    padding-top: 14px;
-  }
-  .rail a::before {
-    content: '';
-    position: absolute;
-    top: -6px;
-    left: 10px;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--bg);
-    border: 2px solid var(--acc);
-  }
-}
-.railTime {
+.hint b {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 19px;
-  letter-spacing: -0.02em;
+  font-size: 15px;
   color: var(--acc);
-  font-variant-numeric: tabular-nums;
-}
-.railLabel {
-  font-size: 13px;
-  color: var(--fg2);
-  line-height: 1.35;
+  letter-spacing: -0.01em;
 }
 
 /* ── 장면 ────────────────────────────────────────── */
@@ -420,6 +424,42 @@
     gap: 36px;
     align-items: stretch;
   }
+  /* 12:00: 작은 시각, 글은 좁게, 말풍선을 넓게 */
+  .sceneGrid.compact {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
+    align-items: center;
+  }
+  /* 19:00: 좌우를 뒤집어 말풍선이 왼쪽, 글은 오른쪽 정렬 */
+  .sceneGrid.mirror {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    grid-template-areas: 'chat text';
+  }
+  .mirror .sceneText {
+    text-align: right;
+  }
+  .mirror .body,
+  .mirror .aside {
+    margin-left: auto;
+  }
+  /* 22:00: 가운데 정렬 큰 시각, 아래에 말풍선과 사진 */
+  .sceneGrid.center {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    grid-template-areas: 'text text' 'chat photo';
+    gap: 24px 40px;
+    align-items: center;
+  }
+  .center .sceneText {
+    text-align: center;
+  }
+  .center .body {
+    margin: 0 auto;
+    max-width: 58ch;
+  }
+  .center .photo {
+    aspect-ratio: 16 / 10;
+    min-height: 0;
+    height: auto;
+  }
 }
 .sceneText {
   grid-area: text;
@@ -448,6 +488,14 @@
   letter-spacing: -0.045em;
   color: var(--acc);
   font-variant-numeric: tabular-nums;
+}
+.timeSmall {
+  font-size: clamp(44px, 5vw, 60px);
+  letter-spacing: -0.035em;
+}
+.timeLarge {
+  font-size: clamp(80px, 11vw, 144px);
+  line-height: 0.82;
 }
 .timeWord {
   font-size: clamp(48px, 6vw, 76px);
@@ -497,41 +545,14 @@
   max-width: 46ch;
 }
 
-.facts {
-  margin: 20px 0 0;
-  display: grid;
-  gap: 14px 24px;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-}
-.fact {
-  display: grid;
-  gap: 2px;
-  padding-left: 14px;
-  border-left: 3px solid var(--acc);
-}
-.fact dt {
-  order: 2;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--fg);
-}
-.factValue {
-  order: 1;
-  margin: 0;
-  font-family: var(--serif);
-  font-weight: 700;
-  font-size: 30px;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  color: var(--acc);
-}
-.factValue small {
-  font-size: 16px;
-  margin-left: 2px;
-}
-.factSource {
-  order: 3;
-  margin: 0;
+.aside {
+  margin: 14px 0 0;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--fg2);
+  max-width: 52ch;
 }
 
 /* 사진: 넓은 화면에선 장면 높이에 맞춘 세로 창, 좁은 화면에선 가로 띠 */
@@ -863,7 +884,7 @@
   list-style: none;
   cursor: pointer;
   display: grid;
-  grid-template-columns: 2.4rem minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 4px 12px;
   align-items: baseline;
   padding: 12px 4px;
@@ -880,11 +901,6 @@
 .fold > summary:focus-visible {
   outline: 2px solid var(--acc);
   outline-offset: 2px;
-}
-.foldNo {
-  font-family: var(--mono);
-  font-size: 12.5px;
-  color: var(--acc);
 }
 .foldText {
   display: grid;
@@ -927,7 +943,6 @@
 }
 .foldBody {
   padding: 4px 4px 28px;
-  padding-left: calc(2.4rem + 16px);
   color: var(--fg);
 }
 @media (max-width: 639px) {

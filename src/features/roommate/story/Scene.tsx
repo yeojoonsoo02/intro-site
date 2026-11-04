@@ -84,16 +84,24 @@ function ChatLine({ line, d }: { line: Line; d: number }): JSX.Element {
   }
 }
 
+const LAYOUT: Record<SceneData['layout'], { grid: string; time: string }> = {
+  photoRight: { grid: s.withPhoto, time: '' },
+  compact: { grid: s.compact, time: s.timeSmall },
+  word: { grid: '', time: s.timeWord },
+  mirror: { grid: s.mirror, time: '' },
+  center: { grid: s.center, time: s.timeLarge },
+};
+
 export default function Scene({ scene }: { scene: SceneData }): JSX.Element {
   const ds = delays(scene.lines);
-  const isWord = !/^\d/.test(scene.time);
+  const lay = LAYOUT[scene.layout];
   return (
     <section id={scene.id} aria-labelledby={`${scene.id}-h`} className={`${s.band} ${TONE[scene.tone]} ${s.scene}`}>
       <div className={s.wrap}>
-        <div className={`${s.sceneGrid} ${scene.photo ? s.withPhoto : ''}`}>
+        <div className={`${s.sceneGrid} ${lay.grid}`}>
           <div className={s.sceneText}>
             <h2 id={`${scene.id}-h`} className={s.h2}>
-              <span className={`${s.time} ${isWord ? s.timeWord : ''}`}>
+              <span className={`${s.time} ${lay.time}`}>
                 <span className={s.part}>{scene.part}</span>
                 {scene.time}
               </span>
@@ -104,6 +112,7 @@ export default function Scene({ scene }: { scene: SceneData }): JSX.Element {
               {scene.tech}
             </p>
             <p className={s.body}>{scene.body}</p>
+            {scene.aside && <p className={s.aside}>{scene.aside}</p>}
           </div>
 
           <div className={s.sceneChat}>
@@ -129,21 +138,6 @@ export default function Scene({ scene }: { scene: SceneData }): JSX.Element {
                 </ol>
               </div>
             )}
-            {scene.facts && (
-              <dl className={s.facts} aria-label="이 장면의 숫자">
-                {scene.facts.map((f) => (
-                  // 읽는 순서는 이름 → 값(dl 규칙), 보이는 순서는 값이 먼저
-                  <div key={f.label} className={s.fact}>
-                    <dt>{f.label}</dt>
-                    <dd className={s.factValue}>
-                      {f.value}
-                      {f.unit && <small>{f.unit}</small>}
-                    </dd>
-                    <dd className={`${s.factSource} ${s.mono}`}>{f.source}</dd>
-                  </div>
-                ))}
-              </dl>
-            )}
           </div>
 
           {scene.photo && (
@@ -153,7 +147,7 @@ export default function Scene({ scene }: { scene: SceneData }): JSX.Element {
                   src={scene.photo.src}
                   alt={scene.photo.alt}
                   fill
-                  sizes="(min-width: 900px) 300px, 100vw"
+                  sizes="(min-width: 900px) 420px, 100vw"
                   style={{ objectPosition: scene.photo.position ?? '50% 50%' }}
                 />
                 <span className={s.chip}>AI 이미지 · 로컬 FLUX.2 klein</span>
