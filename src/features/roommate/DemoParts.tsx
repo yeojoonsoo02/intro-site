@@ -1,8 +1,8 @@
-'use client';
-
 import type { Mistake } from './types';
 
 // 가상 기기 데모의 작은 화면 조각들. 상태는 RoommateDemo가 갖고 여기는 그리기만 한다.
+// 'use client'를 두지 않는다: RoommateDemo(클라이언트)에서만 import되므로 클라이언트 번들에 들어가고,
+// 진입 파일이 아니어야 함수 props 직렬화 경고(TS 71007)가 나지 않는다.
 
 export function Toggle({
   id,
