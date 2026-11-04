@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE_URL } from '@/lib/site';
 import { OG_IMAGES, TWITTER_IMAGES } from '@/components/seo/ogMeta';
+import CapstoneHero, { AiImageFootnote } from '@/features/capstone/CapstoneHero';
+import { CountUp } from '@/features/capstone/motion';
+import RoommateHeroVisual from '@/features/roommate/HeroVisual';
 import SystemDiagram from '@/features/roommate/SystemDiagram';
 
 // 졸업작품 구상 "먼저 말 거는 영어 룸메이트" 설명 페이지. 한국어만 있다(포트폴리오 상세와 같다).
@@ -93,55 +96,47 @@ const LABEL = 'text-[12.5px] tracking-[.03em]';
 
 export default function EnglishRoommatePage(): JSX.Element {
   return (
-    <main style={{ background: 'var(--paper)' }}>
-      <article className="max-w-[720px] mx-auto px-5 sm:px-6 pt-14 sm:pt-20 pb-20">
+    <main className="cap cap-roommate" style={{ background: 'var(--paper)' }}>
+      <div className="max-w-[1080px] mx-auto px-5 sm:px-6 pt-12 sm:pt-16">
         <Link
           href="/portfolio"
-          className="inline-flex items-center gap-1 text-[14px] mb-10 underline-offset-4 hover:underline"
+          className="inline-flex items-center gap-1 text-[14px] mb-8 underline-offset-4 hover:underline"
           style={{ color: 'var(--muted)' }}
         >
           <span aria-hidden="true">←</span> 전체 프로젝트 보기
         </Link>
-
-        <header className="mb-14">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mb-4">
-            <span className={LABEL} style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
-              졸업작품 구상
-            </span>
-            <span className={`inline-flex items-center gap-1.5 ${LABEL}`} style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
-              <span aria-hidden="true" className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: 'var(--muted)' }} />
-              구상 · 웹 데모
-            </span>
-          </div>
-          <h1
-            className="text-[32px] sm:text-[40px] font-bold leading-[1.2] mb-6"
-            style={{ fontFamily: 'var(--font-serif)', letterSpacing: '-0.02em', color: 'var(--ink)', textWrap: 'balance' }}
-          >
-            먼저 말 거는 영어 룸메이트
-          </h1>
-          <p className="intro-p text-[19px] leading-[1.7] max-w-[56ch] mb-8" style={{ color: 'var(--ink)' }}>
-            앱은 내가 열어야 시작되고, 이 기기는 내가 방에 있으면 먼저 시작한다.
-          </p>
-
-          <dl
-            className="m-0 grid gap-x-8 gap-y-3 sm:grid-cols-[auto_1fr] py-5 text-[15px]"
-            style={{ borderTop: '1px solid var(--rule)', borderBottom: '1px solid var(--rule)' }}
-          >
-            <Row label="대상">혼자 사는 20~30대 영어 학습자</Row>
-            <Row label="형태">방에 두는 작은 기기 + 폰 웹앱 (같은 엔진)</Row>
-            <Row label="핵심 기술">먼저 말 걸기(근접·레이더) · 틀린 표현 간격 반복</Row>
-            <Row label="지금">웹 가상 기기 데모 (2026-11)</Row>
-          </dl>
-
-          <div className="flex flex-wrap gap-3 mt-6">
-            <Link href="/portfolio/english-roommate/demo" className="btn btn-primary">
-              가상 기기 데모 열기 <span aria-hidden="true">→</span>
-            </Link>
-            <a href="#research" className="btn btn-ghost">
-              연구 질문 보기
-            </a>
-          </div>
-        </header>
+        <CapstoneHero
+          title="먼저 말 거는 영어 룸메이트"
+          concept="앱은 내가 열어야 시작되고, 이 기기는 내가 방에 있으면 먼저 시작한다."
+          visual={<RoommateHeroVisual />}
+          stats={[
+            { value: <>약 <CountUp to={200} /></>, unit: '원', label: '학생 1명이 한 달 3시간쯤 쓸 때 대화 API 비용', source: '추정 · Claude Haiku 5.5 가격 기준' },
+            { value: <CountUp to={4} />, unit: '가지', label: '먼저 말 거는 신호 비교: 정해진 시간 · 레이더 · 폰 근접 · 폰+레이더', source: '연구 질문 2 · 계획' },
+            { value: <CountUp to={1.1} decimals={1} />, unit: '초', label: '로컬 음성 파이프라인 평균 응답 (받아쓰기 → gemma4 → Kokoro)', source: '맥 시제품 · 합성 음성으로 잰 값' },
+          ]}
+          actions={
+            <>
+              <Link href="/portfolio/english-roommate/demo" className="btn btn-primary">
+                가상 기기 데모 열기 <span aria-hidden="true">→</span>
+              </Link>
+              <a href="#research" className="btn btn-ghost">
+                연구 질문 보기
+              </a>
+            </>
+          }
+        />
+      </div>
+      <article className="max-w-[720px] mx-auto px-5 sm:px-6 pb-20">
+        <dl
+          aria-label="한눈에"
+          className="m-0 mb-14 grid gap-x-8 gap-y-3 sm:grid-cols-[auto_1fr] py-5 text-[15px]"
+          style={{ borderTop: '1px solid var(--rule)', borderBottom: '1px solid var(--rule)' }}
+        >
+          <Row label="대상">혼자 사는 20~30대 영어 학습자</Row>
+          <Row label="형태">방에 두는 작은 기기 + 폰 웹앱 (같은 엔진)</Row>
+          <Row label="핵심 기술">먼저 말 걸기(근접·레이더) · 틀린 표현 간격 반복</Row>
+          <Row label="지금">웹 가상 기기 데모 (2026-11)</Row>
+        </dl>
 
         <div className="grid gap-14 sm:gap-16">
           <Section id="problem" title="대상과 문제">
@@ -363,6 +358,7 @@ export default function EnglishRoommatePage(): JSX.Element {
             데모 →
           </Link>
         </footer>
+        <AiImageFootnote />
       </article>
     </main>
   );

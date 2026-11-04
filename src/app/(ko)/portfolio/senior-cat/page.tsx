@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE_URL } from '@/lib/site';
 import { OG_IMAGES, TWITTER_IMAGES } from '@/components/seo/ogMeta';
+import CapstoneHero, { AiImageFootnote } from '@/features/capstone/CapstoneHero';
+import { CountUp } from '@/features/capstone/motion';
+import SeniorCatHeroVisual from '@/features/seniorcat/HeroVisual';
 import SystemDiagram from '@/features/seniorcat/SystemDiagram';
 
 // 졸업작품 구상 "노령묘 화장실 무게 센서" 설명 페이지. 한국어만 있다(포트폴리오 상세와 같다).
@@ -164,48 +167,51 @@ const MONO_MUTED = { fontFamily: 'var(--font-mono)', color: 'var(--muted)' } as 
 
 export default function SeniorCatPage(): JSX.Element {
   return (
-    <main style={{ background: 'var(--paper)' }}>
-      <article className="max-w-[720px] mx-auto px-5 sm:px-6 pt-14 sm:pt-20 pb-20">
-        <Link href="/portfolio" className="inline-flex items-center gap-1 text-[14px] mb-10 underline-offset-4 hover:underline" style={{ color: 'var(--muted)' }}>
+    <main className="cap cap-seniorcat" style={{ background: 'var(--paper)' }}>
+      <div className="max-w-[1080px] mx-auto px-5 sm:px-6 pt-12 sm:pt-16">
+        <Link href="/portfolio" className="inline-flex items-center gap-1 text-[14px] mb-8 underline-offset-4 hover:underline" style={{ color: 'var(--muted)' }}>
           <span aria-hidden="true">←</span> 전체 프로젝트 보기
         </Link>
-
-        <header className="mb-14">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mb-4">
-            <span className={LABEL} style={MONO_MUTED}>
-              졸업작품 구상
-            </span>
-            <span className={`inline-flex items-center gap-1.5 ${LABEL}`} style={MONO_MUTED}>
-              <span aria-hidden="true" className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: 'var(--muted)' }} />
-              구상 · 웹 데모
-            </span>
-          </div>
-          <h1
-            className="text-[32px] sm:text-[40px] font-bold leading-[1.2] mb-6"
-            style={{ fontFamily: 'var(--font-serif)', letterSpacing: '-0.02em', color: 'var(--ink)', textWrap: 'balance' }}
-          >
-            노령묘 화장실 무게 센서
-          </h1>
-          <p className="intro-p text-[19px] leading-[1.7] max-w-[56ch] mb-8" style={{ color: 'var(--ink)' }}>
-            화장실 밑 저울이 체중·방문 횟수·소변량·머문 시간을 매일 적고, 그 고양이의 평소에서 벗어나면 &ldquo;검진 받아 볼 때&rdquo;라고 알려 준다.
-          </p>
-
-          <dl className="m-0 grid gap-x-8 gap-y-3 sm:grid-cols-[auto_1fr] py-5 text-[15px]" style={{ borderTop: '1px solid var(--rule)', borderBottom: '1px solid var(--rule)' }}>
-            <Row label="대상">9살 넘은 고양이를 키우고, 검진은 1년에 1~2번인 1~2인 가구</Row>
-            <Row label="형태">쓰던 화장실 밑에 까는 무게 판 + 폰 알림 + 병원 리포트</Row>
-            <Row label="하는 일">행동 변화 알림 · 검진 권유 (진단하지 않는다)</Row>
-            <Row label="지금">시뮬레이터와 알고리즘 웹 데모 (2026-11)</Row>
-          </dl>
-
-          <div className="flex flex-wrap gap-3 mt-6">
-            <Link href="/portfolio/senior-cat/demo" className="btn btn-primary">
-              시뮬레이터 데모 열기 <span aria-hidden="true">→</span>
-            </Link>
-            <a href="#research" className="btn btn-ghost">
-              연구 질문 보기
-            </a>
-          </div>
-        </header>
+        <CapstoneHero
+          title="노령묘 화장실 무게 센서"
+          concept={<>화장실 밑 저울이 체중·방문 횟수·소변량·머문 시간을 매일 적고, 그 고양이의 평소에서 벗어나면 &ldquo;검진 받아 볼 때&rdquo;라고 알려 준다.</>}
+          visual={<SeniorCatHeroVisual />}
+          stats={[
+            {
+              value: (
+                <>
+                  <CountUp to={4.6} decimals={1} />
+                  <span className="text-[20px] sm:text-[22px] font-semibold mx-1.5" style={{ color: 'var(--muted)' }}>
+                    vs
+                  </span>
+                  <CountUp to={2.3} decimals={1} />
+                </>
+              ),
+              unit: '회',
+              label: '하루 소변 횟수: 신장병 고양이 vs 신장병 아닌 고양이',
+              source: 'Purina·Ohio State, Animals 2026 · 기기 회사 연구',
+            },
+            { value: <>24~48</>, unit: '시간', label: '요도가 완전히 막힌 뒤 죽을 수도 있는 시간 — "절대 응급"', source: 'Cornell Feline Health Center' },
+          ]}
+          actions={
+            <>
+              <Link href="/portfolio/senior-cat/demo" className="btn btn-primary">
+                시뮬레이터 데모 열기 <span aria-hidden="true">→</span>
+              </Link>
+              <a href="#research" className="btn btn-ghost">
+                연구 질문 보기
+              </a>
+            </>
+          }
+        />
+      </div>
+      <article className="max-w-[720px] mx-auto px-5 sm:px-6 pb-20">
+        <dl aria-label="한눈에" className="m-0 mb-14 grid gap-x-8 gap-y-3 sm:grid-cols-[auto_1fr] py-5 text-[15px]" style={{ borderTop: '1px solid var(--rule)', borderBottom: '1px solid var(--rule)' }}>
+          <Row label="대상">9살 넘은 고양이를 키우고, 검진은 1년에 1~2번인 1~2인 가구</Row>
+          <Row label="형태">쓰던 화장실 밑에 까는 무게 판 + 폰 알림 + 병원 리포트</Row>
+          <Row label="하는 일">행동 변화 알림 · 검진 권유 (진단하지 않는다)</Row>
+          <Row label="지금">시뮬레이터와 알고리즘 웹 데모 (2026-11)</Row>
+        </dl>
 
         <div className="grid grid-cols-[minmax(0,1fr)] gap-14 sm:gap-16">
           <Section id="problem" title="대상과 문제">
@@ -485,6 +491,7 @@ export default function SeniorCatPage(): JSX.Element {
             데모 →
           </Link>
         </footer>
+        <AiImageFootnote />
       </article>
     </main>
   );

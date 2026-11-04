@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE_URL } from '@/lib/site';
 import { OG_IMAGES, TWITTER_IMAGES } from '@/components/seo/ogMeta';
+import '@/features/capstone/capstone.css';
 import AiCheckDemo from '@/features/aicheck/AiCheckDemo';
 
 // "이거 AI야?" 웹 데모. 페이지 껍데기는 정적이고, 판독·판별·압축은 전부 브라우저(AiCheckDemo)에서 돈다.
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
 
 export default function AiCheckDemoPage(): JSX.Element {
   return (
-    <main style={{ background: 'var(--paper)' }}>
+    <main className="cap cap-aicheck" style={{ background: 'var(--paper)' }}>
       <div className="max-w-[1000px] mx-auto px-5 sm:px-6 pt-14 sm:pt-20 pb-20">
         <Link
           href="/portfolio/ai-check"

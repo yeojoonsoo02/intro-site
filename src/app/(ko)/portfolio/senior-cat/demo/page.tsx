@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE_URL } from '@/lib/site';
 import { OG_IMAGES, TWITTER_IMAGES } from '@/components/seo/ogMeta';
+import '@/features/capstone/capstone.css';
 import CatDemo from '@/features/seniorcat/CatDemo';
 
 // 화장실 무게 센서 데모. 페이지 껍데기는 정적이고, 시뮬레이터·알고리즘은 전부 브라우저(CatDemo)에서 돈다.
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
 
 export default function SeniorCatDemoPage(): JSX.Element {
   return (
-    <main style={{ background: 'var(--paper)' }}>
+    <main className="cap cap-seniorcat" style={{ background: 'var(--paper)' }}>
       <div className="max-w-[1080px] mx-auto px-5 sm:px-6 pt-14 sm:pt-20 pb-20">
         <Link
           href="/portfolio/senior-cat"

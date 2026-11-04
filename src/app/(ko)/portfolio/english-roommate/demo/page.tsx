@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE_URL } from '@/lib/site';
 import { OG_IMAGES, TWITTER_IMAGES } from '@/components/seo/ogMeta';
+import '@/features/capstone/capstone.css';
 import RoommateDemo from '@/features/roommate/RoommateDemo';
 
 // 가상 기기 데모. 페이지 껍데기는 정적이고, 기기·대화·기억은 전부 브라우저(RoommateDemo)에서 돈다.
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
 
 export default function EnglishRoommateDemoPage(): JSX.Element {
   return (
-    <main style={{ background: 'var(--paper)' }}>
+    <main className="cap cap-roommate" style={{ background: 'var(--paper)' }}>
       <div className="max-w-[1000px] mx-auto px-5 sm:px-6 pt-14 sm:pt-20 pb-20">
         <Link
           href="/portfolio/english-roommate"

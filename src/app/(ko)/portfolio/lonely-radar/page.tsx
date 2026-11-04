@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE_URL } from '@/lib/site';
 import { OG_IMAGES, TWITTER_IMAGES } from '@/components/seo/ogMeta';
+import CapstoneHero, { AiImageFootnote } from '@/features/capstone/CapstoneHero';
+import { CountUp } from '@/features/capstone/motion';
+import LonelyRadarHeroVisual from '@/features/lonelyradar/HeroVisual';
 import SystemDiagram from '@/features/lonelyradar/SystemDiagram';
 
 // 졸업작품 구상 "1인가구 생활 리듬 레이더" 설명 페이지. 한국어만 있다(포트폴리오 상세와 같다).
@@ -221,50 +224,44 @@ const NOTE = 'text-[15px] leading-[1.7] max-w-[62ch]';
 
 export default function LonelyRadarPage(): JSX.Element {
   return (
-    <main style={{ background: 'var(--paper)' }}>
-      <article className="max-w-[720px] mx-auto px-5 sm:px-6 pt-14 sm:pt-20 pb-20">
-        <Link href="/portfolio" className="inline-flex items-center gap-1 text-[14px] mb-10 underline-offset-4 hover:underline" style={{ color: 'var(--muted)' }}>
+    <main className="cap cap-lonelyradar" style={{ background: 'var(--paper)' }}>
+      <div className="max-w-[1080px] mx-auto px-5 sm:px-6 pt-12 sm:pt-16">
+        <Link href="/portfolio" className="inline-flex items-center gap-1 text-[14px] mb-8 underline-offset-4 hover:underline" style={{ color: 'var(--muted)' }}>
           <span aria-hidden="true">←</span> 전체 프로젝트 보기
         </Link>
-
-        <header className="mb-14">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mb-4">
-            <span className={LABEL} style={MONO_MUTED}>
-              졸업작품 구상
-            </span>
-            <span className={`inline-flex items-center gap-1.5 ${LABEL}`} style={MONO_MUTED}>
-              <span aria-hidden="true" className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: 'var(--muted)' }} />
-              구상 · 웹 데모
-            </span>
-          </div>
-          <h1
-            className="text-[32px] sm:text-[40px] font-bold leading-[1.2] mb-6"
-            style={{ fontFamily: 'var(--font-serif)', letterSpacing: '-0.02em', color: 'var(--ink)', textWrap: 'balance' }}
-          >
-            1인가구 생활 리듬 레이더
-          </h1>
-          <p className="intro-p text-[19px] leading-[1.7] max-w-[56ch] mb-8" style={{ color: 'var(--ink)' }}>
-            카메라 없는 레이더가 움직임과 호흡을 본다. &ldquo;평소 생활 리듬에서 벗어났다&rdquo;거나 &ldquo;쓰러진 뒤 움직임이 없다&rdquo;면 본인 → 관리자 →
-            연락처 순으로 알린다.
-          </p>
-
-          <dl className="m-0 grid gap-x-8 gap-y-3 sm:grid-cols-[auto_1fr] py-5 text-[15px]" style={{ borderTop: '1px solid var(--rule)', borderBottom: '1px solid var(--rule)' }}>
-            <Row label="대상">원룸·오피스텔에 혼자 사는 50~60대 남성</Row>
-            <Row label="돈 내는 쪽">임대인·관리사무소, LH·SH 공공임대, 지자체(B2G)</Row>
-            <Row label="형태">60GHz 레이더 키트 1~2대 + 서버 + 단계 알림</Row>
-            <Row label="하지 않는 것">사망 감지라고 말하지 않는다 · 영상·소리를 만들지 않는다</Row>
-            <Row label="지금">시뮬레이터와 알고리즘 웹 데모 (2026-11)</Row>
-          </dl>
-
-          <div className="flex flex-wrap gap-3 mt-6">
-            <Link href="/portfolio/lonely-radar/demo" className="btn btn-primary">
-              시뮬레이터 데모 열기 <span aria-hidden="true">→</span>
-            </Link>
-            <a href="#validation" className="btn btn-ghost">
-              검증 계획 보기
-            </a>
-          </div>
-        </header>
+        <CapstoneHero
+          title="1인가구 생활 리듬 레이더"
+          concept={
+            <>
+              카메라 없는 레이더가 움직임과 호흡을 본다. &ldquo;평소 생활 리듬에서 벗어났다&rdquo;거나 &ldquo;쓰러진 뒤 움직임이 없다&rdquo;면 본인 → 관리자 → 연락처 순으로 알린다.
+            </>
+          }
+          visual={<LonelyRadarHeroVisual />}
+          stats={[
+            { value: <CountUp to={3661} />, unit: '명', label: '2023년 고독사', source: '보건복지부 발표 · 기사 인용(2차)' },
+            { value: <CountUp to={53.9} decimals={1} />, unit: '%', label: '그중 50대·60대 남성', source: '같은 발표 · 기사 인용(2차)' },
+            { value: <CountUp to={17} />, unit: '분', label: '쓰러진 뒤 첫 알림까지 중앙값 (천장 센서 있음)', source: '시뮬레이션 · 실제 사람 데이터 아님' },
+          ]}
+          actions={
+            <>
+              <Link href="/portfolio/lonely-radar/demo" className="btn btn-primary">
+                시뮬레이터 데모 열기 <span aria-hidden="true">→</span>
+              </Link>
+              <a href="#validation" className="btn btn-ghost">
+                검증 계획 보기
+              </a>
+            </>
+          }
+        />
+      </div>
+      <article className="max-w-[720px] mx-auto px-5 sm:px-6 pb-20">
+        <dl aria-label="한눈에" className="m-0 mb-14 grid gap-x-8 gap-y-3 sm:grid-cols-[auto_1fr] py-5 text-[15px]" style={{ borderTop: '1px solid var(--rule)', borderBottom: '1px solid var(--rule)' }}>
+          <Row label="대상">원룸·오피스텔에 혼자 사는 50~60대 남성</Row>
+          <Row label="돈 내는 쪽">임대인·관리사무소, LH·SH 공공임대, 지자체(B2G)</Row>
+          <Row label="형태">60GHz 레이더 키트 1~2대 + 서버 + 단계 알림</Row>
+          <Row label="하지 않는 것">사망 감지라고 말하지 않는다 · 영상·소리를 만들지 않는다</Row>
+          <Row label="지금">시뮬레이터와 알고리즘 웹 데모 (2026-11)</Row>
+        </dl>
 
         <div className="grid grid-cols-[minmax(0,1fr)] gap-14 sm:gap-16">
           <Section id="problem" title="대상과 문제">
@@ -639,6 +636,7 @@ export default function LonelyRadarPage(): JSX.Element {
             데모 →
           </Link>
         </footer>
+        <AiImageFootnote />
       </article>
     </main>
   );

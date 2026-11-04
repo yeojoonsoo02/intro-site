@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE_URL } from '@/lib/site';
 import { OG_IMAGES, TWITTER_IMAGES } from '@/components/seo/ogMeta';
+import CapstoneHero, { AiImageFootnote } from '@/features/capstone/CapstoneHero';
+import { CountUp } from '@/features/capstone/motion';
+import AiCheckHeroVisual from '@/features/aicheck/HeroVisual';
 import FlowDiagram from '@/features/aicheck/FlowDiagram';
 
 // 졸업작품 구상 "이거 AI야?" 설명 페이지. 한국어만 있다(포트폴리오 상세와 같다).
@@ -134,59 +137,51 @@ const TH = `text-left font-normal py-2 pr-3 ${LABEL}`;
 
 export default function AiCheckPage(): JSX.Element {
   return (
-    <main style={{ background: 'var(--paper)' }}>
-      <article className="max-w-[720px] mx-auto px-5 sm:px-6 pt-14 sm:pt-20 pb-20">
+    <main className="cap cap-aicheck" style={{ background: 'var(--paper)' }}>
+      <div className="max-w-[1080px] mx-auto px-5 sm:px-6 pt-12 sm:pt-16">
         <Link
           href="/portfolio"
-          className="inline-flex items-center gap-1 text-[14px] mb-10 underline-offset-4 hover:underline"
+          className="inline-flex items-center gap-1 text-[14px] mb-8 underline-offset-4 hover:underline"
           style={{ color: 'var(--muted)' }}
         >
           <span aria-hidden="true">←</span> 전체 프로젝트 보기
         </Link>
-
-        <header className="mb-14">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mb-4">
-            <span className={LABEL} style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
-              졸업작품 구상
-            </span>
-            <span className={`inline-flex items-center gap-1.5 ${LABEL}`} style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
-              <span aria-hidden="true" className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: 'var(--muted)' }} />
-              구상 · 웹 데모
-            </span>
-          </div>
-          <h1
-            className="text-[32px] sm:text-[40px] font-bold leading-[1.2] mb-3"
-            style={{ fontFamily: 'var(--font-serif)', letterSpacing: '-0.02em', color: 'var(--ink)', textWrap: 'balance' }}
-          >
-            이거 AI야?
-          </h1>
-          <p className="text-[18px] sm:text-[20px] leading-[1.45] mb-6" style={{ fontFamily: 'var(--font-serif)', color: 'var(--ink-2)', textWrap: 'balance' }}>
-            SNS 압축에도 버티는 AI 이미지·영상 판별기
-          </p>
-          <p className="intro-p text-[19px] leading-[1.7] max-w-[56ch] mb-8" style={{ color: 'var(--ink)' }}>
-            SNS에서 본 이미지·영상을 넣으면, AI 표시가 있는지 먼저 확인하고, 없으면 내용 자체를 분석해 &ldquo;AI 표시 확인됨 · AI 의심 N%와 근거 · 판단
-            어려움&rdquo; 셋 중 하나로 정직하게 알려 준다.
-          </p>
-
-          <dl
-            className="m-0 grid gap-x-8 gap-y-3 sm:grid-cols-[auto_1fr] py-5 text-[15px]"
-            style={{ borderTop: '1px solid var(--rule)', borderBottom: '1px solid var(--rule)' }}
-          >
-            <Row label="대상">SNS에서 이미지·영상을 보는 일반 사용자</Row>
-            <Row label="형태">공유하면 결과를 돌려주는 웹앱 (브라우저 안에서 판별)</Row>
-            <Row label="핵심 기술">표시 확인(C2PA·워터마크) + SNS 압축에 강한 내용 판별</Row>
-            <Row label="지금">이미지 웹 데모 — 실제 판별 모델이 브라우저에서 돈다 (2026-11)</Row>
-          </dl>
-
-          <div className="flex flex-wrap gap-3 mt-6">
-            <Link href="/portfolio/ai-check/demo" className="btn btn-primary">
-              웹 데모 열기 <span aria-hidden="true">→</span>
-            </Link>
-            <a href="#research" className="btn btn-ghost">
-              연구 문제 보기
-            </a>
-          </div>
-        </header>
+        <CapstoneHero
+          title="이거 AI야?"
+          subtitle="SNS 압축에도 버티는 AI 이미지·영상 판별기"
+          concept={
+            <>
+              AI 표시가 있는지 먼저 확인하고, 없으면 내용을 분석해 &ldquo;AI 표시 확인됨 · AI 의심 N% · 판단 어려움&rdquo; 셋 중 하나로 정직하게 알려 준다.
+            </>
+          }
+          visual={<AiCheckHeroVisual />}
+          stats={[
+            { value: <CountUp to={4803} />, unit: '개', label: '데모 판별 모델이 학습한 생성기 수 (이미지 270만 장)', source: 'Community Forensics · CVPR 2025' },
+            { value: <CountUp to={3} />, unit: '가지', label: '결과는 셋뿐: AI 표시 확인됨 · AI 의심 N% · 판단 어려움', source: '"가짜"라고 단정하지 않는다' },
+          ]}
+          actions={
+            <>
+              <Link href="/portfolio/ai-check/demo" className="btn btn-primary">
+                웹 데모 열기 <span aria-hidden="true">→</span>
+              </Link>
+              <a href="#research" className="btn btn-ghost">
+                연구 문제 보기
+              </a>
+            </>
+          }
+        />
+      </div>
+      <article className="max-w-[720px] mx-auto px-5 sm:px-6 pb-20">
+        <dl
+          aria-label="한눈에"
+          className="m-0 mb-14 grid gap-x-8 gap-y-3 sm:grid-cols-[auto_1fr] py-5 text-[15px]"
+          style={{ borderTop: '1px solid var(--rule)', borderBottom: '1px solid var(--rule)' }}
+        >
+          <Row label="대상">SNS에서 이미지·영상을 보는 일반 사용자</Row>
+          <Row label="형태">공유하면 결과를 돌려주는 웹앱 (브라우저 안에서 판별)</Row>
+          <Row label="핵심 기술">표시 확인(C2PA·워터마크) + SNS 압축에 강한 내용 판별</Row>
+          <Row label="지금">이미지 웹 데모 — 실제 판별 모델이 브라우저에서 돈다 (2026-11)</Row>
+        </dl>
 
         <div className="grid grid-cols-[minmax(0,1fr)] gap-14 sm:gap-16">
           <Section id="who" title="누가, 왜 지금">
@@ -454,6 +449,7 @@ export default function AiCheckPage(): JSX.Element {
             데모 →
           </Link>
         </footer>
+        <AiImageFootnote />
       </article>
     </main>
   );
