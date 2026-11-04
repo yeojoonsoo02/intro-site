@@ -614,11 +614,11 @@ export default function RoommateDemo(): JSX.Element {
                 <li
                   key={e.id}
                   lang={e.who === 'device' ? 'en' : undefined}
-                  className={`max-w-[88%] px-3.5 py-2.5 rounded-[var(--r-md)] text-[15.5px] leading-[1.55] ${e.who === 'me' ? 'justify-self-end' : 'justify-self-start'}`}
+                  className={`max-w-[88%] px-4 py-2.5 text-[15.5px] leading-[1.55] ${e.who === 'me' ? 'justify-self-end rounded-[18px_18px_6px_18px] font-semibold' : 'justify-self-start rounded-[18px_18px_18px_6px]'}`}
                   style={
                     e.who === 'device'
-                      ? { background: 'var(--surface)', color: 'var(--ink)', borderLeft: '3px solid var(--accent)' }
-                      : { background: 'var(--ink)', color: 'var(--paper)' }
+                      ? { background: 'var(--surface)', color: 'var(--ink)', border: '1px solid var(--rule)', fontFamily: 'var(--font-bubble, inherit)' }
+                      : { background: 'var(--accent)', color: 'var(--accent-contrast)', fontFamily: 'var(--font-bubble, inherit)' }
                   }
                 >
                   <span className="sr-only">{e.who === 'device' ? '기기: ' : '나: '}</span>
