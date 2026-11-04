@@ -1,0 +1,573 @@
+/* 노령묘 화장실 무게 센서 — "보호자 앱 / 건강 수첩" 형식.
+   /portfolio/senior-cat과 그 데모(<main class="sc">) 안에서만 쓴다. 사이트 공통 토큰(--paper·--ink·--accent …)을
+   이 안에서만 서늘한 민트빛 종이 + 차분한 청록 + 노란 형광펜으로 바꿔서, 데모의 차트·리포트·버튼·입력칸도 같은 색을 따른다.
+   장식은 세 가지만: 줄 공책 괘선(카드 바탕), 형광펜 밑줄(카드 제목·핵심 숫자), 체크 상자 목록.
+   대비(WCAG AA): 본문·보조 글자·청록·빨강 글자 모두 --sc-paper·--sc-card 위 4.5:1 이상(라이트·다크). */
+
+.sc {
+  --sc-paper: #eef4f1;
+  --sc-card: #fcfefd;
+  --sc-sunk: #e4ede9;
+  --sc-ink: #1b2724;
+  --sc-ink-2: #384643;
+  --sc-muted: #51615d;
+  --sc-line: #d5e2dc;
+  --sc-ruled: #ebf2ef;
+  --sc-teal: #0d6a61;
+  --sc-teal-strong: #0a544d;
+  --sc-teal-soft: #d9eee7;
+  --sc-teal-line: #97cdbf;
+  --sc-hl: #fbe48c;
+  --sc-hl-soft: #fdf3c6;
+  --sc-red: #ad2a1f;
+  --sc-red-soft: #fbeae6;
+  --sc-red-line: #e3a093;
+  --sc-on-teal: #ffffff;
+  --sc-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --sc-phone: #1b2724;
+  --sc-shadow: 0 1px 2px rgba(20, 50, 44, 0.06), 0 10px 28px rgba(20, 50, 44, 0.07);
+
+  /* 사이트 토큰을 이 페이지 안에서만 바꾼다 */
+  --paper: var(--sc-paper);
+  --surface: var(--sc-card);
+  --surface-2: var(--sc-sunk);
+  --ink: var(--sc-ink);
+  --ink-2: var(--sc-ink-2);
+  --muted: var(--sc-muted);
+  --rule: var(--sc-line);
+  --accent: var(--sc-teal);
+  --accent-strong: var(--sc-teal-strong);
+  --accent-soft: var(--sc-teal-soft);
+  --accent-contrast: var(--sc-on-teal);
+  --primary: var(--accent);
+  --primary-contrast: var(--accent-contrast);
+  --button-bg: var(--accent);
+  --button-hover: var(--accent-strong);
+  --button-text: var(--accent-contrast);
+  --shadow: var(--sc-shadow);
+  --r-md: 12px;
+  --r-lg: 20px;
+
+  background: var(--sc-paper);
+  color: var(--sc-ink);
+  font-family: var(--font-sans);
+}
+
+html.dark .sc {
+  --sc-paper: #0f1615;
+  --sc-card: #162120;
+  --sc-sunk: #1e2b29;
+  --sc-ink: #e8efec;
+  --sc-ink-2: #c1ccc8;
+  --sc-muted: #9aa9a4;
+  --sc-line: #2a3936;
+  --sc-ruled: #1b2725;
+  --sc-teal: #63d0bf;
+  --sc-teal-strong: #8fe0d4;
+  --sc-teal-soft: #163330;
+  --sc-teal-line: #2e6158;
+  --sc-hl: rgba(240, 205, 90, 0.3);
+  --sc-hl-soft: rgba(240, 205, 90, 0.12);
+  --sc-red: #ff9585;
+  --sc-red-soft: #36201c;
+  --sc-red-line: #7a3a31;
+  --sc-on-teal: #0d1716;
+  --sc-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%230d1716' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --sc-phone: #050807;
+  --sc-shadow: 0 0 0 1px var(--sc-line);
+}
+@media (prefers-color-scheme: dark) {
+  html:not(.dark):not(.light) .sc {
+    --sc-paper: #0f1615;
+    --sc-card: #162120;
+    --sc-sunk: #1e2b29;
+    --sc-ink: #e8efec;
+    --sc-ink-2: #c1ccc8;
+    --sc-muted: #9aa9a4;
+    --sc-line: #2a3936;
+    --sc-ruled: #1b2725;
+    --sc-teal: #63d0bf;
+    --sc-teal-strong: #8fe0d4;
+    --sc-teal-soft: #163330;
+    --sc-teal-line: #2e6158;
+    --sc-hl: rgba(240, 205, 90, 0.3);
+    --sc-hl-soft: rgba(240, 205, 90, 0.12);
+    --sc-red: #ff9585;
+    --sc-red-soft: #36201c;
+    --sc-red-line: #7a3a31;
+    --sc-on-teal: #0d1716;
+    --sc-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%230d1716' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    --sc-phone: #050807;
+    --sc-shadow: 0 0 0 1px var(--sc-line);
+  }
+}
+
+/* ── 제목: 작은 명조는 페이지 제목에만 ───────────────────────── */
+.sc-title {
+  font-family: var(--font-serif-stack);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.18;
+  color: var(--sc-ink);
+  text-wrap: balance;
+}
+.sc-eyebrow {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--sc-teal);
+}
+.sc-small {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--sc-muted);
+}
+
+/* ── 카드(건강 수첩 한 장) ─────────────────────────────────── */
+.sc-card {
+  /* 줄 공책: 32px마다 아주 옅은 괘선 */
+  background: repeating-linear-gradient(to bottom, transparent 0 31px, var(--sc-ruled) 31px 32px) 0 56px / 100% calc(100% - 56px) no-repeat, var(--sc-card);
+  border: 1px solid var(--sc-line);
+  border-radius: 24px;
+  box-shadow: var(--sc-shadow);
+  padding: 22px;
+  min-width: 0;
+}
+@media (min-width: 640px) {
+  .sc-card {
+    padding: 24px 26px;
+  }
+}
+.sc-card-h {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  color: var(--sc-ink);
+}
+/* 형광펜: 글자 아래 절반만 노랗게 */
+.sc-hl {
+  background: linear-gradient(transparent 55%, var(--sc-hl) 55%, var(--sc-hl) 92%, transparent 92%);
+  padding: 0 2px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  color: inherit;
+}
+.sc-urgent {
+  border: 2px solid var(--sc-red-line);
+}
+.sc-slow {
+  border: 2px solid var(--sc-teal-line);
+}
+
+/* 체크 상자 목록(수첩에 적은 할 일·확인 항목처럼). 상자는 장식이라 글자만 읽힌다 */
+/* 여백은 쓰는 쪽(Tailwind mt-*)에 맡긴다 — 여기서 margin을 주면 레이어 밖 규칙이라 mt-*를 이긴다 */
+.sc-check {
+  list-style: none;
+  padding: 0;
+}
+.sc-check > li {
+  position: relative;
+  padding-left: 30px;
+}
+.sc-check > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.22em;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  border: 2px solid var(--sc-teal-line);
+  background: var(--sc-card);
+}
+.sc-check > li.is-done::before {
+  border-color: var(--sc-teal);
+  background: var(--sc-teal) var(--sc-check) center / 14px no-repeat;
+}
+.sc-check-red > li::before {
+  border-color: var(--sc-red-line);
+}
+
+/* 상태 표시 알약(원문 확인 · 기기 회사 연구 · 시뮬레이션 …) */
+.sc-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 1px 7px;
+  border-radius: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.5;
+  border: 1px solid var(--sc-teal-line);
+  background: var(--sc-card);
+  color: var(--sc-teal);
+}
+.sc-pill-quiet {
+  border-color: var(--sc-line);
+  color: var(--sc-ink-2);
+}
+.sc-pill-red {
+  border-color: var(--sc-red-line);
+  color: var(--sc-red);
+}
+
+/* 알림 말풍선(앱 알림처럼) */
+.sc-note {
+  border-radius: 16px;
+  padding: 12px 14px;
+  background: var(--sc-card);
+  border: 1px solid var(--sc-line);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--sc-ink);
+}
+
+/* ── 기록 펼치기(<details>): 카드 안 작은 단추. 펼치면 접는 말로 바뀐다 ───────────── */
+.sc-more {
+  margin-top: 14px;
+}
+.sc-more > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 6px 14px 6px 12px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sc-teal);
+  border: 1px dashed var(--sc-teal-line);
+  border-radius: 10px;
+  background: var(--sc-card);
+}
+.sc-more > summary::-webkit-details-marker {
+  display: none;
+}
+.sc-more > summary::before {
+  content: "+ 기록 펼치기 ·";
+  color: var(--sc-ink-2);
+  font-weight: 700;
+}
+.sc-more[open] > summary::before {
+  content: "− 기록 접기 ·";
+}
+.sc-more > summary:hover {
+  border-style: solid;
+}
+.sc-more[open] > summary {
+  border-style: solid;
+  background: var(--sc-hl-soft);
+}
+.sc-more > summary:focus-visible,
+.sc a:focus-visible,
+.sc button:focus-visible {
+  outline: 2px solid var(--sc-teal);
+  outline-offset: 3px;
+}
+.sc-more-body {
+  padding-top: 10px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--sc-ink-2);
+}
+
+/* 표 */
+.sc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+.sc-table th,
+.sc-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 8px 10px 8px 0;
+  border-bottom: 1px solid var(--sc-line);
+}
+.sc-table thead th {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--sc-muted);
+}
+
+/* 섹션 바로가기(앱의 칩 탭처럼). 폰에서는 가로로 밀어 본다 */
+.sc-tabs {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px 2px 0;
+  margin: 0 -2px;
+  border-bottom: 2px solid var(--sc-teal-line);
+}
+.sc-tabs::-webkit-scrollbar {
+  display: none;
+}
+.sc-tabs a {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 13px;
+  border-radius: 10px 10px 0 0;
+  border: 1px solid var(--sc-line);
+  border-bottom: 0;
+  background: var(--sc-sunk);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sc-ink-2);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.sc-tabs a:hover {
+  background: var(--sc-card);
+  color: var(--sc-teal);
+}
+
+/* 버튼 모양을 둥글게(이 페이지만) */
+.sc .btn {
+  border-radius: 999px;
+  padding-left: 1.3rem;
+  padding-right: 1.3rem;
+}
+.sc .btn-ghost {
+  background: var(--sc-card);
+}
+
+/* ── 첫 화면: 사진 + 폰 목업 ──────────────────────────────── */
+.sc-stage {
+  position: relative;
+}
+.sc-photo {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  aspect-ratio: 4 / 3;
+  background: var(--sc-sunk);
+  isolation: isolate;
+}
+.sc-photo > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.sc-chip {
+  position: absolute;
+  font-size: 11.5px;
+  line-height: 1.3;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(16, 18, 22, 0.68);
+  color: #f3f4f6;
+}
+.sc-phone {
+  position: relative;
+  width: 264px;
+  margin: -96px auto 0 8px;
+  padding: 9px;
+  border-radius: 44px;
+  background: var(--sc-phone);
+  box-shadow: 0 2px 4px rgba(20, 30, 28, 0.18), 0 24px 48px rgba(20, 30, 28, 0.22);
+}
+@media (min-width: 640px) {
+  .sc-stage {
+    display: grid;
+    align-items: center;
+    min-height: 500px;
+    padding-left: 130px;
+  }
+  .sc-phone {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    margin: 0;
+    transform: translateY(-46%);
+  }
+}
+.sc-screen {
+  position: relative;
+  overflow: hidden;
+  border-radius: 36px;
+  background: var(--sc-paper);
+  padding: 12px 14px 10px;
+  color: var(--sc-ink);
+}
+.sc-island {
+  width: 74px;
+  height: 20px;
+  margin: 0 auto 6px;
+  border-radius: 999px;
+  background: var(--sc-phone);
+}
+.sc-screen-card {
+  border-radius: 18px;
+  background: var(--sc-card);
+  border: 1px solid var(--sc-line);
+  padding: 11px 12px;
+}
+.sc-alert {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  border-radius: 16px;
+  padding: 9px 11px;
+  background: var(--sc-teal-soft);
+  color: var(--sc-ink);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.sc-alert-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-top: 5px;
+  border-radius: 999px;
+  background: var(--sc-teal);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--sc-teal) 25%, transparent);
+}
+.sc-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  object-fit: cover;
+  box-shadow: 0 0 0 2px var(--sc-card), 0 0 0 3px var(--sc-teal-line);
+}
+
+/* ── 연출: MotionScope가 화면에 들어올 때 data-motion='play'를 단다. 없으면(동작 줄이기·JS 없음) 최종 모습 ── */
+.sc-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+[data-motion='play'] .sc-draw {
+  animation: sc-draw 0.9s cubic-bezier(0.65, 0, 0.35, 1) var(--d, 0.3s) both;
+}
+[data-motion='play'] .sc-pop {
+  animation: sc-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 1.2s) both;
+}
+[data-motion='play'] .sc-fade {
+  animation: sc-fade 0.4s ease-out var(--d, 1s) both;
+}
+@keyframes sc-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes sc-rise {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes sc-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-motion='play'] .sc-draw,
+  [data-motion='play'] .sc-pop,
+  [data-motion='play'] .sc-fade {
+    animation: none;
+  }
+}
+
+/* ── 지표 타일(무엇을 재나) ────────────────────────────────── */
+.sc-tile {
+  border-radius: 18px;
+  background: var(--sc-paper);
+  border: 1px solid var(--sc-line);
+  padding: 14px;
+  min-width: 0;
+}
+
+/* ── 로드맵 단계 ─────────────────────────────────────────── */
+.sc-step-dot {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--sc-card);
+  border: 2px solid var(--sc-teal-line);
+  color: var(--sc-muted);
+}
+/* 지금 하는 단계는 체크된 상자 */
+.sc-step-now .sc-step-dot {
+  border-color: var(--sc-teal);
+  background: var(--sc-teal) var(--sc-check) center / 16px no-repeat;
+}
+
+/* ── 데모: 설정 칸의 입력도 카드 안에서 둥글게 ───────────────── */
+.sc select,
+.sc input[type='number'] {
+  background: var(--sc-card);
+  border-color: var(--sc-line);
+}
+.sc-demo-sec {
+  background: var(--sc-card);
+  border: 1px solid var(--sc-line);
+  border-radius: 24px;
+  box-shadow: var(--sc-shadow);
+  padding: 20px;
+  min-width: 0;
+}
+@media (min-width: 640px) {
+  .sc-demo-sec {
+    padding: 24px;
+  }
+}
+.sc-bubble {
+  border-radius: 18px;
+  padding: 12px 14px;
+  border: 1px solid var(--sc-teal-line);
+  background: var(--sc-teal-soft);
+}
+.sc-bubble-urgent {
+  border: 1px solid var(--sc-red-line);
+  background: var(--sc-red-soft);
+}
+
+/* 데모 카드 제목에도 같은 형광펜 */
+.sc-demo-sec > h2,
+.sc-demo-sec > div > h2 {
+  display: inline-block;
+  background: linear-gradient(transparent 55%, var(--sc-hl) 55%, var(--sc-hl) 92%, transparent 92%);
+  padding: 0 2px;
+}
+
+/* ── 인쇄: 데모의 병원 리포트만 흰 종이에(globals.css 규칙) — 이 페이지의 크림·다크 색과 카드 테두리를 걷어 낸다 ── */
+@media print {
+  .sc,
+  html.dark .sc,
+  html:not(.dark):not(.light) .sc {
+    --sc-paper: #fff;
+    --sc-card: #fff;
+    --sc-sunk: #f1f3f6;
+    --sc-ink: #111;
+    --sc-ink-2: #333;
+    --sc-muted: #555;
+    --sc-line: #ccc;
+    --sc-teal: #0e6b62;
+    --sc-teal-soft: #e6f2ee;
+    --sc-red: #ad2a1f;
+    --sc-on-teal: #fff;
+    --sc-shadow: none;
+    background: #fff !important;
+  }
+  /* 다크 모드에서 인쇄해도 종이 여백까지 흰색으로. body의 배경 전환(0.25s)이 인쇄 순간에 끼면 어두운 색으로 찍혀서 끈다 */
+  html:has(.sc .cat-report),
+  html:has(.sc .cat-report) > body {
+    color-scheme: light;
+    background: #fff !important;
+    transition: none !important;
+  }
+  .sc :has(.cat-report),
+  .sc .cat-report {
+    border: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    background: #fff !important;
+  }
+}

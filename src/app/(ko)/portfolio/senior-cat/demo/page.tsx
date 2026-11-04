@@ -2,10 +2,11 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE_URL } from '@/lib/site';
 import { OG_IMAGES, TWITTER_IMAGES } from '@/components/seo/ogMeta';
-import '@/features/capstone/capstone.css';
 import CatDemo from '@/features/seniorcat/CatDemo';
+import '@/features/seniorcat/seniorcat.css';
 
 // 화장실 무게 센서 데모. 페이지 껍데기는 정적이고, 시뮬레이터·알고리즘은 전부 브라우저(CatDemo)에서 돈다.
+// 소개 페이지와 같은 "보호자 앱" 모양(크림 종이 + 청록, 둥근 카드 — seniorcat.css)이다.
 
 const URL = `${SITE_URL}/portfolio/senior-cat/demo`;
 const TITLE = '시뮬레이터 데모 — 노령묘 화장실 무게 센서 | 여준수';
@@ -29,27 +30,23 @@ export const metadata: Metadata = {
 
 export default function SeniorCatDemoPage(): JSX.Element {
   return (
-    <main className="cap cap-seniorcat" style={{ background: 'var(--paper)' }}>
-      <div className="max-w-[1080px] mx-auto px-5 sm:px-6 pt-14 sm:pt-20 pb-20">
+    <main className="sc">
+      <div className="max-w-[1120px] mx-auto px-4 sm:px-6 pt-10 sm:pt-14 pb-16">
         <Link
           href="/portfolio/senior-cat"
-          className="inline-flex items-center gap-1 text-[14px] mb-10 underline-offset-4 hover:underline cat-report-noprint"
-          style={{ color: 'var(--muted)' }}
+          className="inline-flex items-center gap-1 min-h-[44px] text-[14px] mb-4 underline-offset-4 hover:underline cat-report-noprint"
+          style={{ color: 'var(--sc-muted)' }}
         >
           <span aria-hidden="true">←</span> 노령묘 화장실 무게 센서
         </Link>
 
-        <header className="mb-10 max-w-[720px] cat-report-noprint">
-          <p className="text-[12.5px] tracking-[.03em] mb-4" style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
-            웹 데모 · 시뮬레이션 데이터
-          </p>
-          <h1
-            className="text-[30px] sm:text-[36px] font-bold leading-[1.2] mb-4"
-            style={{ fontFamily: 'var(--font-serif)', letterSpacing: '-0.02em', color: 'var(--ink)', textWrap: 'balance' }}
-          >
-            화장실 저울 시뮬레이터
-          </h1>
-          <p className="text-[17px] leading-[1.7] max-w-[60ch]" style={{ color: 'var(--ink-2)' }}>
+        <header className="mb-8 max-w-[760px] cat-report-noprint">
+          <div className="flex flex-wrap items-center gap-2 mb-3">
+            <span className="sc-eyebrow">보호자 앱 · 웹 데모</span>
+            <span className="sc-pill">시뮬레이션 데이터</span>
+          </div>
+          <h1 className="sc-title text-[30px] sm:text-[38px] mb-3">화장실 저울 시뮬레이터</h1>
+          <p className="text-[16.5px] leading-[1.7] max-w-[62ch]" style={{ color: 'var(--sc-ink-2)' }}>
             실제 저울 대신 시뮬레이터가 무게 신호를 만듭니다. 알고리즘은 그 신호만 보고 방문을 찾고, 체중으로 고양이를 가리고, 고양이마다 평소 기준선을
             만들어 벗어나면 알립니다. 결과는 미리 적어 둔 값이 아니라 매번 계산한 값입니다.
           </p>
@@ -57,7 +54,7 @@ export default function SeniorCatDemoPage(): JSX.Element {
 
         <CatDemo />
 
-        <p className="mt-14 text-[13.5px] leading-[1.65] max-w-[70ch] cat-report-noprint" style={{ color: 'var(--muted)' }}>
+        <p className="mt-10 sc-small max-w-[70ch] cat-report-noprint">
           모든 계산은 이 브라우저에서만 합니다. 서버로 보내는 데이터는 없고, 시나리오·기준선 기간 같은 설정만 이 브라우저에 기억합니다. 시뮬레이터의 소변
           횟수·양·머문 시간은 데모용 가정이며 실제 고양이 데이터가 아닙니다. 알림은 진단이 아니라 행동 변화 알림입니다.
         </p>
