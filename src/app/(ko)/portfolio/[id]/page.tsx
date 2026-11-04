@@ -14,7 +14,7 @@ export const revalidate = 600
 
 // 자기 정적 페이지가 따로 있는 프로젝트(app/(ko)/portfolio/<id>/). 목록(Firestore)에도 같은 id로
 // 올려 카드 링크가 그 페이지로 가게 하되, 여기서 같은 경로를 또 만들지 않도록 뺀다.
-const DEDICATED_PAGES = new Set(['english-roommate', 'ai-check', 'senior-cat'])
+const DEDICATED_PAGES = new Set(['english-roommate', 'ai-check', 'senior-cat', 'lonely-radar'])
 
 export async function generateStaticParams(): Promise<{ id: string }[]> {
   const data = await getPortfolioData('ko')
