@@ -199,6 +199,7 @@ const ROADMAP: { step: string; detail: string; now?: boolean }[] = [
   { step: '지인 자취방 2~4곳 실거주', detail: '서면 동의, IRB 확인. 주당 헛경보를 세고 문턱값을 다시 고른다.' },
   { step: '이탈 연출', detail: '부재·무활동·쓰러짐을 약속하고 연출해 알림까지 걸린 시간을 잰다.' },
   { step: '임대인·관리사무소 파일럿', detail: '방 단위 월 요금을 시험한다. 그다음 LH·SH 공공임대와 지자체에 실측 숫자를 들고 간다.' },
+  { step: '확장: 어르신 시설용 빠른 낙상 위험 기록', detail: '주야간보호·복지관·실버타운용. 레이더 무활동 감지에 월 1회 몇 분짜리 "일어나 걷기" 검사(허리 IMU 또는 폰)를 더해 추세를 남긴다. 반복 측정 일치도는 ICC 약 0.9로 보고됐지만 낙상 예측력은 보통이라 "신체 기능 기록"으로만 쓴다.' },
 ];
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }): JSX.Element {
