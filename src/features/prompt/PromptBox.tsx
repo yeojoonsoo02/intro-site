@@ -56,8 +56,9 @@ export default function PromptBox({ open, onClose }: PromptBoxProps): JSX.Elemen
       ref={panelRef}
       // 키보드가 뜨면 가용 높이가 ~300px로 줄어 헤더(닫기 버튼)가 화면 밖으로 밀렸다.
       // 뷰포트 기준 상한 + 스크롤로 항상 닫을 수 있게 한다.
-      className={`fixed bottom-0 left-0 w-full max-h-[85dvh] overflow-y-auto overscroll-contain backdrop-blur-md border-t p-3 transition-transform duration-300 z-40 ${
-        open ? 'translate-y-0' : 'translate-y-full pointer-events-none'
+      // 닫힌 패널은 화면 아래로 밀어 둘 뿐이라 전체 페이지 캡처·바닥 당김(오버스크롤)에서 펼쳐진 채로 보였다 → 미끄러져 내려간 뒤 숨긴다.
+      className={`fixed bottom-0 left-0 w-full max-h-[85dvh] overflow-y-auto overscroll-contain backdrop-blur-md border-t p-3 transition-[transform,visibility] duration-300 z-40 ${
+        open ? 'translate-y-0 visible' : 'translate-y-full pointer-events-none invisible'
       }`}
       style={{
         background: 'color-mix(in srgb, var(--surface) 92%, transparent)',
