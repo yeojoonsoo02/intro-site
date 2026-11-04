@@ -12,9 +12,13 @@ type Params = { params: Promise<{ id: string }> }
 // 첫 요청 때 만들어진다. 빌드 중 Firestore를 못 읽으면 빈 목록 — 전부 첫 요청 때 만든다.
 export const revalidate = 600
 
+// 자기 정적 페이지가 따로 있는 프로젝트(app/(ko)/portfolio/<id>/). 목록(Firestore)에도 같은 id로
+// 올려 카드 링크가 그 페이지로 가게 하되, 여기서 같은 경로를 또 만들지 않도록 뺀다.
+const DEDICATED_PAGES = new Set(['english-roommate', 'ai-check', 'senior-cat'])
+
 export async function generateStaticParams(): Promise<{ id: string }[]> {
   const data = await getPortfolioData('ko')
-  return (data?.projects ?? []).map((p) => ({ id: p.id }))
+  return (data?.projects ?? []).filter((p) => !DEDICATED_PAGES.has(p.id)).map((p) => ({ id: p.id }))
 }
 
 // 상세 페이지마다 자기 제목·설명·canonical을 갖는다. 예전엔 전부 클라이언트 렌더라
