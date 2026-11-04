@@ -37,18 +37,24 @@ export function VerdictCard({ verdict, score, title }: { verdict: Verdict; score
   return (
     <section
       aria-labelledby="verdict-title"
-      className="p-5 rounded-[var(--r-lg)] grid gap-4"
-      style={{ background: 'var(--surface)', border: '1px solid var(--rule)', boxShadow: 'var(--shadow)' }}
+      className="lab-exh p-5 grid gap-4"
     >
       <div className="flex items-baseline justify-between gap-3">
         <h2 id="verdict-title" className="text-[17px] font-semibold" style={{ color: 'var(--ink)' }}>
+          <span className="lab-mono text-[12px] font-normal mr-2" style={{ color: 'var(--muted)' }} aria-hidden="true">
+            VERDICT
+          </span>
           {title}
         </h2>
         <span className="meta">브라우저 안에서 판정</span>
       </div>
       <LevelScale level={verdict.level} score={score} />
       <p className="text-[18px] leading-[1.5] font-semibold" style={{ fontFamily: 'var(--font-serif)', color: 'var(--ink)' }} role="status">
+        <span className="lab-mono" style={{ color: 'var(--accent)' }} aria-hidden="true">
+          &gt;{' '}
+        </span>
         {verdict.headline}
+        <span key={verdict.headline} aria-hidden="true" className="lab-cursor" data-blink="" />
       </p>
       <div className="grid gap-1.5">
         <p className="meta">근거</p>

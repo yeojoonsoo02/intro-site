@@ -383,7 +383,10 @@ export default function AiCheckDemo(): JSX.Element {
       )}
 
       {/* 1단계 */}
-      <section aria-labelledby="layer1-title" className="grid gap-4">
+      <section aria-labelledby="layer1-title" className="lab-step grid gap-4">
+        <span className="lab-step-id" aria-hidden="true">
+          STEP-01 · 확실한 쪽
+        </span>
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
           <h2 id="layer1-title" className="text-[20px] font-semibold" style={{ fontFamily: 'var(--font-serif)', letterSpacing: '-0.02em', color: 'var(--ink)' }}>
             1단계 · 표시 확인
@@ -406,7 +409,10 @@ export default function AiCheckDemo(): JSX.Element {
       </section>
 
       {/* 2단계 */}
-      <section aria-labelledby="layer2-title" className="grid gap-4">
+      <section aria-labelledby="layer2-title" className="lab-step grid gap-4">
+        <span className="lab-step-id" aria-hidden="true">
+          STEP-02 · 확률 쪽
+        </span>
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
           <h2 id="layer2-title" className="text-[20px] font-semibold" style={{ fontFamily: 'var(--font-serif)', letterSpacing: '-0.02em', color: 'var(--ink)' }}>
             2단계 · 내용 판별
@@ -492,7 +498,10 @@ export default function AiCheckDemo(): JSX.Element {
       </section>
 
       {/* 압축 실험 */}
-      <section aria-labelledby="sim-title" className="grid gap-5">
+      <section aria-labelledby="sim-title" className="lab-step grid gap-5">
+        <span className="lab-step-id" aria-hidden="true">
+          EXP-01 · 연구 문제를 직접 보기
+        </span>
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
           <h2 id="sim-title" className="text-[20px] font-semibold" style={{ fontFamily: 'var(--font-serif)', letterSpacing: '-0.02em', color: 'var(--ink)' }}>
             SNS 압축 실험
