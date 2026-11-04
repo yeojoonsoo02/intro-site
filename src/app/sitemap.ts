@@ -29,6 +29,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const statics: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/journey`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.85, images: [PROFILE_IMAGE] },
     { url: `${SITE_URL}/portfolio`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${SITE_URL}/portfolio/english-roommate`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${SITE_URL}/portfolio/english-roommate/demo`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.5 },
   ];
 
   return [...homes, ...abouts, ...statics];
