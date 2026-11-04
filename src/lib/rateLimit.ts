@@ -120,16 +120,17 @@ export async function checkRateLimit(
 
 // 전역 일일 예산이 남았는지만 확인(차감하지 않음). 봇·검증 실패·per-IP 초과 요청이
 // 예산을 소진시키지 못하도록, 실제 차감은 모든 검증 통과 후 consumeDailyBudget으로 분리한다.
-export async function checkDailyBudget(): Promise<boolean> {
+// scope를 바꾸면 챗봇과 따로 센다(예: 영어 룸메이트 데모는 'roommate').
+export async function checkDailyBudget(scope = 'daily', max = DAILY_MAX_REQUESTS): Promise<boolean> {
   if (!adminDb) return true;
 
   const today = seoulDate();
-  const docRef = adminDb.collection('rate_limits').doc(`daily_${today}`);
+  const docRef = adminDb.collection('rate_limits').doc(`${scope}_${today}`);
 
   try {
     const snap = await docRef.get();
     const count = snap.exists ? (snap.data()?.count ?? 0) : 0;
-    return count < DAILY_MAX_REQUESTS;
+    return count < max;
   } catch (err) {
     console.error('[DailyBudget] Firestore error:', err);
     return true; // fail open
@@ -137,11 +138,11 @@ export async function checkDailyBudget(): Promise<boolean> {
 }
 
 // 전역 일일 예산을 1 차감. 실제 외부 호출 직전(모든 검증 통과 후)에만 호출한다.
-export async function consumeDailyBudget(): Promise<void> {
+export async function consumeDailyBudget(scope = 'daily'): Promise<void> {
   if (!adminDb) return;
 
   const today = seoulDate();
-  const docRef = adminDb.collection('rate_limits').doc(`daily_${today}`);
+  const docRef = adminDb.collection('rate_limits').doc(`${scope}_${today}`);
 
   try {
     await docRef.set(
