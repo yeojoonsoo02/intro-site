@@ -30,7 +30,37 @@ const LOCALIZABLE: Record<string, (route: string) => string> = {
   '/about': (route) => `${route}/about`,
 };
 
+// 졸업작품 구상 페이지의 짧은 서브도메인(2026-11-04). 루트와 /demo만 해당 페이지로 rewrite하고
+// (주소창은 서브도메인 그대로), 그 밖의 페이지 경로는 본 도메인 같은 경로로 보낸다.
+// canonical은 각 페이지가 본 도메인 경로로 적어 두어 검색엔진에는 한 주소만 남는다.
+// 서브도메인은 Vercel 프로젝트 도메인에도 등록돼 있어야 한다(DNS는 *.yeojoonsoo02.com 와일드카드).
+const ROOT_HOST = 'yeojoonsoo02.com';
+const SUBDOMAIN_PAGES: Record<string, string> = {
+  roommate: 'english-roommate',
+  aicheck: 'ai-check',
+  oldcat: 'senior-cat',
+  radar: 'lonely-radar',
+};
+
+function subdomainResponse(req: NextRequest): NextResponse | null {
+  const host = (req.headers.get('host') || '').toLowerCase().split(':')[0];
+  if (!host.endsWith(`.${ROOT_HOST}`)) return null;
+  const id = SUBDOMAIN_PAGES[host.slice(0, -(ROOT_HOST.length + 1))];
+  if (!id) return null;
+
+  const { pathname, search } = req.nextUrl;
+  if (pathname === '/' || pathname === '/demo') {
+    const url = req.nextUrl.clone();
+    url.pathname = pathname === '/' ? `/portfolio/${id}` : `/portfolio/${id}/demo`;
+    return NextResponse.rewrite(url);
+  }
+  return NextResponse.redirect(`https://${ROOT_HOST}${pathname}${search}`, 308);
+}
+
 export function middleware(req: NextRequest) {
+  const sub = subdomainResponse(req);
+  if (sub) return sub;
+
   const { pathname } = req.nextUrl;
 
   const buildTarget = LOCALIZABLE[pathname];
