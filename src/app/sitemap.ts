@@ -33,6 +33,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/portfolio/english-roommate/demo`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${SITE_URL}/portfolio/ai-check`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${SITE_URL}/portfolio/ai-check/demo`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.5 },
+    { url: `${SITE_URL}/portfolio/senior-cat`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${SITE_URL}/portfolio/senior-cat/demo`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.5 },
   ];
 
   return [...homes, ...abouts, ...statics];
