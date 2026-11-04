@@ -347,8 +347,18 @@ html.dark:has(.theme-classic) {
     text-decoration-color: var(--accent);
   }
 
+  /* 영어 룸메이트 데모: 마이크가 켜진 동안 LED가 천천히 숨 쉰다(동작 줄이기 설정이면 멈춤 — 위 base 규칙) */
+  .roommate-led-on {
+    animation: roommate-led 1.6s ease-in-out infinite;
+  }
+
   /* 얇은 스크롤바 */
   .scrollbar-thin {
     scrollbar-width: thin;
   }
+}
+
+@keyframes roommate-led {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
 }

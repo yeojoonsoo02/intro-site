@@ -84,6 +84,18 @@ const nextConfig: NextConfig = {
           { key: 'Cache-Control', value: 'public, max-age=2592000, must-revalidate' },
         ],
       },
+      {
+        // 영어 룸메이트 데모는 음성 인식에 마이크를 쓴다. 위 공통 정책은 microphone=()로 막으므로
+        // 이 경로만 같은 값에서 microphone을 같은 출처로 연다(같은 키는 뒤에 온 규칙이 이긴다).
+        source: '/portfolio/english-roommate/demo',
+        headers: [
+          {
+            key: 'Permissions-Policy',
+            value:
+              'camera=(), microphone=(self), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), browsing-topics=(), interest-cohort=()',
+          },
+        ],
+      },
     ];
   },
   images: {
