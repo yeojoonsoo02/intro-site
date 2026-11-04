@@ -1,11 +1,14 @@
 // "이거 AI야?" 감식 보고서 모양의 조각들. 스타일은 lab.css(이 페이지 전용).
+// 증거 카드(Exhibit)는 증거 A·B·C와 판정 규칙에만 쓴다. 나머지는 카드 없는 보고서 구간(Section)이다.
+
+export type Signal = 'marked' | 'suspect' | 'unsure';
 
 interface ExhibitProps {
   id: string;
   /** 머리줄 왼쪽의 사건 번호 (예: "EXH-B · 1단계") */
   code: string;
-  /** 머리줄 오른쪽 상태 꼬리표 */
-  status?: React.ReactNode;
+  /** 머리줄 오른쪽 상태 표시 */
+  status?: string;
   title: string;
   className?: string;
   children: React.ReactNode;
@@ -17,7 +20,7 @@ export function Exhibit({ id, code, status, title, className, children }: Exhibi
     <section id={id} aria-labelledby={`${id}-title`} className={`lab-exh scroll-mt-24 ${className ?? ''}`}>
       <div className="lab-exh-head">
         <span>{code}</span>
-        {status}
+        {status && <span className="lab-tag">{status}</span>}
       </div>
       <div className="lab-exh-body">
         <h2 id={`${id}-title`}>{title}</h2>
@@ -27,15 +30,38 @@ export function Exhibit({ id, code, status, title, className, children }: Exhibi
   );
 }
 
-export function Tag({ tone, children }: { tone?: 'accent' | 'amber'; children: React.ReactNode }): JSX.Element {
+/** 카드 없는 보고서 구간: 왼쪽 여백에 구간 이름, 오른쪽에 본문 */
+interface SectionProps {
+  id: string;
+  kicker: string;
+  title: string;
+  /** 본문을 여백 아래로 내려 전체 폭을 쓴다 (한 줄 타임라인 등) */
+  wide?: boolean;
+  children: React.ReactNode;
+}
+
+export function Section({ id, kicker, title, wide, children }: SectionProps): JSX.Element {
   return (
-    <span className="lab-tag" data-tone={tone}>
+    <section id={id} aria-labelledby={`${id}-title`} className="lab-sec scroll-mt-24" data-wide={wide ? '' : undefined}>
+      <header>
+        <p className="lab-kicker m-0">{kicker}</p>
+        <h2 id={`${id}-title`}>{title}</h2>
+      </header>
+      <div className="min-w-0">{children}</div>
+    </section>
+  );
+}
+
+/** 판정 이름. 신호색 + 작은 사각점 (색만으로 구분하지 않게 이름을 늘 같이 쓴다) */
+export function Sig({ kind, children }: { kind: Signal; children: React.ReactNode }): JSX.Element {
+  return (
+    <span className="lab-sig" data-sig={kind}>
       {children}
     </span>
   );
 }
 
-/** 호박색 경고 줄 — 한계·위험에만 쓴다 */
+/** 한계 줄 */
 export function Flag({ label = '한계', children }: { label?: string; children: React.ReactNode }): JSX.Element {
   return (
     <p className="lab-flag m-0">
@@ -45,15 +71,15 @@ export function Flag({ label = '한계', children }: { label?: string; children:
   );
 }
 
-/** 접어 둔 자료(기본 닫힘). 표·인용·실험 세부를 여기에 둔다. */
-export function More({ label, count, children }: { label: string; count?: string; children: React.ReactNode }): JSX.Element {
+/** 펼쳐 보기(기본 닫힘). 표·인용이 있는 곳에만 쓴다. */
+export function Toggle({ label, count, children }: { label: string; count?: string; children: React.ReactNode }): JSX.Element {
   return (
-    <details className="lab-more">
+    <details className="lab-toggle">
       <summary>
         <span>{label}</span>
         {count && <span className="lab-count">{count}</span>}
       </summary>
-      <div className="lab-more-body">{children}</div>
+      <div className="lab-toggle-body">{children}</div>
     </details>
   );
 }

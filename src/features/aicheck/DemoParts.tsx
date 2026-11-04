@@ -6,6 +6,10 @@ import { LEVEL_LABEL, SUSPECT_AT, pctText, type Level, type Verdict } from './ve
 
 const LEVELS: Level[] = ['marked', 'suspect', 'unsure'];
 
+// 판정마다 고유 신호색(lab.css의 --sig-*). 나머지 화면은 회색 뉴트럴이다.
+const sig = (l: Level): string => `var(--sig-${l}, var(--accent))`;
+const sigSoft = (l: Level): string => `var(--sig-${l}-soft, var(--accent-soft))`;
+
 /** 결과 3단계를 나란히 보여 주고 지금 단계만 강조한다. 색만으로 구분하지 않게 "지금" 글자를 같이 쓴다. */
 export function LevelScale({ level, score }: { level: Level; score: number | null }): JSX.Element {
   return (
@@ -19,9 +23,9 @@ export function LevelScale({ level, score }: { level: Level; score: number | nul
             aria-current={on ? 'step' : undefined}
             className="px-2.5 py-2 rounded-[var(--r-md)] text-[13.5px] leading-[1.35] font-semibold text-center"
             style={{
-              border: `1px solid ${on ? 'var(--accent)' : 'var(--rule)'}`,
-              background: on ? 'var(--accent-soft)' : 'transparent',
-              color: on ? 'var(--accent)' : 'var(--muted)',
+              border: `1px solid ${on ? sig(l) : 'var(--rule)'}`,
+              background: on ? sigSoft(l) : 'transparent',
+              color: on ? sig(l) : 'var(--muted)',
             }}
           >
             {label}
@@ -50,7 +54,7 @@ export function VerdictCard({ verdict, score, title }: { verdict: Verdict; score
       </div>
       <LevelScale level={verdict.level} score={score} />
       <p className="text-[18px] leading-[1.5] font-semibold" style={{ fontFamily: 'var(--font-serif)', color: 'var(--ink)' }} role="status">
-        <span className="lab-mono" style={{ color: 'var(--accent)' }} aria-hidden="true">
+        <span className="lab-mono" style={{ color: sig(verdict.level) }} aria-hidden="true">
           &gt;{' '}
         </span>
         {verdict.headline}
@@ -67,7 +71,7 @@ export function VerdictCard({ verdict, score, title }: { verdict: Verdict; score
       {verdict.cautions.length > 0 && (
         <ul className="m-0 p-0 list-none grid gap-2">
           {verdict.cautions.map((c) => (
-            <li key={c} className="pl-3 text-[14px] leading-[1.6]" style={{ borderLeft: '3px solid var(--accent)', color: 'var(--ink)' }}>
+            <li key={c} className="pl-3 text-[14px] leading-[1.6]" style={{ borderLeft: '2px solid var(--rule-strong, var(--rule))', color: 'var(--ink)' }}>
               {c}
             </li>
           ))}
@@ -87,7 +91,7 @@ export function ScoreBar({ score, label }: { score: number | null; label: string
         <span className="text-[14px]" style={{ color: 'var(--ink-2)' }}>
           {label}
         </span>
-        <span className="text-[15px] font-semibold" style={{ fontFamily: 'var(--font-mono)', color: pct !== null && score !== null && score >= SUSPECT_AT ? 'var(--accent)' : 'var(--ink)' }}>
+        <span className="text-[15px] font-semibold" style={{ fontFamily: 'var(--font-mono)', color: score === null ? 'var(--ink)' : sig(score >= SUSPECT_AT ? 'suspect' : 'unsure') }}>
           {text ?? '—'}
         </span>
       </div>
@@ -97,7 +101,7 @@ export function ScoreBar({ score, label }: { score: number | null; label: string
         role="img"
         aria-label={pct === null ? `${label}: 아직 없음` : `${label}: AI일 확률 ${text}, 기준 ${Math.round(SUSPECT_AT * 100)}%`}
       >
-        {pct !== null && <div className="absolute inset-y-0 left-0" style={{ width: `${pct}%`, background: 'var(--accent)' }} />}
+        {pct !== null && <div className="absolute inset-y-0 left-0" style={{ width: `${pct}%`, background: sig(score !== null && score >= SUSPECT_AT ? 'suspect' : 'unsure') }} />}
         <div className="absolute inset-y-0 w-px" style={{ left: `${SUSPECT_AT * 100}%`, background: 'var(--ink)' }} aria-hidden="true" />
       </div>
     </div>
@@ -136,7 +140,7 @@ export function CheckTable({ rows, caption }: { rows: CheckRow[]; caption: strin
                   {r.how}
                 </span>
               </th>
-              <td className="align-top py-2.5" style={{ color: r.tone === 'mark' ? 'var(--accent)' : r.tone === 'none' ? 'var(--muted)' : 'var(--ink)', fontWeight: r.tone === 'mark' ? 600 : 400 }}>
+              <td className="align-top py-2.5" style={{ color: r.tone === 'mark' ? sig('marked') : r.tone === 'none' ? 'var(--muted)' : 'var(--ink)', fontWeight: r.tone === 'mark' ? 600 : 400 }}>
                 {r.result}
               </td>
             </tr>
@@ -168,7 +172,7 @@ export function CompareTable({ rows }: { rows: CompareRow[] }): JSX.Element {
             <th scope="col" className="text-left font-normal py-2 pr-3 meta">
               원본
             </th>
-            <th scope="col" className="text-left font-normal py-2 meta" style={{ color: 'var(--accent)' }}>
+            <th scope="col" className="text-left font-normal py-2 meta" style={{ color: 'var(--ink)' }}>
               압축본
             </th>
           </tr>
@@ -182,7 +186,7 @@ export function CompareTable({ rows }: { rows: CompareRow[] }): JSX.Element {
               <td className="align-top py-2.5 pr-3" style={{ color: 'var(--ink-2)' }}>
                 {r.before}
               </td>
-              <td className="align-top py-2.5" style={{ color: r.changed ? 'var(--accent)' : 'var(--ink)', fontWeight: r.changed ? 600 : 400 }}>
+              <td className="align-top py-2.5" style={{ color: r.changed ? sig('suspect') : 'var(--ink)', fontWeight: r.changed ? 600 : 400 }}>
                 {r.after}
               </td>
             </tr>
@@ -218,7 +222,7 @@ export function Range({
         <label htmlFor={id} className="text-[14.5px] font-semibold" style={{ color: 'var(--ink)' }}>
           {label}
         </label>
-        <output htmlFor={id} className="text-[14px]" style={{ fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>
+        <output htmlFor={id} className="text-[14px]" style={{ fontFamily: 'var(--font-mono)', color: 'var(--ink)' }}>
           {value}
           {unit}
         </output>

@@ -348,7 +348,7 @@ export default function AiCheckDemo(): JSX.Element {
           </span>
         </label>
         {sample && file?.name === SAMPLE.name && (
-          <p className="m-0 text-[13.5px] leading-[1.6] pl-3" style={{ color: 'var(--ink-2)', borderLeft: '3px solid var(--accent)' }}>
+          <p className="m-0 text-[13.5px] leading-[1.6] pl-3" style={{ color: 'var(--ink-2)', borderLeft: '2px solid var(--ink-2)' }}>
             예시 자동 실행됨 · 견본 그림을 미리 넣어 표시 확인과 압축 실험을 돌려 두었습니다. 견본은 이 작업용 맥에서 오픈소스 모델(FLUX.2 klein 4B)로
             만든 AI 이미지 원본 PNG입니다. 내 그림을 고르면 바뀝니다. 판별 모델은 아래 버튼을 눌러야 받습니다.
           </p>
@@ -571,7 +571,7 @@ export default function AiCheckDemo(): JSX.Element {
                   </div>
                 )}
                 {compVerdict && verdict && (
-                  <p className="text-[15px] leading-[1.7] pl-3" style={{ borderLeft: '3px solid var(--accent)', color: 'var(--ink)' }} aria-live="polite">
+                  <p className="text-[15px] leading-[1.7] pl-3" style={{ borderLeft: '2px solid var(--ink-2)', color: 'var(--ink)' }} aria-live="polite">
                     원본 판정 <b>{levelText(verdict, scoreOrig)}</b> → 압축본 판정 <b>{levelText(compVerdict, scoreComp)}</b>
                     {model.state !== 'ready' && ' (모델을 받으면 점수까지 비교합니다)'}
                   </p>

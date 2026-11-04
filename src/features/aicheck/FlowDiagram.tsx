@@ -1,5 +1,7 @@
-// 두 단계 판별 흐름도. 색은 전부 사이트 토큰(var(--ink) 등)이라 라이트·다크 모두 따라간다.
-// 좁은 화면에서 가로 그림을 줄이면 글자가 10px 아래로 작아져서, 세로판을 따로 그린다(영어 룸메이트 구성도와 같은 방식).
+import type { Signal } from './LabParts';
+
+// 두 단계 판별 흐름도. 색은 전부 토큰(var(--ink) 등)이고, 결과 상자 셋만 판정 신호색(var(--sig-*))을 쓴다.
+// 좁은 화면에서 가로 그림을 줄이면 글자가 10px 아래로 작아져서, 세로판을 따로 그리고 글 요약 뒤에 접어 둔다.
 
 interface Box {
   x: number;
@@ -10,8 +12,8 @@ interface Box {
   lines: string[];
   /** 결과 상자(굵은 테두리) */
   result?: boolean;
-  /** 강조 상자(유일한 강조색) */
-  accent?: boolean;
+  /** 결과 상자의 판정 신호 */
+  sig?: Signal;
   tag?: string;
 }
 
@@ -24,7 +26,8 @@ interface Edge {
 }
 
 function Node({ b }: { b: Box }): JSX.Element {
-  const stroke = b.accent ? 'var(--accent)' : 'var(--ink-2)';
+  const color = b.sig ? `var(--sig-${b.sig})` : undefined;
+  const stroke = color ?? 'var(--ink-2)';
   return (
     <g>
       <rect
@@ -33,10 +36,10 @@ function Node({ b }: { b: Box }): JSX.Element {
         width={b.w}
         height={b.h}
         rx={10}
-        style={{ fill: b.accent ? 'var(--accent-soft)' : 'var(--surface)', stroke }}
-        strokeWidth={b.accent || b.result ? 1.6 : 1}
+        style={{ fill: b.sig ? `var(--sig-${b.sig}-soft)` : 'var(--surface)', stroke }}
+        strokeWidth={b.result ? 1.6 : 1}
       />
-      <text x={b.x + 14} y={b.y + 26} style={{ fill: b.accent ? 'var(--accent)' : 'var(--ink)' }} fontSize={15} fontWeight={700}>
+      <text x={b.x + 14} y={b.y + 26} style={{ fill: color ?? 'var(--ink)' }} fontSize={15} fontWeight={700}>
         {b.title}
       </text>
       {b.tag && (
@@ -91,9 +94,9 @@ function Diagram({ id, width, height, boxes, edges }: { id: string; width: numbe
 const INPUT = { title: 'SNS 사본', lines: ['공유받은 이미지', '(영상은 다음 단계)'] };
 const L1 = { title: '1단계 · 표시 확인', tag: '확실', lines: ['C2PA 출처 정보', '보이지 않는 워터마크', '화면 속 “AI 생성” 문구'] };
 const L2 = { title: '2단계 · 내용 판별', tag: '확률', lines: ['압축에 강하게 학습한 판별 모델', 'VLM이 근거 문장을 붙임', '점수 + 근거'] };
-const R1 = { title: 'AI 표시 확인됨', lines: ['어디에 무슨 표시인지'], accent: true, result: true };
-const R2 = { title: 'AI 의심 N%', lines: ['+ 근거 문장'], result: true };
-const R3 = { title: '판단 어려움', lines: ['모르면 모른다고'], result: true };
+const R1: Pick<Box, 'title' | 'lines' | 'sig' | 'result'> = { title: 'AI 표시 확인됨', lines: ['어디에 무슨 표시인지'], sig: 'marked', result: true };
+const R2: Pick<Box, 'title' | 'lines' | 'sig' | 'result'> = { title: 'AI 의심 N%', lines: ['+ 근거 문장'], sig: 'suspect', result: true };
+const R3: Pick<Box, 'title' | 'lines' | 'sig' | 'result'> = { title: '판단 어려움', lines: ['모르면 모른다고'], sig: 'unsure', result: true };
 
 const WIDE: { boxes: Box[]; edges: Edge[] } = {
   boxes: [
@@ -137,8 +140,22 @@ export default function FlowDiagram(): JSX.Element {
       <div className="hidden sm:block">
         <Diagram id="flow-wide" width={760} height={330} {...WIDE} />
       </div>
-      <div className="sm:hidden">
-        <Diagram id="flow-tall" width={360} height={608} {...TALL} />
+      <div className="sm:hidden grid gap-1">
+        <ol className="m-0 pl-5 grid gap-1 text-[14.5px] leading-[1.6]" style={{ color: 'var(--ink-2)' }}>
+          <li>
+            1단계 표시 확인 → 표시 있음: <span className="lab-sig" data-sig="marked">AI 표시 확인됨</span>
+          </li>
+          <li>
+            표시 없음 → 2단계 내용 판별 → 점수 높음: <span className="lab-sig" data-sig="suspect">AI 의심 N%</span> · 그 밖:{' '}
+            <span className="lab-sig" data-sig="unsure">판단 어려움</span>
+          </li>
+        </ol>
+        <details className="lab-toggle">
+          <summary>흐름도 보기</summary>
+          <div className="lab-toggle-body">
+            <Diagram id="flow-tall" width={360} height={608} {...TALL} />
+          </div>
+        </details>
       </div>
       <figcaption className="mt-3 text-[14px] leading-[1.6]" style={{ color: 'var(--muted)' }}>
         표시가 있으면 그걸 보여 주는 것으로 끝난다. 표시가 없다고 사람이 만든 것은 아니어서, 그때만 그림 자체를 판별하고 확률과 근거로 말한다.
