@@ -2,14 +2,14 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE_URL } from '@/lib/site';
 import { OG_IMAGES, TWITTER_IMAGES } from '@/components/seo/ogMeta';
-import { CountUp, MotionScope } from '@/features/capstone/motion';
+import { MotionScope } from '@/features/capstone/motion';
 import AppHero from '@/features/seniorcat/AppHero';
 import Spark, { type SparkShape } from '@/features/seniorcat/Spark';
 import SystemDiagram from '@/features/seniorcat/SystemDiagram';
 import '@/features/seniorcat/seniorcat.css';
 
 // 졸업작품 구상 "노령묘 화장실 무게 센서" 설명 페이지. 한국어만 있다(포트폴리오 상세와 같다).
-// 형식: 이 구상이 될 "보호자 앱 / 건강 수첩" — 첫 화면은 앱 홈 목업, 본문은 둥근 수첩 카드. 긴 표·출처·수치는 카드 안 <details>에 접어 둔다.
+// 형식: 이 구상이 될 "보호자 앱 / 건강 수첩" — 첫 화면은 앱 홈 목업, 본문은 줄 공책 카드(형광펜·체크 상자). 긴 표·출처·수치는 카드 안 "기록 펼치기"(<details>)에 접어 둔다.
 // 데이터 없이 코드에 쓴 정적 페이지라 빌드 때 만들어 둔다. /portfolio/[id]보다 이 정적 경로가 먼저 잡힌다.
 // 숫자는 원문을 직접 연 것만 싣고 출처·상태를 붙인다. 진단처럼 읽히는 표현("~병입니다")은 쓰지 않는다.
 
@@ -66,6 +66,14 @@ const FACTS: { claim: string; source: string; href: string; status: string }[] =
     href: PURINA_2026,
     status: '원문 확인 · 기기 회사 연구',
   },
+];
+
+/** "왜 필요한가" 카드에 펼쳐 두는 확인 목록 — FACTS를 짧게 줄인 것(숫자는 그대로). 형광펜은 핵심 숫자에만 */
+const CHECKED: { lead: string; mark: string; tail: string; source: string; status: string }[] = [
+  { lead: '만성 신장병(CKD)은 노령묘에 가장 흔한 병 중 하나 — ', mark: '10살 넘은 고양이의 최대 40%, 15살 넘은 고양이의 80%', tail: '에 생긴다.', source: 'Cornell Feline Health Center', status: '원문 확인 · 교육용 자료' },
+  { lead: '초기엔 증상이 거의 없다. 혈액 크레아티닌은 ', mark: '신장 기능을 약 75% 잃을 때까지', tail: ' 잘 오르지 않는다(SDMA는 약 40%에서).', source: 'Cornell Feline Health Center', status: '원문 확인' },
+  { lead: '화장실 무게 센서 기록에서 CKD 고양이는 ', mark: '하루 평균 소변 4.6회, 비신장 고양이는 2.3회', tail: '였다(136마리 중 CKD 20).', source: 'Purina·Ohio State, Animals 2026', status: '원문 확인 · 기기 회사 연구' },
+  { lead: '요도가 완전히 막히면 ', mark: '24~48시간 안에 죽을 수도 있는 "절대 응급"', tail: '이다. 수컷이 해부학적으로 더 위험하다.', source: 'Cornell Feline Health Center (FLUTD)', status: '원문 확인' },
 ];
 
 const MEASURES: { what: string; how: string; why: string; shape: SparkShape }[] = [
@@ -153,9 +161,6 @@ const TOC: { id: string; label: string }[] = [
   { id: 'roadmap', label: '로드맵' },
 ];
 
-/** 카드 번호(01…)는 차례(TOC) 순서에서 가져온다 */
-const no = (id: string): string => String(TOC.findIndex((t) => t.id === id) + 1).padStart(2, '0');
-
 const BODY = 'text-[16px] leading-[1.7]';
 
 export default function SeniorCatPage(): JSX.Element {
@@ -177,7 +182,7 @@ export default function SeniorCatPage(): JSX.Element {
             <p className="text-[18px] sm:text-[19px] leading-[1.65] max-w-[42ch]" style={{ color: 'var(--sc-ink)' }}>
               화장실 밑 저울이 체중·방문 횟수·소변량·머문 시간을 매일 적고, 그 고양이의 평소에서 벗어나면 &ldquo;검진 받아 볼 때&rdquo;라고 알려 준다.
             </p>
-            <dl aria-label="한눈에" className="m-0 mt-6 grid gap-2 sm:grid-cols-2 max-w-[560px]">
+            <dl aria-label="한눈에" className="m-0 mt-6 max-w-[560px]" style={{ borderTop: '1px dashed var(--sc-teal-line)' }}>
               <Fact label="대상">9살 넘은 고양이를 키우고, 검진은 1년에 1~2번인 1~2인 가구</Fact>
               <Fact label="형태">쓰던 화장실 밑에 까는 무게 판 + 폰 알림 + 병원 리포트</Fact>
               <Fact label="하는 일">행동 변화 알림 · 검진 권유 (진단하지 않는다)</Fact>
@@ -201,7 +206,7 @@ export default function SeniorCatPage(): JSX.Element {
         <h2 id="journal" className="mt-14 sm:mt-16 mb-3 scroll-mt-24 text-[15px] font-semibold" style={{ color: 'var(--sc-muted)' }}>
           건강 수첩 — 구상의 10쪽
         </h2>
-        <nav aria-label="건강 수첩 차례" className="sc-tabs mb-5">
+        <nav aria-label="건강 수첩 차례" className="sc-tabs">
           {TOC.map((t) => (
             <a key={t.id} href={`#${t.id}`}>
               {t.label}
@@ -209,51 +214,33 @@ export default function SeniorCatPage(): JSX.Element {
           ))}
         </nav>
 
-        <div className="grid gap-5 lg:grid-cols-2">
+        <div className="mt-4 grid gap-5 lg:grid-cols-2">
           <Card id="why" title="왜 필요한가" wide>
             <p className={`${BODY} max-w-[78ch]`} style={{ color: 'var(--sc-ink)' }}>
               나이 든 고양이의 병은 조용히 온다. 검진은 1년에 한두 번이고, 그 사이의 매일을 보는 사람이 없다. 그런데 고양이는 하루에도 몇 번씩 같은 자리, 화장실에
               간다. 병을 알아맞히려는 게 아니라 <b>그 고양이의 평소</b>를 기록해 두었다가 달라지면 &ldquo;병원에 가 볼 때&rdquo;라고 알린다.
             </p>
-            <dl className="m-0 mt-5 grid gap-3 sm:grid-cols-3">
-              <Stat
-                value={
-                  <>
-                    <CountUp to={40} />
-                    <span className="text-[18px] mx-1" style={{ color: 'var(--sc-muted)' }}>
-                      ·
-                    </span>
-                    <CountUp to={80} />
-                  </>
-                }
-                unit="%"
-                label="만성 신장병(CKD)이 생기는 비율: 10살 넘은 고양이 최대 40% · 15살 넘은 고양이 80%"
-                source="Cornell Feline Health Center"
-                status="원문 확인 · 교육용 자료"
-              />
-              <Stat
-                value={
-                  <>
-                    <CountUp to={4.6} decimals={1} />
-                    <span className="text-[18px] mx-1" style={{ color: 'var(--sc-muted)' }}>
-                      vs
-                    </span>
-                    <CountUp to={2.3} decimals={1} />
-                  </>
-                }
-                unit="회/일"
-                label="하루 소변 횟수: 신장병 고양이 vs 신장병 아닌 고양이"
-                source="Purina·Ohio State, Animals 2026"
-                status="원문 확인 · 기기 회사 연구"
-              />
-              <Stat value={<>24~48</>} unit="시간" label='요도가 완전히 막힌 뒤 죽을 수도 있는 시간 — "절대 응급"' source="Cornell Feline Health Center (FLUTD)" status="원문 확인" />
-            </dl>
+            <ul className="sc-check grid mt-5 gap-x-8 gap-y-4 lg:grid-cols-2" aria-label="원문을 확인한 근거">
+              {CHECKED.map((c) => (
+                <li key={c.source + c.lead} className="is-done">
+                  <p className="text-[15.5px] leading-[1.6]" style={{ color: 'var(--sc-ink)' }}>
+                    {c.lead}
+                    <mark className="sc-hl font-semibold">{c.mark}</mark>
+                    {c.tail}
+                  </p>
+                  <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px]" style={{ color: 'var(--sc-muted)' }}>
+                    {c.source}
+                    <StatusPills status={c.status} small />
+                  </p>
+                </li>
+              ))}
+            </ul>
             <p className="mt-3 sc-small">
               국내 반려묘 수와 노령묘 진료 통계도 찾았지만 원문을 열어 확인하지 못해 싣지 않았다. 아래 연구는 기기를 만든 회사가 쓴 것이고 CKD 고양이가 20마리뿐이라,
               이 구상의 근거는 &ldquo;화장실 행동에 신호가 있다&rdquo;까지만이다.
             </p>
             <details className="sc-more">
-              <summary>근거 원문 4개 · 출처와 확인 상태</summary>
+              <summary>근거 원문 4개와 링크</summary>
               <ul className="sc-more-body m-0 p-0 list-none grid gap-x-8 lg:grid-cols-2" aria-label="근거">
                 {FACTS.map((f) => (
                   <li key={f.claim} className="grid gap-1.5 content-start py-3" style={{ borderTop: '1px solid var(--sc-line)' }}>
@@ -323,7 +310,7 @@ export default function SeniorCatPage(): JSX.Element {
           </Card>
 
           <Card id="urgent" title="급한 변화" tone="sc-urgent" badge={<span className="sc-pill sc-pill-red">시간 단위</span>}>
-            <ul className="m-0 pl-5 grid gap-1.5 text-[15.5px] leading-[1.6] list-disc" style={{ color: 'var(--sc-ink)' }}>
+            <ul className="sc-check sc-check-red m-0 grid gap-2 text-[15.5px] leading-[1.6]" style={{ color: 'var(--sc-ink)' }} aria-label="이런 신호를 본다">
               {URGENT.signals.map((s) => (
                 <li key={s}>{s}</li>
               ))}
@@ -355,7 +342,7 @@ export default function SeniorCatPage(): JSX.Element {
             </ul>
             <p className="mt-3 sc-small">소변이 느는 원인은 여럿이라 병 이름은 말하지 않는다.</p>
             <details className="sc-more">
-              <summary>기준선과 문턱값 (알고리즘)</summary>
+              <summary>기준선과 문턱값</summary>
               <div className="sc-more-body grid gap-3">
                 <p>
                   <b style={{ color: 'var(--sc-ink)' }}>기준선은 고양이마다 따로.</b> 처음 몇 주(데모 기본 21일)를 그 고양이의 평소로 삼는다. 다른 고양이 평균이 아니라
@@ -423,7 +410,8 @@ export default function SeniorCatPage(): JSX.Element {
               <span className="sc-pill mr-1.5" style={{ fontSize: 11.5, padding: '1px 8px' }}>
                 시뮬레이션
               </span>
-              세 마리(3.6·4.2·4.4kg): 방문의 <b>5.5%</b>가 &ldquo;구분 어려움&rdquo;, 구분한 것 중 <b>97%</b>가 맞음. 실제 고양이 데이터가 아니다.
+              세 마리(3.6·4.2·4.4kg): 방문의 <mark className="sc-hl font-semibold">5.5%</mark>가 &ldquo;구분 어려움&rdquo;, 구분한 것 중{' '}
+              <mark className="sc-hl font-semibold">97%</mark>가 맞음. 실제 고양이 데이터가 아니다.
             </p>
           </Card>
 
@@ -436,15 +424,15 @@ export default function SeniorCatPage(): JSX.Element {
               찾는다.
             </p>
             <details className="sc-more">
-              <summary>데이터는 이렇게 모은다 (3가지)</summary>
-            <ol className="sc-more-body m-0 pl-5 grid gap-1.5 list-decimal">
+              <summary>데이터 모으는 법</summary>
+            <ol className="sc-more-body sc-check m-0 grid gap-2">
               <li>자원 가구: 9살 넘은 고양이를 키우는 집에서 4~8주, 저울 기록과 화장실 쪽 카메라(동의한 기간만)로 정답을 붙인다.</li>
               <li>보호소·다묘 가구: 체중이 비슷한 고양이 여럿이 한 화장실을 쓰는 곳에서 구분 성능만 따로 본다.</li>
               <li>아픈 고양이를 일부러 모으거나 병을 맞혔다고 주장하지 않는다. 확인하는 것은 &ldquo;행동 기록이 정확한가&rdquo;와 &ldquo;평소에서 벗어남을 잡는가&rdquo;다.</li>
             </ol>
             </details>
             <details className="sc-more">
-              <summary>시뮬레이터로 먼저 잰 값 (4개)</summary>
+              <summary>시뮬레이터로 먼저 잰 값</summary>
               <div className="sc-more-body">
                 <p className="mb-2">
                   데모의 시뮬레이터(시드 20개 × 90일)에서 잰 예비 결과다. <b>실제 고양이 데이터가 아니라</b> 시뮬레이터 가정에서만 의미가 있다.
@@ -479,7 +467,7 @@ export default function SeniorCatPage(): JSX.Element {
               ))}
             </p>
             <details className="sc-more">
-              <summary>이미 있는 제품 3개 (가격·조회일)</summary>
+              <summary>이미 있는 제품 3개</summary>
               <dl className="sc-more-body m-0 grid gap-3">
                 {COMPETITORS.map((c) => (
                   <div key={c.name}>
@@ -504,16 +492,16 @@ export default function SeniorCatPage(): JSX.Element {
                 리포트 첫머리에 &ldquo;진단이 아닙니다&rdquo;를 넣는다.
               </p>
             </div>
-            <div className="mt-2">
+            <ul className="sc-check grid mt-4 gap-3" aria-label="다른 위험과 대응">
               {RISKS.map((r) => (
-                <details key={r.risk} className="sc-more" style={{ marginTop: 6 }}>
-                  <summary>{r.risk}</summary>
-                  <p className="sc-more-body" style={{ paddingTop: 6 }}>
-                    {r.answer}
-                  </p>
-                </details>
+                <li key={r.risk} className="text-[14.5px] leading-[1.6]" style={{ color: 'var(--sc-ink-2)' }}>
+                  <b className="font-semibold" style={{ color: 'var(--sc-ink)' }}>
+                    {r.risk}
+                  </b>{' '}
+                  — {r.answer}
+                </li>
               ))}
-            </div>
+            </ul>
           </Card>
 
           <Card id="roadmap" title="로드맵" wide>
@@ -521,7 +509,7 @@ export default function SeniorCatPage(): JSX.Element {
               {ROADMAP.map((r, i) => (
                 <li key={r.step} className={`grid grid-cols-[30px_minmax(0,1fr)] gap-3 lg:grid-cols-1 lg:gap-2 content-start ${r.now ? 'sc-step-now' : ''}`}>
                   <span className="sc-step-dot" aria-hidden="true">
-                    {i + 1}
+                    {r.now ? '' : i + 1}
                   </span>
                   <div className="min-w-0">
                     <p className="text-[15.5px] font-bold leading-[1.4]" style={{ color: 'var(--sc-ink)' }}>
@@ -589,10 +577,7 @@ function Card({ id, title, wide, tone, badge, children }: CardProps): JSX.Elemen
     <section id={id} aria-labelledby={`${id}-title`} className={`sc-card scroll-mt-24 ${wide ? 'lg:col-span-2' : ''} ${tone ?? ''}`}>
       <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
         <h2 id={`${id}-title`} className="sc-card-h">
-          <span className="sc-card-no" aria-hidden="true">
-            {no(id)}
-          </span>
-          {title}
+          <span className="sc-hl">{title}</span>
         </h2>
         {badge}
       </div>
@@ -601,43 +586,15 @@ function Card({ id, title, wide, tone, badge, children }: CardProps): JSX.Elemen
   );
 }
 
+/** 첫 화면의 "한눈에" — 수첩 첫 장의 인적 사항 칸처럼 점선 줄로 나눈다 */
 function Fact({ label, children }: { label: string; children: React.ReactNode }): JSX.Element {
   return (
-    <div className="rounded-[16px] px-3.5 py-2.5" style={{ background: 'var(--sc-card)', border: '1px solid var(--sc-line)' }}>
-      <dt className="text-[12.5px] font-semibold" style={{ color: 'var(--sc-teal)' }}>
+    <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3 py-2" style={{ borderBottom: '1px dashed var(--sc-teal-line)' }}>
+      <dt className="text-[13px] font-semibold pt-0.5" style={{ color: 'var(--sc-teal)' }}>
         {label}
       </dt>
-      <dd className="m-0 text-[14.5px] leading-[1.5]" style={{ color: 'var(--sc-ink)' }}>
+      <dd className="m-0 text-[15px] leading-[1.55]" style={{ color: 'var(--sc-ink)' }}>
         {children}
-      </dd>
-    </div>
-  );
-}
-
-interface StatProps {
-  value: React.ReactNode;
-  unit: string;
-  label: string;
-  source: string;
-  status: string;
-}
-
-function Stat({ value, unit, label, source, status }: StatProps): JSX.Element {
-  return (
-    // 읽는 순서는 이름 → 값(dl 규칙), 보이는 순서는 값이 먼저
-    <div className="sc-tile grid content-start gap-1.5">
-      <dt className="order-2 text-[14px] leading-[1.5]" style={{ color: 'var(--sc-ink)' }}>
-        {label}
-      </dt>
-      <dd className="m-0 order-1 leading-none" style={{ color: 'var(--sc-teal)' }}>
-        <span className="text-[30px] font-bold tracking-[-0.02em]" style={{ fontVariantNumeric: 'tabular-nums' }}>
-          {value}
-        </span>
-        <span className="ml-1 text-[15px] font-semibold">{unit}</span>
-      </dd>
-      <dd className="m-0 order-3 flex flex-wrap items-center gap-1.5 text-[12.5px]" style={{ color: 'var(--sc-muted)' }}>
-        {source}
-        <StatusPills status={status} small />
       </dd>
     </div>
   );
