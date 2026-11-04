@@ -52,8 +52,8 @@ function savePrefs(p: Prefs): void {
   }
 }
 
-const H2 = 'text-[20px] font-semibold';
-const H2_STYLE = { fontFamily: 'var(--font-serif)', letterSpacing: '-0.02em', color: 'var(--ink)' } as const;
+const H2 = 'text-[19px] font-bold';
+const H2_STYLE = { letterSpacing: '-0.01em', color: 'var(--ink)' } as const;
 const ELIM_LABEL = { urine: '소변 추정', feces: '대변 추정', none: '배설 없음' } as const;
 
 export default function CatDemo(): JSX.Element {
@@ -172,11 +172,11 @@ export default function CatDemo(): JSX.Element {
   const latestAlert = analysis.alerts[0];
 
   return (
-    <div className="grid gap-10 md:grid-cols-[300px_minmax(0,1fr)] md:gap-12">
+    <div className="grid gap-5 md:grid-cols-[300px_minmax(0,1fr)] md:gap-6">
       {/* 날 넘기기 — 폰에서도 맨 위에 오게 두 칸을 가로지른다 */}
-      <section aria-labelledby="time-title" className="md:col-span-2 grid gap-3 p-5 rounded-[var(--r-lg)] cat-report-noprint" style={{ background: 'var(--surface)', border: '1px solid var(--rule)', boxShadow: 'var(--shadow)' }}>
+      <section aria-labelledby="time-title" className="md:col-span-2 grid gap-3 sc-demo-sec cat-report-noprint" style={{ background: 'var(--sc-teal-soft)', borderColor: 'var(--sc-teal-line)' }}>
         {showcase && (
-          <p className="m-0 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13.5px] pl-3" style={{ color: 'var(--ink-2)', borderLeft: '3px solid var(--accent)' }}>
+          <p className="m-0 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13.5px] px-3 py-1.5 rounded-[14px] justify-self-start" style={{ color: 'var(--ink-2)', background: 'var(--surface)' }}>
             <span>
               예시 시나리오 자동 실행됨 · {sc.label} · {SHOWCASE.day}일까지 미리 돌려 둠
             </span>
@@ -186,10 +186,10 @@ export default function CatDemo(): JSX.Element {
           </p>
         )}
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-          <h2 id="time-title" className="text-[17px] font-semibold" style={{ color: 'var(--ink)' }}>
+          <h2 id="time-title" className="text-[20px] font-bold" style={{ color: 'var(--ink)' }}>
             {day}일 기록됨
           </h2>
-          <span className="meta" style={{ color: 'var(--accent)' }}>
+          <span className="sc-pill" style={{ background: 'var(--surface)' }}>
             시뮬레이션 데이터
           </span>
         </div>
@@ -225,7 +225,7 @@ export default function CatDemo(): JSX.Element {
         )}
       </section>
       {/* 왼쪽: 설정 */}
-      <div className="grid gap-8 content-start cat-report-noprint">
+      <div className="grid gap-7 content-start sc-demo-sec self-start cat-report-noprint">
         <fieldset className="m-0 p-0 border-0 min-w-0">
           <legend className="meta mb-2">시나리오</legend>
           <div className="grid gap-1.5">
@@ -302,7 +302,7 @@ export default function CatDemo(): JSX.Element {
             </div>
           ))}
           {pairs.length > 0 && (
-            <p className="text-[13.5px] leading-[1.55] pl-3" style={{ borderLeft: '3px solid var(--accent)', color: 'var(--ink)' }}>
+            <p className="text-[13.5px] leading-[1.55] sc-bubble" style={{ color: 'var(--ink)', padding: '8px 12px' }}>
               {pairs.map(([a, b]) => `${a.name}·${b.name}`).join(', ')}의 체중 차이가 0.3kg 안쪽입니다. 체중만으로는 구분이 어려운 방문이 생깁니다.
             </p>
           )}
@@ -346,9 +346,9 @@ export default function CatDemo(): JSX.Element {
       </div>
 
       {/* 오른쪽: 결과 */}
-      <div className="grid gap-12 content-start min-w-0">
+      <div className="grid gap-5 content-start min-w-0">
 
-        <section aria-labelledby="alerts-title" className="grid gap-3 min-w-0 cat-report-noprint">
+        <section aria-labelledby="alerts-title" className="sc-demo-sec grid gap-3 min-w-0 cat-report-noprint">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
             <h2 id="alerts-title" className={H2} style={H2_STYLE}>
               알림
@@ -364,12 +364,8 @@ export default function CatDemo(): JSX.Element {
           ) : (
             <ul className="list-none m-0 p-0 grid gap-3" aria-live="polite">
               {analysis.alerts.slice(0, 8).map((a) => (
-                <li
-                  key={a.id}
-                  className="pl-4 py-1 grid gap-1"
-                  style={{ borderLeft: a.kind === 'urgent' ? '3px solid var(--accent)' : '1px solid var(--rule)' }}
-                >
-                  <p className="meta" style={{ color: a.kind === 'urgent' ? 'var(--accent)' : 'var(--muted)' }}>
+                <li key={a.id} className={`grid gap-1 ${a.kind === 'urgent' ? 'sc-bubble sc-bubble-urgent' : 'sc-bubble'}`}>
+                  <p className="text-[12.5px] font-semibold" style={{ color: a.kind === 'urgent' ? 'var(--sc-red)' : 'var(--accent)' }}>
                     {a.kind === 'urgent' ? '급한 변화' : '느린 변화 · 검진 권유'} · {when(a.t)}
                   </p>
                   <p className="text-[16px] font-semibold leading-[1.45]" style={{ color: 'var(--ink)' }}>
@@ -385,7 +381,7 @@ export default function CatDemo(): JSX.Element {
           )}
         </section>
 
-        <section aria-labelledby="daily-title" className="grid gap-4 min-w-0 cat-report-noprint">
+        <section aria-labelledby="daily-title" className="sc-demo-sec grid gap-4 min-w-0 cat-report-noprint">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
             <h2 id="daily-title" className={H2} style={H2_STYLE}>
               고양이별 하루 기록
@@ -434,7 +430,7 @@ export default function CatDemo(): JSX.Element {
           </p>
         </section>
 
-        <section aria-labelledby="signal-title" className="grid gap-3 min-w-0 cat-report-noprint">
+        <section aria-labelledby="signal-title" className="sc-demo-sec grid gap-3 min-w-0 cat-report-noprint">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
             <h2 id="signal-title" className={H2} style={H2_STYLE}>
               센서 원신호
@@ -490,7 +486,7 @@ export default function CatDemo(): JSX.Element {
                 <table className="w-full border-collapse text-[14px] leading-[1.5] min-w-[540px]">
                   <caption className="sr-only">{shownDay + 1}일째 찾은 방문</caption>
                   <thead>
-                    <tr style={{ borderBottom: '1px solid var(--ink-2)', position: 'sticky', top: 0, background: 'var(--paper)' }}>
+                    <tr style={{ borderBottom: '1px solid var(--ink-2)', position: 'sticky', top: 0, background: 'var(--surface)' }}>
                       {['시각', '누구(확률)', '머문 시간', '체중', '모래 변화', '추정'].map((h) => (
                         <th key={h} scope="col" className="text-left font-normal py-1.5 pr-2 meta">
                           {h}
@@ -538,7 +534,7 @@ export default function CatDemo(): JSX.Element {
           )}
         </section>
 
-        <section aria-labelledby="eval-title" className="grid gap-3 min-w-0 cat-report-noprint">
+        <section aria-labelledby="eval-title" className="sc-demo-sec grid gap-3 min-w-0 cat-report-noprint">
           <h2 id="eval-title" className={H2} style={H2_STYLE}>
             시뮬레이터 정답과 비교
           </h2>
@@ -546,7 +542,7 @@ export default function CatDemo(): JSX.Element {
             알고리즘은 무게 신호만 봅니다. 시뮬레이터는 누가 언제 무엇을 했는지 알고 있어서, 연구 질문 두 가지를 여기서 미리 재 볼 수 있습니다. 실제
             고양이에서는 카메라로 붙인 정답이 필요합니다.
           </p>
-          <dl className="m-0 grid gap-x-6 gap-y-3 grid-cols-2 sm:grid-cols-3">
+          <dl className="m-0 grid gap-3 grid-cols-2 sm:grid-cols-3">
             <Stat label="방문 검출" value={pct(ev.matched, ev.trueVisits)} sub={`${ev.matched}/${ev.trueVisits}번`} />
             <Stat label="배설 종류 맞힘" value={pct(ev.elimCorrect, ev.matched)} sub="소변·대변·없음" />
             <Stat label="체중 오차" value={ev.matched ? `${Math.round(ev.weightMaeG)}g` : '—'} sub="방문당 평균" />
@@ -581,10 +577,10 @@ export default function CatDemo(): JSX.Element {
 
 function Stat({ label, value, sub }: { label: string; value: string; sub: string }): JSX.Element {
   return (
-    <div className="pl-3 min-w-0" style={{ borderLeft: '1px solid var(--rule)' }}>
+    <div className="sc-tile">
       <dt className="meta">{label}</dt>
       <dd className="m-0">
-        <span className="block text-[22px] font-semibold leading-tight" style={{ color: 'var(--ink)', fontVariantNumeric: 'tabular-nums' }}>
+        <span className="block text-[22px] font-bold leading-tight mt-0.5" style={{ color: 'var(--accent)', fontVariantNumeric: 'tabular-nums' }}>
           {value}
         </span>
         <span className="block text-[12.5px]" style={{ color: 'var(--muted)' }}>
