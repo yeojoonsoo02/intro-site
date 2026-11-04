@@ -31,6 +31,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/portfolio`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${SITE_URL}/portfolio/english-roommate`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${SITE_URL}/portfolio/english-roommate/demo`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.5 },
+    { url: `${SITE_URL}/portfolio/senior-cat`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${SITE_URL}/portfolio/senior-cat/demo`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.5 },
   ];
 
   return [...homes, ...abouts, ...statics];
