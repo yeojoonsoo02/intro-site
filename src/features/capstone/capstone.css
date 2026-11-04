@@ -92,7 +92,8 @@ html.dark .cap-lonelyradar {
 }
 
 /* ── 첫 화면 연출 ─────────────────────────────────────────────
-   MotionScope가 data-motion을 단다: 속성 없음 = 최종 모습(JS 없음·동작 줄이기), ready = 시작 전, play = 화면에 들어옴.
+   MotionScope가 화면에 들어올 때 data-motion='play'를 단다. 속성이 없으면 최종 모습(JS 없음·동작 줄이기·아직 안 봄).
+   키프레임은 fill-mode both라 play가 붙는 순간 시작 모습부터 그려진다.
    모든 움직임은 transform·opacity·clip-path·stroke-dashoffset만 써서 자리를 밀지 않는다. */
 
 .cap-photo {
@@ -149,10 +150,6 @@ html.dark .cap-photo {
   font-size: 15px;
   line-height: 1.45;
 }
-[data-motion='ready'] .cap-led,
-[data-motion='ready'] .cap-bubble {
-  opacity: 0;
-}
 [data-motion='play'] .cap-led {
   animation: cap-led 1.2s ease-in-out 0.15s 3 both;
 }
@@ -191,12 +188,6 @@ html.dark .cap-photo {
   background: #fff;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
 }
-[data-motion='ready'] .cap-split {
-  clip-path: inset(0 0 0 100%);
-}
-[data-motion='ready'] .cap-divider {
-  opacity: 0;
-}
 [data-motion='play'] .cap-split {
   animation: cap-wipe 0.6s cubic-bezier(0.65, 0, 0.35, 1) 0.2s both;
 }
@@ -226,9 +217,6 @@ html.dark .cap-photo {
   transform-origin: left center;
   transform: scaleX(var(--to));
 }
-[data-motion='ready'] .cap-bar > span {
-  transform: scaleX(var(--from, 0));
-}
 [data-motion='play'] .cap-bar > span {
   animation: cap-bar 0.6s cubic-bezier(0.65, 0, 0.35, 1) var(--delay, 0s) both;
 }
@@ -242,14 +230,8 @@ html.dark .cap-photo {
   stroke-dasharray: 1;
   stroke-dashoffset: 0;
 }
-[data-motion='ready'] .cap-line {
-  stroke-dashoffset: 1;
-}
 [data-motion='play'] .cap-line {
   animation: cap-draw 0.6s cubic-bezier(0.65, 0, 0.35, 1) 0.25s both;
-}
-[data-motion='ready'] .cap-dot {
-  opacity: 0;
 }
 [data-motion='play'] .cap-dot {
   animation: cap-fade 0.25s ease-out 0.85s both;
