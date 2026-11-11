@@ -51,7 +51,7 @@ React는 아직 **18.3.1**이다(Next 16 + React 18 조합). 19 전용 API를 �
 
 ## 4. 챗봇 — 두 개의 경로와 살아있는 컨텍스트
 
-`/api/gemini`로 POST. **`GEMINI_API_KEY`가 있으면 서버가 직접 처리하고, 없으면 외부 Cloud Run 서비스로 포워딩한다**(`GEMINI_API_FALLBACK_URL`, 허용 호스트는 `api/gemini/security.ts`). 챗봇이 "왜 다른 답을 하지" 싶으면 **어느 경로를 타는지부터** 확인한다.
+`/api/gemini`로 POST(경로 이름은 그대로). **답하는 모델은 `ANTHROPIC_API_KEY`가 있으면 Claude(`claude-opus-5-5`, effort low), 없고 `GEMINI_API_KEY`가 있으면 Gemini, 둘 다 없으면 외부 Cloud Run 서비스로 포워딩한다**(2026-11-11 Claude 로 바꿈, 고르는 곳은 `api/gemini/model.ts`의 `chatProvider`·`startChatStream` — 평가 스크립트도 같은 함수를 쓴다. 검색용 임베딩은 Claude 에 임베딩 모델이 없어 Gemini 그대로)(`GEMINI_API_FALLBACK_URL`, 허용 호스트는 `api/gemini/security.ts`). 챗봇이 "왜 다른 답을 하지" 싶으면 **어느 경로를 타는지부터** 확인한다.
 
 컨텍스트 구성:
 - `src/data/knowledge.ts` — 정적 지식 베이스

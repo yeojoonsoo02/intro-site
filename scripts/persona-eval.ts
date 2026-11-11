@@ -19,7 +19,7 @@
 
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { buildSystemPrompt } from '@/app/api/gemini/systemPrompt'
-import { CHAT_MODEL, createChatModel } from '@/app/api/gemini/model'
+import { chatModelName, chatProvider, startChatStream, type ChatProvider } from '@/app/api/gemini/model'
 import { sanitizeHistory } from '@/app/api/gemini/history'
 import { filterReply } from '@/app/api/gemini/replyFilter'
 import { isUnanswered } from '@/lib/unanswered'
@@ -78,30 +78,24 @@ function parseArgs(argv: string[]): Args {
   return out
 }
 
-async function ask(apiKey: string, item: EvalQuestion, thinkingBudget?: number): Promise<EvalResult> {
+async function ask(provider: ChatProvider, item: EvalQuestion, thinkingBudget?: number): Promise<EvalResult> {
   const started = Date.now()
   const systemPrompt = await buildSystemPrompt(item.q)
-  const chat = createChatModel(apiKey, systemPrompt, { thinkingBudget }).startChat({
-    history: sanitizeHistory(item.history ?? []),
+  // 운영 라우트와 같은 입구 — 모델(Claude/Gemini)도 운영과 같게 고른다
+  const stream = await startChatStream(provider, systemPrompt, sanitizeHistory(item.history ?? []), item.q, {
+    thinkingBudget,
   })
-  const stream = await chat.sendMessageStream(item.q)
 
   let a = ''
   let firstMs = 0
-  for await (const chunk of stream.stream) {
-    let piece = ''
-    try {
-      piece = chunk.text() ?? ''
-    } catch {
-      break // safety 차단 — 운영과 같이 받은 데까지만
-    }
+  for await (const piece of stream.pieces) {
     if (piece && !firstMs) firstMs = Date.now() - started
     a += piece
   }
   // 운영과 같은 거름(추임새 제거·유출 차단)을 적용해 방문자가 실제로 보게 될 답을 평가한다.
   const filtered = filterReply(a)
   a = filtered.text
-  const usage = ((await stream.response).usageMetadata ?? {}) as Record<string, number | undefined>
+  const usage = await stream.usage()
 
   return {
     id: item.id,
@@ -110,14 +104,14 @@ async function ask(apiKey: string, item: EvalQuestion, thinkingBudget?: number):
     a: a.trim(),
     firstMs,
     totalMs: Date.now() - started,
-    promptTokens: usage.promptTokenCount ?? 0,
-    outputTokens: usage.candidatesTokenCount ?? 0,
-    thoughtTokens: usage.thoughtsTokenCount ?? 0,
+    promptTokens: usage.promptTokens,
+    outputTokens: usage.outputTokens,
+    thoughtTokens: usage.thoughtTokens,
     leaked: filtered.leaked,
   }
 }
 
-async function runAll(apiKey: string, items: EvalQuestion[], thinkingBudget?: number): Promise<EvalResult[]> {
+async function runAll(provider: ChatProvider, items: EvalQuestion[], thinkingBudget?: number): Promise<EvalResult[]> {
   const results: EvalResult[] = new Array(items.length)
   let next = 0
   const worker = async (): Promise<void> => {
@@ -125,7 +119,7 @@ async function runAll(apiKey: string, items: EvalQuestion[], thinkingBudget?: nu
       const i = next++
       if (i >= items.length) return
       try {
-        results[i] = await ask(apiKey, items[i], thinkingBudget)
+        results[i] = await ask(provider, items[i], thinkingBudget)
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err)
         results[i] = {
@@ -248,20 +242,22 @@ function report(run: EvalRun, base: EvalRun | null): string {
 
 async function main(): Promise<void> {
   const { label, base: basePath, only, repeat, thinkingBudget } = parseArgs(process.argv.slice(2))
-  const apiKey = process.env.GEMINI_API_KEY
-  if (!apiKey) throw new Error('GEMINI_API_KEY가 없습니다. npm run persona:eval 로 실행하세요(.env.local을 읽습니다).')
+  const provider = chatProvider()
+  if (!provider)
+    throw new Error('ANTHROPIC_API_KEY·GEMINI_API_KEY가 없습니다. npm run persona:eval 로 실행하세요(.env.local을 읽습니다).')
+  const model = chatModelName(provider)
 
   const picked = only ? QUESTIONS.filter((x) => only.has(x.id)) : QUESTIONS
   const items = Array.from({ length: repeat }, () => picked).flat()
   if (items.length === 0) throw new Error('돌릴 질문이 없습니다(--only의 id를 확인하세요).')
   const base: EvalRun | null = basePath ? JSON.parse(readFileSync(basePath, 'utf8')) : null
 
-  console.log(`${items.length}개 질문을 ${CHAT_MODEL}에 묻는 중...`)
+  console.log(`${items.length}개 질문을 ${model}에 묻는 중...`)
   const run: EvalRun = {
     label,
-    model: CHAT_MODEL,
+    model,
     createdAt: new Date().toISOString(),
-    results: await runAll(apiKey, items, thinkingBudget),
+    results: await runAll(provider, items, thinkingBudget),
   }
 
   mkdirSync(OUT_DIR, { recursive: true })

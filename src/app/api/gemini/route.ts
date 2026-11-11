@@ -3,7 +3,7 @@ import { getClientIp } from '@/lib/clientIp'
 import { checkRateLimit, checkDailyBudget, consumeDailyBudget } from '@/lib/rateLimit'
 import { adminAuth } from '@/lib/firebaseAdmin'
 import { buildSystemPrompt } from './systemPrompt'
-import { createChatModel } from './model'
+import { chatProvider, startChatStream, type ChatProvider, type ChatStream } from './model'
 import { isBot, resolveFallbackUrl } from './security'
 import { createReplyFilter, filterReply } from './replyFilter'
 import { fireSideEffects } from './sideEffects'
@@ -91,12 +91,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const history = sanitizeHistory(body.history)
   const historyTruncated = wasHistoryTruncated(body.history)
 
-  const apiKey = process.env.GEMINI_API_KEY
-  if (!apiKey) {
+  // ANTHROPIC_API_KEY 가 있으면 Claude, 없으면 GEMINI_API_KEY 로 Gemini, 둘 다 없으면 외부 대체 서비스로
+  const provider = chatProvider()
+  if (!provider) {
     return await proxyToFallback(message, userInfo, rateLimit.remaining, history, historyTruncated)
   }
 
-  return await callGemini(apiKey, message, userInfo, rateLimit.remaining, history, historyTruncated)
+  return await callModel(provider, message, userInfo, rateLimit.remaining, history, historyTruncated)
 }
 
 async function proxyToFallback(
@@ -162,8 +163,8 @@ async function proxyToFallback(
 
 // 응답을 통째로 기다렸다가 한 번에 내려주면 RAG·컨텍스트 준비 시간까지 더해져
 // 체감 대기가 길다. 토큰 과금은 동일하므로 스트리밍이 순수 이득이다.
-async function callGemini(
-  apiKey: string,
+async function callModel(
+  provider: ChatProvider,
   message: string,
   userInfo: Record<string, unknown> | null,
   remaining: number,
@@ -172,18 +173,16 @@ async function callGemini(
 ): Promise<NextResponse> {
   try {
     const systemPrompt = await buildSystemPrompt(message, { historyTruncated })
-    const chat = createChatModel(apiKey, systemPrompt).startChat({ history })
-
     // 네트워크·일시 오류만 1회 재시도. Safety 차단은 재시도하지 않는다 —
-    // 리프레이밍으로 정책을 우회하게 되는 걸 막기 위함.
-    let stream: Awaited<ReturnType<typeof chat.sendMessageStream>> | null = null
+    // 리프레이밍으로 정책을 우회하게 되는 걸 막기 위함. (Claude 는 SDK 가 연결 오류를 알아서 재시도한다)
+    let stream: ChatStream | null = null
     for (let attempt = 0; attempt < 2; attempt++) {
       try {
-        stream = await chat.sendMessageStream(message)
+        stream = await startChatStream(provider, systemPrompt, history, message)
         break
       } catch (retryErr) {
         console.warn(
-          `Gemini attempt ${attempt} failed:`,
+          `${provider} attempt ${attempt} failed:`,
           retryErr instanceof Error ? retryErr.message : retryErr,
         )
       }
@@ -210,28 +209,16 @@ async function callGemini(
         // 맨 앞 추임새를 떼고 프롬프트 유출을 끊는다(replyFilter.ts).
         const filter = createReplyFilter()
         try {
-          for await (const chunk of activeStream.stream) {
-            // safety 차단 시 text()가 던진다 — 그 시점까지 받은 내용은 그대로 둔다.
-            let piece = ''
-            try {
-              piece = chunk.text() ?? ''
-            } catch (chunkErr) {
-              console.warn(
-                'Gemini chunk blocked:',
-                chunkErr instanceof Error ? chunkErr.message : chunkErr,
-              )
-              break
-            }
-            if (!piece) continue
+          for await (const piece of activeStream.pieces) {
             const out = filter.push(piece)
             if (out) controller.enqueue(encoder.encode(out))
             if (filter.leaked) {
-              console.warn('Gemini reply cut: system prompt leak detected')
+              console.warn(`${provider} reply cut: system prompt leak detected`)
               break
             }
           }
         } catch (streamErr) {
-          console.error('Gemini stream error', streamErr)
+          console.error(`${provider} stream error`, streamErr)
         }
 
         // 방문자가 중간에 창을 닫으면 enqueue·close가 던진다. 그래도 받은 데까지는 기록한다.
@@ -264,7 +251,7 @@ async function callGemini(
       },
     })
   } catch (err) {
-    console.error('Gemini API error', err)
+    console.error(`${provider} API error`, err)
     return NextResponse.json({ error: 'Failed to fetch response' }, { status: 500 })
   }
 }

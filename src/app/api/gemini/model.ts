@@ -1,3 +1,4 @@
+import Anthropic from '@anthropic-ai/sdk'
 import {
   GoogleGenerativeAI,
   HarmCategory,
@@ -56,4 +57,129 @@ export function createChatModel(
     safetySettings: SAFETY_SETTINGS,
     generationConfig,
   })
+}
+
+// ── Claude ───────────────────────────────────────────────────────────────
+// 2026-11-11 사용자 결정: 챗봇 답은 Claude 로. ANTHROPIC_API_KEY 가 있으면 Claude, 없으면 위의 Gemini.
+// (검색용 임베딩은 Claude 에 임베딩 모델이 없어 Gemini 그대로 — lib/embeddings.ts)
+export const CLAUDE_CHAT_MODEL = 'claude-opus-5-5'
+
+// 답은 1~3문장. 짧은 대화라 생각 깊이는 low — 더 올리려면 persona:eval 로 먼저 비교한다.
+const CLAUDE_EFFORT = 'low' as const
+// Gemini 의 MAX_OUTPUT_TOKENS 와 같은 뜻(프롬프트를 통째로 뱉게 하는 공격 대비). Claude 는 생각 토큰도 여기에 들어가 넉넉히.
+const CLAUDE_MAX_TOKENS = 4096
+
+export type ChatProvider = 'claude' | 'gemini'
+
+/** 지금 쓸 모델. 둘 다 없으면 null (라우트가 외부 대체 서비스로 넘긴다). */
+export function chatProvider(): ChatProvider | null {
+  if (process.env.ANTHROPIC_API_KEY) return 'claude'
+  if (process.env.GEMINI_API_KEY) return 'gemini'
+  return null
+}
+
+export function chatModelName(provider: ChatProvider): string {
+  return provider === 'claude' ? CLAUDE_CHAT_MODEL : CHAT_MODEL
+}
+
+export interface ChatUsage {
+  promptTokens: number
+  outputTokens: number
+  thoughtTokens: number
+}
+
+export interface ChatStream {
+  /** 답 글 조각. 안전 차단·거절이면 그때까지 받은 데서 끝난다. */
+  pieces: AsyncIterable<string>
+  usage(): Promise<ChatUsage>
+}
+
+interface ChatTurn {
+  role: 'user' | 'model'
+  parts: { text: string }[]
+}
+
+let anthropic: Anthropic | null = null
+
+/** 라우트와 평가 스크립트가 같이 쓰는 입구 — 모델이 달라도 같은 모양으로 글 조각을 준다. */
+export async function startChatStream(
+  provider: ChatProvider,
+  systemPrompt: string,
+  history: ChatTurn[],
+  message: string,
+  options: ChatModelOptions = {},
+): Promise<ChatStream> {
+  if (provider === 'claude') return startClaudeStream(systemPrompt, history, message)
+  return startGeminiStream(systemPrompt, history, message, options)
+}
+
+async function startGeminiStream(
+  systemPrompt: string,
+  history: ChatTurn[],
+  message: string,
+  options: ChatModelOptions,
+): Promise<ChatStream> {
+  const chat = createChatModel(process.env.GEMINI_API_KEY ?? '', systemPrompt, options).startChat({ history })
+  const stream = await chat.sendMessageStream(message)
+  async function* pieces() {
+    for await (const chunk of stream.stream) {
+      let piece = ''
+      try {
+        piece = chunk.text() ?? ''
+      } catch (chunkErr) {
+        // safety 차단 시 text()가 던진다 — 받은 데까지만
+        console.warn('Gemini chunk blocked:', chunkErr instanceof Error ? chunkErr.message : chunkErr)
+        return
+      }
+      if (piece) yield piece
+    }
+  }
+  return {
+    pieces: pieces(),
+    async usage() {
+      const u = ((await stream.response).usageMetadata ?? {}) as Record<string, number | undefined>
+      return {
+        promptTokens: u.promptTokenCount ?? 0,
+        outputTokens: u.candidatesTokenCount ?? 0,
+        thoughtTokens: u.thoughtsTokenCount ?? 0,
+      }
+    },
+  }
+}
+
+async function startClaudeStream(systemPrompt: string, history: ChatTurn[], message: string): Promise<ChatStream> {
+  if (!anthropic) anthropic = new Anthropic()
+  const messages: Anthropic.Beta.BetaMessageParam[] = history.map((turn) => ({
+    role: turn.role === 'model' ? 'assistant' : 'user',
+    content: turn.parts.map((p) => p.text).join('\n'),
+  }))
+  messages.push({ role: 'user', content: message })
+  const stream = anthropic.beta.messages.stream({
+    model: CLAUDE_CHAT_MODEL,
+    max_tokens: CLAUDE_MAX_TOKENS,
+    output_config: { effort: CLAUDE_EFFORT },
+    // 안전 분류기가 거절하면 서버가 기본 대체 모델로 다시 돌린다
+    betas: ['server-side-fallback-2026-07-01'],
+    fallbacks: 'default',
+    system: systemPrompt,
+    messages,
+  })
+  async function* pieces() {
+    for await (const event of stream) {
+      if (event.type === 'content_block_delta' && event.delta.type === 'text_delta' && event.delta.text) {
+        yield event.delta.text
+      }
+    }
+  }
+  return {
+    pieces: pieces(),
+    async usage() {
+      const final = await stream.finalMessage()
+      return {
+        promptTokens: final.usage.input_tokens + (final.usage.cache_read_input_tokens ?? 0),
+        outputTokens: final.usage.output_tokens,
+        thoughtTokens: 0, // Claude 는 생각 토큰을 output_tokens 에 합쳐 센다
+      }
+    },
+  }
 }

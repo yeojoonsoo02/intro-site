@@ -16,6 +16,7 @@
     "persona:eval": "tsx --env-file=.env.local scripts/persona-eval.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.121.0",
     "@contentauth/c2pa-web": "0.15.6",
     "@google/generative-ai": "^0.24.1",
     "firebase": "^11.7.1",
