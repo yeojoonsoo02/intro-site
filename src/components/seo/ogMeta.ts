@@ -1,6 +1,6 @@
 // OG/Twitter 카드의 규격·문구와, 페이지 메타데이터에 넣을 이미지 항목.
 // next/og(ImageResponse)를 끌어오지 않도록 템플릿과 분리해 둔다 — 모든 페이지가 이 파일을 import한다.
-export const OG_ALT = '여준수 (Junsu Yeo) — 대학생 개발자 자기소개';
+export const OG_ALT = '여준수 (Yeo Junsu) — 대학생 개발자 자기소개';
 export const OG_SIZE = { width: 1200, height: 630 };
 export const OG_CONTENT_TYPE = 'image/png';
 

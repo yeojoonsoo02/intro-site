@@ -32,6 +32,20 @@ export default function SocialLinks({ colored = false, isDev = false }: { colore
         </svg>
       ),
     },
+    // Personal YouTube channel (타발추) — shown on the personal profile only.
+    ...(isNormal
+      ? [{
+          href: 'https://www.youtube.com/@yeojoonsoo02',
+          label: '여준수 유튜브',
+          color: '#ff0000',
+          icon: (
+            <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect width="24" height="24" rx="6" fill="#ff0000" />
+              <path d="M10 8.5v7l6-3.5-6-3.5z" fill="#fff" />
+            </svg>
+          ),
+        }]
+      : []),
     {
       href: isNormal ? 'https://open.kakao.com/o/sbUgmzji' : 'https://pf.kakao.com/_dFqxdn',
       label: isNormal ? '여준수 카카오톡' : '개발자 카카오톡',

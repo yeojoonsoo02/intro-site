@@ -54,7 +54,7 @@ export function renderOgImage(): ImageResponse {
               marginLeft: 28,
             }}
           >
-            Junsu Yeo
+            Yeo Junsu
           </span>
         </div>
         <div

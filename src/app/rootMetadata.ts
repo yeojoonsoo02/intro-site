@@ -3,10 +3,10 @@ import { hreflangFor, SITE_URL } from "@/lib/site";
 import { OG_IMAGES, TWITTER_IMAGES } from "@/components/seo/ogMeta";
 
 // 루트 레이아웃이 둘이라((ko)·[lang]) 공통 메타데이터를 여기 한 번만 둔다.
-const SITE_NAME = "여준수 (Junsu Yeo)";
-const DEFAULT_TITLE = "여준수 (Junsu Yeo) — 대학생 개발자 자기소개";
+const SITE_NAME = "여준수 (Yeo Junsu)";
+const DEFAULT_TITLE = "여준수 (Yeo Junsu) — 대학생 개발자 자기소개";
 const DEFAULT_DESC =
-  "여준수(Junsu Yeo) 공식 자기소개 사이트. 대학생 개발자의 프로필과 연락처를 확인할 수 있습니다.";
+  "여준수(Yeo Junsu) 공식 자기소개 사이트. 대학생 개발자의 프로필과 연락처를 확인할 수 있습니다.";
 
 export const ROOT_METADATA: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -21,6 +21,7 @@ export const ROOT_METADATA: Metadata = {
   publisher: "여준수",
   keywords: [
     "여준수",
+    "Yeo Junsu",
     "Junsu Yeo",
     "Yeojunsu",
     "yeojoonsoo02",

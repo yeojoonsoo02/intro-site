@@ -7,48 +7,48 @@ export type ProfileLang = Lang;
 // 언어별 name / description (현재 페이지 lang에 맞춰 분기)
 const LOCALIZED_TEXT: Record<ProfileLang, { name: string; description: string }> = {
   ko: {
-    name: '여준수 (Junsu Yeo) — 공식 프로필',
+    name: '여준수 (Yeo Junsu) — 공식 프로필',
     description:
-      '대학생 개발자 여준수(Junsu Yeo)의 공식 프로필 페이지. 자기소개와 연락처를 확인할 수 있습니다.',
+      '대학생 개발자 여준수(Yeo Junsu)의 공식 프로필 페이지. 자기소개와 연락처를 확인할 수 있습니다.',
   },
   en: {
-    name: 'Junsu Yeo — Official Profile',
+    name: 'Yeo Junsu — Official Profile',
     description:
-      "Official profile page of Junsu Yeo, a university student developer. Find his introduction and contact information.",
+      "Official profile page of Yeo Junsu, a university student developer. Find his introduction and contact information.",
   },
   ja: {
-    name: 'ヨ・ジュンス (Junsu Yeo) — 公式プロフィール',
+    name: 'ヨ・ジュンス (Yeo Junsu) — 公式プロフィール',
     description:
-      '大学生開発者ヨ・ジュンス(Junsu Yeo)の公式プロフィールページ。自己紹介と連絡先を確認できます。',
+      '大学生開発者ヨ・ジュンス(Yeo Junsu)の公式プロフィールページ。自己紹介と連絡先を確認できます。',
   },
   zh: {
-    name: '呂晙壽 (Junsu Yeo) — 官方简介',
-    description: '大学生开发者呂晙壽(Junsu Yeo)的官方简介页面。可查看自我介绍和联系方式。',
+    name: '呂晙壽 (Yeo Junsu) — 官方简介',
+    description: '大学生开发者呂晙壽(Yeo Junsu)的官方简介页面。可查看自我介绍和联系方式。',
   },
   es: {
-    name: 'Junsu Yeo — Perfil oficial',
+    name: 'Yeo Junsu — Perfil oficial',
     description:
-      'Página de perfil oficial de Junsu Yeo, desarrollador y estudiante universitario. Consulta su presentación y datos de contacto.',
+      'Página de perfil oficial de Yeo Junsu, desarrollador y estudiante universitario. Consulta su presentación y datos de contacto.',
   },
   fr: {
-    name: 'Junsu Yeo — Profil officiel',
+    name: 'Yeo Junsu — Profil officiel',
     description:
-      "Page de profil officielle de Junsu Yeo, développeur et étudiant universitaire. Découvrez sa présentation et ses coordonnées.",
+      "Page de profil officielle de Yeo Junsu, développeur et étudiant universitaire. Découvrez sa présentation et ses coordonnées.",
   },
   de: {
-    name: 'Junsu Yeo — Offizielles Profil',
+    name: 'Yeo Junsu — Offizielles Profil',
     description:
-      'Offizielle Profilseite von Junsu Yeo, einem studentischen Entwickler. Hier finden Sie seine Vorstellung und Kontaktdaten.',
+      'Offizielle Profilseite von Yeo Junsu, einem studentischen Entwickler. Hier finden Sie seine Vorstellung und Kontaktdaten.',
   },
   pt: {
-    name: 'Junsu Yeo — Perfil oficial',
+    name: 'Yeo Junsu — Perfil oficial',
     description:
-      'Página de perfil oficial de Junsu Yeo, desenvolvedor e estudante universitário. Veja sua apresentação e informações de contato.',
+      'Página de perfil oficial de Yeo Junsu, desenvolvedor e estudante universitário. Veja sua apresentação e informações de contato.',
   },
   ru: {
-    name: 'Junsu Yeo — Официальный профиль',
+    name: 'Yeo Junsu — Официальный профиль',
     description:
-      'Официальная страница профиля Junsu Yeo, студента-разработчика. Здесь можно найти его представление и контактные данные.',
+      'Официальная страница профиля Yeo Junsu, студента-разработчика. Здесь можно найти его представление и контактные данные.',
   },
 };
 

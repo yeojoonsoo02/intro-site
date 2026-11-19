@@ -17,14 +17,14 @@ const SITE_LANGUAGES = [
 // 현재 페이지 언어에 맞춘 사이트명(한국어 외에는 영문 표기로 통일).
 const SITE_NAME_BY_LANG: Record<ProfileLang, string> = {
   ko: '여준수 | 자기소개 사이트',
-  en: 'Junsu Yeo | Personal Site',
+  en: 'Yeo Junsu | Personal Site',
   ja: 'ヨ・ジュンス | 自己紹介サイト',
   zh: '呂晙壽 | 个人简介网站',
-  es: 'Junsu Yeo | Sitio personal',
-  fr: 'Junsu Yeo | Site personnel',
-  de: 'Junsu Yeo | Persönliche Website',
-  pt: 'Junsu Yeo | Site pessoal',
-  ru: 'Junsu Yeo | Личный сайт',
+  es: 'Yeo Junsu | Sitio personal',
+  fr: 'Yeo Junsu | Site personnel',
+  de: 'Yeo Junsu | Persönliche Website',
+  pt: 'Yeo Junsu | Site pessoal',
+  ru: 'Yeo Junsu | Личный сайт',
 };
 
 /**
@@ -37,7 +37,7 @@ export function buildWebsiteSchema(lang: ProfileLang) {
     '@type': 'WebSite',
     '@id': `${SITE_URL}#website`,
     name: SITE_NAME_BY_LANG[lang],
-    alternateName: 'Junsu Yeo Personal Site',
+    alternateName: 'Yeo Junsu Personal Site',
     url: SITE_URL,
     inLanguage: SITE_LANGUAGES,
     author: { '@id': `${SITE_URL}#person` },

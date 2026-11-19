@@ -11,7 +11,7 @@
 export const KNOWLEDGE = `
 # 기본 정보
 이름: 여준수
-영문: Junsu Yeo (이전 표기: Yeojunsu)
+영문: Yeo Junsu (여권 표기. 이전 표기: Junsu Yeo, Yeojunsu)
 일본어: ヨ・ジュンス
 한자: 呂晙壽 (중국어권 표기도 동일)
 본관: 함양(咸陽) 여씨

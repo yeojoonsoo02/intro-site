@@ -6,7 +6,7 @@ import { OG_IMAGES } from '@/components/seo/ogMeta';
 
 export const metadata: Metadata = {
   title: '여준수 — 성장 기록 (Journey)',
-  description: '유아기부터 현재까지, 여준수(Junsu Yeo)의 시기별 사진 기록.',
+  description: '유아기부터 현재까지, 여준수(Yeo Junsu)의 시기별 사진 기록.',
   alternates: { canonical: `${SITE_URL}/journey` },
   openGraph: {
     type: 'article',

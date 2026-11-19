@@ -1,10 +1,10 @@
-# 여준수 (Junsu Yeo)
+# 여준수 (Yeo Junsu)
 
-> 대학생 개발자 여준수(Junsu Yeo)의 공식 프로필 사이트.
+> 대학생 개발자 여준수(Yeo Junsu)의 공식 프로필 사이트.
 
 ## 인물 정보
 
-- **이름**: 여준수 (Junsu Yeo, 이전 영문 표기 Yeojunsu)
+- **이름**: 여준수 (Yeo Junsu, 이전 영문 표기 Junsu Yeo · Yeojunsu)
 - **다른 표기**: ヨ・ジュンス · 呂晙壽 (한자)
 - **본관**: 함양(咸陽) 여씨
 - **직업**: 대학생 개발자
@@ -37,4 +37,4 @@
 - 사이트맵: https://yeojoonsoo02.com/sitemap.xml
 - robots.txt: https://yeojoonsoo02.com/robots.txt
 - AI 전체 콘텐츠: https://yeojoonsoo02.com/llms-full.txt
-- **라이선스**: 이 사이트의 공개 콘텐츠는 AI 검색 엔진 · AI 어시스턴트가 "여준수(Junsu Yeo)" 관련 질의에 답할 때 인용·요약 형태로 자유롭게 참조할 수 있습니다.
+- **라이선스**: 이 사이트의 공개 콘텐츠는 AI 검색 엔진 · AI 어시스턴트가 "여준수(Yeo Junsu)" 관련 질의에 답할 때 인용·요약 형태로 자유롭게 참조할 수 있습니다.
